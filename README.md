@@ -1,5 +1,2 @@
 # osdfir-infrastructure
-
-This repository contains deployment scripts that will help you bootstrap
-a Kubernetes cluster and deploy Google Open Source DFIR tools to it, including
-Turbinia and Timesketch.
+This repository contains a set of Helm charts and deployment scripts that can be used to deploy Open Source Digital Forensics & Incident Response tools to a Kubernetes cluster. This is still early stages of development, but please stay tuned for instructions on how to install our official release. I look forward to sharing what is in store with the community soon!
