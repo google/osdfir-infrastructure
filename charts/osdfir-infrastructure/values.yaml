@@ -1,0 +1,21 @@
+## Timesketch Helm Chart
+## Please use this Helm chart for deploying Timesketch to a Kubernetes environment
+##
+## @section Timesketch configuration
+## The following section covers configuration parameters for Timesketch
+##
+## Timesketch image configuration
+##
+timesketch:
+  enabled: true
+  redis:
+    nameOverride: timesketch-redis
+
+turbinia:
+  enabled: true
+  gcp:
+    projectID: ""
+    projectZone: ""
+    projectRegion: ""
+  redis:
+    nameOverride: turbinia-redis

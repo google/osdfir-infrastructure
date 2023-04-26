@@ -1,0 +1,12 @@
+{{- $globconfigs := .Files.Glob "configs/*" }}
+{{- if $globconfigs }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "timesketch.fullname" . }}-configmap
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "timesketch.labels" . | nindent 4 }}
+data:
+{{ ($globconfigs).AsConfig | indent 2 }}
+{{- end }}
