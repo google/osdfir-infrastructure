@@ -196,3 +196,91 @@ kubectl delete pvc -l release=my-release
 | `postgresql.readReplicas.resources.requests.cpu`    | Requested cpu for the PostgreSQL read only containers                       | `250m`       |
 | `postgresql.readReplicas.resources.requests.memory` | Requested memory for the PostgreSQL read only containers                    | `256Mi`      |
 | `postgresql.readReplicas.resources.limits`          | Resource limits for the PostgreSQL read only containers                     | `{}`         |
+
+Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
+
+```console
+helm install my-release \
+    --set metrics.port=9300
+    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+```
+
+The above command updates the Timesketch metrics port to `9300`.
+
+
+Alternatively, the `values.yaml` file can be directly updated if the Helm chart 
+was pulled locally. For example,
+
+```console
+helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
+```
+
+Then make changes to the downloaded `values.yaml`. A `configs/` directory containing user-provided Timesketch configs can also be placed at this point to override
+the default ones. Once done, install the local chart with the updated values.
+
+```console
+helm install my-release ../timesketch
+```
+
+Lastly, a YAML file that specifies the values for the parameters can also be provided while installing the chart. For example,
+
+```console
+helm install my-release -f newvalues.yaml oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+```
+## Persistence
+
+The Timesketch deployment stores data at the `/mnt/timesketchvolume` path of the container and stores configuration files
+at the `/etc/timesketch` path of the container. 
+
+Persistent Volume Claims are used to keep the data across deployments. By default the Timesketch deployment attempts to
+deploy a GCP Filestore server, similar to a NFS share. The `persistent.StorageClass` value can be updated to automatically
+provision storage for other providers such as AWS and minikube, but this has yet to be tested. See the [Parameters](#parameters) section to configure the PVC or to disable persistence.
+
+To install the Timesketch chart with more storage capacity, run:
+```console
+helm install my-release \
+    --set persistence.size=10T
+    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+```
+
+The above command installs the Timesketch chart with a persistent volume size of 10 Terabytes.
+
+## Upgrading
+
+If you need to upgrade an existing release to update a value in, such as
+persistent volume size or upgrading to a new release, you can run 
+[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/). For example,
+e, to set a new release and upgrade storage capacity, run:
+```
+helm upgrade my-release \
+    --set image.tag=latest
+    --set persistence.size=10T
+```
+
+The above command upgrades an existing release named `my-release` updating the
+image tag to `latest` and increasing persistent volume size of an existing volume
+to 10 Terabytes
+
+## Troubleshooting
+
+There is a known issue causing PostgreSQL authentication to fail. This occurs 
+when you `delete` the deployed Helm chart and then redeploy the Chart without
+removing the existing PVCs. When redeploying, please ensure to delete the underlying 
+PostgreSQL PVC. Refer to [issue 2061](https://github.com/bitnami/charts/issues/2061) 
+for more details.
+
+## License
+
+Copyright &copy; 2023 Timesketch
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+<http://www.apache.org/licenses/LICENSE-2.0>
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
