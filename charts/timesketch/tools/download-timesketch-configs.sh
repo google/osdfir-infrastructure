@@ -5,6 +5,9 @@
 set -o posix
 set -e
 
+# Create config directory
+mkdir -p configs/
+
 echo -n "* Fetching configuration files.." 
 GITHUB_BASE_URL="https://raw.githubusercontent.com/google/timesketch/master"
 # Fetch default Timesketch config files

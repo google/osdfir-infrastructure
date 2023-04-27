@@ -1,4 +1,12 @@
+# Ignore back-up files.
+*~
 *.tgz
+
+# Exclude IDE files
 /.idea/*
 .vscode
 .DS_Store
+
+# Exclude config files
+charts/timesketch/configs
+turbinia.conf
