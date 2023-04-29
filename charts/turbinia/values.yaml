@@ -45,18 +45,24 @@ server:
   ##
   securityContext: {}
   ## Turbinia Server resource requests and limits
-  ## @param server.resources.requests.cpu The requested cpu for the frontend container
-  ## @param server.resources.requests.memory The requested memory for the frontend container
-  ## @param server.resources.limits.cpu The resources cpu limits for the frontend container
-  ## @param server.resources.limits.memory The resources memory limits for the frontend container
-  ##
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## We leave the default resources as a this choice for the user in order to increase
+  ## the chances charts run on environments with little resources, such as Minikube.
+  ## If you want to specify resources, uncomment the following lines, adjust them as
+  ## necessary, and remove the curly braces after 'resources:'.
+  ## @param server.resources.limits The resources limits for the frontend container
+  ## @param server.resources.requests The requested resources for the frontend container
   resources:
-    requests:
-      cpu: 1000m
-      memory: 2000Mi
-    limits:
-      cpu: 8000m
-      memory: 16000Mi
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
   ## @param server.nodeSelector Node labels for Turbinia server pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -124,18 +130,19 @@ worker:
   securityContext:
     privileged: true
   ## Turbinia Worker resource requests and limits
+  ## @param worker.resources.limits The resources limits for the worker container
   ## @param worker.resources.requests.cpu The requested cpu for the worker container
   ## @param worker.resources.requests.memory The requested memory for the worker container
-  ## @param worker.resources.limits.cpu The resources cpu limits for the worker container
-  ## @param worker.resources.limits.memory The resources memory limits for the worker container
   ##
   resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
     requests:
-      cpu: 1500m
-      memory: 2048Mi
-    limits:
-      cpu: 31000m
-      memory: 65536Mi
+      cpu: 250m
+      memory: 256Mi
   ## @param worker.nodeSelector Node labels for Turbinia worker pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -191,18 +198,19 @@ api:
   ##
   securityContext: {}
   ## Turbinia API / Web resource requests and limits
-  ## @param api.resources.requests.cpu The requested cpu for the frontend container
-  ## @param api.resources.requests.memory The requested memory for the frontend container
-  ## @param api.resources.limits.cpu The resources cpu limits for the frontend container
-  ## @param api.resources.limits.memory The resources memory limits for the frontend container
-  ##
+  ## @param api.resources.limits The resources limits for the api container
+  ## @param api.resources.requests The requested resources for the api container
   resources:
-    requests:
-      cpu: 2000m
-      memory: 4000Mi
-    limits:
-      cpu: 8000m
-      memory: 16000Mi
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
   ## @param api.nodeSelector Node labels for Turbinia api pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -261,18 +269,19 @@ controller:
   ##
   securityContext: {}
   ## Turbinia controller resource requests and limits
-  ## @param controller.resources.requests.cpu The requested cpu for the controller container
-  ## @param controller.resources.requests.memory The requested memory for the controller container
-  ## @param controller.resources.limits.cpu The resources cpu limits for the controller container
-  ## @param controller.resources.limits.memory The resources memory limits for the controller container
-  ##
+  ## @param api.resources.limits The resources limits for the api container
+  ## @param api.resources.requests The requested resources for the api container
   resources:
-    requests:
-      cpu: 1000m
-      memory: 2000Mi
-    limits:
-      cpu: 4000m
-      memory: 4000Mi
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
   ## @param controller.nodeSelector Node labels for Turbinia controller pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -307,6 +316,9 @@ config:
 ## missing functionality with attaching and detaching cloud disks for other providers
 ##
 gcp:
+  ## @param gcp.enabled Whether Turbinia is running within a GCP project
+  ##
+  enabled: false
   ## @param gcp.projectID GCP Project ID where your cluster is deployed
   ## 
   projectID: ""
@@ -365,7 +377,7 @@ persistence:
   name: turbiniavolume
   ## @param persistence.size Turbinia persistent volume size
   ##
-  size: 1T
+  size: 8Gi
   ## @param persistence.storageClass PVC Storage Class for Turbinia volume
   ## If default, storageClassName: <storageClass>, which enables GCP Filestore
   ##   when using the Filestore CSI Driver
@@ -376,13 +388,13 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ## 
-  storageClass: standard-rwx
+  storageClass: ""
   ## @param persistence.accessModes PVC Access Mode for Turbinia volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ## 
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
 ## Turbinia ingress parameters
 ##
 ingress:
@@ -447,24 +459,25 @@ redis:
       ##
       size: 8Gi
     ## Redis master resource requests and limits
-    ## @param redis.master.resources.requests.cpu The requested cpu for the Redis master containers
-    ## @param redis.master.resources.requests.memory The requested memory for the Redis master containers 
-    ## @param redis.master.resources.limits.cpu The resources cpu limits for the Redis master containers
-    ## @param redis.master.resources.limits.memory The resources memory limits for the Redis master containers
-    ##
+    ## @param redis.master.resources.limits The resources limits for the Redis master containers
+    ## @param redis.master.resources.requests The requested resources for the Redis master containers
     resources:
-      requests:
-        cpu: 4000m
-        memory: 8Gi
-      limits:
-        cpu: 8000m
-        memory: 16Gi
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
   ## Redis replicas configuration parameters
   ##
   replica:
     ## @param redis.replica.replicaCount Number of Redis replicas to deploy
     ##
-    replicaCount: 3
+    replicaCount: 1
     ## Redis replicas service parameters
     ##
     service:
@@ -482,15 +495,16 @@ redis:
       ##
       size: 8Gi
     ## Redis Replica resource requests and limits
-    ## @param redis.replica.resources.requests.cpu The requested cpu for the Redis replica containers
-    ## @param redis.replica.resources.requests.memory The requested memory for the Redis replica containers 
-    ## @param redis.replica.resources.limits.cpu The resources cpu limits for the Redis replica containers
-    ## @param redis.replica.resources.limits.memory The resources memory limits for the Redis replica containers
-    ##
+    ## @param redis.replica.resources.limits The resources limits for the Redis replica containers
+    ## @param redis.replica.resources.requests The requested resources for the Redis replica containers
     resources:
-      requests:
-        cpu: 4000m
-        memory: 8Gi
-      limits:
-        cpu: 8000m
-        memory: 16Gi 
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}

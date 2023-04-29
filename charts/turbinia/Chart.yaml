@@ -15,8 +15,8 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
 maintainers:
   - name: wajihyassine
-  - name: hacktobeer
   - name: aaronpeterson
+  - name: hacktobeer
 sources:
 - https://github.com/google/turbinia
 icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png

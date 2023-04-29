@@ -73,7 +73,7 @@ Create persistence volume claim name.
 GCP Project ID validation
 */}}
 {{- define "turbinia.gcp.project" -}}
-{{- if .Values.gcp.projectID -}}
+{{- if and .Values.gcp.projectID .Values.gcp.enabled -}}
 {{- printf "%s" .Values.gcp.projectID -}}
 {{- else -}}
 {{ fail "A valid .Values.gcp.projectID entry is required!" }}
@@ -84,7 +84,7 @@ GCP Project ID validation
 GCP Project region validation
 */}}
 {{- define "turbinia.gcp.region" -}}
-{{- if .Values.gcp.projectRegion -}}
+{{- if and .Values.gcp.projectRegion .Values.gcp.enabled -}}
 {{- printf "%s" .Values.gcp.projectRegion -}}
 {{- else -}}
 {{ fail "A valid .Values.gcp.projectRegion entry is required!" }}
@@ -95,7 +95,7 @@ GCP Project region validation
 GCP Project zone validation
 */}}
 {{- define "turbinia.gcp.zone" -}}
-{{- if .Values.gcp.projectZone -}}
+{{- if and .Values.gcp.projectZone .Values.gcp.enabled -}}
 {{- printf "%s" .Values.gcp.projectZone -}}
 {{- else -}}
 {{ fail "A valid .Values.gcp.projectZone entry is required!" }}

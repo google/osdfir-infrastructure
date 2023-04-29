@@ -51,12 +51,12 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
           volumeMounts:
+            {{- if .Values.gcp.enabled }}
             - mountPath: "/dev"
               name: dev
-              readOnly: true
             - mountPath: "/var/run/lock"
               name: lockfolder
-              readOnly: false
+            {{- end }}
             - mountPath: /mnt/turbiniavolume
               name: turbiniavolume
             - mountPath: /etc/turbinia
@@ -68,12 +68,16 @@ spec:
           resources:
             {{- toYaml .Values.controller.resources | nindent 12 }}
       volumes:
+        {{- if .Values.gcp.enabled }}
         - name: dev
           hostPath:
             path: /dev
+            readOnly: true
         - name: lockfolder
           hostPath:
             path: /var/run/lock
+            readOnly: false
+        {{- end }}
         - name: turbiniavolume
           persistentVolumeClaim:
             claimName: {{ include "turbinia.pvc.name"  . }}
