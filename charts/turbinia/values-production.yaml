@@ -1,5 +1,5 @@
-## Turbinia Helm Chart
-## Please use this Helm chart for deploying Turbinia to a Kubernetes environment
+## Turbinia Helm Production Values
+## Please use these values to override the default Turbinia values with recommended resources and replica counts for production installations
 ##
 ## @section Turbinia configuration
 ## The following section covers configuration parameters for Turbinia
@@ -45,24 +45,18 @@ server:
   ##
   securityContext: {}
   ## Turbinia Server resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a this choice for the user in order to increase
-  ## the chances charts run on environments with little resources, such as Minikube.
-  ## If you want to specify resources, uncomment the following lines, adjust them as
-  ## necessary, and remove the curly braces after 'resources:'.
-  ## @param server.resources.limits Resource limits for the server container
-  ## @param server.resources.requests Requested resources for the server container
+  ## @param server.resources.requests.cpu The requested cpu for the server container
+  ## @param server.resources.requests.memory The requested memory for the server container
+  ## @param server.resources.limits.cpu The resources cpu limits for the server container
+  ## @param server.resources.limits.memory The resources memory limits for the server container
+  ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
+    requests:
+      cpu: 1000m
+      memory: 2000Mi
+    limits:
+      cpu: 8000m
+      memory: 16000Mi
   ## @param server.nodeSelector Node labels for Turbinia server pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -131,19 +125,18 @@ worker:
     ##
     privileged: true
   ## Turbinia Worker resource requests and limits
-  ## @param worker.resources.limits Resources limits for the worker container
-  ## @param worker.resources.requests.cpu Requested cpu for the worker container
-  ## @param worker.resources.requests.memory Requested memory for the worker container
+  ## @param worker.resources.requests.cpu The requested cpu for the worker container
+  ## @param worker.resources.requests.memory The requested memory for the worker container
+  ## @param worker.resources.limits.cpu The resources cpu limits for the worker container
+  ## @param worker.resources.limits.memory The resources memory limits for the worker container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
     requests:
-      cpu: 250m
-      memory: 256Mi
+      cpu: 1500m
+      memory: 2048Mi
+    limits:
+      cpu: 31000m
+      memory: 65536Mi
   ## @param worker.nodeSelector Node labels for Turbinia worker pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -201,19 +194,18 @@ api:
   ##
   securityContext: {}
   ## Turbinia API / Web resource requests and limits
-  ## @param api.resources.limits Resource limits for the api container
-  ## @param api.resources.requests Requested resources for the api container
+  ## @param api.resources.requests.cpu The requested cpu for the frontend container
+  ## @param api.resources.requests.memory The requested memory for the frontend container
+  ## @param api.resources.limits.cpu The resources cpu limits for the frontend container
+  ## @param api.resources.limits.memory The resources memory limits for the frontend container
+  ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
+    requests:
+      cpu: 2000m
+      memory: 4000Mi
+    limits:
+      cpu: 8000m
+      memory: 16000Mi
   ## @param api.nodeSelector Node labels for Turbinia api pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -272,19 +264,18 @@ controller:
   ##
   securityContext: {}
   ## Turbinia controller resource requests and limits
-  ## @param controller.resources.limits Resource limits for the controller container
-  ## @param controller.resources.requests Requested resources for the controller container
+  ## @param controller.resources.requests.cpu The requested cpu for the controller container
+  ## @param controller.resources.requests.memory The requested memory for the controller container
+  ## @param controller.resources.limits.cpu The resources cpu limits for the controller container
+  ## @param controller.resources.limits.memory The resources memory limits for the controller container
+  ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
+    requests:
+      cpu: 1000m
+      memory: 2000Mi
+    limits:
+      cpu: 4000m
+      memory: 4000Mi
   ## @param controller.nodeSelector Node labels for Turbinia controller pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -297,82 +288,6 @@ controller:
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ##
   affinity: {}
-## @section Common Parameters
-##
-## @param nameOverride String to partially override names.fullname
-##
-nameOverride: ""
-## @param fullnameOverride String to fully override names.fullname
-##
-fullnameOverride: ""
-## Turbinia configuration parameters
-## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
-## 
-config:
-  ## @param config.override Overrides the default Turbinia config to instead use a user specified config. Please ensure
-  ## that the config file is either placed in the root of this directory or point the override flag to a path containing
-  ## your config file
-  ##
-  override: turbinia.conf
-  ## @param config.disabledJobs List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.
-  disabledJobs: "['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']"
-## GCP configuration parameters
-## IMPORTANT: Enable GCP when running Turbinia in a GKE cluster
-##
-gcp:
-  ## @param gcp.enabled Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks.
-  ##
-  enabled: false
-  ## @param gcp.projectID GCP Project ID where your cluster is deployed. Required when `gcp.enabled` is set to true.
-  ## 
-  projectID: ""
-  ## @param gcp.projectRegion Region where your cluster is deployed. Required when `gcp.enabled`` is set to true.
-  ##
-  projectRegion: ""
-  ## @param gcp.projectZone Zone where your cluster is deployed. Required when `gcp.enabled` is set to true.
-  ##
-  projectZone: ""
-  ## @param gcp.gcpLogging Enables GCP Cloud Logging
-  ## ref https://cloud.google.com/logging
-  ##
-  gcpLogging: false
-  ## @param gcp.gcpErrorReporting Enables GCP Cloud Error Reporting
-  ## ref https://cloud.google.com/error-reporting/docs/grouping-errors
-  ##
-  gcpErrorReporting: false
-## Turbinia service account parameters
-##
-serviceAccount:
-  ## @param serviceAccount.create Specifies whether a service account should be created
-  ##
-  create: true
-  ## @param serviceAccount.annotations Annotations to add to the service account
-  ##
-  annotations: {}
-  ## @param serviceAccount.name The name of the service account to use
-  ## If not set and create is true, a name is generated using the fullname template
-  ##
-  name: "turbinia"
-## Turbinia service parameters
-##
-service:
-  ## @param service.type Turbinia service type
-  ##
-  type: ClusterIP
-  ## @param service.port Turbinia api service port
-  ##
-  port: 8000
-## Turbinia metrics parameters
-## IMPORTANT: Turbinia utilizes Prometheus to scrape metrics through annotations
-## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
-##
-metrics:
-  ## @param metrics.enabled Enables metrics scraping
-  ##
-  enabled: true
-  ## @param metrics.port Port to scrape metrics from
-  ##
-  port: 9200
 ## Turbinia persistence storage parameters
 ##
 persistence:
@@ -381,49 +296,24 @@ persistence:
   name: turbiniavolume
   ## @param persistence.size Turbinia persistent volume size
   ##
-  size: 8Gi
+  size: 1T
   ## @param persistence.storageClass PVC Storage Class for Turbinia volume
+  ## If default, storageClassName: <storageClass>, which enables GCP Filestore
+  ##   when using the Filestore CSI Driver
+  ##   ref https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/filestore-csi-driver#access
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ## 
-  storageClass: ""
+  storageClass: standard-rwx
   ## @param persistence.accessModes PVC Access Mode for Turbinia volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ## 
   accessModes:
-    - ReadWriteOnce
-## Turbinia ingress parameters
-##
-ingress:
-  ## @param ingress.enabled Enable the Turbinia loadbalancer for external access
-  ##
-  enabled: false
-  ## @param ingress.host The domain name Turbinia will be hosted under
-  ## Please ensure this value is set when enabling Ingress. If using "gce" for
-  ## ingress.className, please ensure you have a DNS record set for the IP address
-  ## registered under ingress.gcp.staticIPName
-  ##
-  host: ""
-  ## @param ingress.className IngressClass that will be be used to implement the Ingress
-  ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
-  ##
-  className: "gce"
-  ## GCP ingress configuration
-  ##
-  gcp:
-    ## @param ingress.gcp.managedCertificates Enabled GCP managed certificates for your domain
-    ## ref https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs
-    ##
-    managedCertificates: false
-    ## @param ingress.gcp.staticIPName Name of the static IP address you reserved in GCP
-    ## This is required when using "gce" in ingress.className
-    ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
-    ##
-    staticIPName: ""
+    - ReadWriteMany
 ## @section Third Party Configuration
 ##
 ## @section Redis configuration parameters
@@ -445,16 +335,6 @@ redis:
     ## @param redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
     ##
     count: 1
-    ## Redis master service parameters
-    ##
-    service:
-      ## @param redis.master.service.type Redis master service type
-      ##
-      type: ClusterIP
-      ## @param redis.master.service.ports.redis Redis master service port
-      ##
-      ports:
-        redis: 6379
     ## Redis master persistence configuration
     ##
     persistence:
@@ -462,35 +342,24 @@ redis:
       ##
       size: 8Gi
     ## Redis master resource requests and limits
-    ## @param redis.master.resources.limits Resource limits for the Redis master containers
-    ## @param redis.master.resources.requests Requested resources for the Redis master containers
+    ## @param redis.master.resources.requests.cpu The requested cpu for the Redis master containers
+    ## @param redis.master.resources.requests.memory The requested memory for the Redis master containers 
+    ## @param redis.master.resources.limits.cpu The resources cpu limits for the Redis master containers
+    ## @param redis.master.resources.limits.memory The resources memory limits for the Redis master containers
+    ##
     resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
+      requests:
+        cpu: 4000m
+        memory: 8Gi
+      limits:
+        cpu: 8000m
+        memory: 16Gi
   ## Redis replicas configuration parameters
   ##
   replica:
     ## @param redis.replica.replicaCount Number of Redis replicas to deploy
     ##
     replicaCount: 0
-    ## Redis replicas service parameters
-    ##
-    service:
-      ## @param redis.replica.service.type Redis replicas service type
-      ##
-      type: ClusterIP
-      ## @param redis.replica.service.ports.redis Redis replicas service port
-      ##
-      ports:
-        redis: 6379
     ## Redis replicas persistence configuration
     ##
     persistence:
@@ -498,16 +367,15 @@ redis:
       ##
       size: 8Gi
     ## Redis Replica resource requests and limits
-    ## @param redis.replica.resources.limits Resources limits for the Redis replica containers
-    ## @param redis.replica.resources.requests Requested resources for the Redis replica containers
+    ## @param redis.replica.resources.requests.cpu The requested cpu for the Redis replica containers
+    ## @param redis.replica.resources.requests.memory The requested memory for the Redis replica containers 
+    ## @param redis.replica.resources.limits.cpu The resources cpu limits for the Redis replica containers
+    ## @param redis.replica.resources.limits.memory The resources memory limits for the Redis replica containers
+    ##
     resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
+      requests:
+        cpu: 4000m
+        memory: 8Gi
+      limits:
+        cpu: 8000m
+        memory: 16Gi
