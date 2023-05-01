@@ -19,9 +19,5 @@ timesketch:
 ##
 turbinia:
   enabled: true
-  gcp:
-    projectID: "turbiniang-dev-1"
-    projectZone: "us-central1-f"
-    projectRegion: "us-central1"
   redis:
     nameOverride: turbinia-redis
