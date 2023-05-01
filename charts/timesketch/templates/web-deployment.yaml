@@ -38,12 +38,25 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["sh", "-c", "./docker-entrypoint.sh timesketch-web"]
+          {{- if .Values.config.createUser }}
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "tsctl create-user timesketch --password $TIMESKETCH_USER"]
+          {{- end }}
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
                   apiVersion: v1
+            {{- if .Values.config.createUser }}
+            - name: TIMESKETCH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "timesketch.fullname" . }}-secret 
+                  key: timesketch-user
+            {{- end }}
           volumeMounts:
             - mountPath: {{ (include "timesketch.uploadPath" .) | quote }}
               name: timesketchvolume

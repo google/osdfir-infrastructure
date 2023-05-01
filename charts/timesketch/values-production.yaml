@@ -31,9 +31,6 @@ config:
   ## script packaged along with this Helm chart.
   ##
   override: configs/*
-  ## @param config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
-  ##
-  createUser: true
 ## @section Timesketch Frontend Configuration
 ##
 frontend:
@@ -56,25 +53,19 @@ frontend:
   ## runAsUser: 1000
   ##
   securityContext: {}
-  ## Timesketch Frontend resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a this choice for the user in order to increase
-  ## the chances charts run on environments with little resources, such as Minikube.
-  ## If you want to specify resources, uncomment the following lines, adjust them as
-  ## necessary, and remove the curly braces after 'resources:'.
-  ## @param frontend.resources.limits The resources limits for the frontend container
-  ## @param frontend.resources.requests The requested resources for the frontend container
+  ## Frontend resource requests and limits
+  ## @param frontend.resources.requests.cpu Requested cpu for the frontend container
+  ## @param frontend.resources.requests.memory Requested memory for the frontend container
+  ## @param frontend.resources.limits.cpu Resource cpu limits for the frontend container
+  ## @param frontend.resources.limits.memory Resource memory limits for the frontend container
+  ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
+    requests:
+      cpu: 2000m
+      memory: 4000Mi
+    limits:
+      cpu: 8000m
+      memory: 16000Mi
   ## @param frontend.nodeSelector Node labels for Timesketch frontend pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -109,20 +100,19 @@ worker:
   ## runAsUser: 1000
   ##
   securityContext: {}
-  ## Timesketch Worker resource requests and limits
-  ## @param worker.resources.limits The resources limits for the worker container
-  ## @param worker.resources.requests.cpu The requested cpu for the worker container
-  ## @param worker.resources.requests.memory The requested memory for the worker container
+  ## Worker resource requests and limits
+  ## @param worker.resources.requests.cpu Requested cpu for the worker container
+  ## @param worker.resources.requests.memory Requested memory for the worker container
+  ## @param worker.resources.limits.cpu Resource cpu limits for the worker container
+  ## @param worker.resources.limits.memory Resource memory limits for the worker container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
     requests:
-      cpu: 250m
-      memory: 256Mi
+      cpu: 2000m
+      memory: 4000Mi
+    limits:
+      cpu: 8000m
+      memory: 16000Mi
   ## @param worker.nodeSelector Node labels for Timesketch worker pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -183,21 +173,24 @@ persistence:
   name: timesketchvolume
   ## @param persistence.size Timesketch persistent volume size
   ##
-  size: 8Gi
+  size: 1T
   ## @param persistence.storageClass PVC Storage Class for Timesketch volume
+  ## If default, storageClassName: <storageClass>, which enables GCP Filestore
+  ##   when using the Filestore CSI Driver
+  ##   ref https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/filestore-csi-driver#access
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ## 
-  storageClass: ""
+  storageClass: standard-rwx
   ## @param persistence.accessModes PVC Access Mode for Timesketch volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ## 
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
 ## Ingress Parameters
 ##
 ingress:
@@ -267,15 +260,15 @@ opensearch:
       value: "true"
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
-  replicas: 1
+  replicas: 3
   ## @param opensearch.sysctlInit.enabled Sets optimal sysctl's through privileged initContainer
   ##
   sysctlInit:
-    enabled: false
+    enabled: true
   ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
   ## It is recommended to use at least half the system's available ram
   ## 
-  opensearchJavaOpts: "-Xmx512M -Xms512M"
+  opensearchJavaOpts: "-Xms32g -Xmx32g"
   ## @param opensearch.httpPort Opensearch service port
   ##
   httpPort: 9200
@@ -284,16 +277,15 @@ opensearch:
   persistence:
     ## @param opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
     ##
-    size: 8Gi
+    size: 1Ti
   ## Opensearch resource requests
-  ## @param opensearch.resources.requests Requested resources for the Opensearch containers
+  ## @param opensearch.resources.requests.cpu Requested cpu for the Opensearch containers
+  ## @param opensearch.resources.requests.memory Requested memory for the Opensearch containers 
   ##
   resources:
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
+    requests:
+      cpu: 8000m
+      memory: 32Gi
   ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -334,25 +326,24 @@ redis:
       ##
       size: 8Gi
     ## Redis master resource requests and limits
-    ## @param redis.master.resources.limits The resources limits for the Redis master containers
-    ## @param redis.master.resources.requests The requested resources for the Redis master containers
+    ## @param redis.master.resources.requests.cpu Requested cpu for the Redis master containers
+    ## @param redis.master.resources.requests.memory Requested memory for the Redis master containers 
+    ## @param redis.master.resources.limits.cpu Resource cpu limits for the Redis master containers
+    ## @param redis.master.resources.limits.memory Resource memory limits for the Redis master containers
+    ##
     resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
+      requests:
+        cpu: 4000m
+        memory: 8Gi
+      limits:
+        cpu: 8000m
+        memory: 16Gi
   ## Redis replicas configuration parameters
   ##
   replica:
     ## @param redis.replica.replicaCount Number of Redis replicas to deploy
     ##
-    replicaCount: 0
+    replicaCount: 3
     ## Redis replicas service parameters
     ##
     service:
@@ -370,19 +361,18 @@ redis:
       ##
       size: 8Gi
     ## Redis Replica resource requests and limits
-    ## @param redis.replica.resources.limits The resources limits for the Redis replica containers
-    ## @param redis.replica.resources.requests The requested resources for the Redis replica containers
+    ## @param redis.replica.resources.requests.cpu Requested cpu for the Redis replica containers
+    ## @param redis.replica.resources.requests.memory Requested memory for the Redis replica containers 
+    ## @param redis.replica.resources.limits.cpu Resource cpu limits for the Redis replica containers
+    ## @param redis.replica.resources.limits.memory Resource memory limits for the Redis replica containers
+    ##
     resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
+      requests:
+        cpu: 4000m
+        memory: 8Gi
+      limits:
+        cpu: 8000m
+        memory: 16Gi 
 ## @section Postgresql Configuration Parameters
 ## IMPORTANT: Postgresql is deployed with Auth enabled by default
 ## To see a full list of available values, run helm show values charts/postgresql*
@@ -422,26 +412,22 @@ postgresql:
       ## @param postgresql.primary.persistence.size PostgreSQL Persistent Volume size
       ##
       size: 8Gi
-    ## PostgreSQL primary resource requests and limits
-    ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
-    ## @param postgresql.primary.resources.requests The requested resources for the PostgreSQL primary containers
+    ## PostgreSQL Primary resource requests and limits
+    ## @param postgresql.primary.resources.requests.cpu Requested cpu for the PostgreSQL Primary containers
+    ## @param postgresql.primary.resources.requests.memory Requested memory for the PostgreSQL Primary containers
+    ## @param postgresql.primary.resources.limits Resource limits for the PostgreSQL Primary containers
+    ##
     resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
       limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
   ## PostgreSQL read only replica parameters (only used when `architecture` is set to `replication`)
   ## 
   readReplicas:
     ## @param postgresql.readReplicas.replicaCount Number of PostgreSQL read only replicas
     ##
-    replicaCount: 0
+    replicaCount: 1
     ## PostgreSQL read only service configuration
     ##
     service:
@@ -457,16 +443,12 @@ postgresql:
       ##
       size: 8Gi
     ## PostgreSQL read only resource requests and limits
-    ## @param postgresql.readReplicas.resources.limits The resources limits for the PostgreSQL read only containers
-    ## @param postgresql.readReplicas.resources.requests The requested resources for the PostgreSQL read only containers
+    ## @param postgresql.readReplicas.resources.requests.cpu Requested cpu for the PostgreSQL read only containers
+    ## @param postgresql.readReplicas.resources.requests.memory Requested memory for the PostgreSQL read only containers
+    ## @param postgresql.readReplicas.resources.limits Resource limits for the PostgreSQL read only containers
+    ##
     resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
       limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
