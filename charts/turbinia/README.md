@@ -73,11 +73,11 @@ Install the chart providing both the original values and the production values,
 and required GCP values with a release name `my-release`:
 ```console
 helm install my-release ../turbinia \
-    -f values.yaml 
-    -f values-production.yaml 
-    --set gcp.project=true
-    --set gcp.projectID=<GCP_PROJECT_ID>
-    --set gcp.projectRegion=<GKE_CLUSTER_REGION>
+    -f values.yaml \ 
+    -f values-production.yaml \
+    --set gcp.project=true \
+    --set gcp.projectID=<GCP_PROJECT_ID> \
+    --set gcp.projectRegion=<GKE_CLUSTER_REGION> \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
