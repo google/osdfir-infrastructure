@@ -288,7 +288,7 @@ To install the Turbinia chart with more storage capacity, run:
 ```console
 helm install my-release \
     --set persistence.size=10T
-    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/Turbinia
+    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
 ```
 
 The above command installs the Turbinia chart with a persistent volume size of 10 Terabytes.

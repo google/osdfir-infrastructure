@@ -260,9 +260,7 @@ helm install my-release -f newvalues.yaml oci://us-docker.pkg.dev/osdfir-registr
 The Timesketch deployment stores data at the `/mnt/timesketchvolume` path of the container and stores configuration files
 at the `/etc/timesketch` path of the container. 
 
-Persistent Volume Claims are used to keep the data across deployments. By default the Timesketch deployment attempts to
-deploy a GCP Filestore server, similar to a NFS share. The `persistent.StorageClass` value can be updated to automatically
-provision storage for other providers such as AWS and minikube, but this has yet to be tested. See the [Parameters](#parameters) section to configure the PVC or to disable persistence.
+Persistent Volume Claims are used to keep the data across deployments. By default the Timesketch deployment attempts to use dynamic persistent volume provisioning to automatically configure storage, but the `persistent.storageClass` value can be updated to a storageClass supported by your provider. See the [Parameters](#parameters) section to configure the PVC or to disable persistence.
 
 To install the Timesketch chart with more storage capacity, run:
 ```console
