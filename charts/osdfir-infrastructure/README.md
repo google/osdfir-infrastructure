@@ -121,16 +121,120 @@ kubectl delete pvc -l release=my-release
 
 ## Parameters
 
+### Timesketch Configuration
+
+| Name                                          | Description                                                                                                                           | Value                                                     |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `timesketch.enabled`                          | Enables the Timesketch deployment                                                                                                     | `true`                                                    |
+| `timesketch.image.repository`                 | Timesketch image repository                                                                                                           | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
+| `timesketch.image.tag`                        | Overrides the image tag whose default is the chart appVersion                                                                         | `latest`                                                  |
+| `timesketch.config.override`                  | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*`                                               |
+| `timesketch.config.createUser`                | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`                                                    |
+| `timesketch.frontend.resources.limits`        | The resources limits for the frontend container                                                                                       | `{}`                                                      |
+| `timesketch.frontend.resources.requests`      | The requested resources for the frontend container                                                                                    | `{}`                                                      |
+| `timesketch.worker.resources.limits`          | The resources limits for the worker container                                                                                         | `{}`                                                      |
+| `timesketch.worker.resources.requests.cpu`    | The requested cpu for the worker container                                                                                            | `250m`                                                    |
+| `timesketch.worker.resources.requests.memory` | The requested memory for the worker container                                                                                         | `256Mi`                                                   |
+
+### Timesketch Third Party
+
+
+### Opensearch Configuration
+
+| Name                                       | Description                                                                                                 | Value  |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------ |
+| `timesketch.opensearch.enabled`            | Enables the Opensearch deployment                                                                           | `true` |
+| `timesketch.opensearch.replicas`           | Number of Opensearch instances to deploy                                                                    | `1`    |
+| `timesketch.opensearch.persistence.size`   | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `8Gi`  |
+| `timesketch.opensearch.resources.requests` | Requested resources for the Opensearch containers                                                           | `{}`   |
+
+### Redis Configuration
+
+| Name                                          | Description                                                                                  | Value              |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------ |
+| `timesketch.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`             |
+| `timesketch.redis.nameOverride`               | Overrides the Redis deployment name                                                          | `timesketch-redis` |
+| `timesketch.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`                |
+| `timesketch.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `8Gi`              |
+| `timesketch.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`               |
+| `timesketch.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`               |
+| `timesketch.redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`                |
+| `timesketch.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `8Gi`              |
+| `timesketch.redis.replica.resources.limits`   | The resources limits for the Redis replica containers                                        | `{}`               |
+| `timesketch.redis.replica.resources.requests` | The requested resources for the Redis replica containers                                     | `{}`               |
+
+### PostgreSQL Configuration
+
+| Name                                                    | Description                                                     | Value  |
+| ------------------------------------------------------- | --------------------------------------------------------------- | ------ |
+| `timesketch.postgresql.enabled`                         | Enables the Postgresql deployment                               | `true` |
+| `timesketch.postgresql.primary.persistence.size`        | PostgreSQL Persistent Volume size                               | `8Gi`  |
+| `timesketch.postgresql.primary.resources.limits`        | The resources limits for the PostgreSQL primary containers      | `{}`   |
+| `timesketch.postgresql.primary.resources.requests`      | The requested resources for the PostgreSQL primary containers   | `{}`   |
+| `timesketch.postgresql.readReplicas.replicaCount`       | Number of PostgreSQL read only replicas                         | `0`    |
+| `timesketch.postgresql.readReplicas.persistence.size`   | PostgreSQL Persistent Volume size                               | `8Gi`  |
+| `timesketch.postgresql.readReplicas.resources.limits`   | The resources limits for the PostgreSQL read only containers    | `{}`   |
+| `timesketch.postgresql.readReplicas.resources.requests` | The requested resources for the PostgreSQL read only containers | `{}`   |
+
+### Turbinia Configuration
+
+| Name                                                         | Description                                                                                                                                                                                                          | Value                                                                                        |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `turbinia.enabled`                                           | Enables the Turbinia deployment                                                                                                                                                                                      | `true`                                                                                       |
+| `turbinia.server.image.repository`                           | Turbinia image repository                                                                                                                                                                                            | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server`                         |
+| `turbinia.server.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                                                                                        | `latest`                                                                                     |
+| `turbinia.server.resources.limits`                           | Resource limits for the server container                                                                                                                                                                             | `{}`                                                                                         |
+| `turbinia.server.resources.requests`                         | Requested resources for the server container                                                                                                                                                                         | `{}`                                                                                         |
+| `turbinia.worker.image.repository`                           | Turbinia image repository                                                                                                                                                                                            | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker`                         |
+| `turbinia.worker.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                                                                                        | `latest`                                                                                     |
+| `turbinia.worker.autoscaling.enabled`                        | Enables Turbinia Worker autoscaling                                                                                                                                                                                  | `true`                                                                                       |
+| `turbinia.worker.autoscaling.minReplicas`                    | Minimum amount of worker pods to run at once                                                                                                                                                                         | `5`                                                                                          |
+| `turbinia.worker.autoscaling.maxReplicas`                    | Maximum amount of worker pods to run at once                                                                                                                                                                         | `500`                                                                                        |
+| `turbinia.worker.autoscaling.targetCPUUtilizationPercentage` | CPU scaling metric workers will scale based on                                                                                                                                                                       | `80`                                                                                         |
+| `turbinia.worker.resources.limits`                           | Resources limits for the worker container                                                                                                                                                                            | `{}`                                                                                         |
+| `turbinia.worker.resources.requests.cpu`                     | Requested cpu for the worker container                                                                                                                                                                               | `250m`                                                                                       |
+| `turbinia.worker.resources.requests.memory`                  | Requested memory for the worker container                                                                                                                                                                            | `256Mi`                                                                                      |
+| `turbinia.api.image.repository`                              | Turbinia image repository for API / Web server                                                                                                                                                                       | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-api-server`                     |
+| `turbinia.api.image.tag`                                     | Overrides the image tag whose default is the chart appVersion                                                                                                                                                        | `latest`                                                                                     |
+| `turbinia.api.resources.limits`                              | Resource limits for the api container                                                                                                                                                                                | `{}`                                                                                         |
+| `turbinia.api.resources.requests`                            | Requested resources for the api container                                                                                                                                                                            | `{}`                                                                                         |
+| `turbinia.controller.enabled`                                | If enabled, deploys the Turbinia controller                                                                                                                                                                          | `false`                                                                                      |
+| `turbinia.config.override`                                   | Overrides the default Turbinia config to instead use a user specified config. Please ensure                                                                                                                          | `turbinia.conf`                                                                              |
+| `turbinia.config.disabledJobs`                               | List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.                                                                                                                                    | `['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']` |
+| `turbinia.gcp.enabled`                                       | Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks. | `false`                                                                                      |
+| `turbinia.gcp.projectID`                                     | GCP Project ID where your cluster is deployed. Required when `gcp.enabled` is set to true.                                                                                                                           | `""`                                                                                         |
+| `turbinia.gcp.projectRegion`                                 | Region where your cluster is deployed. Required when `gcp.enabled`` is set to true.                                                                                                                                  | `""`                                                                                         |
+| `turbinia.gcp.projectZone`                                   | Zone where your cluster is deployed. Required when `gcp.enabled` is set to true.                                                                                                                                     | `""`                                                                                         |
+| `turbinia.gcp.gcpLogging`                                    | Enables GCP Cloud Logging                                                                                                                                                                                            | `false`                                                                                      |
+| `turbinia.gcp.gcpErrorReporting`                             | Enables GCP Cloud Error Reporting                                                                                                                                                                                    | `false`                                                                                      |
+
+### Turbinia Third Party
+
+
+### Redis Configuration
+
+| Name                                        | Description                                                                                  | Value            |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------- | ---------------- |
+| `turbinia.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`           |
+| `turbinia.redis.nameOverride`               | Overrides the Redis deployment name                                                          | `turbinia-redis` |
+| `turbinia.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`              |
+| `turbinia.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `8Gi`            |
+| `turbinia.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`             |
+| `turbinia.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`             |
+| `turbinia.redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`              |
+| `turbinia.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `8Gi`            |
+| `turbinia.redis.replica.resources.limits`   | The resources limits for the Redis replica containers                                        | `{}`             |
+| `turbinia.redis.replica.resources.requests` | The requested resources for the Redis replica containers                                     | `{}`             |
+
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console
 helm install my-release \
-    --set metrics.port=9300
+    --set timesketch.config.createUser=false
     oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
 ```
 
-The above command updates the OSDFIR Infrastructure metrics port to `9300`.
-
+The above command updates the Timesketch deployment to not create a default user at deployment.
 
 Alternatively, the `values.yaml` file can be directly updated if the Helm chart 
 was pulled locally. For example,
@@ -139,14 +243,13 @@ was pulled locally. For example,
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
 ```
 
-Then make changes to the downloaded `values.yaml`. Once done, install the local 
-chart with the updated values.
+Then make changes to the downloaded `values.yaml`. A `configs/` directory containing user-provided Timesketch configs can also be placed at this point to override the default ones. Additionally, a `turbinia.conf` config file can be placed at the root of the Helm chart. Once done, install the local chart with the updated values.
+
 ```console
 helm install my-release ../osdfir-infrastructure
 ```
 
-Lastly, a YAML file that specifies the values for the parameters can also be 
-provided while installing the chart. For example,
+Lastly, a YAML file that specifies the values for the parameters can also be provided while installing the chart. For example,
 
 ```console
 helm install my-release -f newvalues.yaml oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
@@ -174,7 +277,7 @@ persistent volume size or upgrading to a new release, you can run
 new release and upgrade storage capacity, run:
 ```console
 helm upgrade my-release \
-    --set image.tag=latest
+    --set turbinia.server.image.tag=latest
     --set persistence.size=10T
 ```
 

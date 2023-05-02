@@ -5,11 +5,13 @@
 ## - Timesketch; ref https://github.com/google/timesketch
 ## - Turbinia; ref https://github.com/google/turbinia
 ##
-## @section Timesketch configuration
+## @section Timesketch Configuration
 ## The following section covers configuration parameters for Timesketch
 ## To see a full list of available values, run helm show values charts/timesketch*
 ##
 timesketch:
+  ## @param timesketch.enabled Enables the Timesketch deployment
+  ##
   enabled: true
   image:
     ## @param timesketch.image.repository Timesketch image repository
@@ -51,11 +53,11 @@ timesketch:
       requests:
         cpu: 250m
         memory: 256Mi
-  ## @section Third Party Configuration
+  ## @section Timesketch Third Party
   ## This section contains all the main configuration for third party dependencies
   ## Timesketch requires to run
   ##
-  ## @section Opensearch Configuration Parameters
+  ## @section Opensearch Configuration
   ## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
   ## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
   ## To see a full list of available values, run helm show values charts/opensearch*
@@ -79,7 +81,7 @@ timesketch:
       ##    cpu: 500m
       ##    memory: 1Gi
       requests: {}
-  ## @section Redis Configuration Parameters
+  ## @section Redis Configuration
   ## IMPORTANT: Redis is deployed with Auth enabled by default
   ## To see a full list of available values, run helm show values charts/redis*
   ##
@@ -87,7 +89,7 @@ timesketch:
     ## @param timesketch.redis.enabled Enables the Redis deployment
     ##
     enabled: true
-    ## @param turbinia.redis.nameOverride Overrides the Redis deployment name 
+    ## @param timesketch.redis.nameOverride Overrides the Redis deployment name 
     ## This is required since Turbinia and Timesketch both use Redis, we need to differentiate the instances.
     ##
     nameOverride: timesketch-redis
@@ -143,7 +145,7 @@ timesketch:
         ##    cpu: 500m
         ##    memory: 1Gi
         requests: {}
-  ## @section Postgresql Configuration Parameters
+  ## @section PostgreSQL Configuration
   ## IMPORTANT: Postgresql is deployed with Auth enabled by default
   ## To see a full list of available values, run helm show values charts/postgresql*
   ##
@@ -177,7 +179,7 @@ timesketch:
     ## PostgreSQL read only replica parameters (only used when `architecture` is set to `replication`)
     ## 
     readReplicas:
-      ## @param timeksetch.postgresql.readReplicas.replicaCount Number of PostgreSQL read only replicas
+      ## @param timesketch.postgresql.readReplicas.replicaCount Number of PostgreSQL read only replicas
       ##
       replicaCount: 0
       ## @param timesketch.postgresql.readReplicas.persistence.size PostgreSQL Persistent Volume size
@@ -198,13 +200,15 @@ timesketch:
         ##    cpu: 500m
         ##    memory: 1Gi
         requests: {}
-## @section Turbinia configuration
+## @section Turbinia Configuration
 ## The following section covers configuration parameters for Turbinia
 ## To see a full list of available values, run helm show values charts/turbinia*
 ##
 turbinia:
+  ## @param turbinia.enabled Enables the Turbinia deployment
+  ##
   enabled: true
-  ## @section Turbinia server configuration
+  ##  Turbinia server configuration
   ##
   server:
     image:
@@ -214,21 +218,21 @@ turbinia:
       ## @param turbinia.server.image.tag Overrides the image tag whose default is the chart appVersion
       ##
       tag: latest
-      ## Turbinia Server resource requests and limits
-      ## @param turbinia.server.resources.limits Resource limits for the server container
-      ## @param turbinia.server.resources.requests Requested resources for the server container
-      resources:
-        ## Example:
-        ## limits:
-        ##    cpu: 500m
-        ##    memory: 1Gi
-        limits: {}
-        ## Example:
-        ## requests:
-        ##    cpu: 500m
-        ##    memory: 1Gi
-        requests: {}
-  ## @section Turbinia worker configuration
+    ## Turbinia Server resource requests and limits
+    ## @param turbinia.server.resources.limits Resource limits for the server container
+    ## @param turbinia.server.resources.requests Requested resources for the server container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## Turbinia Worker Configuration
   ##
   worker:
     image:
@@ -268,7 +272,7 @@ turbinia:
       requests:
         cpu: 250m
         memory: 256Mi
-  ## @section Turbinia API / Web configuration
+  ## Turbinia API / Web configuration
   ##
   api:
     image:
@@ -292,12 +296,12 @@ turbinia:
       ##    cpu: 500m
       ##    memory: 1Gi
       requests: {}
-  ## @section Turbinia controller configuration
+  ## Turbinia controller configuration
   ## The controller is not required to use Turbinia and serves as an extra
   ## container that can be used for troubleshooting
   ##
   controller:
-    ## @param controller.enabled If enabled, deploys the Turbinia controller
+    ## @param turbinia.controller.enabled If enabled, deploys the Turbinia controller
     ##
     enabled: false
   ## Turbinia configuration parameters
@@ -335,6 +339,12 @@ turbinia:
     ## ref https://cloud.google.com/error-reporting/docs/grouping-errors
     ##
     gcpErrorReporting: false
+  ## @section Turbinia Third Party
+  ##
+  ## @section Redis Configuration
+  ## IMPORTANT: Redis is deployed with Auth enabled by default
+  ## To see a full list of available values, run helm show values charts/redis*
+  ##
   redis:
     ## @param turbinia.redis.enabled Enables the Redis deployment
     ##
