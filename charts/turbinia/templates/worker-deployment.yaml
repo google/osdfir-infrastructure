@@ -80,11 +80,9 @@ spec:
         - name: dev
           hostPath:
             path: /dev
-            readOnly: true
         - name: lockfolder
           hostPath:
             path: /var/run/lock
-            readOnly: false
         {{- end }}
         - name: turbiniavolume
           persistentVolumeClaim:

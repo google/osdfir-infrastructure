@@ -13,6 +13,11 @@ dependencies:
   name: redis
   version: 17.9.3
   repository: https://charts.bitnami.com/bitnami
+- condition: oauth2-proxy.enabled
+  name: oauth2-proxy
+  alias: oauth2proxy
+  version: 3.6.1
+  repository: https://charts.bitnami.com/bitnami
 maintainers:
   - name: wajihyassine
   - name: aaronpeterson

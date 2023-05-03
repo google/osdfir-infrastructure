@@ -2,7 +2,7 @@
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
-  name: {{ include "turbinia.fullname" . }}-backend-config
+  name: "{{ .Release.Name }}-oauth2-backend-config"
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "turbinia.labels" . | nindent 4 }}
@@ -15,5 +15,5 @@ spec:
     unhealthyThreshold: 2
     type: HTTP
     requestPath: /ping
-    port: 8080
+    port: 4180
 {{- end }}

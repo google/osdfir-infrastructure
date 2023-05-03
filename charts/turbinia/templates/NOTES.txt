@@ -8,7 +8,10 @@ To learn more about the release, try:
   $ helm get all {{ .Release.Name }}
 
 To connect to the Turbinia URL, run:
-  $ export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "turbinia.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}") 
-  $ export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
-  $ echo "Visit http://127.0.0.1:8080 to access the Turbinia Web UI"
+  {{ if .Values.oauth2proxy.enabled }}
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-oauth2proxy {{ .Values.oauth2proxy.service.port }}:{{ .Values.oauth2proxy.service.port }}
+  $ echo "Visit http://127.0.0.1:{{ .Values.oauth2proxy.service.port }} to access Turbinia"
+  {{ else }}
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-turbinia {{ .Values.service.port }}:{{ .Values.service.port }}
+  $ echo "Visit http://127.0.0.1:{{ .Values.service.port }} to access Turbinia"
+  {{ end }}

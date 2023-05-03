@@ -28,12 +28,12 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "turbinia.fullname" . }}
+                name: {{ .Release.Name }}-oauth2proxy
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ .Values.oauth2proxy.service.port }}
   defaultBackend:
     service:
-      name: {{ include "turbinia.fullname" . }} # Name of the Service targeted by the Ingress
+      name: {{ .Release.Name }}-oauth2proxy # Name of the Service targeted by the Ingress
       port:
-        number: {{ .Values.service.port }} # Should match the port used by the Service
+        number: {{ .Values.oauth2proxy.service.port }} # Should match the port used by the Service
 {{- end }}

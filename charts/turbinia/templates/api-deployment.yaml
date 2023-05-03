@@ -37,6 +37,11 @@ spec:
               {{- toYaml .Values.api.securityContext | nindent 12 }}
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          livenessProbe:
+            exec:
+              command: ['sh', '-c', "ps aux | grep api_server | grep -v grep"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
           env:
             - name: TURBINIA_EXTRA_ARGS
               value: "-d"

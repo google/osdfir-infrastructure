@@ -177,17 +177,13 @@ api:
     ##   - myRegistryKeySecretName
     ##
     imagePullSecrets: []
-  ## API podSecurity Context configuration
+  ## @param api.podSecurityContext Holds pod-level security attributes that will be applied to the API / Web container
   ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
   ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
   ## e.g.
   ## fsgroup: 2000
   ##
-  podSecurityContext:
-    seccompProfile:
-      ## @param api.podSecurityContext.seccompProfile.type Deploys the default seccomp profile to the container
-      ##
-      type: RuntimeDefault
+  podSecurityContext: {}
   ## @param api.securityContext Holds security configuration that will be applied to the API / Web container
   ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
   ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
@@ -361,7 +357,7 @@ service:
   type: ClusterIP
   ## @param service.port Turbinia api service port
   ##
-  port: 8000
+  port: &turbiniaSvcPort 8000
 ## Turbinia metrics parameters
 ## IMPORTANT: Turbinia utilizes Prometheus to scrape metrics through annotations
 ## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
@@ -511,3 +507,93 @@ redis:
       ##    cpu: 500m
       ##    memory: 1Gi
       requests: {}
+## @section Oauth2 Proxy configuration parameters
+## To see a full list of available values, run helm show values charts/oauth2-proxy*
+##
+oauth2proxy:
+  ## @param oauth2-proxy.enabled enabled Enables the Oauth2 Proxy deployment
+  ##
+  enabled: true
+  ## OAuth2 Proxy service parameters
+  ##
+  service:
+    ## @param service.type OAuth2 Proxy service type
+    ##
+    type: ClusterIP
+    ## @param service.port OAuth2 Proxy service HTTP port
+    ##
+    port: 8080
+    ## @param service.annotations Additional custom annotations for OAuth2 Proxy service
+    ##
+    annotations: {}
+    #  cloud.google.com/neg: '{"ingress": true}'
+    #  cloud.google.com/backend-config: '{"ports": {"4180": "{{ .Release.Name }}-oauth2-backend-config"}}'
+  ## Configuration section
+  ##
+  configuration:
+    ##
+    ##
+    turbiniaSvcPort: *turbiniaSvcPort
+    ## @param configuration.clientID OAuth client ID
+    ##
+    clientID: ""
+    ## @param configuration.clientSecret OAuth client secret
+    ##
+    clientSecret: ""
+    ## @param 
+    ##
+    nativeClientID: ""
+    ## Create a new secret with the following command openssl rand -base64 32 | head -c 32 | base64
+    ## Use an existing secret for OAuth2 credentials (see secret.yaml for required fields)
+    ##
+    ## @param configuration.cookieSecret OAuth cookie secret
+    ##
+    cookieSecret: ""
+    ## Custom configuration file: oauth2_proxy.cfg
+    ## content: |
+    ##   pass_basic_auth = false
+    ##   pass_access_token = true
+    ##
+    ## @param configuration.content [string] Default configuration
+    ##
+    content: |
+      provider="oidc"
+      oidc_jwks_url="https://accounts.google.com/.well-known/openid-configuration"
+      scope="https://www.googleapis.com/auth/userinfo.email"
+      skip_jwt_bearer_tokens=true
+      force_code_challenge_method='S256'
+      logging_filename = "/tmp/oauth2proxy.log"
+      standard_logging = true
+      request_logging = true
+      auth_logging = true
+      show_debug_on_error=true
+      upstreams=["http://{{ .Release.Name }}-turbinia:{{ .Values.configuration.turbiniaSvcPort }}"]
+      oidc_extra_audiences= {{ default "[]" (printf "['%s']" .Values.configuration.nativeClientID) }}
+    ## Authorize individual email addresses
+    ## @param configuration.authenticatedEmailsFile.enabled Enable authenticated emails file
+    ## @param configuration.authenticatedEmailsFile.content Restricted access list (one email per line)
+    ## @param configuration.authenticatedEmailsFile.existingSecret Secret with the authenticated emails file
+    ##
+    authenticatedEmailsFile:
+      enabled: true
+      ## One email per line
+      ## e.g:
+      ## content: |-
+      ##   name1@domain
+      ##   name2@domain
+      ## If you override the config with restricted_access it will configure a user list within this chart what takes care of the configmap
+      ##
+      content: ""
+      existingSecret: ""
+    ## @param configuration.oidcIssuerUrl OpenID Connect issuer URL
+    ##
+    oidcIssuerUrl: "https://accounts.google.com"
+    ## @param configuration.redirectUrl OAuth Redirect URL
+    ##
+    redirectUrl: ""
+  ## @section Redis&reg; sub-chart parameters
+  ##
+  redis:
+    ## @param redis.enabled Deploy Redis&reg; sub-chart
+    ##
+    enabled: false
