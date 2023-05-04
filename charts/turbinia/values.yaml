@@ -511,19 +511,20 @@ redis:
 ## To see a full list of available values, run helm show values charts/oauth2-proxy*
 ##
 oauth2proxy:
-  ## @param oauth2-proxy.enabled enabled Enables the Oauth2 Proxy deployment
+  ## @param oauth2proxy.enabled Enables the Oauth2 Proxy deployment
   ##
-  enabled: true
+  enabled: false
   ## OAuth2 Proxy service parameters
   ##
   service:
-    ## @param service.type OAuth2 Proxy service type
+    ## @param oauth2proxy.service.type OAuth2 Proxy service type
     ##
     type: ClusterIP
-    ## @param service.port OAuth2 Proxy service HTTP port
+    ## @param oauth2proxy.service.port OAuth2 Proxy service HTTP port
     ##
     port: 8080
-    ## @param service.annotations Additional custom annotations for OAuth2 Proxy service
+    ## @param oauth2proxy.service.annotations Additional custom annotations for OAuth2 Proxy service
+    ## For GCP deployments, remove `{}` and uncomment annotations below.
     ##
     annotations: {}
     #  cloud.google.com/neg: '{"ingress": true}'
@@ -531,22 +532,22 @@ oauth2proxy:
   ## Configuration section
   ##
   configuration:
-    ##
+    ## @param oauth2proxy.configuration.turbiniaSvcPort Turbinia service port referenced from `.Values.service.port` to be used in Oauth setup
     ##
     turbiniaSvcPort: *turbiniaSvcPort
-    ## @param configuration.clientID OAuth client ID
+    ## @param oauth2proxy.configuration.clientID OAuth client ID for Turbinia Web UI.
     ##
     clientID: ""
-    ## @param configuration.clientSecret OAuth client secret
+    ## @param oauth2proxy.configuration.clientSecret OAuth client secret for Turbinia Web UI.
     ##
     clientSecret: ""
-    ## @param 
+    ## @param oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI. 
     ##
     nativeClientID: ""
     ## Create a new secret with the following command openssl rand -base64 32 | head -c 32 | base64
     ## Use an existing secret for OAuth2 credentials (see secret.yaml for required fields)
     ##
-    ## @param configuration.cookieSecret OAuth cookie secret
+    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  openssl rand -base64 32 | head -c 32 | base64) 
     ##
     cookieSecret: ""
     ## Custom configuration file: oauth2_proxy.cfg
@@ -554,7 +555,7 @@ oauth2proxy:
     ##   pass_basic_auth = false
     ##   pass_access_token = true
     ##
-    ## @param configuration.content [string] Default configuration
+    ## @param oauth2proxy.configuration.content [string] Default configuration
     ##
     content: |
       provider="oidc"
@@ -570,9 +571,9 @@ oauth2proxy:
       upstreams=["http://{{ .Release.Name }}-turbinia:{{ .Values.configuration.turbiniaSvcPort }}"]
       oidc_extra_audiences= {{ default "[]" (printf "['%s']" .Values.configuration.nativeClientID) }}
     ## Authorize individual email addresses
-    ## @param configuration.authenticatedEmailsFile.enabled Enable authenticated emails file
-    ## @param configuration.authenticatedEmailsFile.content Restricted access list (one email per line)
-    ## @param configuration.authenticatedEmailsFile.existingSecret Secret with the authenticated emails file
+    ## @param oauth2proxy.configuration.authenticatedEmailsFile.enabled Enable authenticated emails file
+    ## @param oauth2proxy.configuration.authenticatedEmailsFile.content Restricted access list (one email per line)
+    ## @param oauth2proxy.configuration.authenticatedEmailsFile.existingSecret Secret with the authenticated emails file
     ##
     authenticatedEmailsFile:
       enabled: true
@@ -585,15 +586,15 @@ oauth2proxy:
       ##
       content: ""
       existingSecret: ""
-    ## @param configuration.oidcIssuerUrl OpenID Connect issuer URL
+    ## @param oauth2proxy.configuration.oidcIssuerUrl OpenID Connect issuer URL
     ##
     oidcIssuerUrl: "https://accounts.google.com"
-    ## @param configuration.redirectUrl OAuth Redirect URL
+    ## @param oauth2proxy.configuration.redirectUrl OAuth Redirect URL
     ##
     redirectUrl: ""
-  ## @section Redis&reg; sub-chart parameters
+  ## Oauth2 Proxy Redis Subchart
   ##
   redis:
-    ## @param redis.enabled Deploy Redis&reg; sub-chart
+    ## @param oauth2proxy.redis.enabled Enable Redis for OAuth Session Storage
     ##
     enabled: false
