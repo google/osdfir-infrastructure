@@ -8,7 +8,7 @@ global:
   ## Global Persistence Configuration 
   ## @param global.existingPVC Existing claim for Turbinia persistent volume (overrides `persistent.name`)
   ##
-  existingPVC: "merp"
+  existingPVC: ""
   ## @param global.storageClass StorageClass for the Turbinia persistent volume (overrides `persistent.storageClass`)
   ##
   storageClass: ""
