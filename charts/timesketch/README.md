@@ -103,6 +103,15 @@ kubectl delete pvc -l release=my-release
 
 ## Parameters
 
+### Global parameters
+
+| Name                              | Description                                                                             | Value |
+| --------------------------------- | --------------------------------------------------------------------------------------- | ----- |
+| `global.persistence.name`         | Name for the Timesketch persistent volume (overrides `persistence.name`)                | `""`  |
+| `global.persistence.storageClass` | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`) | `""`  |
+| `global.persistence.size`         | Size for the Timesketch persistent volume (overrides `persistent.size`)                 | `""`  |
+| `global.persistence.accessModes`  | PVC Access Mode for Timesketch volume (overrides `persistent.accessModes`)              | `""`  |
+
 ### Timesketch image configuration
 
 | Name                     | Description                                                   | Value                                                     |
