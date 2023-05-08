@@ -1,3 +1,4 @@
+{{- if not (.Values.global.existingPVC) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -10,3 +11,4 @@ spec:
   resources:
     requests:
       storage: {{ include "timesketch.storage.size"  . }}
+{{- end }}

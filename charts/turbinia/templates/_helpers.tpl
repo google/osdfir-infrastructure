@@ -68,8 +68,8 @@ Return the proper persistence volume claim name
 {{- define "turbinia.pvc.name" -}}
 {{- $pvcName := .Values.persistence.name -}}
 {{- if .Values.global -}}
-    {{- if .Values.global.persistence.name -}}
-        {{- $pvcName = .Values.global.persistence.name -}}
+    {{- if .Values.global.existingPVC -}}
+        {{- $pvcName = .Values.global.existingPVC -}}
     {{- end -}}
 {{- printf "%s-%s" $pvcName "claim" }}
 {{- end -}}
@@ -81,8 +81,8 @@ Return the proper Storage Class
 {{- define "turbinia.storage.class" -}}
 {{- $storageClass := .Values.persistence.storageClass -}}
 {{- if .Values.global -}}
-    {{- if .Values.global.persistence.storageClass -}}
-        {{- $storageClass = .Values.global.persistence.storageClass -}}
+    {{- if .Values.global.storageClass -}}
+        {{- $storageClass = .Values.global.storageClass -}}
     {{- end -}}
 {{- end -}}
 {{- if $storageClass -}}
@@ -91,34 +91,6 @@ Return the proper Storage Class
   {{- else }}
       {{- printf "storageClassName: %s" $storageClass -}}
   {{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Return the proper persistence volume size
-*/}}
-{{- define "turbinia.storage.size" -}}
-{{- $pvcSize := .Values.persistence.size -}}
-{{- if .Values.global -}}
-    {{- if .Values.global.persistence.size -}}
-        {{- $pvcSize = .Values.global.persistence.size -}}
-    {{- end -}}
-{{- printf "%s" $pvcSize }}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Return the proper persistence access modes
-*/}}
-{{- define "turbinia.storage.accessModes" -}}
-{{- $storageAccess := .Values.persistence.accessModes -}}
-{{- if .Values.global -}}
-    {{- if .Values.global.persistence.accessModes -}}
-        {{- $storageAccess = .Values.global.persistence.accessModes -}}
-    {{- end -}}
-{{- range $storageAccess -}}
-  - {{ . | quote }}
-{{- end }}
 {{- end -}}
 {{- end -}}
 

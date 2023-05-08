@@ -1,3 +1,4 @@
+{{- if not (.Values.global.existingPVC) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -6,7 +7,10 @@ metadata:
 spec:
   {{- include "turbinia.storage.class" . | nindent 2 }}
   accessModes:
-  {{- include "turbinia.storage.accessModes" . | nindent 4 }}
+    {{- range .Values.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
   resources:
     requests:
-      storage: {{ include "turbinia.storage.size"  . }}
+      storage: {{ .Values.persistence.size | quote }}
+{{- end }}
