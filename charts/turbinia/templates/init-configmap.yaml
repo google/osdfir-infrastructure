@@ -32,6 +32,7 @@ data:
     # Set up the Redis connection
     sed -i -e "s/^TASK_MANAGER = .*$/TASK_MANAGER = 'Celery'/g" turbinia.conf
     sed -i -e "s/^STATE_MANAGER = .*$/STATE_MANAGER = 'Redis'/g" turbinia.conf
+    sed -i -e 's#^REDIS_HOST =.*#REDIS_HOST = {{ (include "turbinia.redis.url.noport" .) | quote }}#' turbinia.conf 
     sed -i -e 's#^CELERY_BROKER =.*#CELERY_BROKER = {{ (include "turbinia.redis.url" .) | quote }}#' turbinia.conf
     sed -i -e 's#^CELERY_BACKEND =.*#CELERY_BACKEND = {{ (include "turbinia.redis.url" .) | quote }}#' turbinia.conf
     sed -i -e "s/^DEBUG_TASKS = .*$/DEBUG_TASKS = True/g" turbinia.conf

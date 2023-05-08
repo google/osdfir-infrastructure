@@ -118,3 +118,19 @@ Redis subcharts connection url
 {{ fail "Attempting to use Redis, but the subchart is not enabled. This will lead to misconfiguration" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Redis subcharts host url
+*/}}
+{{- define "turbinia.redis.url.noport" -}}
+{{- if .Values.redis.enabled -}}
+{{- $name := include "common.names.fullname" (dict "Chart" (dict "Name" "redis") "Release" .Release "Values" .Values.redis) -}}
+{{- if .Values.redis.auth.enabled -}}
+{{- printf "%s-master" $name -}}
+{{- else -}}
+{{- printf "%s-master" $name -}}
+{{- end -}}
+{{- else -}}
+{{ fail "Attempting to use Redis, but the subchart is not enabled. This will lead to misconfiguration" }}
+{{- end -}}
+{{- end -}}

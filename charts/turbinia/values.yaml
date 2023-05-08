@@ -345,10 +345,13 @@ serviceAccount:
   ## @param serviceAccount.annotations Annotations to add to the service account
   ##
   annotations: {}
-  ## @param serviceAccount.name The name of the service account to use
+  ## @param serviceAccount.name The name of the Kubernetes service account to use
   ## If not set and create is true, a name is generated using the fullname template
   ##
   name: "turbinia"
+  ## @param serviceaAccount.gcpName The name of the GCP service account to annotate with the Kubernetes service account
+  ##
+  gcpName: "turbinia"
 ## Turbinia service parameters
 ##
 service:
@@ -430,6 +433,12 @@ redis:
   ## @param redis.enabled enabled Enables the Redis deployment
   ##
   enabled: true
+  ## Redis Authentication parameters
+  ##
+  auth:
+    ## @param redis.auth.enabled Enables Redis Authentication. Disabled due to incompatibility with Turbinia
+    ##
+    enabled: false
   ## @param redis.sentinel.enabled Enables Redis Sentinel on Redis pods
   ## IMPORTANT: This has not been tested for Turbinia so would leave this disabled
   ##
