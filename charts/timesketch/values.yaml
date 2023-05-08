@@ -1,6 +1,25 @@
 ## Timesketch Helm Chart
 ## Please use this Helm chart for deploying Timesketch to a Kubernetes environment
 ##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  ## Global Persistence Configuration 
+  ##
+  persistence:
+    ## @param global.persistence.name Name for the Timesketch persistent volume (overrides `persistence.name`)
+    ##
+    name: ""
+    ## @param global.persistence.storageClass StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)
+    ##
+    storageClass: ""
+    ## @param global.persistence.size Size for the Timesketch persistent volume (overrides `persistent.size`)
+    ##
+    size: ""
+    ## @param global.persistence.accessModes PVC Access Mode for Timesketch volume (overrides `persistent.accessModes`)
+    ##
+    accessModes: ""
 ## @section Timesketch image configuration
 ##
 image:

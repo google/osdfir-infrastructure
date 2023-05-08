@@ -31,17 +31,76 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Create persistence volume claim name.
+Return the proper persistence volume claim name
 */}}
 {{- define "timesketch.pvc.name" -}}
-{{- printf "%s-%s" .Values.persistence.name "claim" }}
+{{- $pvcName := .Values.persistence.name -}}
+{{- if .Values.global -}}
+    {{- if .Values.global.persistence.name -}}
+        {{- $pvcName = .Values.global.persistence.name -}}
+    {{- end -}}
+{{- printf "%s-%s" $pvcName "claim" }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Storage Class
+*/}}
+{{- define "timesketch.storage.class" -}}
+{{- $storageClass := .Values.persistence.storageClass -}}
+{{- if .Values.global -}}
+    {{- if .Values.global.persistence.storageClass -}}
+        {{- $storageClass = .Values.global.persistence.storageClass -}}
+    {{- end -}}
+{{- end -}}
+{{- if $storageClass -}}
+  {{- if (eq "-" $storageClass) -}}
+      {{- printf "storageClassName: \"\"" -}}
+  {{- else }}
+      {{- printf "storageClassName: %s" $storageClass -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper persistence volume size
+*/}}
+{{- define "timesketch.storage.size" -}}
+{{- $pvcSize := .Values.persistence.size -}}
+{{- if .Values.global -}}
+    {{- if .Values.global.persistence.size -}}
+        {{- $pvcSize = .Values.global.persistence.size -}}
+    {{- end -}}
+{{- printf "%s" $pvcSize }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper persistence access modes
+*/}}
+{{- define "timesketch.storage.accessModes" -}}
+{{- $storageAccess := .Values.persistence.accessModes -}}
+{{- if .Values.global -}}
+    {{- if .Values.global.persistence.accessModes -}}
+        {{- $storageAccess = .Values.global.persistence.accessModes -}}
+    {{- end -}}
+{{- range $storageAccess -}}
+  - {{ . | quote }}
 {{- end }}
+{{- end -}}
+{{- end -}}
 
 {{/*
 Create the upload path.
 */}}
 {{- define "timesketch.uploadPath" -}}
-{{- printf "/mnt/%s/upload" .Values.persistence.name }}
+{{- $pvcName := .Values.persistence.name -}}
+{{- if .Values.global -}}
+    {{- if .Values.global.persistence.name -}}
+        {{- $pvcName = .Values.global.persistence.name -}}
+    {{- end -}}
+{{- printf "/mnt/%s/upload" $pvcName }}
+{{- end }}
 {{- end }}
 
 {{/*
