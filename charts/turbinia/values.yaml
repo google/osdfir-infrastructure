@@ -5,7 +5,8 @@
 ## Please, note that this will override the parameters configured to use the global value
 ##
 global:
-  ## Global Persistence Configuration 
+  ## Global Persistence Configuration
+  ##
   ## @param global.existingPVC Existing claim for Turbinia persistent volume (overrides `persistent.name`)
   ##
   existingPVC: ""

@@ -5,6 +5,18 @@
 ## - Timesketch; ref https://github.com/google/timesketch
 ## - Turbinia; ref https://github.com/google/turbinia
 ##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  ## Global Persistence Configuration 
+  ##
+  ## @param global.existingPVC Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)
+  ##
+  existingPVC: ""
+  ## @param global.storageClass StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`)
+  ##
+  storageClass: ""
 ## @section Timesketch Configuration
 ## The following section covers configuration parameters for Timesketch
 ## To see a full list of available values, run helm show values charts/timesketch*
