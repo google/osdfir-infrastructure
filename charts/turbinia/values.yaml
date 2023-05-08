@@ -368,7 +368,7 @@ serviceAccount:
   ## If not set and create is true, a name is generated using the fullname template
   ##
   name: "turbinia"
-  ## @param serviceaAccount.gcpName The name of the GCP service account to annotate with the Kubernetes service account
+  ## @param serviceAccount.gcpName The name of the GCP service account to annotate with the Kubernetes service account
   ##
   gcpName: "turbinia"
 ## Turbinia service parameters

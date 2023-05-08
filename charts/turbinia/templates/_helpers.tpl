@@ -69,7 +69,7 @@ Return the proper persistence volume claim name
 {{- $pvcName := .Values.persistence.name -}}
 {{- if .Values.global -}}
     {{- if .Values.global.persistence.name -}}
-        {{- $pvcName = .Values.global.persistence.storageClass -}}
+        {{- $pvcName = .Values.global.persistence.name -}}
     {{- end -}}
 {{- printf "%s-%s" $pvcName "claim" }}
 {{- end -}}
@@ -108,7 +108,7 @@ Return the proper persistence volume size
 {{- end -}}
 
 {{/*
-Return the proper persistence volume size
+Return the proper persistence access modes
 */}}
 {{- define "turbinia.storage.accessModes" -}}
 {{- $storageAccess := .Values.persistence.accessModes -}}

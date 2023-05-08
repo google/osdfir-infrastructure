@@ -75,30 +75,35 @@ Install the chart providing both the original values and the production values,
 and required GCP values with a release name `my-release`:
 ```console
 helm install my-release ../turbinia \
-    -f values.yaml \ 
-    -f values-production.yaml \
+    -f values.yaml -f values-production.yaml \
     --set gcp.project=true \
     --set gcp.projectID=<GCP_PROJECT_ID> \
     --set gcp.projectRegion=<GKE_CLUSTER_REGION> \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-With the Oauth2 Proxy
+To install Turbinia on GKE with external connectivity and authentication using
+the Oauth2 Proxy, install the chart replacing the required values:
 ```console
 helm install my-release ../turbinia \
-    -f values.yaml \ 
-    -f values-production.yaml \
+    -f values.yaml -f values-production.yaml \
     --set gcp.project=true \
     --set gcp.projectID=<GCP_PROJECT_ID> \
     --set gcp.projectRegion=<GKE_CLUSTER_REGION> \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE> \
+    --set ingress.enabled=true
+    --set ingress.host=<DOMAIN>
+    --set ingress.gcp.managedCertificates=true
+    --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME>
     --set oauth2proxy.enabled=true
-    --set oauth2proxy.configuration.clientID=<OAUTH_CLIENT_ID> \
-    --set oauth2proxy.configuration.clientSecret=<OAUTH_CLIENT_SECRET> \
+    --set oauth2proxy.configuration.clientID=<WEB_OAUTH_CLIENT_ID> \
+    --set oauth2proxy.configuration.clientSecret=<WEB_OAUTH_CLIENT_SECRET> \
+    --set oauth2proxy.configuration.nativeClientID=<NATIVE_OAUTH_CLIENT_ID> \
     --set oauth2proxy.configuration.cookieSecret=<COOKIE_SECRET> \
-    --set oauth2proxy.configuration.clientID=<GKE_ClUSTER_ZONE> \
-    --set oauth2proxy.configuration.redirectUrl=<https://<DOMAIN>/oauth2/>
-    --set oauth2proxy.configuration.authenticatedEmailsFile.content=
+    --set oauth2proxy.configuration.redirectUrl=https://<DOMAIN>/oauth2/callback
+    --set oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\}
+    --set oauth2proxy.service.annotations."cloud\.google\.com/neg=\{\"ingress\": true\}" \
+    --set oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-oauth2-backend-config\"\}\}"
 ```
 
 For non GCP production deployments, install the chart providing both the 
@@ -139,6 +144,15 @@ kubectl delete pvc -l release=my-release
 > **Note**: Deleting the PVC's will delete Turbinia data as well. Please be cautious before doing it.
 
 ## Parameters
+
+### Global parameters
+
+| Name                              | Description                                                                           | Value |
+| --------------------------------- | ------------------------------------------------------------------------------------- | ----- |
+| `global.persistence.name`         | Name for the Turbinia persistent volume (overrides `persistence.name`)                | `""`  |
+| `global.persistence.storageClass` | StorageClass for the Turbinia persistent volume (overrides `persistent.storageClass`) | `""`  |
+| `global.persistence.size`         | Size for the Turbinia persistent volume (overrides `persistent.size`)                 | `""`  |
+| `global.persistence.accessModes`  | PVC Access Mode for Turbinia volume (overrides `persistent.accessModes`)              | `""`  |
 
 ### Turbinia configuration
 
@@ -230,7 +244,8 @@ kubectl delete pvc -l release=my-release
 | `gcp.gcpErrorReporting`           | Enables GCP Cloud Error Reporting                                                                                                                                                                                    | `false`                                                                                      |
 | `serviceAccount.create`           | Specifies whether a service account should be created                                                                                                                                                                | `true`                                                                                       |
 | `serviceAccount.annotations`      | Annotations to add to the service account                                                                                                                                                                            | `{}`                                                                                         |
-| `serviceAccount.name`             | The name of the service account to use                                                                                                                                                                               | `turbinia`                                                                                   |
+| `serviceAccount.name`             | The name of the Kubernetes service account to use                                                                                                                                                                    | `turbinia`                                                                                   |
+| `serviceAccount.gcpName`          | The name of the GCP service account to annotate with the Kubernetes service account                                                                                                                                  | `turbinia`                                                                                   |
 | `service.type`                    | Turbinia service type                                                                                                                                                                                                | `ClusterIP`                                                                                  |
 | `service.port`                    | Turbinia api service port                                                                                                                                                                                            | `8000`                                                                                       |
 | `metrics.enabled`                 | Enables metrics scraping                                                                                                                                                                                             | `true`                                                                                       |
@@ -253,6 +268,7 @@ kubectl delete pvc -l release=my-release
 | Name                                | Description                                                                                  | Value       |
 | ----------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
 | `redis.enabled`                     | enabled Enables the Redis deployment                                                         | `true`      |
+| `redis.auth.enabled`                | Enables Redis Authentication. Disabled due to incompatibility with Turbinia                  | `false`     |
 | `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`     |
 | `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
 | `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP` |
