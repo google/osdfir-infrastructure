@@ -13,10 +13,36 @@ global:
   ##
   ## @param global.existingPVC Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)
   ##
-  existingPVC: ""
+  existingPVC: osdfirvolume
   ## @param global.storageClass StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`)
   ##
   storageClass: ""
+## @section OSDFIR Infrastructure persistence storage parameters
+##
+persistence:
+  ## @param persistence.enabled Enables persistent volume storage for OSDFIR Infrastructure
+  ##
+  enabled: true
+  ## @param persistence.name OSDFIR Infrastructure persistent volume name
+  ##
+  name: osdfirvolume
+  ## @param persistence.size OSDFIR Infrastructure persistent volume size
+  ##
+  size: 8Gi
+  ## @param persistence.storageClass PVC Storage Class for OSDFIR Infrastructure volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ## 
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for the OSDFIR Infrastructure volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ## 
+  accessModes:
+    - ReadWriteOnce
 ## @section Timesketch Configuration
 ## The following section covers configuration parameters for Timesketch
 ## To see a full list of available values, run helm show values charts/timesketch*

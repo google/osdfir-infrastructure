@@ -121,6 +121,23 @@ kubectl delete pvc -l release=my-release
 
 ## Parameters
 
+### Global parameters
+
+| Name                  | Description                                                                                                                                          | Value          |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `global.existingPVC`  | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
+| `global.storageClass` | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
+
+### OSDFIR Infrastructure persistence storage parameters
+
+| Name                       | Description                                                 | Value               |
+| -------------------------- | ----------------------------------------------------------- | ------------------- |
+| `persistence.enabled`      | Enables persistent volume storage for OSDFIR Infrastructure | `true`              |
+| `persistence.name`         | OSDFIR Infrastructure persistent volume name                | `osdfirvolume`      |
+| `persistence.size`         | OSDFIR Infrastructure persistent volume size                | `8Gi`               |
+| `persistence.storageClass` | PVC Storage Class for OSDFIR Infrastructure volume          | `""`                |
+| `persistence.accessModes`  | PVC Access Mode for the OSDFIR Infrastructure volume        | `["ReadWriteOnce"]` |
+
 ### Timesketch Configuration
 
 | Name                                          | Description                                                                                                                           | Value                                                     |
