@@ -1,7 +1,7 @@
 <!--- app-name: OSDFIR Infrastructure -->
 # OSDFIR Infrastructure Helm Chart
 
-A Helm chart for OSDFIR Infrastructure. OSDFIR Infrastructure helps setup Open Source
+OSDFIR Infrastructure helps setup Open Source
 Digital Forensics tools to Kubernetes clusters using Helm. 
 
 Currently, OSDFIR Infrastructure
@@ -14,8 +14,7 @@ supports the deployment of the following tools:
 ```console
 helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
 ```
-> **Tip**: To quickly get started with your own local Kubernetes cluster, see 
-install docs for [minikube](https://minikube.sigs.k8s.io/docs/start/).
+> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ## Introduction
 
@@ -27,10 +26,7 @@ This chart bootstraps a OSDFIR Infrastructure deployment on a [Kubernetes](https
 - Helm 3.2.0+
 - PV provisioner support in the underlying infrastructure
 
-> **Note**: Due to Turbinia requiring additional permissions for attaching 
-persistent disks, currently only Google Kubernetes Engine (GKE) and Local 
-Kubernetes installations are supported at this time. See 
-[GKE Installations](#gke-installations) for deploying to GKE.
+> **Note**: Currently Turbinia only supports processing of GCP Persistent Disks and Local Evidence. See [GKE Installations](#gke-installations) for deploying to GKE.
 
 ## Installing the Chart
 
@@ -39,36 +35,19 @@ To install the chart with the release name `my-release`:
 ```console
 helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
 ```
-
-To pull the chart locally:
-```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
-```
-
-To install the chart from a local repo with the release name `my-release`:
-```console
-helm install my-release ../osdfir-infrastructure
-```
-
-The install command deploys OSDFIR Infrastructure on the Kubernetes cluster in the default 
-configuration without any resources defined. This is so we can increase the 
-chances our chart runs on environments with little resources, such as Minikube. 
-The [Parameters](#parameters) section lists the parameters that can be configured 
+The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured 
 during installation or see [Installating for Production](#installing-for-production) 
 for a recommended production installation.
 
 ## Installing for Production
 
-Pull the chart locally and review the `values.production.yaml` file for a list 
-of values that will be overridden as part of this installation. 
+Pull the chart locally and review the `values.production.yaml` file for a list of values that will be used for production. 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
 ```
 
 ### GKE Installations
-Please ensure that a Turbinia GCP service account has been created prior to 
-installing the chart. You can use the helper script from the locally pulled 
-chart in `tools/create-gcp-sa.sh` to automatically do this for you.
+Create a Turbinia GCP account using the helper script in `tools/create-gcp-sa.sh` prior to installing the chart.
 
 Install the chart providing both the original values and the production values,
 and required GCP values with a release name `my-release`:
@@ -76,30 +55,39 @@ and required GCP values with a release name `my-release`:
 helm install my-release ../osdfir-infrastructure \
     -f values.yaml \ 
     -f values-production.yaml \
-    --set gcp.project=true \
-    --set gcp.projectID=<GCP_PROJECT_ID> \
-    --set gcp.projectRegion=<GKE_CLUSTER_REGION> \
-    --set gcp.projectZone=<GKE_ClUSTER_ZONE>
+    --set turbinia.gcp.project=true \
+    --set turbinia.gcp.projectID=<GCP_PROJECT_ID> \
+    --set turbinia.gcp.projectRegion=<GKE_CLUSTER_REGION> \
+    --set turbinia.gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-For non GCP production deployments, install the chart providing both the 
-original values and the production values with a release name `my-release`:
+To upgrade an existing release and externally expose Timesketch through a loadbalancer with SSL through GCP managed certificates, run:
 ```console
-helm install my-release ../osdfir-infrastructure -f values.yaml -f values-production.yaml
+helm upgrade my-release
+    --set timesketch.ingress.enabled=true \
+    --set timesketch.ingress.host=<DOMAIN_NAME> \
+    --set timesketch.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
+    --set timesketch.ingress.gcp.managedCertificates=true
 ```
 
-To upgrade an existing release name `my-release` using production values, run:
+To upgrade an existing and externally expose Turbinia through a load balancer with SSL through GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
 ```console
-helm upgrade my-release -f values-production.yaml
+helm upgrade my-release \
+    -f values.yaml -f values-production.yaml \
+    --set ingress.enabled=true
+    --set ingress.host=<DOMAIN>
+    --set ingress.gcp.managedCertificates=true
+    --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME>
+    --set oauth2proxy.enabled=true
+    --set oauth2proxy.configuration.clientID=<WEB_OAUTH_CLIENT_ID> \
+    --set oauth2proxy.configuration.clientSecret=<WEB_OAUTH_CLIENT_SECRET> \
+    --set oauth2proxy.configuration.nativeClientID=<NATIVE_OAUTH_CLIENT_ID> \
+    --set oauth2proxy.configuration.cookieSecret=<COOKIE_SECRET> \
+    --set oauth2proxy.configuration.redirectUrl=https://<DOMAIN>/oauth2/callback
+    --set oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\}
+    --set oauth2proxy.service.annotations."cloud\.google\.com/neg=\{\"ingress\": true\}" \
+    --set oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-oauth2-backend-config\"\}\}"
 ```
-
-Installing or upgrading a OSDFIR Infrastructure deployment with `values-production.yaml` 
-file will override a subset of values in the `values.yaml` file with a recommended
-set of resources and replica pods needed for a production OSDFIR Infrastructure installation
-and deploys a GCP Filestore persistent volume for shared storage. For non GCP 
-installations, please update the `persistence.storageClass` value with a 
-storageClass supported by your provider.
-
 ## Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
@@ -109,8 +97,7 @@ helm delete my-release
 ```
 > **Tip**: List all releases using `helm list`
 
-The command removes all the Kubernetes components but PVC's associated with the chart and deletes the release.
-
+he command removes all the Kubernetes components but Persistent Volumes (PVC) associated with the chart and deletes the release.
 To delete the PVC's associated with `my-release`:
 
 ```console
@@ -247,60 +234,48 @@ Specify each parameter using the --set key=value[,key=value] argument to helm in
 
 ```console
 helm install my-release \
-    --set timesketch.config.createUser=false
+    --set turbinia.enabled=false
     oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
 ```
 
-The above command updates the Timesketch deployment to not create a default user at deployment.
+The above command installs OSDFIR Infrastructure without Turbinia deployed.
 
-Alternatively, the `values.yaml` file can be directly updated if the Helm chart 
-was pulled locally. For example,
+Alternatively, the `values.yaml` and `values-production.yaml` file can be 
+directly updated if the Helm chart was pulled locally. For example,
 
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
 ```
 
-Then make changes to the downloaded `values.yaml`. A `configs/` directory containing user-provided Timesketch configs can also be placed at this point to override the default ones. Additionally, a `turbinia.conf` config file can be placed at the root of the Helm chart. Once done, install the local chart with the updated values.
+Then make changes to the downloaded `values.yaml` and once done, install the 
+chart with the updated values.
 
 ```console
 helm install my-release ../osdfir-infrastructure
 ```
 
-Lastly, a YAML file that specifies the values for the parameters can also be provided while installing the chart. For example,
-
-```console
-helm install my-release -f newvalues.yaml oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
-```
 ## Persistence
 
 The OSDFIR Infrastructure deployment stores data at the `/mnt/osdfir` path of the container.
 
-Persistent Volume Claims are used to keep the data across deployments. By default the OSDFIR Infrastucture deployment attempts to use dynamic persistent volume provisioning to automatically configure storage, but the `persistent.storageClass` value can be updated to a storageClass supported by your provider. See the [Parameters](#parameters) section to configure the PVC or to disable persistence.
-
-To install the OSDFIR Infrastructure chart with more storage capacity, run:
-```console
-helm install my-release \
-    --set persistence.size=10T
-    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
-```
-
-The above command installs the OSDFIR Infrastructure chart with a persistent volume size of 10 Terabytes.
+Persistent Volume Claims are used to keep the data across deployments. This is 
+known to work in GCE and minikube. See the [Parameters](#parameters) section to configure the PVC or to disable persistence.
 
 ## Upgrading
 
-If you need to upgrade an existing release to update a value in, such as
+If you need to upgrade an existing release to update a value, such as
 persistent volume size or upgrading to a new release, you can run 
 [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/). For example, to set a 
 new release and upgrade storage capacity, run:
 ```console
 helm upgrade my-release \
-    --set turbinia.server.image.tag=latest
+    --set turbinia.server.image.tag=latest \
+    --set timesketch.image.tag=latest \
     --set persistence.size=10T
 ```
 
-The above command upgrades an existing release named `my-release` updating the
-image tag to `latest` and increasing persistent volume size of an existing volume
-to 10 Terabytes
+The above command upgrades an existing release named `my-release` updating the Turbinia server and Timesketch
+image tag to `latest` and increasing persistent volume size of the existing volume to 10 Terabytes.
 
 ## License
 
