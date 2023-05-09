@@ -23,7 +23,7 @@ maintainers:
   - name: wajihyassine
   - name: berggren
   - name: aaronpeterson
-  - name: rbdebeer
+  - name: hacktobeer
 sources:
 - https://github.com/google/osdfir-infrastructure
 - https://github.com/google/turbinia
