@@ -280,7 +280,7 @@ Then make changes to the downloaded `values.yaml` and once done, install the
 chart with the updated values.
 
 ```console
-helm install my-release ../timesketch
+helm install my-release ../turbinia
 ```
 
 ## Persistence
