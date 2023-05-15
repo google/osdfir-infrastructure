@@ -283,7 +283,7 @@ opensearch:
   ## @param opensearch.sysctlInit.enabled Sets optimal sysctl's through privileged initContainer
   ##
   sysctlInit:
-    enabled: false
+    enabled: true
   ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
   ## It is recommended to use at least half the system's available ram
   ## 
