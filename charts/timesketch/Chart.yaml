@@ -22,7 +22,8 @@ dependencies:
   repository: https://opensearch-project.github.io/helm-charts/
 maintainers:
   - name: wajihyassine
-  - name: berggren
+  - name: Johan Berggren
+     url: https://github.com/berggren
 sources:
 - https://github.com/google/timesketch
 - https://timesketch.org/
