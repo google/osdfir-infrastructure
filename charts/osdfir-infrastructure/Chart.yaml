@@ -21,7 +21,8 @@ dependencies:
   version: 0.1.0
 maintainers:
   - name: wajihyassine
-  - name: berggren
+  - name: Johan Berggren
+     url: https://github.com/berggren
   - name: aaronpeterson
   - name: hacktobeer
 sources:
