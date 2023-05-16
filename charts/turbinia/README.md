@@ -51,8 +51,7 @@ helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia --untar
 ### GKE Installations
 Create a Turbinia GCP account using the helper script in `tools/create-gcp-sa.sh` prior to installing the chart. 
 
-Install the chart providing both the original values and the production values,
-and required GCP values then pick a release name such as `turbinia-prod`:
+Install the chart with the base values in `values.yaml`, the production values in `values-production.yaml`, and set appropriate values to enable GCP for Turbinia. Using a release name such as `turbinia-prod`, run:
 ```console
 helm install turbinia-prod ../turbinia \
     -f values.yaml -f values-production.yaml \
@@ -303,7 +302,8 @@ helm upgrade my-release \
 ```
 
 The above command upgrades an existing release named `my-release` updating the
-image tag to `latest` and increasing persistent volume size of an existing volume to 10 Terabytes.
+image tag to `latest` and increasing persistent volume size of an existing volume to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
+of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
 
 ## License
 

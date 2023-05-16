@@ -33,7 +33,7 @@ This chart bootstraps a OSDFIR Infrastructure deployment on a [Kubernetes](https
 To install the chart, specify any release name of your choice. For example, if you
 want to install the chart for development, you can choose a release name of `osdfir-dev` then run:
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm install osdfir-dev oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
 ```
 The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured 
 during installation or see [Installating for Production](#installing-for-production) 
@@ -47,10 +47,9 @@ helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastru
 ```
 
 ### GKE Installations
-Create a Turbinia GCP account using the helper script in `tools/create-gcp-sa.sh` prior to installing the chart.
+Create a Turbinia GCP account using the helper script in `osdfir-infrastructure/charts/turbinia/tools/create-gcp-sa.sh` prior to installing the chart.
 
-Install the chart providing both the original values and the production values,
-and required GCP values then pick a release name such as `osdfir-prod`:
+Install the chart with the base values in `values.yaml`, the production values in `values-production.yaml`, and set appropriate values to enable GCP for Turbinia. Using a release name such as `osdfir-prod`, run:
 ```console
 helm install osdfir-prod ../osdfir-infrastructure \
     -f values.yaml \ 
@@ -276,7 +275,8 @@ helm upgrade my-release \
 ```
 
 The above command upgrades an existing release named `my-release` updating the Turbinia server and Timesketch
-image tag to `latest` and increasing persistent volume size of the existing volume to 10 Terabytes.
+image tag to `latest` and increasing persistent volume size of the existing volume to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
+of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
 
 ## License
 

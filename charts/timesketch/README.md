@@ -45,7 +45,7 @@ Pull the chart locally and review the `values-production.yaml` file for a list o
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
 ```
 
-Install the chart providing both the original values and the production values then pick a release name such as `timesketch-prod`:
+Install the chart with the base values in `values.yaml` and the production values in `values-production.yaml`, then using a release name such as `timesketch-prod`, run:
 ```console
 helm install timesketch-prod ../timesketch -f values.yaml -f values-production.yaml
 ```
@@ -259,7 +259,8 @@ helm upgrade my-release \
 
 The above command upgrades an existing release named `my-release` updating the
 image tag to `latest` and increasing persistent volume size of an existing volume
-to 10 Terabytes.
+to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
+of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
 
 ## Troubleshooting
 
