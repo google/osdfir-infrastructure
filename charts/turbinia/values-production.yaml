@@ -340,7 +340,7 @@ redis:
     persistence:
       ## @param redis.master.persistence.size Persistent Volume size
       ##
-      size: 8Gi
+      size: 500Gi
     ## Redis master resource requests and limits
     ## @param redis.master.resources.requests.cpu The requested cpu for the Redis master containers
     ## @param redis.master.resources.requests.memory The requested memory for the Redis master containers 
@@ -350,7 +350,7 @@ redis:
     resources:
       requests:
         cpu: 4000m
-        memory: 8Gi
+        memory: 500Gi
       limits:
         cpu: 8000m
         memory: 16Gi
@@ -359,13 +359,13 @@ redis:
   replica:
     ## @param redis.replica.replicaCount Number of Redis replicas to deploy
     ##
-    replicaCount: 0
+    replicaCount: 3
     ## Redis replicas persistence configuration
     ##
     persistence:
       ## @param redis.replica.persistence.size Persistent Volume size
       ##
-      size: 8Gi
+      size: 500Gi
     ## Redis Replica resource requests and limits
     ## @param redis.replica.resources.requests.cpu The requested cpu for the Redis replica containers
     ## @param redis.replica.resources.requests.memory The requested memory for the Redis replica containers 

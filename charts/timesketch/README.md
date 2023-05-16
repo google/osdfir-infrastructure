@@ -9,7 +9,7 @@ Timesketch is an open-source tool for collaborative forensic timeline analysis.
 ## TL;DR
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install timesketch-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
 ```
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
@@ -26,10 +26,10 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](htt
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release`:
-
+To install the chart, specify any release name of your choice. For example, if you
+want to install the chart for development, you can choose a release name of `timesketch-dev` then run:
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install timesketch-dev oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
 ```
 The command deploys Timesketch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured 
 during installation or see [Installating for Production](#installing-for-production) 
@@ -40,19 +40,19 @@ chart locally and adding a `configs/` directory at the root of the Helm chart wi
 
 ## Installing for Production
 
-Pull the chart locally and review the `values.production.yaml` file for a list of values that will be used for production.
+Pull the chart locally and review the `values-production.yaml` file for a list of values that will be used for production.
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
 ```
 
-Install the chart providing both the original values and the production values with a release name `my-release`:
+Install the chart providing both the original values and the production values then pick a release name such as `timesketch-prod`:
 ```console
-helm install my-release ../timesketch -f values.yaml -f values-production.yaml
+helm install timesketch-prod ../timesketch -f values.yaml -f values-production.yaml
 ```
 
 To upgrade an existing release with production values, externally expose Timesketch through a loadbalancer, and add SSL through GCP managed certificates, run:
 ```console
-helm upgrade my-release 
+helm upgrade timesketch-prod
     -f values-production.yaml \
     --set ingress.enabled=true \
     --set ingress.host=<DOMAIN_NAME> \
@@ -62,19 +62,19 @@ helm upgrade my-release
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release` deployment:
+To uninstall/delete a Helm deployment with a release name of `timesketch-release`:
 
 ```console
-helm delete my-release
+helm delete timesketch-release
 ```
-> **Tip**: List all releases using `helm list`
+> **Tip**: Please update based on the release name chosen. You can list all releases using `helm list`
 
 The command removes all the Kubernetes components but Persistent Volumes (PVC) associated with the chart and deletes the release.
 
-To delete the PVC's associated with `my-release`:
+To delete the PVC's associated with a release name of `timesketch-release`:
 
 ```console
-kubectl delete pvc -l release=my-release
+kubectl delete pvc -l release=timesketch-release
 ```
 
 > **Note**: Deleting the PVC's will delete Timesketch data as well. Please be cautious before doing it.

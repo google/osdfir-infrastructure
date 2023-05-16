@@ -21,9 +21,10 @@ dependencies:
   version: 2.11.3
   repository: https://opensearch-project.github.io/helm-charts/
 maintainers:
-  - name: wajihyassine
+  - name: Wajih Yassine
+    url: https://github.com/wajihyassine
   - name: Johan Berggren
-     url: https://github.com/berggren
+    url: https://github.com/berggren
 sources:
 - https://github.com/google/timesketch
 - https://timesketch.org/

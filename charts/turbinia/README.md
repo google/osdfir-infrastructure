@@ -9,7 +9,7 @@ Turbinia is an open-source framework for deploying, managing, and running distri
 ## TL;DR
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
+helm install turbinia-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
 ```
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
@@ -27,10 +27,10 @@ This chart bootstraps a [Turbinia](https://github.com/google/turbinia/blob/maste
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release`:
-
+To install the chart, specify any release name of your choice. For example, if you
+want to install the chart for development, you can choose a release name of `turbinia-dev` then run:
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
+helm install turbinia-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
 ```
 
 The command deploys Turbinia on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured 
@@ -43,7 +43,7 @@ pull and install the Helm chart locally.
 
 ## Installing for Production
 
-Pull the chart locally and review the `values.production.yaml` file for a list of values that will be used for production.
+Pull the chart locally and review the `values-production.yaml` file for a list of values that will be used for production.
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia --untar
 ```
@@ -52,9 +52,9 @@ helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia --untar
 Create a Turbinia GCP account using the helper script in `tools/create-gcp-sa.sh` prior to installing the chart. 
 
 Install the chart providing both the original values and the production values,
-and required GCP values with a release name `my-release`:
+and required GCP values then pick a release name such as `turbinia-prod`:
 ```console
-helm install my-release ../turbinia \
+helm install turbinia-prod ../turbinia \
     -f values.yaml -f values-production.yaml \
     --set gcp.project=true \
     --set gcp.projectID=<GCP_PROJECT_ID> \
@@ -64,7 +64,7 @@ helm install my-release ../turbinia \
 
 To upgrade an existing release with production values, externally expose Turbinia through a load balancer with GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
 ```console
-helm upgrade my-release \
+helm upgrade turbinia-prod \
     -f values.yaml -f values-production.yaml \
     --set ingress.enabled=true
     --set ingress.host=<DOMAIN>
@@ -83,19 +83,18 @@ helm upgrade my-release \
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release` deployment:
-
+To uninstall/delete a Helm deployment with a release name of `turbinia-release`:
 ```console
-helm delete my-release
+helm delete turbinia-release
 ```
-> **Tip**: List all releases using `helm list`
+> **Tip**: Please update based on the release name chosen. You can list all releases using `helm list`
 
 The command removes all the Kubernetes components but Persistent Volumes (PVC) associated with the chart and deletes the release.
 
-To delete the PVC's associated with `my-release`:
+To delete the PVC's associated with a release name of `turbinia-release`:
 
 ```console
-kubectl delete pvc -l release=my-release
+kubectl delete pvc -l release=turbinia-release
 ```
 
 > **Note**: Deleting the PVC's will delete Turbinia data as well. Please be cautious before doing it.

@@ -19,9 +19,12 @@ dependencies:
   version: 3.6.1
   repository: https://charts.bitnami.com/bitnami
 maintainers:
-  - name: wajihyassine
-  - name: aaronpeterson
+  - name: Wajih Yassine
+    url: https://github.com/wajihyassine
+  - name: Aaron Peterson
+    url: https://github.com/aarontp
   - name: hacktobeer
+    url: https://github.com/hacktobeer
 sources:
 - https://github.com/google/turbinia
 icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
