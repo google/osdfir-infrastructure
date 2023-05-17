@@ -40,7 +40,7 @@ chart locally and adding a `configs/` directory at the root of the Helm chart wi
 
 ## Installing for Production
 
-Pull the chart locally and review the `values-production.yaml` file for a list of values that will be used for production.
+Pull the chart locally then cd into `/timesketch` and review the `values-production.yaml` file for a list of values that will be used for production.
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
 ```

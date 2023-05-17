@@ -58,7 +58,7 @@ server:
   securityContext: {}
   ## Turbinia Server resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a this choice for the user in order to increase
+  ## We leave the default resources as a choice for the user in order to increase
   ## the chances charts run on environments with little resources, such as Minikube.
   ## If you want to specify resources, uncomment the following lines, adjust them as
   ## necessary, and remove the curly braces after 'resources:'.

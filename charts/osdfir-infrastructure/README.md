@@ -41,7 +41,7 @@ for a recommended production installation.
 
 ## Installing for Production
 
-Pull the chart locally and review the `values-production.yaml` file for a list of values that will be used for production. 
+Pull the chart locally then cd into `/osdfir-infrastructure` and review the `values-production.yaml` file for a list of values that will be used for production. 
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
 ```

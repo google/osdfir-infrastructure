@@ -15,7 +15,7 @@ helm install turbinia-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-cha
 
 ## Introduction
 
-This chart bootstraps a [Turbinia](https://github.com/google/turbinia/blob/master/docker/release/build/Dockerfile-latest) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a [Turbinia](https://github.com/google/turbinia) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 
@@ -23,14 +23,14 @@ This chart bootstraps a [Turbinia](https://github.com/google/turbinia/blob/maste
 - Helm 3.2.0+
 - PV provisioner support in the underlying infrastructure
 
-> **Note**: Currently Turbinia only supports processing of GCP Persistent Disks and Local Evidence. See [GKE Installations](#gke-installations) for deploying to GKE.
+> **Note**: See [GKE Installations](#gke-installations) for deploying to GKE.
 
 ## Installing the Chart
 
 To install the chart, specify any release name of your choice. For example, if you
 want to install the chart for development, you can choose a release name of `turbinia-dev` then run:
 ```console
-helm install turbinia-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
+helm install turbinia-dev oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
 ```
 
 The command deploys Turbinia on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured 
@@ -43,7 +43,7 @@ pull and install the Helm chart locally.
 
 ## Installing for Production
 
-Pull the chart locally and review the `values-production.yaml` file for a list of values that will be used for production.
+Pull the chart locally then cd into `/turbinia` and review the `values-production.yaml` file for a list of values that will be used for production.
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia --untar
 ```
