@@ -1,0 +1,445 @@
+## OSDFIR Infrastructure Helm Chart
+## Please use this Helm chart for deploying Open Source Digital Forensics Tools
+## to a Kubernetes environment. 
+## The following tools are supported in this deployment:
+## - Timesketch; ref https://github.com/google/timesketch
+## - Turbinia; ref https://github.com/google/turbinia
+##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  ## Global Persistence Configuration 
+  ##
+  ## @param global.existingPVC Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)
+  ##
+  existingPVC: osdfirvolume
+  ## @param global.storageClass StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`)
+  ##
+  storageClass: ""
+## @section OSDFIR Infrastructure persistence storage parameters
+##
+persistence:
+  ## @param persistence.enabled Enables persistent volume storage for OSDFIR Infrastructure
+  ##
+  enabled: true
+  ## @param persistence.name OSDFIR Infrastructure persistent volume name
+  ##
+  name: osdfirvolume
+  ## @param persistence.size OSDFIR Infrastructure persistent volume size
+  ##
+  size: 8Gi
+  ## @param persistence.storageClass PVC Storage Class for OSDFIR Infrastructure volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ## 
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for the OSDFIR Infrastructure volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ## 
+  accessModes:
+    - ReadWriteOnce
+## @section Timesketch Configuration
+## The following section covers configuration parameters for Timesketch
+## To see a full list of available values, run helm show values charts/timesketch*
+##
+timesketch:
+  ## @param timesketch.enabled Enables the Timesketch deployment
+  ##
+  enabled: true
+  image:
+    ## @param timesketch.image.repository Timesketch image repository
+    ##
+    repository: us-docker.pkg.dev/osdfir-registry/timesketch/timesketch
+    ## @param timesketch.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: latest
+  config:
+    ## @param timesketch.config.override Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart
+    ## to retrieve the config files from. Please ensure the appropriate configs are in the directory else Timesketch
+    ## may not run properly. To see which config files are required, review the tools/download-timesketch-configs.sh
+    ## script packaged along with this Helm chart.
+    ##
+    override: configs/*
+    ## @param timesketch.config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
+    ##
+    createUser: true
+  frontend:
+    ## Timesketch Frontend resource requests and limits
+    ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+    ## We leave the default resources as a choice for the user in order to increase
+    ## the chances charts run on environments with little resources, such as Minikube.
+    ## If you want to specify resources, uncomment the following lines, adjust them as
+    ## necessary, and remove the curly braces after 'resources:'.
+    ## @param timesketch.frontend.resources.limits The resources limits for the frontend container
+    ## @param timesketch.frontend.resources.requests The requested resources for the frontend container
+    resources:
+      limits: {}
+      requests: {}
+  worker:
+    ## Timesketch Worker resource requests and limits
+    ## @param timesketch.worker.resources.limits The resources limits for the worker container
+    ## @param timesketch.worker.resources.requests.cpu The requested cpu for the worker container
+    ## @param timesketch.worker.resources.requests.memory The requested memory for the worker container
+    ##
+    resources:
+      limits: {}
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  ## @section Timesketch Third Party
+  ## This section contains all the main configuration for third party dependencies
+  ## Timesketch requires to run
+  ##
+  ## @section Opensearch Configuration
+  ## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
+  ## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
+  ## To see a full list of available values, run helm show values charts/opensearch*
+  ##
+  opensearch:
+    ## @param timesketch.opensearch.enabled Enables the Opensearch deployment
+    ##
+    enabled: true
+    ## @param timesketch.opensearch.replicas Number of Opensearch instances to deploy
+    ##
+    replicas: 1
+    persistence:
+      ## @param timesketch.opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
+      ##
+      size: 8Gi
+    ## @param timesketch.opensearch.resources.requests Requested resources for the Opensearch containers
+    ##
+    resources:
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## @section Redis Configuration
+  ## IMPORTANT: Redis is deployed with Auth enabled by default
+  ## To see a full list of available values, run helm show values charts/redis*
+  ##
+  redis:
+    ## @param timesketch.redis.enabled Enables the Redis deployment
+    ##
+    enabled: true
+    ## @param timesketch.redis.nameOverride Overrides the Redis deployment name 
+    ## This is required since Turbinia and Timesketch both use Redis, we need to differentiate the instances.
+    ##
+    nameOverride: timesketch-redis
+    ## Master Redis Service configuration
+    ##
+    master:
+      ## @param timesketch.redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
+      ##
+      count: 1
+      ## Redis master persistence configuration
+      ##
+      persistence:
+        ## @param timesketch.redis.master.persistence.size Redis master Persistent Volume size
+        ##
+        size: 8Gi
+      ## Redis master resource requests and limits
+      ## @param timesketch.redis.master.resources.limits The resources limits for the Redis master containers
+      ## @param timesketch.redis.master.resources.requests The requested resources for the Redis master containers
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        limits: {}
+        ## Example:
+        ## requests:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        requests: {}
+    ## Redis replicas configuration parameters
+    ##
+    replica:
+      ## @param timesketch.redis.replica.replicaCount Number of Redis replicas to deploy
+      ##
+      replicaCount: 0
+      ## Redis replicas persistence configuration
+      ##
+      persistence:
+        ## @param timesketch.redis.replica.persistence.size Redis replica Persistent Volume size
+        ##
+        size: 8Gi
+      ## Redis Replica resource requests and limits
+      ## @param timesketch.redis.replica.resources.limits The resources limits for the Redis replica containers
+      ## @param timesketch.redis.replica.resources.requests The requested resources for the Redis replica containers
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        limits: {}
+        ## Example:
+        ## requests:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        requests: {}
+  ## @section PostgreSQL Configuration
+  ## IMPORTANT: Postgresql is deployed with Auth enabled by default
+  ## To see a full list of available values, run helm show values charts/postgresql*
+  ##
+  postgresql:
+    ## @param timesketch.postgresql.enabled Enables the Postgresql deployment
+    ##
+    enabled: true
+    ## PostgreSQL Primary configuration parameters
+    ##
+    primary:
+      ## PostgreSQL Primary persistence configuration
+      ##
+      persistence:
+        ## @param timesketch.postgresql.primary.persistence.size PostgreSQL Persistent Volume size
+        ##
+        size: 8Gi
+      ## PostgreSQL primary resource requests and limits
+      ## @param timesketch.postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
+      ## @param timesketch.postgresql.primary.resources.requests The requested resources for the PostgreSQL primary containers
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        limits: {}
+        ## Example:
+        ## requests:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        requests: {}
+    ## PostgreSQL read only replica parameters (only used when `architecture` is set to `replication`)
+    ## 
+    readReplicas:
+      ## @param timesketch.postgresql.readReplicas.replicaCount Number of PostgreSQL read only replicas
+      ##
+      replicaCount: 0
+      ## @param timesketch.postgresql.readReplicas.persistence.size PostgreSQL Persistent Volume size
+      ##
+      persistence:
+        size: 8Gi
+      ## PostgreSQL read only resource requests and limits
+      ## @param timesketch.postgresql.readReplicas.resources.limits The resources limits for the PostgreSQL read only containers
+      ## @param timesketch.postgresql.readReplicas.resources.requests The requested resources for the PostgreSQL read only containers
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        limits: {}
+        ## Example:
+        ## requests:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        requests: {}
+## @section Turbinia Configuration
+## The following section covers configuration parameters for Turbinia
+## To see a full list of available values, run helm show values charts/turbinia*
+##
+turbinia:
+  ## @param turbinia.enabled Enables the Turbinia deployment
+  ##
+  enabled: true
+  ##  Turbinia server configuration
+  ##
+  server:
+    image:
+      ## @param turbinia.server.image.repository Turbinia image repository
+      ##
+      repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server
+      ## @param turbinia.server.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+    ## Turbinia Server resource requests and limits
+    ## @param turbinia.server.resources.limits Resource limits for the server container
+    ## @param turbinia.server.resources.requests Requested resources for the server container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## Turbinia Worker Configuration
+  ##
+  worker:
+    image:
+      ## @param turbinia.worker.image.repository Turbinia image repository
+      ##
+      repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker
+      ## @param turbinia.worker.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+    ## Worker autoscaler configuration
+    ## ref https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    ##
+    autoscaling:
+      ## @param turbinia.worker.autoscaling.enabled Enables Turbinia Worker autoscaling
+      ##
+      enabled: true
+      ## @param turbinia.worker.autoscaling.minReplicas Minimum amount of worker pods to run at once
+      ##
+      minReplicas: 5
+      ## @param turbinia.worker.autoscaling.maxReplicas Maximum amount of worker pods to run at once
+      ##
+      maxReplicas: 500
+      ## @param turbinia.worker.autoscaling.targetCPUUtilizationPercentage CPU scaling metric workers will scale based on
+      ##
+      targetCPUUtilizationPercentage: 80
+    ## Turbinia Worker resource requests and limits
+    ## @param turbinia.worker.resources.limits Resources limits for the worker container
+    ## @param turbinia.worker.resources.requests.cpu Requested cpu for the worker container
+    ## @param turbinia.worker.resources.requests.memory Requested memory for the worker container
+    ##
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  ## Turbinia API / Web configuration
+  ##
+  api:
+    image:
+      ## @param turbinia.api.image.repository Turbinia image repository for API / Web server
+      ##
+      repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-api-server
+      ## @param turbinia.api.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+    ## Turbinia API / Web resource requests and limits
+    ## @param turbinia.api.resources.limits Resource limits for the api container
+    ## @param turbinia.api.resources.requests Requested resources for the api container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## Turbinia controller configuration
+  ## The controller is not required to use Turbinia and serves as an extra
+  ## container that can be used for troubleshooting
+  ##
+  controller:
+    ## @param turbinia.controller.enabled If enabled, deploys the Turbinia controller
+    ##
+    enabled: false
+  ## Turbinia configuration parameters
+  ## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
+  ## 
+  config:
+    ## @param turbinia.config.override Overrides the default Turbinia config to instead use a user specified config. Please ensure
+    ## that the config file is either placed in the root of this directory or point the override flag to a path containing
+    ## your config file
+    ##
+    override: turbinia.conf
+    ## @param turbinia.config.disabledJobs List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.
+    disabledJobs: "['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']"
+  ## GCP configuration parameters
+  ## IMPORTANT: Enable GCP when running Turbinia in a GKE cluster
+  ##
+  gcp:
+    ## @param turbinia.gcp.enabled Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks.
+    ##
+    enabled: false
+    ## @param turbinia.gcp.projectID GCP Project ID where your cluster is deployed. Required when `gcp.enabled` is set to true.
+    ## 
+    projectID: ""
+    ## @param turbinia.gcp.projectRegion Region where your cluster is deployed. Required when `gcp.enabled`` is set to true.
+    ##
+    projectRegion: ""
+    ## @param turbinia.gcp.projectZone Zone where your cluster is deployed. Required when `gcp.enabled` is set to true.
+    ##
+    projectZone: ""
+    ## @param turbinia.gcp.gcpLogging Enables GCP Cloud Logging
+    ## ref https://cloud.google.com/logging
+    ##
+    gcpLogging: false
+    ## @param turbinia.gcp.gcpErrorReporting Enables GCP Cloud Error Reporting
+    ## ref https://cloud.google.com/error-reporting/docs/grouping-errors
+    ##
+    gcpErrorReporting: false
+  ## @section Turbinia Third Party
+  ##
+  ## @section Redis Configuration
+  ## IMPORTANT: Redis is deployed with Auth enabled by default
+  ## To see a full list of available values, run helm show values charts/redis*
+  ##
+  redis:
+    ## @param turbinia.redis.enabled Enables the Redis deployment
+    ##
+    enabled: true
+    ## @param turbinia.redis.nameOverride Overrides the Redis deployment name
+    ## This is required since Turbinia and Timesketch both use Redis, we need to differentiate the instances.
+    ##
+    nameOverride: turbinia-redis
+    ## Master Redis Service configuration
+    ##
+    master:
+      ## @param turbinia.redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
+      ##
+      count: 1
+      ## Redis master persistence configuration
+      ##
+      persistence:
+        ## @param turbinia.redis.master.persistence.size Redis master Persistent Volume size
+        ##
+        size: 8Gi
+      ## Redis master resource requests and limits
+      ## @param turbinia.redis.master.resources.limits The resources limits for the Redis master containers
+      ## @param turbinia.redis.master.resources.requests The requested resources for the Redis master containers
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        limits: {}
+        ## Example:
+        ## requests:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        requests: {}
+    ## Redis replicas configuration parameters
+    ##
+    replica:
+      ## @param turbinia.redis.replica.replicaCount Number of Redis replicas to deploy
+      ##
+      replicaCount: 0
+      ## Redis replicas persistence configuration
+      ##
+      persistence:
+        ## @param turbinia.redis.replica.persistence.size Redis replica Persistent Volume size
+        ##
+        size: 8Gi
+      ## Redis Replica resource requests and limits
+      ## @param turbinia.redis.replica.resources.limits The resources limits for the Redis replica containers
+      ## @param turbinia.redis.replica.resources.requests The requested resources for the Redis replica containers
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        limits: {}
+        ## Example:
+        ## requests:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        requests: {}

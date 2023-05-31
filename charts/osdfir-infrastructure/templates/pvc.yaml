@@ -1,0 +1,16 @@
+{{- if (.Values.persistence.enabled) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "osdfir.pvc.name"  . }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  {{- include "osdfir.storage.class" . | nindent 2 }}
+  accessModes:
+    {{- range .Values.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | quote }}
+{{- end }}

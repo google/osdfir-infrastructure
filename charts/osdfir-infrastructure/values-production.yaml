@@ -1,0 +1,635 @@
+## OSDFIR Infrastructure Helm Production Values
+## Please use these values to override the default OSDFIR Infrastructure values with recommended resources and replica counts for production installations
+##
+## @section OSDFIR Infrastructure persistence storage parameters
+##
+persistence:
+  ## @param persistence.enabled Enables persistent volume storage for OSDFIR Infrastructure
+  ##
+  enabled: true
+  ## @param persistence.name OSDFIR Infrastructure persistent volume name
+  ##
+  name: osdfirvolume
+  ## @param persistence.size OSDFIR Infrastructure persistent volume size
+  ##
+  size: 1T
+  ## @param persistence.storageClass PVC Storage Class for OSDFIR Infrastructure volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ## 
+  storageClass: "standard-rwx"
+  ## @param persistence.accessModes PVC Access Mode for the OSDFIR Infrastructure volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ## 
+  accessModes:
+    - ReadWriteMany
+## Timesketch Helm Production Values
+##
+timesketch:
+  ## @section Timesketch Frontend Configuration
+  ##
+  frontend:
+    ## @param frontend.podSecurityContext Holds pod-level security attributes and common frontend container settings
+    ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+    ## e.g.
+    ## fsgroup: 2000
+    ##
+    podSecurityContext: {}
+    ## @param frontend.securityContext Holds security configuration that will be applied to the frontend container
+    ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+    ## e.g.
+    ## capabilities
+    ##   drop:
+    ##   - ALL
+    ## readOnlyRootFilesystem: true
+    ## runAsNonRoot: true
+    ## runAsUser: 1000
+    ##
+    securityContext: {}
+    ## Frontend resource requests and limits
+    ## @param frontend.resources.requests.cpu Requested cpu for the frontend container
+    ## @param frontend.resources.requests.memory Requested memory for the frontend container
+    ## @param frontend.resources.limits.cpu Resource cpu limits for the frontend container
+    ## @param frontend.resources.limits.memory Resource memory limits for the frontend container
+    ##
+    resources:
+      requests:
+        cpu: 2000m
+        memory: 4000Mi
+      limits:
+        cpu: 8000m
+        memory: 16000Mi
+    ## @param frontend.nodeSelector Node labels for Timesketch frontend pods assignment
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: {}
+    ## @param frontend.tolerations Tolerations for Timesketch frontend pods assignment
+    ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    ##
+    tolerations: []
+    ## @param frontend.affinity Affinity for Timesketch frontend pods assignment
+    ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity: {}
+  ## @section Timesketch Worker Configuration
+  ##
+  worker:
+    ## @param worker.podSecurityContext Holds pod-level security attributes and common worker container settings
+    ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+    ## e.g.
+    ## fsgroup: 2000
+    ##
+    podSecurityContext: {}
+    ## @param worker.securityContext Holds security configuration that will be applied to the worker container
+    ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+    ## e.g.
+    ## capabilities
+    ##   drop:
+    ##   - ALL
+    ## readOnlyRootFilesystem: true
+    ## runAsNonRoot: true
+    ## runAsUser: 1000
+    ##
+    securityContext: {}
+    ## Worker resource requests and limits
+    ## @param worker.resources.requests.cpu Requested cpu for the worker container
+    ## @param worker.resources.requests.memory Requested memory for the worker container
+    ## @param worker.resources.limits.cpu Resource cpu limits for the worker container
+    ## @param worker.resources.limits.memory Resource memory limits for the worker container
+    ##
+    resources:
+      requests:
+        cpu: 2000m
+        memory: 4000Mi
+      limits:
+        cpu: 8000m
+        memory: 16000Mi
+    ## @param worker.nodeSelector Node labels for Timesketch worker pods assignment
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: {}
+    ## @param worker.tolerations Tolerations for Timesketch worker pods assignment
+    ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    ##
+    tolerations: []
+    ## @param worker.affinity Affinity for Timesketch worker pods assignment
+    ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity: {}
+  ## @section Third Party Configuration
+  ## This section contains all the main configuration for third party dependencies
+  ## Timesketch requires to run
+  ##
+  ## @section Opensearch Configuration Parameters
+  ## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
+  ## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
+  ## To see a full list of available values, run helm show values charts/opensearch*
+  ##
+  opensearch:
+    ## @param opensearch.enabled Enables the Opensearch deployment
+    ##
+    enabled: true
+    ## @param opensearch.replicas Number of Opensearch instances to deploy
+    ##
+    replicas: 3
+    ## @param opensearch.sysctlInit.enabled Sets optimal sysctl's through privileged initContainer
+    ##
+    sysctlInit:
+      enabled: true
+    ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
+    ## It is recommended to use at least half the system's available ram
+    ## 
+    opensearchJavaOpts: "-Xms64g -Xmx64g"
+    ## @param opensearch.httpPort Opensearch service port
+    ##
+    httpPort: 9200
+    ## Opensearch persistence configuration
+    ##
+    persistence:
+      ## @param opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
+      ##
+      size: 1Ti
+    ## Opensearch resource requests
+    ## @param opensearch.resources.requests.cpu Requested cpu for the Opensearch containers
+    ## @param opensearch.resources.requests.memory Requested memory for the Opensearch containers 
+    ##
+    resources:
+      requests:
+        cpu: 8000m
+        memory: 32Gi
+    ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: {}
+  ## @section Redis Configuration Parameters
+  ## IMPORTANT: Redis is deployed with Auth enabled by default
+  ## To see a full list of available values, run helm show values charts/redis*
+  ##
+  redis:
+    ## @param redis.enabled Enables the Redis deployment
+    ##
+    enabled: true
+    ## @param redis.sentinel.enabled Enables Redis Sentinel on Redis pods
+    ## IMPORTANT: This has not been tested for Timesketch so would leave this disabled
+    ##
+    sentinel:
+      enabled: false
+    ## Master Redis Service configuration
+    ##
+    master:
+      ## @param redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
+      ##
+      count: 1
+      ## Redis master persistence configuration
+      ##
+      persistence:
+        ## @param redis.master.persistence.size Redis master Persistent Volume size
+        ##
+        size: 500Gi
+      ## Redis master resource requests and limits
+      ## @param redis.master.resources.requests.cpu Requested cpu for the Redis master containers
+      ## @param redis.master.resources.requests.memory Requested memory for the Redis master containers 
+      ## @param redis.master.resources.limits.cpu Resource cpu limits for the Redis master containers
+      ## @param redis.master.resources.limits.memory Resource memory limits for the Redis master containers
+      ##
+      resources:
+        requests:
+          cpu: 4000m
+          memory: 8Gi
+        limits:
+          cpu: 8000m
+          memory: 16Gi
+    ## Redis replicas configuration parameters
+    ##
+    replica:
+      ## @param redis.replica.replicaCount Number of Redis replicas to deploy
+      ##
+      replicaCount: 3
+      ## Redis replicas persistence configuration
+      ##
+      persistence:
+        ## @param redis.replica.persistence.size Redis replica Persistent Volume size
+        ##
+        size: 500Gi
+      ## Redis Replica resource requests and limits
+      ## @param redis.replica.resources.requests.cpu Requested cpu for the Redis replica containers
+      ## @param redis.replica.resources.requests.memory Requested memory for the Redis replica containers 
+      ## @param redis.replica.resources.limits.cpu Resource cpu limits for the Redis replica containers
+      ## @param redis.replica.resources.limits.memory Resource memory limits for the Redis replica containers
+      ##
+      resources:
+        requests:
+          cpu: 4000m
+          memory: 8Gi
+        limits:
+          cpu: 8000m
+          memory: 16Gi 
+  ## @section Postgresql Configuration Parameters
+  ## IMPORTANT: Postgresql is deployed with Auth enabled by default
+  ## To see a full list of available values, run helm show values charts/postgresql*
+  ##
+  postgresql:
+    ## @param postgresql.enabled Enables the Postgresql deployment
+    ##
+    enabled: true
+    ## PostgreSQL Primary configuration parameters
+    ##
+    primary:
+      ## PostgreSQL Primary persistence configuration
+      ##
+      persistence:
+        ## @param postgresql.primary.persistence.size PostgreSQL Persistent Volume size
+        ##
+        size: 500Gi
+      ## PostgreSQL Primary resource requests and limits
+      ## @param postgresql.primary.resources.requests.cpu Requested cpu for the PostgreSQL Primary containers
+      ## @param postgresql.primary.resources.requests.memory Requested memory for the PostgreSQL Primary containers
+      ## @param postgresql.primary.resources.limits Resource limits for the PostgreSQL Primary containers
+      ##
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits: {}
+    ## PostgreSQL read only replica parameters (only used when `architecture` is set to `replication`)
+    ## 
+    readReplicas:
+      ## @param postgresql.readReplicas.replicaCount Number of PostgreSQL read only replicas
+      ##
+      replicaCount: 1
+      ## PostgreSQL Persistent Storage configuration
+      ##
+      persistence:
+        ## @param postgresql.readReplicas.persistence.size PostgreSQL Persistent Volume size
+        ##
+        size: 500Gi
+      ## PostgreSQL read only resource requests and limits
+      ## @param postgresql.readReplicas.resources.requests.cpu Requested cpu for the PostgreSQL read only containers
+      ## @param postgresql.readReplicas.resources.requests.memory Requested memory for the PostgreSQL read only containers
+      ## @param postgresql.readReplicas.resources.limits Resource limits for the PostgreSQL read only containers
+      ##
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits: {}
+## Turbinia Helm Production Values
+##
+turbinia:
+  ## @section Turbinia server configuration
+  ##
+  server:
+    image:
+      ## @param server.image.repository Turbinia image repository
+      ##
+      repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server
+      ## @param server.image.pullPolicy Turbinia image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: IfNotPresent
+      ## @param server.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+      ## @param server.image.imagePullSecrets Specify secrets if pulling from a private repository
+      ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.
+      ## imagePullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      imagePullSecrets: []
+    ## @param server.podSecurityContext Holds pod-level security attributes and common server container settings
+    ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+    ## e.g.
+    ## fsgroup: 2000
+    ##
+    podSecurityContext: {}
+    ## @param server.securityContext Holds security configuration that will be applied to the server container
+    ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+    ## e.g.
+    ## capabilities
+    ##   drop:
+    ##   - ALL
+    ## readOnlyRootFilesystem: true
+    ## runAsNonRoot: true
+    ## runAsUser: 1000
+    ##
+    securityContext: {}
+    ## Turbinia Server resource requests and limits
+    ## @param server.resources.requests.cpu The requested cpu for the server container
+    ## @param server.resources.requests.memory The requested memory for the server container
+    ## @param server.resources.limits.cpu The resources cpu limits for the server container
+    ## @param server.resources.limits.memory The resources memory limits for the server container
+    ##
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2000Mi
+      limits:
+        cpu: 8000m
+        memory: 16000Mi
+    ## @param server.nodeSelector Node labels for Turbinia server pods assignment
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: {}
+    ## @param server.tolerations Tolerations for Turbinia server pods assignment
+    ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    ##
+    tolerations: []
+    ## @param server.affinity Affinity for Turbinia server pods assignment
+    ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity: {}
+  ## @section Turbinia worker configuration
+  ##
+  worker:
+    image:
+      ## @param worker.image.repository Turbinia image repository
+      ##
+      repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker
+      ## @param worker.image.pullPolicy Turbinia image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: IfNotPresent
+      ## @param worker.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+      ## @param worker.image.imagePullSecrets Specify secrets if pulling from a private repository
+      ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.
+      ## imagePullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      imagePullSecrets: []
+    ## @param worker.replicaCount Number of worker pods to run at once
+    ## Disabled if the value worker.autoscaling.enabled is enabled.
+    replicaCount: 5
+    ## Worker autoscaler configuration
+    ## ref https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    ##
+    autoscaling:
+      ## @param worker.autoscaling.enabled Enables Turbinia Worker autoscaling
+      ##
+      enabled: true
+      ## @param worker.autoscaling.minReplicas Minimum amount of worker pods to run at once
+      ##
+      minReplicas: 5
+      ## @param worker.autoscaling.maxReplicas Maximum amount of worker pods to run at once
+      ##
+      maxReplicas: 500
+      ## @param worker.autoscaling.targetCPUUtilizationPercentage CPU scaling metric workers will scale based on
+      ##
+      targetCPUUtilizationPercentage: 80
+    ## @param worker.podSecurityContext Holds pod-level security attributes and common worker container settings
+    ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+    ## e.g.
+    ## fsgroup: 2000
+    ##
+    podSecurityContext: {}
+    ## Worker Security Context Configuration
+    ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+    ##
+    securityContext:
+      ## @param worker.securityContext.privileged Runs the container as priveleged. Due to Turbinia attaching and detaching disks, a priveleged container is required for the worker container.
+      ##
+      privileged: true
+    ## Turbinia Worker resource requests and limits
+    ## @param worker.resources.requests.cpu The requested cpu for the worker container
+    ## @param worker.resources.requests.memory The requested memory for the worker container
+    ## @param worker.resources.limits.cpu The resources cpu limits for the worker container
+    ## @param worker.resources.limits.memory The resources memory limits for the worker container
+    ##
+    resources:
+      requests:
+        cpu: 1500m
+        memory: 2048Mi
+      limits:
+        cpu: 31000m
+        memory: 65536Mi
+    ## @param worker.nodeSelector Node labels for Turbinia worker pods assignment
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: {}
+    ## @param worker.tolerations Tolerations for Turbinia worker pods assignment
+    ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    ##
+    tolerations: []
+    ## @param worker.affinity Affinity for Turbinia worker pods assignment
+    ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity: {}
+  ## @section Turbinia API / Web configuration
+  ##
+  api:
+    image:
+      ## @param api.image.repository Turbinia image repository for API / Web server
+      ##
+      repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-api-server
+      ## @param api.image.pullPolicy Turbinia image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: IfNotPresent
+      ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+      ## @param api.image.imagePullSecrets Specify secrets if pulling from a private repository
+      ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.
+      ## imagePullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      imagePullSecrets: []
+    ## API podSecurity Context configuration
+    ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+    ## e.g.
+    ## fsgroup: 2000
+    ##
+    podSecurityContext:
+      seccompProfile:
+        ## @param api.podSecurityContext.seccompProfile.type Deploys the default seccomp profile to the container
+        ##
+        type: RuntimeDefault
+    ## @param api.securityContext Holds security configuration that will be applied to the API / Web container
+    ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+    ## e.g.
+    ## capabilities
+    ##   drop:
+    ##   - ALL
+    ## readOnlyRootFilesystem: true
+    ## runAsNonRoot: true
+    ## runAsUser: 1000
+    ##
+    securityContext: {}
+    ## Turbinia API / Web resource requests and limits
+    ## @param api.resources.requests.cpu The requested cpu for the frontend container
+    ## @param api.resources.requests.memory The requested memory for the frontend container
+    ## @param api.resources.limits.cpu The resources cpu limits for the frontend container
+    ## @param api.resources.limits.memory The resources memory limits for the frontend container
+    ##
+    resources:
+      requests:
+        cpu: 2000m
+        memory: 4000Mi
+      limits:
+        cpu: 8000m
+        memory: 16000Mi
+    ## @param api.nodeSelector Node labels for Turbinia api pods assignment
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: {}
+    ## @param api.tolerations Tolerations for Turbinia api pods assignment
+    ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    ##
+    tolerations: []
+    ## @param api.affinity Affinity for Turbinia api pods assignment
+    ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity: {}
+  ## @section Turbinia controller configuration
+  ## The controller is not required to use Turbinia and serves as an extra
+  ## container that can be used for troubleshooting
+  ##
+  controller:
+    ## @param controller.enabled If enabled, deploys the Turbinia controller
+    ##
+    enabled: false
+    image:
+      ## @param controller.image.repository Turbinia image repository for the Turbinia controller
+      ##
+      repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-controller
+      ## @param controller.image.pullPolicy Turbinia image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: IfNotPresent
+      ## @param controller.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+      ## @param controller.image.imagePullSecrets Specify secrets if pulling from a private repository
+      ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.
+      ## imagePullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      imagePullSecrets: []
+    ## @param controller.podSecurityContext Holds pod-level security attributes and common API / Web container settings
+    ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+    ## e.g.
+    ## fsgroup: 2000
+    ##
+    podSecurityContext: {}
+    ## @param controller.securityContext Holds security configuration that will be applied to the API / Web container
+    ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
+    ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+    ## e.g.
+    ## capabilities
+    ##   drop:
+    ##   - ALL
+    ## readOnlyRootFilesystem: true
+    ## runAsNonRoot: true
+    ## runAsUser: 1000
+    ##
+    securityContext: {}
+    ## Turbinia controller resource requests and limits
+    ## @param controller.resources.requests.cpu The requested cpu for the controller container
+    ## @param controller.resources.requests.memory The requested memory for the controller container
+    ## @param controller.resources.limits.cpu The resources cpu limits for the controller container
+    ## @param controller.resources.limits.memory The resources memory limits for the controller container
+    ##
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2000Mi
+      limits:
+        cpu: 4000m
+        memory: 4000Mi
+    ## @param controller.nodeSelector Node labels for Turbinia controller pods assignment
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: {}
+    ## @param controller.tolerations Tolerations for Turbinia controller pods assignment
+    ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    ##
+    tolerations: []
+    ## @param controller.affinity Affinity for Turbinia controller pods assignment
+    ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity: {}
+  ## @section Third Party Configuration
+  ##
+  ## @section Redis configuration parameters
+  ## IMPORTANT: Redis is deployed with Auth enabled by default
+  ## To see a full list of available values, run helm show values charts/redis*
+  ##
+  redis:
+    ## @param redis.enabled enabled Enables the Redis deployment
+    ##
+    enabled: true
+    ## @param redis.sentinel.enabled Enables Redis Sentinel on Redis pods
+    ## IMPORTANT: This has not been tested for Turbinia so would leave this disabled
+    ##
+    sentinel:
+      enabled: false
+    ## Master Redis Service configuration
+    ##
+    master:
+      ## @param redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
+      ##
+      count: 1
+      ## Redis master persistence configuration
+      ##
+      persistence:
+        ## @param redis.master.persistence.size Persistent Volume size
+        ##
+        size: 500Gi
+      ## Redis master resource requests and limits
+      ## @param redis.master.resources.requests.cpu The requested cpu for the Redis master containers
+      ## @param redis.master.resources.requests.memory The requested memory for the Redis master containers 
+      ## @param redis.master.resources.limits.cpu The resources cpu limits for the Redis master containers
+      ## @param redis.master.resources.limits.memory The resources memory limits for the Redis master containers
+      ##
+      resources:
+        requests:
+          cpu: 4000m
+          memory: 500Gi
+        limits:
+          cpu: 8000m
+          memory: 16Gi
+    ## Redis replicas configuration parameters
+    ##
+    replica:
+      ## @param redis.replica.replicaCount Number of Redis replicas to deploy
+      ##
+      replicaCount: 3
+      ## Redis replicas persistence configuration
+      ##
+      persistence:
+        ## @param redis.replica.persistence.size Persistent Volume size
+        ##
+        size: 500Gi
+      ## Redis Replica resource requests and limits
+      ## @param redis.replica.resources.requests.cpu The requested cpu for the Redis replica containers
+      ## @param redis.replica.resources.requests.memory The requested memory for the Redis replica containers 
+      ## @param redis.replica.resources.limits.cpu The resources cpu limits for the Redis replica containers
+      ## @param redis.replica.resources.limits.memory The resources memory limits for the Redis replica containers
+      ##
+      resources:
+        requests:
+          cpu: 4000m
+          memory: 8Gi
+        limits:
+          cpu: 8000m
+          memory: 16Gi

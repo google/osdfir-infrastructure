@@ -1,0 +1,16 @@
+{{- if not (.Values.global.existingPVC) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "timesketch.pvc.name"  . }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  {{- include "timesketch.storage.class" . | nindent 2 }}
+  accessModes:
+    {{- range .Values.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | quote }}
+{{- end }}

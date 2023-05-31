@@ -1,0 +1,22 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+To connect to the Timesketch UI, run:
+
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "timesketch.fullname" .Subcharts.timesketch }} {{ .Values.timesketch.service.port }}:{{ .Values.timesketch.service.port }}
+  $ echo "Visit http://127.0.0.1:{{ .Values.timesketch.service.port }} to access Timesketch"
+
+{{ if .Values.timesketch.config.createUser -}}
+Login to Timesketch with the User `timesketch`. To get your password run:
+  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ include "timesketch.fullname" .Subcharts.timesketch }}-secret -o jsonpath="{.data.timesketch-user}" | base64 -d
+{{- end }}
+
+To connect to the Turbinia UI, run:
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "turbinia.fullname" .Subcharts.turbinia }} {{ .Values.turbinia.service.port }}:{{ .Values.turbinia.service.port }}
+  $ echo "Visit http://127.0.0.1:{{ .Values.turbinia.service.port }} to access the Turbinia Web UI"
