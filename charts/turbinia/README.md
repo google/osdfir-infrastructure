@@ -212,6 +212,7 @@ kubectl delete pvc -l release=turbinia-release
 | `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                                                                                                           | `gce`                                                                                        |
 | `ingress.gcp.managedCertificates` | Enabled GCP managed certificates for your domain                                                                                                                                                                     | `false`                                                                                      |
 | `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP                                                                                                                                                                    | `""`                                                                                         |
+| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address                                                                                   | `""`                                                                                         |
 
 ### Third Party Configuration
 
