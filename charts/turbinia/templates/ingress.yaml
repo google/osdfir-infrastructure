@@ -37,3 +37,39 @@ spec:
       port:
         number: {{ .Values.oauth2proxy.service.port }} # Should match the port used by the Service
 {{- end }}
+{{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:  {{ include "turbinia.fullname" . }}-ingress-ipv6
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "turbinia.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    {{- if .Values.ingress.gcp.managedCertificates }}
+    networking.gke.io/managed-certificates: {{ include "turbinia.fullname" . }}-managed-ssl
+    {{- end }}
+    {{- if (eq .Values.ingress.className "gce") }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPV6Name }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "turbinia.fullname" . }}-frontend-config
+    {{- end }}
+spec:
+  rules:
+    - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-oauth2proxy
+                port:
+                  number: {{ .Values.oauth2proxy.service.port }}
+  defaultBackend:
+    service:
+      name: {{ .Release.Name }}-oauth2proxy # Name of the Service targeted by the Ingress
+      port:
+        number: {{ .Values.oauth2proxy.service.port }} # Should match the port used by the Service
+{{- end }}

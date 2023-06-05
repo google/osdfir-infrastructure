@@ -435,6 +435,10 @@ ingress:
     ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
     ##
     staticIPName: ""
+    ## @param ingress.gcp.staticIPV6Name Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address
+    ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
+    ##
+    staticIPV6Name: ""
 ## @section Third Party Configuration
 ##
 ## @section Redis configuration parameters

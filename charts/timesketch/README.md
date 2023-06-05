@@ -131,26 +131,27 @@ kubectl delete pvc -l release=timesketch-release
 
 ### Common Parameters
 
-| Name                              | Description                                                                                       | Value               |
-| --------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------- |
-| `nameOverride`                    | String to partially override names.fullname                                                       | `""`                |
-| `fullnameOverride`                | String to fully override names.fullname                                                           | `""`                |
-| `serviceAccount.create`           | Specifies whether a service account should be created                                             | `true`              |
-| `serviceAccount.annotations`      | Annotations to add to the service account                                                         | `{}`                |
-| `serviceAccount.name`             | The name of the service account to use                                                            | `timesketch`        |
-| `service.type`                    | Timesketch service type                                                                           | `ClusterIP`         |
-| `service.port`                    | Timesketch service port                                                                           | `5000`              |
-| `metrics.enabled`                 | Enables metrics scraping                                                                          | `true`              |
-| `metrics.port`                    | Port to scrape metrics from                                                                       | `9200`              |
-| `persistence.name`                | Timesketch persistent volume name                                                                 | `timesketchvolume`  |
-| `persistence.size`                | Timesketch persistent volume size                                                                 | `8Gi`               |
-| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                           | `""`                |
-| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                             | `["ReadWriteOnce"]` |
-| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                            | `false`             |
-| `ingress.host`                    | Domain name Timesketch will be hosted under                                                       | `""`                |
-| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                        | `gce`               |
-| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                  | `false`             |
-| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP. Required when using "gce" in ingress.className | `""`                |
+| Name                              | Description                                                                                                                        | Value               |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `nameOverride`                    | String to partially override names.fullname                                                                                        | `""`                |
+| `fullnameOverride`                | String to fully override names.fullname                                                                                            | `""`                |
+| `serviceAccount.create`           | Specifies whether a service account should be created                                                                              | `true`              |
+| `serviceAccount.annotations`      | Annotations to add to the service account                                                                                          | `{}`                |
+| `serviceAccount.name`             | The name of the service account to use                                                                                             | `timesketch`        |
+| `service.type`                    | Timesketch service type                                                                                                            | `ClusterIP`         |
+| `service.port`                    | Timesketch service port                                                                                                            | `5000`              |
+| `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
+| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `9200`              |
+| `persistence.name`                | Timesketch persistent volume name                                                                                                  | `timesketchvolume`  |
+| `persistence.size`                | Timesketch persistent volume size                                                                                                  | `8Gi`               |
+| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                            | `""`                |
+| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                              | `["ReadWriteOnce"]` |
+| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                             | `false`             |
+| `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                        | `""`                |
+| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `gce`               |
+| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                   | `false`             |
+| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP. Required when using "gce" in ingress.className                                  | `""`                |
+| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address | `""`                |
 
 ### Third Party Configuration
 
