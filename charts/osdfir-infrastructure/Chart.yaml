@@ -28,6 +28,8 @@ maintainers:
     url: https://github.com/aarontp
   - name: hacktobeer
     url: https://github.com/hacktobeer
+  - name: Juan Leaniz
+    url: https://github.com/jleaniz
 sources:
 - https://github.com/google/osdfir-infrastructure
 - https://github.com/google/turbinia
