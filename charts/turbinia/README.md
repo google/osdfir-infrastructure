@@ -80,6 +80,10 @@ helm upgrade turbinia-prod \
     --set oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-oauth2-backend-config\"\}\}"
 ```
 
+> **Warning**: Turbinia relies on the Oauth2 Proxy for authentication. If you
+plan to expose Turbinia with a public facing IP, it is highly recommended that
+the Oauth2 Proxy is deployed alongside with the command provided above.
+
 ## Uninstalling the Chart
 
 To uninstall/delete a Helm deployment with a release name of `turbinia-release`:
