@@ -27,6 +27,7 @@ spec:
           - path: /
             pathType: Prefix
             backend:
+              service:
                 {{- if .Values.oauth2proxy.enabled }}
                 name: {{ .Release.Name }}-oauth2proxy
                 port:
@@ -74,6 +75,7 @@ spec:
           - path: /
             pathType: Prefix
             backend:
+              service:
                 {{- if .Values.oauth2proxy.enabled }}
                 name: {{ .Release.Name }}-oauth2proxy
                 port:
