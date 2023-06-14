@@ -356,32 +356,32 @@ turbinia:
   ## Turbinia ingress parameters
   ##
   ingress:
-    ## @param ingress.enabled Enable the Turbinia loadbalancer for external access
+    ## @param turbinia.ingress.enabled Enable the Turbinia loadbalancer for external access
     ##
     enabled: false
-    ## @param ingress.host The domain name Turbinia will be hosted under
+    ## @param turbinia.ingress.host The domain name Turbinia will be hosted under
     ## Please ensure this value is set when enabling Ingress. If using "gce" for
     ## ingress.className, please ensure you have a DNS record set for the IP address
     ## registered under ingress.gcp.staticIPName
     ##
     host: ""
-    ## @param ingress.className IngressClass that will be be used to implement the Ingress
+    ## @param turbinia.ingress.className IngressClass that will be be used to implement the Ingress
     ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
     ##
     className: "gce"
     ## GCP ingress configuration
     ##
     gcp:
-      ## @param ingress.gcp.managedCertificates Enabled GCP managed certificates for your domain
+      ## @param turbinia.ingress.gcp.managedCertificates Enabled GCP managed certificates for your domain
       ## ref https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs
       ##
       managedCertificates: false
-      ## @param ingress.gcp.staticIPName Name of the static IP address you reserved in GCP
+      ## @param turbinia.ingress.gcp.staticIPName Name of the static IP address you reserved in GCP
       ## This is required when using "gce" in ingress.className
       ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
       ##
       staticIPName: ""
-      ## @param ingress.gcp.staticIPV6Name Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address
+      ## @param turbinia.ingress.gcp.staticIPV6Name Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address
       ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
       ##
       staticIPV6Name: ""
