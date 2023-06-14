@@ -77,7 +77,7 @@ helm upgrade turbinia-prod \
     --set oauth2proxy.configuration.redirectUrl=https://<DOMAIN>/oauth2/callback
     --set oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\}
     --set oauth2proxy.service.annotations."cloud\.google\.com/neg=\{\"ingress\": true\}" \
-    --set oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-oauth2-backend-config\"\}\}"
+    --set oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-backend-config\"\}\}"
 ```
 
 > **Warning**: Turbinia relies on the Oauth2 Proxy for authentication. If you
