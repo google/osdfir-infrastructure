@@ -27,15 +27,26 @@ spec:
           - path: /
             pathType: Prefix
             backend:
-              service:
+                {{- if .Values.oauth2proxy.enabled }}
                 name: {{ .Release.Name }}-oauth2proxy
                 port:
                   number: {{ .Values.oauth2proxy.service.port }}
+                {{- else }}
+                name: {{ include "turbinia.fullname" . }}-api
+                port:
+                  number: {{ .Values.service.port }}
+                {{- end }}
   defaultBackend:
     service:
+      {{- if .Values.oauth2proxy.enabled }} 
       name: {{ .Release.Name }}-oauth2proxy # Name of the Service targeted by the Ingress
       port:
         number: {{ .Values.oauth2proxy.service.port }} # Should match the port used by the Service
+      {{- else }}
+      name: {{ include "turbinia.fullname" . }}-api
+      port:
+        number: {{ .Values.service.port }}
+      {{- end }}
 {{- end }}
 {{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
 ---
@@ -73,14 +84,14 @@ spec:
                   number: {{ .Values.service.port }}
                 {{- end }}
   defaultBackend:
-    {{- if .Values.oauth2proxy.enabled }}
     service:
+      {{- if .Values.oauth2proxy.enabled }} 
       name: {{ .Release.Name }}-oauth2proxy # Name of the Service targeted by the Ingress
       port:
         number: {{ .Values.oauth2proxy.service.port }} # Should match the port used by the Service
-    {{- else }}
-    name: {{ include "turbinia.fullname" . }}-api
-    port:
-      number: {{ .Values.service.port }}
-    {{- end }}
+      {{- else }}
+      name: {{ include "turbinia.fullname" . }}-api
+      port:
+        number: {{ .Values.service.port }}
+      {{- end }}
 {{- end }}
