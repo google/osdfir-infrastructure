@@ -25,6 +25,8 @@ maintainers:
     url: https://github.com/aarontp
   - name: hacktobeer
     url: https://github.com/hacktobeer
+  - name: Juan Leaniz
+    url: https://github.com/jleaniz
 sources:
 - https://github.com/google/turbinia
 icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
