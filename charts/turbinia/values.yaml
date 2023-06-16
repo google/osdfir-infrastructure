@@ -331,13 +331,13 @@ gcp:
   ## @param gcp.enabled Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks.
   ##
   enabled: false
-  ## @param gcp.projectID GCP Project ID where your cluster is deployed. Required when `gcp.enabled` is set to true.
+  ## @param gcp.projectID GCP Project ID where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
   ## 
   projectID: ""
-  ## @param gcp.projectRegion Region where your cluster is deployed. Required when `gcp.enabled`` is set to true.
+  ## @param gcp.projectRegion Region where your cluster is deployed. Required when `.Values.gcp.enabled`` is set to `true`
   ##
   projectRegion: ""
-  ## @param gcp.projectZone Zone where your cluster is deployed. Required when `gcp.enabled` is set to true.
+  ## @param gcp.projectZone Zone where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
   ##
   projectZone: ""
   ## @param gcp.gcpLogging Enables GCP Cloud Logging
@@ -361,7 +361,7 @@ serviceAccount:
   ## If not set and create is true, a name is generated using the fullname template
   ##
   name: "turbinia"
-  ## @param serviceAccount.gcpName The name of the GCP service account to annotate with the Kubernetes service account
+  ## @param serviceAccount.gcpName The name of the GCP service account to annotate. Applied only if `.Values.gcp.enabled` is set to `true`
   ##
   gcpName: "turbinia"
 ## Turbinia service parameters
