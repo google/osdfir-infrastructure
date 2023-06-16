@@ -2,7 +2,7 @@
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
-  name: "{{ .Release.Name }}-backend-config"
+  name: "{{ .Release.Name }}-healthcheck"
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "turbinia.labels" . | nindent 4 }}
@@ -19,6 +19,6 @@ spec:
     port: 4180
     {{- else }}
     requestPath: /web
-    port: 8000
+    port: {{ .Values.service.port }}
     {{- end }}
 {{- end }}

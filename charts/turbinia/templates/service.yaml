@@ -5,7 +5,7 @@ metadata:
   {{- if and (.Values.ingress.enabled) (not .Values.oauth2proxy.enabled) }}
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
-    cloud.google.com/backend-config: '{"ports": {"8000": "{{ .Release.Name }}-backend-config"}}'
+    cloud.google.com/backend-config: '{"ports": {"{{ .Values.service.port }}": "{{ .Release.Name }}-backend-config"}}'
   {{- end }}
   labels:
     {{- include "turbinia.labels" . | nindent 4 }}
