@@ -24,3 +24,7 @@ For more information on how to install and configure OSDFIR Infrastructure or in
 - [OSDFIR Infrastructure Install Guide](charts/osdfir-infrastructure/README.md)
 - [Timesketch Install Guide](charts/timesketch/README.md)
 - [Turbinia Install Guide](charts/turbinia/README.md)
+
+##### Obligatory Fine Print
+This is not an official Google product (experimental or otherwise), it is just
+code that happens to be owned by Google.
