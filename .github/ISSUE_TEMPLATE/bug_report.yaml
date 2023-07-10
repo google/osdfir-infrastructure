@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
-        
+
         Please fill in as much of the following form as you're able.
   - type: input
     attributes:
@@ -20,9 +20,8 @@ body:
       label: What environment are you using?
       description: Choose the environment where the containers are executed
       options:
-        - GCP
+        - GKE
         - Minikube
-        - Local Kubernetes
   - type: textarea
     attributes:
       label: What steps will reproduce the bug?

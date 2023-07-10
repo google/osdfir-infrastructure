@@ -2,7 +2,6 @@
  Thank you for contributing! Before you open the request please review the following guidelines and tips to help it be more easily integrated:
 
  - Describe what the change does.
- - Describe any known limitations with your change.
  - Please run any tests that can exercise your modified code.
  - Please have an issue created and ready to be linked to the PR. 
  -->
@@ -10,14 +9,6 @@
 ### Description of the change
 
 <!-- Describe what the change does. -->
-
-### Benefits
-
-<!-- What benefits will be realized by the code change? -->
-
-### Possible drawbacks
-
-<!-- Describe any known limitations with your change -->
 
 ### Applicable issues
 
