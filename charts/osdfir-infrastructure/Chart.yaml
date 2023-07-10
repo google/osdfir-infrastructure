@@ -28,13 +28,10 @@ maintainers:
     url: https://github.com/aarontp
   - name: hacktobeer
     url: https://github.com/hacktobeer
-  - name: Juan Leaniz
-    url: https://github.com/jleaniz
 sources:
 - https://github.com/google/osdfir-infrastructure
 - https://github.com/google/turbinia
 - https://github.com/google/timesketch
-icon: https://raw.githubusercontent.com/google/timesketch/master/timesketch/frontend-ng/dist/timesketch-color.png
 appVersion: "0.1.0"
 annotations:
   category: Security
