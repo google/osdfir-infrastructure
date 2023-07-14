@@ -24,3 +24,12 @@ To connect to the Turbinia UI, run:
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "turbinia.fullname" .Subcharts.turbinia }} {{ .Values.turbinia.service.port }}:{{ .Values.turbinia.service.port }}
   $ echo "Visit http://127.0.0.1:{{ .Values.turbinia.service.port }} to access the Turbinia Web UI"
 {{- end }}
+
+Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:
+  $ git clone https://github.com/log2timeline/dftimewolf && cd dftimewolf
+  $ pip3 install poetry
+  $ poetry install && poetry shell
+  $ dftimewolf -h
+  $ Use the Timesketch credentials provided in this chart when prompted.
+  Common examples used with this chart:
+    $ dftimewolf gcp_turbinia_disk_copy_ts <source_project_name> <analysis_project_name> --all_disks --create_analysis_vm --incident_id <xyz>
