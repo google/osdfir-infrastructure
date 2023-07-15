@@ -6,6 +6,7 @@ Currently, OSDFIR Infrastructure
 supports the deployment of the following tools:
   * Timesketch; ref https://github.com/google/timesketch
   * Turbinia; ref https://github.com/google/turbinia
+  * dfTimewolf integration; ref https://github.com/log2timeline/dftimewolf
 
 ## Installing the Charts
 To get started, ensure you have [Helm](https://helm.sh) installed and are 
