@@ -31,5 +31,3 @@ Run the following commands on your workstation to orchestrate collection and pro
   $ poetry install && poetry shell
   $ dftimewolf -h
   $ Use the Timesketch credentials provided in this chart when prompted.
-  Common examples used with this chart:
-    $ dftimewolf gcp_turbinia_disk_copy_ts <source_project_name> <analysis_project_name> --all_disks --create_analysis_vm --incident_id <xyz>
