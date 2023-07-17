@@ -38,7 +38,7 @@ CLUSTER_MACHINE_TYPE='e2-standard-32'
 CLUSTER_MACHINE_SIZE='200'
 # The Turbinia service account name. If you update this name, please be sure to
 # to update the `turbinia.gcp.ServiceAccountName` value in the Helm chart.
-SA_NAME="turbiniaosdfir"
+SA_NAME="turbinia"
 
 # Help menu
 if [[ "$*" == *--help ||  "$*" == *-h ]] ; then
