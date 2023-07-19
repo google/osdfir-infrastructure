@@ -15,18 +15,18 @@ set -e
 # Please review the section below and update to your preference. The default
 # values are for a production level environment.
 #
-# A unique ID used for the OSDFIR Infrastructure cluster name.
+# A unique ID used for the OSDFIR Infrastructure cluster name
 INSTANCE_ID='osdfir-cluster'
-# The region and zone where Turbinia will run.  Note that Turbinia does
-# not currently support multi-zone operation.
+# The region and zone where the cluster will run. Note that multi-zone clusters
+# are currently not supported.
 ZONE='us-central1-f'
 REGION='us-central1'
 # VPC network to configure the cluster in. This will be automatically created
 # if it does not already exist.
 VPC_NETWORK='default'
-# Control plane IP range for the control pane VPC. Due to the Turbinia
-# cluster being private, this is required for the control pane and cluster
-# to communicate privately.
+# Control pane IP range for the control pane VPC. Due to the cluster being
+# private, this is required for the control pane and cluster to communicate
+# privately.
 VPC_CONTROL_PANE='172.16.0.0/28' # Set to default
 # The cluster name, number of minimum and maximum nodes, machine type and disk 
 # size of the deployed cluster and nodes within it. If you enable --no-node-autoscale
@@ -35,7 +35,7 @@ CLUSTER_NAME='osdfir-cluster'
 CLUSTER_MIN_NODE_SIZE='1'
 CLUSTER_MAX_NODE_SIZE='20'
 CLUSTER_MACHINE_TYPE='e2-standard-32'
-CLUSTER_MACHINE_SIZE='200'
+CLUSTER_DISK_SIZE='200'
 # The Turbinia service account name. If you update this name, please be sure to
 # to update the `turbinia.gcp.ServiceAccountName` value in the Helm chart.
 SA_NAME="turbinia"
@@ -46,8 +46,8 @@ if [[ "$*" == *--help ||  "$*" == *-h ]] ; then
   echo "Options:"
   echo "--no-cluster                   Do not create the cluster"
   echo "--no-node-autoscale            Do not enable Node autoscaling"
-  echo "--no-nat                       Do not deploy the Cloud NAT (use only if you already have a Cloud NAT deployed as it's required by the private cluster to pull third party dependencies.)"
-  echo "--no-turbinia-sa               Do not create a Turbinia GCP service account (use only if disabling the Turbinia deployment in OSDFIR Infrastructure.)"
+  echo "--no-nat                       Do not deploy the Cloud NAT (use only if you already have a Cloud NAT deployed as it's required by the private cluster to pull third party dependencies)"
+  echo "--no-turbinia-sa               Do not create a Turbinia GCP service account (use only if disabling the Turbinia deployment in OSDFIR Infrastructure)"
   exit 1
 fi
 
@@ -81,7 +81,7 @@ fi
 
 # TODO: Do real check to make sure credentials have adequate roles
 if [[ $( gcloud -q --project $DEVSHELL_PROJECT_ID auth list --filter="status:ACTIVE" --format="value(account)" | wc -l ) -eq 0 ]] ; then
-  echo "No gcloud credentials found.  Use 'gcloud auth login' and 'gcloud auth application-default login' to log in"
+  echo "No gcloud credentials found.  Use 'gcloud auth login' or 'gcloud auth application-default login' to log in"
   exit 1
 fi
 
@@ -97,7 +97,7 @@ if [[ "$*" != *--no-turbinia-sa* ]] ; then
       gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member=$SA_MEMBER --role='roles/compute.instanceAdmin'
       gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member=$SA_MEMBER --role='roles/iam.serviceAccountUser'
     else
-      echo "The GCP service account $SA_NAME already exists. Skipping creation..."
+      echo "The Turbinia GCP service account $SA_NAME already exists. Skipping creation..."
     fi
 else
   echo "--no-turbinia-sa specified. Skipping Turbinia GCP service account creation..."
