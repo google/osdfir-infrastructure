@@ -15,3 +15,14 @@ To connect to the Turbinia URL, run:
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-turbinia {{ .Values.service.port }}:{{ .Values.service.port }}
   $ echo "Visit http://127.0.0.1:{{ .Values.service.port }} to access Turbinia"
   {{ end }}
+
+Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:
+  $ git clone https://github.com/log2timeline/dftimewolf && cd dftimewolf
+  $ pip3 install poetry
+  $ poetry install && poetry shell
+  $ dftimewolf -h
+  $ If using Timesketch, use the credentials provided in this chart when prompted
+  {{- if .Values.oauth2proxy.enabled }}
+  $ If using Turbinia with the Oauth2 Proxy, use the command below to generate the necessary config
+    $ kubectl get secret --namespace {{ .Release.Namespace }} {{ include "turbinia.fullname" . }}-secret -o jsonpath="{.data.turbinia-secret}" | base64 -d > ~/.dftimewolf_turbinia_secrets.json
+  {{- end }}

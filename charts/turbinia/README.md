@@ -253,7 +253,7 @@ kubectl delete pvc -l release=turbinia-release
 | `oauth2proxy.configuration.clientID`                               | OAuth client ID for Turbinia Web UI.                                                   | `""`                          |
 | `oauth2proxy.configuration.clientSecret`                           | OAuth client secret for Turbinia Web UI.                                               | `""`                          |
 | `oauth2proxy.configuration.nativeClientID`                         | Native Oauth client ID for Turbinia CLI.                                               | `""`                          |
-| `oauth2proxy.configuration.cookieSecret`                           | OAuth cookie secret (e.g.  openssl rand -base64 32 | head -c 32 | base64)              | `""`                          |
+| `oauth2proxy.configuration.cookieSecret`                           | OAuth cookie secret (e.g.  openssl rand -base64 32)                                    | `""`                          |
 | `oauth2proxy.configuration.content`                                | Default configuration                                                                  | `""`                          |
 | `oauth2proxy.configuration.authenticatedEmailsFile.enabled`        | Enable authenticated emails file                                                       | `true`                        |
 | `oauth2proxy.configuration.authenticatedEmailsFile.content`        | Restricted access list (one email per line)                                            | `""`                          |

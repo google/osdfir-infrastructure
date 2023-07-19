@@ -491,3 +491,91 @@ turbinia:
         ##    cpu: 500m
         ##    memory: 1Gi
         requests: {}
+  ## @section Oauth2 Proxy configuration parameters
+  ## To see a full list of available values, run helm show values charts/oauth2-proxy*
+  ##
+  oauth2proxy:
+    ## @param turbinia.oauth2proxy.enabled Enables the Oauth2 Proxy deployment
+    ##
+    enabled: false
+    ## OAuth2 Proxy service parameters
+    ##
+    service:
+      ## @param turbinia.oauth2proxy.service.type OAuth2 Proxy service type
+      ##
+      type: ClusterIP
+      ## @param turbinia.oauth2proxy.service.port OAuth2 Proxy service HTTP port
+      ##
+      port: 8080
+      ## @param turbinia.oauth2proxy.service.annotations Additional custom annotations for OAuth2 Proxy service
+      ## For GCP deployments, remove `{}` and uncomment annotations below.
+      ##
+      annotations: {}
+      #  cloud.google.com/neg: '{"ingress": true}'
+      #  cloud.google.com/backend-config: '{"ports": {"4180": "{{ .Release.Name }}-backend-config"}}'
+    ## Configuration section
+    ##
+    configuration:
+      ## @param turbinia.oauth2proxy.configuration.turbiniaSvcPort Turbinia service port referenced from `.Values.service.port` to be used in Oauth setup
+      ##
+      turbiniaSvcPort: 8000
+      ## @param turbinia.oauth2proxy.configuration.clientID OAuth client ID for Turbinia Web UI.
+      ##
+      clientID: ""
+      ## @param turbinia.oauth2proxy.configuration.clientSecret OAuth client secret for Turbinia Web UI.
+      ##
+      clientSecret: ""
+      ## @param turbinia.oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI. 
+      ##
+      nativeClientID: ""
+      ## @param turbinia.oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g. openssl rand -base64 32 ) 
+      ##
+      cookieSecret: ""
+      ## Custom configuration file: oauth2_proxy.cfg
+      ## content: |
+      ##   pass_basic_auth = false
+      ##   pass_access_token = true
+      ##
+      ## @param turbinia.oauth2proxy.configuration.content [string] Default configuration
+      ##
+      content: |
+        provider="oidc"
+        oidc_jwks_url="https://accounts.google.com/.well-known/openid-configuration"
+        scope="https://www.googleapis.com/auth/userinfo.email"
+        skip_jwt_bearer_tokens=true
+        force_code_challenge_method='S256'
+        logging_filename = "/tmp/oauth2proxy.log"
+        standard_logging = true
+        request_logging = true
+        auth_logging = true
+        show_debug_on_error=true
+        upstreams=["http://{{ .Release.Name }}-turbinia:{{ .Values.configuration.turbiniaSvcPort }}"]
+        oidc_extra_audiences= {{ default "[]" (printf "['%s']" .Values.configuration.nativeClientID) }}
+      ## Authorize individual email addresses
+      ## @param turbinia.oauth2proxy.configuration.authenticatedEmailsFile.enabled Enable authenticated emails file
+      ## @param turbinia.oauth2proxy.configuration.authenticatedEmailsFile.content Restricted access list (one email per line)
+      ## @param turbinia.oauth2proxy.configuration.authenticatedEmailsFile.existingSecret Secret with the authenticated emails file
+      ##
+      authenticatedEmailsFile:
+        enabled: true
+        ## One email per line
+        ## e.g:
+        ## content: |-
+        ##   name1@domain
+        ##   name2@domain
+        ## If you override the config with restricted_access it will configure a user list within this chart what takes care of the configmap
+        ##
+        content: ""
+        existingSecret: ""
+      ## @param turbinia.oauth2proxy.configuration.oidcIssuerUrl OpenID Connect issuer URL
+      ##
+      oidcIssuerUrl: "https://accounts.google.com"
+      ## @param turbinia.oauth2proxy.configuration.redirectUrl OAuth Redirect URL
+      ##
+      redirectUrl: ""
+    ## Oauth2 Proxy Redis Subchart
+    ##
+    redis:
+      ## @param turbinia.oauth2proxy.redis.enabled Enable Redis for OAuth Session Storage
+      ##
+      enabled: false

@@ -240,6 +240,27 @@ kubectl delete pvc -l release=osdfir-release
 | `turbinia.redis.replica.resources.limits`   | The resources limits for the Redis replica containers                                        | `{}`             |
 | `turbinia.redis.replica.resources.requests` | The requested resources for the Redis replica containers                                     | `{}`             |
 
+### Oauth2 Proxy configuration parameters
+
+| Name                                                                        | Description                                                                            | Value                         |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------- |
+| `turbinia.oauth2proxy.enabled`                                              | Enables the Oauth2 Proxy deployment                                                    | `false`                       |
+| `turbinia.oauth2proxy.service.type`                                         | OAuth2 Proxy service type                                                              | `ClusterIP`                   |
+| `turbinia.oauth2proxy.service.port`                                         | OAuth2 Proxy service HTTP port                                                         | `8080`                        |
+| `turbinia.oauth2proxy.service.annotations`                                  | Additional custom annotations for OAuth2 Proxy service                                 | `{}`                          |
+| `turbinia.oauth2proxy.configuration.turbiniaSvcPort`                        | Turbinia service port referenced from `.Values.service.port` to be used in Oauth setup | `8000`                        |
+| `turbinia.oauth2proxy.configuration.clientID`                               | OAuth client ID for Turbinia Web UI.                                                   | `""`                          |
+| `turbinia.oauth2proxy.configuration.clientSecret`                           | OAuth client secret for Turbinia Web UI.                                               | `""`                          |
+| `turbinia.oauth2proxy.configuration.nativeClientID`                         | Native Oauth client ID for Turbinia CLI.                                               | `""`                          |
+| `turbinia.oauth2proxy.configuration.cookieSecret`                           | OAuth cookie secret (e.g. openssl rand -base64 32 )                                    | `""`                          |
+| `turbinia.oauth2proxy.configuration.content`                                | Default configuration                                                                  | `""`                          |
+| `turbinia.oauth2proxy.configuration.authenticatedEmailsFile.enabled`        | Enable authenticated emails file                                                       | `true`                        |
+| `turbinia.oauth2proxy.configuration.authenticatedEmailsFile.content`        | Restricted access list (one email per line)                                            | `""`                          |
+| `turbinia.oauth2proxy.configuration.authenticatedEmailsFile.existingSecret` | Secret with the authenticated emails file                                              | `""`                          |
+| `turbinia.oauth2proxy.configuration.oidcIssuerUrl`                          | OpenID Connect issuer URL                                                              | `https://accounts.google.com` |
+| `turbinia.oauth2proxy.configuration.redirectUrl`                            | OAuth Redirect URL                                                                     | `""`                          |
+| `turbinia.oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                 | `false`                       |
+
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console
