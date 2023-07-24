@@ -538,9 +538,12 @@ redis:
 oauth2proxy:
   ## @param oauth2proxy.enabled Enables the Oauth2 Proxy deployment
   ##
-  enabled: false
-  ## OAuth2 Proxy service parameters
+  enabled: true
+  ## @param oauth2proxy.containerPort Oauth2 Proxy container port
   ##
+  containerPort: 4180
+  ## OAuth2 Proxy service parameters
+  ## 
   service:
     ## @param oauth2proxy.service.type OAuth2 Proxy service type
     ##
@@ -553,7 +556,7 @@ oauth2proxy:
     ##
     annotations: {}
     #  cloud.google.com/neg: '{"ingress": true}'
-    #  cloud.google.com/backend-config: '{"ports": {"4180": "{{ .Release.Name }}-backend-config"}}'
+    #  cloud.google.com/backend-config: '{"ports": { "{{ .Values.containerPort }}": "{{ .Release.Name }}-backend-config"}}'
   ## Configuration section
   ##
   configuration:
@@ -577,7 +580,7 @@ oauth2proxy:
     ##   pass_basic_auth = false
     ##   pass_access_token = true
     ##
-    ## @param oauth2proxy.configuration.content [string] Default configuration
+    ## @param oauth2proxy.configuration.content [string] Oauth2 proxy configuration. Please see the [official docs](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview) for a list of configurable values
     ##
     content: |
       provider="oidc"
@@ -594,7 +597,7 @@ oauth2proxy:
       oidc_extra_audiences= {{ default "[]" (printf "['%s']" .Values.configuration.nativeClientID) }}
     ## Authorize individual email addresses
     ## @param oauth2proxy.configuration.authenticatedEmailsFile.enabled Enable authenticated emails file
-    ## @param oauth2proxy.configuration.authenticatedEmailsFile.content Restricted access list (one email per line)
+    ## @param oauth2proxy.configuration.authenticatedEmailsFile.content Restricted access list (one email per line). At least one email address is required for the Oauth2 Proxy to properly work
     ## @param oauth2proxy.configuration.authenticatedEmailsFile.existingSecret Secret with the authenticated emails file
     ##
     authenticatedEmailsFile:

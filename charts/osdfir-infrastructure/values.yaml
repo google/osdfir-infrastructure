@@ -498,6 +498,9 @@ turbinia:
     ## @param turbinia.oauth2proxy.enabled Enables the Oauth2 Proxy deployment
     ##
     enabled: false
+    ## @param turbinia.oauth2proxy.containerPort Oauth2 Proxy container port
+    ##
+    containerPort: 4180
     ## OAuth2 Proxy service parameters
     ##
     service:
@@ -512,7 +515,7 @@ turbinia:
       ##
       annotations: {}
       #  cloud.google.com/neg: '{"ingress": true}'
-      #  cloud.google.com/backend-config: '{"ports": {"4180": "{{ .Release.Name }}-backend-config"}}'
+      #  cloud.google.com/backend-config: '{"ports": { "{{ .Values.containerPort }}": "{{ .Release.Name }}-backend-config"}}'
     ## Configuration section
     ##
     configuration:
@@ -536,7 +539,7 @@ turbinia:
       ##   pass_basic_auth = false
       ##   pass_access_token = true
       ##
-      ## @param turbinia.oauth2proxy.configuration.content [string] Default configuration
+      ## @param turbinia.oauth2proxy.configuration.content [string] Oauth2 proxy configuration. Please see the [official docs](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview) for a list of configurable values
       ##
       content: |
         provider="oidc"
@@ -553,7 +556,7 @@ turbinia:
         oidc_extra_audiences= {{ default "[]" (printf "['%s']" .Values.configuration.nativeClientID) }}
       ## Authorize individual email addresses
       ## @param turbinia.oauth2proxy.configuration.authenticatedEmailsFile.enabled Enable authenticated emails file
-      ## @param turbinia.oauth2proxy.configuration.authenticatedEmailsFile.content Restricted access list (one email per line)
+      ## @param turbinia.oauth2proxy.configuration.authenticatedEmailsFile.content Restricted access list (one email per line). At least one email address is required for the Oauth2 Proxy to properly work
       ## @param turbinia.oauth2proxy.configuration.authenticatedEmailsFile.existingSecret Secret with the authenticated emails file
       ##
       authenticatedEmailsFile:
