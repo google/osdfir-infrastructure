@@ -2,13 +2,15 @@
 # OSDFIR Infrastructure Helm Chart
 
 OSDFIR Infrastructure helps setup Open Source
-Digital Forensics tools to Kubernetes clusters using Helm. 
+Digital Forensics tools to Kubernetes clusters using Helm.
 
 Currently, OSDFIR Infrastructure supports the deployment and integration of the
 following tools:
   * Timesketch; ref https://github.com/google/timesketch
   * Turbinia; ref https://github.com/google/turbinia
   * dfTimewolf; ref https://github.com/log2timeline/dftimewolf
+  * Plaso (and related projects such as dfVFS, libyal); ref https://github.com/log2timeline/plaso
+  * Libcloudforensics; ref https://github.com/google/cloud-forensics-utils
 
 ## TL;DR
 
