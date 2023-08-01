@@ -5,5 +5,5 @@ dependencies:
 - name: oauth2-proxy
   repository: https://charts.bitnami.com/bitnami
   version: 3.6.1
-digest: sha256:f6db99c8555e80da1d0c3275c7bae42a16cdd0e237486cf1525d1cbf50ffb48b
-generated: "2023-05-02T20:59:39.052924874Z"
+digest: sha256:29baea1cdda77d2d9f54d328ded2acb4be04b155828a3bcb8f8299cabbd8b214
+generated: "2023-08-01T21:31:30.386568938Z"
