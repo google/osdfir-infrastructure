@@ -22,8 +22,4 @@ Run the following commands on your workstation to orchestrate collection and pro
   $ pip3 install poetry
   $ poetry install && poetry shell
   $ dftimewolf -h
-  $ If using Timesketch, use the credentials provided in this chart when prompted
-  {{- if .Values.oauth2proxy.enabled }}
-  $ If using Turbinia with the Oauth2 Proxy, use the command below to generate the necessary config
-    $ kubectl get secret --namespace {{ .Release.Namespace }} {{ include "turbinia.fullname" . }}-secret -o jsonpath="{.data.turbinia-secret}" | base64 -d > ~/.dftimewolf_turbinia_secrets.json
-  {{- end }}
+  $ To configure with Timesketch, use the credentials provided in this chart when prompted
