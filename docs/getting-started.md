@@ -245,7 +245,7 @@ For detailed information around a given deployment, replacing DEPLOYMENT_NAME
 with the deployment you want to inspect:
 
 ```shell
-kubectl describe deployment DEPLOYMENT_NAME
+$ kubectl describe deployment DEPLOYMENT_NAME
 ```
 
 ##### Monitoring pods
@@ -276,7 +276,7 @@ For detailed information around a given pod, replacing POD_NAME
 with the pod you want to inspect:
 
 ```shell
-kubectl describe pod POD_NAME
+$ kubectl describe pod POD_NAME
 ```
 
 For logs around a given pod, replacing POD_NAME
@@ -286,10 +286,10 @@ with the pod you want to grab logs from:
 $ kubectl logs POD_NAME
 ```
 
-To get a shell directly into the pod, replacing POD_NAME with the pod you want to exec into:
+For a shell directly into the pod, replacing POD_NAME with the pod you want to exec into:
 
 ```shell
-kubectl exec --stdin --tty POD_NAME -- /bin/bash
+$ kubectl exec --stdin --tty POD_NAME -- /bin/bash
 ```
 
 #### Find application credentials
@@ -317,10 +317,10 @@ To uninstall an application, you need to run the *helm uninstall* command. Every
 > TIP: To get the release name, you can run the *helm list* command.
 
 ```shell
-    $ helm uninstall MY_RELEASE
+    $ helm uninstall my-release
 ```
 
-> NOTE: Remember that MY_RELEASE is a placeholder, replace it with the name you have used during the chart installation process.
+> NOTE: Remember that `my-release` is a placeholder, replace it with the name you have used during the chart installation process.
 
 To delete accompanying the Persistent Volumes, run:
 
