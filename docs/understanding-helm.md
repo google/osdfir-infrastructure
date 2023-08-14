@@ -50,7 +50,7 @@ helm install --dry-run --debug ./mychart
 apiVersion: v1
 kind: Service
 metadata:
-name: ice-cream-mychart
+name: chocolate-potato-mychart
 labels:
     chart: "mychart-0.1.0"
 spec:
@@ -61,7 +61,7 @@ ports:
     protocol: TCP
     name: nginx
 selector:
-    app: ice-cream-mychart
+    app: chocolate-potato-mychart
 ...
 ```
 
