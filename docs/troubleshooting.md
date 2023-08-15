@@ -48,7 +48,7 @@ $ kubectl exec -it POD-NAME -- /bin/bash
 
 > TIP: Turbinia logs can be found in `/mnt/turbiniavolume/logs` and Timesketch logs can be found in `/var/log/timesketch`.
 
-When your pod status is *ImagePullBackOff* or *ErrImagePull*, this means that the pod could not run because it could not pull the image. This typically occurs when there is either an invalid Image or the Kubernetes cluster does not have Internet connectivity. Try pulling the image manually on the host using *docker pull*. For example, to manually pull an image from Docker Hub, use the command below by replacing IMAGE with the image ID:
+When your pod status is *ImagePullBackOff* or *ErrImagePull*, this means that the pod could not run because it could not pull the image. This typically occurs when there is either an invalid Image or the Kubernetes cluster does not have Internet connectivity. Try pulling the image manually on the node using *docker pull*. For example, to manually pull an image from Docker Hub, use the command below by replacing IMAGE with the image ID:
 
 ```shell
 $ docker pull IMAGE
@@ -62,7 +62,7 @@ When your pod status is *Init:CrashLoopBackOff* or *Init:Error*, this means that
 $ kubectl logs POD-NAME -c INIT-POD
 ```
 
-> TIP: The respective init container names for Turbinia is `init-turbinia` and for Timesketch is `init-timesketch`.
+> TIP: The respective init container name for Turbinia is `init-turbinia` and for Timesketch is `init-timesketch`.
 
 For more troubleshooting tips, see the official k8s docs for [troubleshooting pods](https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/).
 
@@ -95,13 +95,13 @@ $ kubectl exec -it POD-NAME nslookup SVC-NAME
 
 If the error persists, then [confirm that DNS is enabled for your Kubernetes cluster](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/). Check out the Kubernetes official documentation to learn how to [debug DNS resolution](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/).
 
-Lastly, if the service was attached to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) (Load Balancer), you can check for issues related to the Ingress deployment. To troubleshoot, run the *kubectl get ingress* command to get the name of your ingress. Then, replacing `INGRESS-NAME` placeholder with the Ingress name, run:
+Lastly, if the service was attached to an [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) (Load Balancer), you can check for issues related to the ingress deployment. To troubleshoot, run the *kubectl get ingress* command to get the name of your ingress. Then, replacing `INGRESS-NAME` placeholder with the ingress name, run:
 
 ```shell
 $ kubectl describe ingress INGRESS-NAME
 ```
 
-You should see an output message providing some information including any Ingress issues.
+You should see an output message providing some information including any ingress issues.
 
 For more troubleshooting tips, see the official k8s docs for [troubleshooting services](https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/).
 
@@ -198,3 +198,5 @@ kubectl cp POD-NAME:/tmp/foo /tmp/bar         # Copy /tmp/foo from a remote pod 
 kubectl top pods                              # Show pod usage (cpu/mem)
 kubectl top nodes                             # Show node usage (cpu/mem)
 ```
+
+If you are running into an issue that is not covered in this troubleshooting guide, please file a [bug](https://github.com/google/osdfir-infrastructure/issues/new?assignees=&labels=bug%2Ctriage&projects=&template=bug_report.yaml) and include as much information as possible and we'll take a look.
