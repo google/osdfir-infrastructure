@@ -334,7 +334,7 @@ gcp:
   ## @param gcp.projectID GCP Project ID where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
   ## 
   projectID: ""
-  ## @param gcp.projectRegion Region where your cluster is deployed. Required when `.Values.gcp.enabled`` is set to `true`
+  ## @param gcp.projectRegion Region where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
   ##
   projectRegion: ""
   ## @param gcp.projectZone Zone where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
