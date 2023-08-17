@@ -150,7 +150,7 @@ kubectl delete pvc -l release=my-release
 | `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
 | `metrics.port`                    | Port to scrape metrics from                                                                                                        | `9200`              |
 | `persistence.name`                | Timesketch persistent volume name                                                                                                  | `timesketchvolume`  |
-| `persistence.size`                | Timesketch persistent volume size                                                                                                  | `8Gi`               |
+| `persistence.size`                | Timesketch persistent volume size                                                                                                  | `2Gi`               |
 | `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                            | `""`                |
 | `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                              | `["ReadWriteOnce"]` |
 | `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                             | `false`             |
@@ -161,6 +161,7 @@ kubectl delete pvc -l release=my-release
 | `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address | `""`                |
 
 ### Third Party Configuration
+
 
 ### Opensearch Configuration Parameters
 
@@ -176,7 +177,7 @@ kubectl delete pvc -l release=my-release
 | `opensearch.sysctlInit.enabled`    | Sets optimal sysctl's through privileged initContainer                                                      | `true`                                                                                   |
 | `opensearch.opensearchJavaOpts`    | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M`                                                                      |
 | `opensearch.httpPort`              | Opensearch service port                                                                                     | `9200`                                                                                   |
-| `opensearch.persistence.size`      | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `8Gi`                                                                                    |
+| `opensearch.persistence.size`      | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                                                                                    |
 | `opensearch.resources.requests`    | Requested resources for the Opensearch containers                                                           | `{}`                                                                                     |
 | `opensearch.nodeSelector`          | Node labels for Opensearch pods assignment                                                                  | `{}`                                                                                     |
 
@@ -189,13 +190,13 @@ kubectl delete pvc -l release=my-release
 | `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
 | `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP` |
 | `redis.master.service.ports.redis`  | Redis master service port                                                                    | `6379`      |
-| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `8Gi`       |
+| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `2Gi`       |
 | `redis.master.resources.limits`     | The resources limits for the Redis master containers                                         | `{}`        |
 | `redis.master.resources.requests`   | The requested resources for the Redis master containers                                      | `{}`        |
 | `redis.replica.replicaCount`        | Number of Redis replicas to deploy                                                           | `0`         |
 | `redis.replica.service.type`        | Redis replicas service type                                                                  | `ClusterIP` |
 | `redis.replica.service.ports.redis` | Redis replicas service port                                                                  | `6379`      |
-| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `8Gi`       |
+| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `2Gi`       |
 | `redis.replica.resources.limits`    | The resources limits for the Redis replica containers                                        | `{}`        |
 | `redis.replica.resources.requests`  | The requested resources for the Redis replica containers                                     | `{}`        |
 
@@ -209,13 +210,13 @@ kubectl delete pvc -l release=my-release
 | `postgresql.auth.database`                         | Name for a custom PostgreSQL database to create (overrides `auth.database`) | `timesketch` |
 | `postgresql.primary.service.type`                  | PostgreSQL primary service type                                             | `ClusterIP`  |
 | `postgresql.primary.service.ports.postgresql`      | PostgreSQL primary service port                                             | `5432`       |
-| `postgresql.primary.persistence.size`              | PostgreSQL Persistent Volume size                                           | `8Gi`        |
+| `postgresql.primary.persistence.size`              | PostgreSQL Persistent Volume size                                           | `2Gi`        |
 | `postgresql.primary.resources.limits`              | The resources limits for the PostgreSQL primary containers                  | `{}`         |
 | `postgresql.primary.resources.requests`            | The requested resources for the PostgreSQL primary containers               | `{}`         |
 | `postgresql.readReplicas.replicaCount`             | Number of PostgreSQL read only replicas                                     | `0`          |
 | `postgresql.readReplicas.service.type`             | PostgreSQL read replicas service type                                       | `ClusterIP`  |
 | `postgresql.readReplicas.service.ports.postgresql` | PostgreSQL read replicas service port                                       | `5432`       |
-| `postgresql.readReplicas.persistence.size`         | PostgreSQL Persistent Volume size                                           | `8Gi`        |
+| `postgresql.readReplicas.persistence.size`         | PostgreSQL Persistent Volume size                                           | `2Gi`        |
 | `postgresql.readReplicas.resources.limits`         | The resources limits for the PostgreSQL read only containers                | `{}`         |
 | `postgresql.readReplicas.resources.requests`       | The requested resources for the PostgreSQL read only containers             | `{}`         |
 

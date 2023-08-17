@@ -43,13 +43,13 @@ Helm charts contains at least these two elements:
 
 Despite the fact you can run application containers using the Kubernetes command line (*kubectl*), the easiest way to run workloads in Kubernetes is using the ready-made Helm charts. Helm charts simply indicate to Kubernetes how to perform the application deployment and how to manage the container clusters.
 
-OSDFIR Infrastructure offers a number of stable, production-ready Helm charts to deploy popular Digital Forensics & Incident Response (DFIR) with ease and confidence.
+OSDFIR Infrastructure offers a number of stable, production-ready Helm charts to deploy popular Digital Forensics & Incident Response (DFIR) tools with ease and confidence.
 
 ### Overview
 
 [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube/) is the official way to run Kubernetes locally. It is a tool that runs a single-node Kubernetes cluster inside a Virtual Machine (VM) on your computer. It is an easy way to try out Kubernetes and is also useful for testing and development scenarios.
 
-In this tutorial, you will learn how to install the needed requirements to run OSDFIR Infrastructure on Kubernetes using Minikube.
+In this tutorial, you will learn how to install the needed requirements to run OSDFIR Infrastructure on Kubernetes using Minikube. If you would like to provision a GKE cluster in GCP instead, please see the [init-gke.sh](../tools/init-gke.sh) helper script.
 
 Here are the steps you'll follow in this tutorial:
 
@@ -67,25 +67,13 @@ The next sections will walk you through these steps in detail.
 
 This guide focuses on deploying OSDFIR Infrastructure in a Kubernetes cluster running on Minikube. The example applications within OSDFIR Infrastructure are Timesketch and Turbinia.
 
-This guide assumes that you have [VirtualBox](https://www.virtualbox.org/wiki/Downloads) installed on your computer or a similar [virtualization software](https://minikube.sigs.k8s.io/docs/start/).
+This guide assumes that you have a virtualization software such as [Docker](https://www.docker.com/), [KVM](https://www.linux-kvm.org/page/Downloads), or [VirtualBox](https://www.virtualbox.org/wiki/Downloads) installed and running on your computer. For more examples, see the official [Minikube docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ### Step 1: Configure the platform
 
-The first step for working with Kubernetes clusters is to have Minikube installed if you have selected to work locally.
+The first step for working with local Kubernetes clusters is to have Minikube installed.
 
-Install Minikube in your local system, either by using a virtualization software such as VirtualBox or a local terminal.
-
-* Browse to the [Minikube latest releases page](https://minikube.sigs.k8s.io/docs/start/).
-
-* Select the distribution you wish to download depending on your Operating System.
-
-* Open a new console window on the local system or open your VirtualBox.
-
-* To obtain the latest Minikube release, execute the following command depending on your OS. Replace the OS_DISTRIBUTION placeholder with the software distribution for your platform, which are "darwin" for OS X, "linux" for Linux and "windows" for Windows.
-
-    ```shell
-    $ curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-OS_DISTRIBUTION-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-    ```
+To install Minikube, please see the official [Minikube installation guide](https://minikube.sigs.k8s.io/docs/start/).
 
 ### Step 2: Create a Kubernetes cluster
 
@@ -99,17 +87,11 @@ To run your commands against Kubernetes clusters, the *kubectl* CLI is needed. C
 
 ### Step 3: Install the *kubectl* command-line tool
 
-In order to start working on a Kubernetes cluster, it is necessary to install the Kubernetes command line (*kubectl*). Follow these steps to install the *kubectl* CLI:
+In order to start working on a Kubernetes cluster, it is necessary to install the Kubernetes command line (*kubectl*).
 
-* Execute the following commands to install the *kubectl* CLI. OS_DISTRIBUTION is a placeholder for the binary distribution of *kubectl*, remember to replace it with the corresponding distribution for your Operating System (OS).
+To install kubectl, please see the official [kubectl installation guide](https://kubernetes.io/docs/tasks/tools/).
 
-    ```shell
-    $ curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/OS_DISTRIBUTION/amd64/kubectl
-    $ chmod +x ./kubectl
-    $ sudo mv ./kubectl /usr/local/bin/kubectl
-    ```
-
-    > TIP: Once the *kubectl* CLI is installed, you can obtain information about the current version with the *kubectl version* command. You can also install *kubectl* by using the *sudo apt-get install kubectl* command.
+> TIP: Once the *kubectl* CLI is installed, you can obtain information about the current version with the *kubectl version* command. You can also install *kubectl* by using the *sudo apt-get install kubectl* command.
 
 * Check that *kubectl* is correctly installed and configured by running the *kubectl cluster-info* command:
 
@@ -139,15 +121,7 @@ In order to start working on a Kubernetes cluster, it is necessary to install th
 
 The easiest way to run and manage applications in a Kubernetes cluster is using Helm. Helm allows you to perform key operations for managing applications such as install, upgrade or delete.
 
-* To install Helm v3.x, run the following commands:
-
-    ```shell
-    $ curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get-helm-3 > get_helm.sh
-    $ chmod 700 get_helm.sh
-    $ ./get_helm.sh
-    ```
-
-    > TIP: If you are using OS X you can install it with the *brew install* command: *brew install helm*.
+To install Helm, please see the official [Helm installation guide](https://helm.sh/docs/intro/install/).
 
 ### Step 5: Install an application using a Helm Chart
 
@@ -159,7 +133,7 @@ The steps below show how to run the following OSDFIR Infrastucture tools using H
 * [Turbinia](https://github.com/google/osdfir-infrastructure/tree/main/charts/turbinia)
 * [Timesketch](https://github.com/google/osdfir-infrastructure/tree/main/charts/timesketch)
 
-By executing the *helm install* command the application will be deployed on the Kubernetes cluster. You can install more than one chart across the cluster or clusters. We recommend installing and using the main OSDFIR Infrastructure charts as it deploy and integrates multiple DFIR tools together.
+By executing the *helm install* command the application will be deployed on the Kubernetes cluster. You can install more than one chart across the cluster or clusters. We recommend installing and using the main OSDFIR Infrastructure charts as it deploys and integrates multiple DFIR tools together.
 
 > IMPORTANT: If you don't specify a release name, one will be automatically assigned.
 
@@ -175,7 +149,7 @@ Once you have the chart installed a "Notes" section will be shown at the bottom 
 
 ![notes-txt](images/notes-txt.png)
 
-> IMPORTANT: When deploying on Minikube, you may see errors such as *CrashLoopBackOff* and your application may fail to start. This is typically because the Persistent Volumes are still provisioning or the docker images are still being pulled and may need to wait a few minutes for the error to resolve.
+> IMPORTANT: When installing the Helm chart then running *kubectl get pods* immediately after, you may see errors such as *CrashLoopBackOff* and your application may fail to start. This is typically because the Persistent Volumes are still provisioning or the docker images are still being pulled and may need to wait a few minutes for the error to resolve.
 
 Find how to install Turbinia or Timesketch in the examples below:
 
@@ -201,10 +175,10 @@ Now, you can manage your deployments from the Kubernetes Dashboard. Follow the i
 
 The [Kubernetes Dashboard](https://github.com/kubernetes/dashboard) is a Web user interface from which you can manage your clusters in a more simple and digestible way. It provides information on the cluster state, deployments and container resources. You can also check both the credentials and the log error file of each pod within the deployment.
 
-To open the Kubernetes Dashboard, you just need to run the following command:
+To get a URL for the Kubernetes Dashboard, run the following command:
 
 ```shell
-$ minikube dashboard
+$ minikube dashboard --url
 ```
 
 With this command, you will be redirected automatically to the Kubernetes Dashboard. The home screen shows the "Workloads" section. Here you get an overview of the following cluster elements:
@@ -322,10 +296,22 @@ To uninstall an application, you need to run the *helm uninstall* command. Every
 
 > NOTE: Remember that `my-release` is a placeholder, replace it with the name you have used during the chart installation process.
 
-To delete accompanying the Persistent Volumes, run:
+To delete all Persistent Volumes in the cluster, run:
 
 ```shell
-$ kubectl delete pvc -l release=my-release
+$ kubectl delete pvc --all
+```
+
+To delete a specific Persistent Volume instead, first run the following command to get the name of the Persistent Volume you want to delete:
+
+```shell
+$ kubectl get pvc
+```
+
+Then, replace the `PVC-NAME` placeholder with the name you got from the previous command and run the following command to delete the Persistent Volume Claim:
+
+```shell
+kubectl delete pvc PVC-NAME
 ```
 
 To delete the Minikube cluster, run:

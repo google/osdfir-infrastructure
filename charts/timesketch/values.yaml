@@ -195,7 +195,7 @@ persistence:
   name: timesketchvolume
   ## @param persistence.size Timesketch persistent volume size
   ##
-  size: 8Gi
+  size: 2Gi
   ## @param persistence.storageClass PVC Storage Class for Timesketch volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
@@ -300,7 +300,7 @@ opensearch:
   persistence:
     ## @param opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
     ##
-    size: 8Gi
+    size: 2Gi
   ## Opensearch resource requests
   ## @param opensearch.resources.requests Requested resources for the Opensearch containers
   ##
@@ -348,7 +348,7 @@ redis:
     persistence:
       ## @param redis.master.persistence.size Redis master Persistent Volume size
       ##
-      size: 8Gi
+      size: 2Gi
     ## Redis master resource requests and limits
     ## @param redis.master.resources.limits The resources limits for the Redis master containers
     ## @param redis.master.resources.requests The requested resources for the Redis master containers
@@ -384,7 +384,7 @@ redis:
     persistence:
       ## @param redis.replica.persistence.size Redis replica Persistent Volume size
       ##
-      size: 8Gi
+      size: 2Gi
     ## Redis Replica resource requests and limits
     ## @param redis.replica.resources.limits The resources limits for the Redis replica containers
     ## @param redis.replica.resources.requests The requested resources for the Redis replica containers
@@ -437,7 +437,7 @@ postgresql:
     persistence:
       ## @param postgresql.primary.persistence.size PostgreSQL Persistent Volume size
       ##
-      size: 8Gi
+      size: 2Gi
     ## PostgreSQL primary resource requests and limits
     ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
     ## @param postgresql.primary.resources.requests The requested resources for the PostgreSQL primary containers
@@ -471,7 +471,7 @@ postgresql:
     persistence:
       ## @param postgresql.readReplicas.persistence.size PostgreSQL Persistent Volume size
       ##
-      size: 8Gi
+      size: 2Gi
     ## PostgreSQL read only resource requests and limits
     ## @param postgresql.readReplicas.resources.limits The resources limits for the PostgreSQL read only containers
     ## @param postgresql.readReplicas.resources.requests The requested resources for the PostgreSQL read only containers

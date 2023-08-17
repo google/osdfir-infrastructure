@@ -28,7 +28,7 @@ persistence:
   name: osdfirvolume
   ## @param persistence.size OSDFIR Infrastructure persistent volume size
   ##
-  size: 8Gi
+  size: 2Gi
   ## @param persistence.storageClass PVC Storage Class for OSDFIR Infrastructure volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
@@ -110,7 +110,7 @@ timesketch:
     persistence:
       ## @param timesketch.opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
       ##
-      size: 8Gi
+      size: 2Gi
     ## @param timesketch.opensearch.resources.requests Requested resources for the Opensearch containers
     ##
     resources:
@@ -142,7 +142,7 @@ timesketch:
       persistence:
         ## @param timesketch.redis.master.persistence.size Redis master Persistent Volume size
         ##
-        size: 8Gi
+        size: 2Gi
       ## Redis master resource requests and limits
       ## @param timesketch.redis.master.resources.limits The resources limits for the Redis master containers
       ## @param timesketch.redis.master.resources.requests The requested resources for the Redis master containers
@@ -168,7 +168,7 @@ timesketch:
       persistence:
         ## @param timesketch.redis.replica.persistence.size Redis replica Persistent Volume size
         ##
-        size: 8Gi
+        size: 2Gi
       ## Redis Replica resource requests and limits
       ## @param timesketch.redis.replica.resources.limits The resources limits for the Redis replica containers
       ## @param timesketch.redis.replica.resources.requests The requested resources for the Redis replica containers
@@ -199,7 +199,7 @@ timesketch:
       persistence:
         ## @param timesketch.postgresql.primary.persistence.size PostgreSQL Persistent Volume size
         ##
-        size: 8Gi
+        size: 2Gi
       ## PostgreSQL primary resource requests and limits
       ## @param timesketch.postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
       ## @param timesketch.postgresql.primary.resources.requests The requested resources for the PostgreSQL primary containers
@@ -223,7 +223,7 @@ timesketch:
       ## @param timesketch.postgresql.readReplicas.persistence.size PostgreSQL Persistent Volume size
       ##
       persistence:
-        size: 8Gi
+        size: 2Gi
       ## PostgreSQL read only resource requests and limits
       ## @param timesketch.postgresql.readReplicas.resources.limits The resources limits for the PostgreSQL read only containers
       ## @param timesketch.postgresql.readReplicas.resources.requests The requested resources for the PostgreSQL read only containers
@@ -286,7 +286,7 @@ turbinia:
     autoscaling:
       ## @param turbinia.worker.autoscaling.enabled Enables Turbinia Worker autoscaling
       ##
-      enabled: true
+      enabled: false
       ## @param turbinia.worker.autoscaling.minReplicas Minimum amount of worker pods to run at once
       ##
       minReplicas: 5
@@ -450,7 +450,7 @@ turbinia:
       persistence:
         ## @param turbinia.redis.master.persistence.size Redis master Persistent Volume size
         ##
-        size: 8Gi
+        size: 2Gi
       ## Redis master resource requests and limits
       ## @param turbinia.redis.master.resources.limits The resources limits for the Redis master containers
       ## @param turbinia.redis.master.resources.requests The requested resources for the Redis master containers
@@ -476,7 +476,7 @@ turbinia:
       persistence:
         ## @param turbinia.redis.replica.persistence.size Redis replica Persistent Volume size
         ##
-        size: 8Gi
+        size: 2Gi
       ## Redis Replica resource requests and limits
       ## @param turbinia.redis.replica.resources.limits The resources limits for the Redis replica containers
       ## @param turbinia.redis.replica.resources.requests The requested resources for the Redis replica containers
