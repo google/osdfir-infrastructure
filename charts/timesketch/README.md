@@ -1,21 +1,23 @@
 <!--- app-name: Timesketch -->
 # Timesketch Helm Chart
 
-Timesketch is an open-source tool for collaborative forensic timeline analysis. 
+Timesketch is an open-source tool for collaborative forensic timeline analysis.
 
 [Overview of Timesketch](http://www.timesketch.org)
 
 [Chart Source Code](https://github.com/google/osdfir-infrastructure)
+
 ## TL;DR
 
 ```console
-helm install timesketch-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
 ```
+
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ## Introduction
 
-This chart bootstraps a [Timesketch](https://github.com/google/timesketch/blob/master/docker/release/build/Dockerfile-latest) 
+This chart bootstraps a [Timesketch](https://github.com/google/timesketch/blob/master/docker/release/build/Dockerfile-latest)
 deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
@@ -26,13 +28,14 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](htt
 
 ## Installing the Chart
 
-To install the chart, specify any release name of your choice. For example, if you
-want to install the chart for development, you can choose a release name of `timesketch-dev` then run:
+To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
+
 ```console
-helm install timesketch-dev oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
 ```
-The command deploys Timesketch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured 
-during installation or see [Installating for Production](#installing-for-production) 
+
+The command deploys Timesketch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
+during installation or see [Installating for Production](#installing-for-production)
 for a recommended production installation.
 
 > **Tip**:  You can override the default Timesketch configuration by pulling the Helm
@@ -41,18 +44,21 @@ chart locally and adding a `configs/` directory at the root of the Helm chart wi
 ## Installing for Production
 
 Pull the chart locally then cd into `/timesketch` and review the `values-production.yaml` file for a list of values that will be used for production.
+
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
 ```
 
-Install the chart with the base values in `values.yaml` and the production values in `values-production.yaml`, then using a release name such as `timesketch-prod`, run:
+Install the chart with the base values in `values.yaml` and the production values in `values-production.yaml`, then using a release name such as `my-release`, run:
+
 ```console
-helm install timesketch-prod ../timesketch -f values.yaml -f values-production.yaml
+helm install my-release ../timesketch -f values.yaml -f values-production.yaml
 ```
 
 To upgrade an existing release with production values, externally expose Timesketch through a loadbalancer, and add SSL through GCP managed certificates, run:
+
 ```console
-helm upgrade timesketch-prod
+helm upgrade my-release
     -f values-production.yaml \
     --set ingress.enabled=true \
     --set ingress.host=<DOMAIN_NAME> \
@@ -62,19 +68,20 @@ helm upgrade timesketch-prod
 
 ## Uninstalling the Chart
 
-To uninstall/delete a Helm deployment with a release name of `timesketch-release`:
+To uninstall/delete a Helm deployment with a release name of `my-release`:
 
 ```console
-helm delete timesketch-release
+helm uninstall my-release
 ```
+
 > **Tip**: Please update based on the release name chosen. You can list all releases using `helm list`
 
 The command removes all the Kubernetes components but Persistent Volumes (PVC) associated with the chart and deletes the release.
 
-To delete the PVC's associated with a release name of `timesketch-release`:
+To delete the PVC's associated with a release name of `my-release`:
 
 ```console
-kubectl delete pvc -l release=timesketch-release
+kubectl delete pvc -l release=my-release
 ```
 
 > **Note**: Deleting the PVC's will delete Timesketch data as well. Please be cautious before doing it.
@@ -155,7 +162,6 @@ kubectl delete pvc -l release=timesketch-release
 
 ### Third Party Configuration
 
-
 ### Opensearch Configuration Parameters
 
 | Name                               | Description                                                                                                 | Value                                                                                    |
@@ -213,7 +219,7 @@ kubectl delete pvc -l release=timesketch-release
 | `postgresql.readReplicas.resources.limits`         | The resources limits for the PostgreSQL read only containers                | `{}`         |
 | `postgresql.readReplicas.resources.requests`       | The requested resources for the PostgreSQL read only containers             | `{}`         |
 
-Specify each parameter using the --set key=value[,key=value] argument to helm 
+Specify each parameter using the --set key=value[,key=value] argument to helm
 install. For example,
 
 ```console
@@ -224,14 +230,14 @@ helm install my-release \
 
 The above command installs Timesketch with 3 Opensearch Replicas.
 
-Alternatively, the `values.yaml` and `values-production.yaml` file can be 
+Alternatively, the `values.yaml` and `values-production.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
 ```
 
-Then make changes to the downloaded `values.yaml` and once done, install the 
+Then make changes to the downloaded `values.yaml` and once done, install the
 chart with the updated values.
 
 ```console
@@ -241,17 +247,18 @@ helm install my-release ../timesketch
 ## Persistence
 
 The Timesketch deployment stores data at the `/mnt/timesketchvolume` path of the
-container and stores configuration files at the `/etc/timesketch` path of the container. 
+container and stores configuration files at the `/etc/timesketch` path of the container.
 
-Persistent Volume Claims are used to keep the data across deployments. This is 
-known to work in GCE and minikube. See the Parameters section to configure the 
+Persistent Volume Claims are used to keep the data across deployments. This is
+known to work in GCP and Minikube. See the Parameters section to configure the
 PVC or to disable persistence.
 
 ## Upgrading
 
-If you need to upgrade an existing release to update a value, such as persistent 
-volume size or upgrading to a new release, you can run [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/). 
+If you need to upgrade an existing release to update a value, such as persistent
+volume size or upgrading to a new release, you can run [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/).
 For example, to set a new release and upgrade storage capacity, run:
+
 ```console
 helm upgrade my-release \
     --set image.tag=latest
@@ -265,10 +272,10 @@ of the volume that backs the underlying PersistentVolume. See [here](https://kub
 
 ## Troubleshooting
 
-There is a known issue causing PostgreSQL authentication to fail. This occurs 
+There is a known issue causing PostgreSQL authentication to fail. This occurs
 when you `delete` the deployed Helm chart and then redeploy the Chart without
-removing the existing PVCs. When redeploying, please ensure to delete the underlying 
-PostgreSQL PVC. Refer to [issue 2061](https://github.com/bitnami/charts/issues/2061) 
+removing the existing PVCs. When redeploying, please ensure to delete the underlying
+PostgreSQL PVC. Refer to [issue 2061](https://github.com/bitnami/charts/issues/2061)
 for more details.
 
 ## License
