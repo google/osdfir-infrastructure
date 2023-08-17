@@ -1,16 +1,18 @@
 <!--- app-name: Turbinia -->
 # Turbinia Helm Chart
 
-Turbinia is an open-source framework for deploying, managing, and running distributed forensic workloads. 
+Turbinia is an open-source framework for deploying, managing, and running distributed forensic workloads.
 
 [Overview of Turbinia](https://turbinia.readthedocs.io/en/latest/)
 
 [Chart Source Code](https://github.com/google/osdfir-infrastructure)
+
 ## TL;DR
 
 ```console
-helm install turbinia-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
+helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
 ```
+
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ## Introduction
@@ -19,41 +21,44 @@ This chart bootstraps a [Turbinia](https://github.com/google/turbinia) deploymen
 
 ## Prerequisites
 
-- Kubernetes 1.19+
-- Helm 3.2.0+
-- PV provisioner support in the underlying infrastructure
+* Kubernetes 1.19+
+* Helm 3.2.0+
+* PV provisioner support in the underlying infrastructure
 
 > **Note**: See [GKE Installations](#gke-installations) for deploying to GKE.
 
 ## Installing the Chart
 
-To install the chart, specify any release name of your choice. For example, if you
-want to install the chart for development, you can choose a release name of `turbinia-dev` then run:
+To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
+
 ```console
-helm install turbinia-dev oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
+helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
 ```
 
-The command deploys Turbinia on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured 
-during installation or see [Installating for Production](#installing-for-production) 
-for a recommended production installation. 
+The command deploys Turbinia on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
+during installation or see [Installating for Production](#installing-for-production)
+for a recommended production installation.
 
-> **Tip**:  You can override the default Turbinia configuration by placing the 
-`turbinia.conf` config at the root of the Helm chart. When choosing this option, 
+> **Tip**:  You can override the default Turbinia configuration by placing the
+`turbinia.conf` config at the root of the Helm chart. When choosing this option,
 pull and install the Helm chart locally.
 
 ## Installing for Production
 
 Pull the chart locally then cd into `/turbinia` and review the `values-production.yaml` file for a list of values that will be used for production.
+
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia --untar
 ```
 
 ### GKE Installations
-Create a Turbinia GCP account using the helper script in `tools/create-gcp-sa.sh` prior to installing the chart. 
 
-Install the chart with the base values in `values.yaml`, the production values in `values-production.yaml`, and set appropriate values to enable GCP for Turbinia. Using a release name such as `turbinia-prod`, run:
+Create a Turbinia GCP account using the helper script in `tools/create-gcp-sa.sh` prior to installing the chart.
+
+Install the chart with the base values in `values.yaml`, the production values in `values-production.yaml`, and set appropriate values to enable GCP for Turbinia. Using a release name such as `my-release`, run:
+
 ```console
-helm install turbinia-prod ../turbinia \
+helm install my-release ../turbinia \
     -f values.yaml -f values-production.yaml \
     --set gcp.project=true \
     --set gcp.projectID=<GCP_PROJECT_ID> \
@@ -62,8 +67,9 @@ helm install turbinia-prod ../turbinia \
 ```
 
 To upgrade an existing release with production values, externally expose Turbinia through a load balancer with GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
+
 ```console
-helm upgrade turbinia-prod \
+helm upgrade my-release \
     -f values.yaml -f values-production.yaml \
     --set ingress.enabled=true
     --set ingress.host=<DOMAIN>
@@ -86,18 +92,20 @@ the Oauth2 Proxy is deployed alongside with the command provided above.
 
 ## Uninstalling the Chart
 
-To uninstall/delete a Helm deployment with a release name of `turbinia-release`:
+To uninstall/delete a Helm deployment with a release name of `my-release`:
+
 ```console
-helm delete turbinia-release
+helm uninstall my-release
 ```
+
 > **Tip**: Please update based on the release name chosen. You can list all releases using `helm list`
 
 The command removes all the Kubernetes components but Persistent Volumes (PVC) associated with the chart and deletes the release.
 
-To delete the PVC's associated with a release name of `turbinia-release`:
+To delete the PVC's associated with a release name of `my-release`:
 
 ```console
-kubectl delete pvc -l release=turbinia-release
+kubectl delete pvc -l release=my-release
 ```
 
 > **Note**: Deleting the PVC's will delete Turbinia data as well. Please be cautious before doing it.
@@ -195,7 +203,7 @@ kubectl delete pvc -l release=turbinia-release
 | `config.disabledJobs`             | List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.                                                                                                                                    | `['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']` |
 | `gcp.enabled`                     | Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks. | `false`                                                                                      |
 | `gcp.projectID`                   | GCP Project ID where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`                                                                                                                  | `""`                                                                                         |
-| `gcp.projectRegion`               | Region where your cluster is deployed. Required when `.Values.gcp.enabled`` is set to `true`                                                                                                                         | `""`                                                                                         |
+| `gcp.projectRegion`               | Region where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`                                                                                                                          | `""`                                                                                         |
 | `gcp.projectZone`                 | Zone where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`                                                                                                                            | `""`                                                                                         |
 | `gcp.gcpLogging`                  | Enables GCP Cloud Logging                                                                                                                                                                                            | `false`                                                                                      |
 | `gcp.gcpErrorReporting`           | Enables GCP Cloud Error Reporting                                                                                                                                                                                    | `false`                                                                                      |
@@ -273,14 +281,14 @@ helm install my-release \
 
 The above command installs Turbinia with the Turbinia Controller deployed.
 
-Alternatively, the `values.yaml` and `values-production.yaml` file can be 
+Alternatively, the `values.yaml` and `values-production.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console
 helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia --untar
 ```
 
-Then make changes to the downloaded `values.yaml` and once done, install the 
+Then make changes to the downloaded `values.yaml` and once done, install the
 chart with the updated values.
 
 ```console
@@ -289,18 +297,19 @@ helm install my-release ../turbinia
 
 ## Persistence
 
-The Turbinia deployment stores data at the `/mnt/turbiniavolume` path of the container and stores configuration files at the `/etc/turbinia` path of the container. 
+The Turbinia deployment stores data at the `/mnt/turbiniavolume` path of the container and stores configuration files at the `/etc/turbinia` path of the container.
 
-Persistent Volume Claims are used to keep the data across deployments. This is 
-known to work in GCE and minikube. See the Parameters section to configure the 
+Persistent Volume Claims are used to keep the data across deployments. This is
+known to work in GCP and Minikube. See the Parameters section to configure the
 PVC or to disable persistence.
 
 ## Upgrading
 
 If you need to upgrade an existing release to update a value, such as
-persistent volume size or upgrading to a new release, you can run 
-[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/). 
+persistent volume size or upgrading to a new release, you can run
+[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/).
 For example, to set a new release and upgrade storage capacity, run:
+
 ```console
 helm upgrade my-release \
     --set image.tag=latest
