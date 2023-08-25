@@ -132,7 +132,7 @@ kubectl delete pvc -l release=my-release
 | -------------------------- | ----------------------------------------------------------- | ------------------- |
 | `persistence.enabled`      | Enables persistent volume storage for OSDFIR Infrastructure | `true`              |
 | `persistence.name`         | OSDFIR Infrastructure persistent volume name                | `osdfirvolume`      |
-| `persistence.size`         | OSDFIR Infrastructure persistent volume size                | `8Gi`               |
+| `persistence.size`         | OSDFIR Infrastructure persistent volume size                | `2Gi`               |
 | `persistence.storageClass` | PVC Storage Class for OSDFIR Infrastructure volume          | `""`                |
 | `persistence.accessModes`  | PVC Access Mode for the OSDFIR Infrastructure volume        | `["ReadWriteOnce"]` |
 
@@ -160,7 +160,7 @@ kubectl delete pvc -l release=my-release
 | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------ |
 | `timesketch.opensearch.enabled`            | Enables the Opensearch deployment                                                                           | `true` |
 | `timesketch.opensearch.replicas`           | Number of Opensearch instances to deploy                                                                    | `1`    |
-| `timesketch.opensearch.persistence.size`   | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `8Gi`  |
+| `timesketch.opensearch.persistence.size`   | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`  |
 | `timesketch.opensearch.resources.requests` | Requested resources for the Opensearch containers                                                           | `{}`   |
 
 ### Redis configuration
@@ -170,11 +170,11 @@ kubectl delete pvc -l release=my-release
 | `timesketch.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`             |
 | `timesketch.redis.nameOverride`               | Overrides the Redis deployment name                                                          | `timesketch-redis` |
 | `timesketch.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`                |
-| `timesketch.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `8Gi`              |
+| `timesketch.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`              |
 | `timesketch.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`               |
 | `timesketch.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`               |
 | `timesketch.redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`                |
-| `timesketch.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `8Gi`              |
+| `timesketch.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `2Gi`              |
 | `timesketch.redis.replica.resources.limits`   | The resources limits for the Redis replica containers                                        | `{}`               |
 | `timesketch.redis.replica.resources.requests` | The requested resources for the Redis replica containers                                     | `{}`               |
 
@@ -183,11 +183,11 @@ kubectl delete pvc -l release=my-release
 | Name                                                    | Description                                                     | Value  |
 | ------------------------------------------------------- | --------------------------------------------------------------- | ------ |
 | `timesketch.postgresql.enabled`                         | Enables the Postgresql deployment                               | `true` |
-| `timesketch.postgresql.primary.persistence.size`        | PostgreSQL Persistent Volume size                               | `8Gi`  |
+| `timesketch.postgresql.primary.persistence.size`        | PostgreSQL Persistent Volume size                               | `2Gi`  |
 | `timesketch.postgresql.primary.resources.limits`        | The resources limits for the PostgreSQL primary containers      | `{}`   |
 | `timesketch.postgresql.primary.resources.requests`      | The requested resources for the PostgreSQL primary containers   | `{}`   |
 | `timesketch.postgresql.readReplicas.replicaCount`       | Number of PostgreSQL read only replicas                         | `0`    |
-| `timesketch.postgresql.readReplicas.persistence.size`   | PostgreSQL Persistent Volume size                               | `8Gi`  |
+| `timesketch.postgresql.readReplicas.persistence.size`   | PostgreSQL Persistent Volume size                               | `2Gi`  |
 | `timesketch.postgresql.readReplicas.resources.limits`   | The resources limits for the PostgreSQL read only containers    | `{}`   |
 | `timesketch.postgresql.readReplicas.resources.requests` | The requested resources for the PostgreSQL read only containers | `{}`   |
 
@@ -202,7 +202,7 @@ kubectl delete pvc -l release=my-release
 | `turbinia.server.resources.requests`                         | Requested resources for the server container                                                                                                                                                                         | `{}`                                                                                         |
 | `turbinia.worker.image.repository`                           | Turbinia image repository                                                                                                                                                                                            | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker`                         |
 | `turbinia.worker.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                                                                                        | `latest`                                                                                     |
-| `turbinia.worker.autoscaling.enabled`                        | Enables Turbinia Worker autoscaling                                                                                                                                                                                  | `true`                                                                                       |
+| `turbinia.worker.autoscaling.enabled`                        | Enables Turbinia Worker autoscaling                                                                                                                                                                                  | `false`                                                                                      |
 | `turbinia.worker.autoscaling.minReplicas`                    | Minimum amount of worker pods to run at once                                                                                                                                                                         | `5`                                                                                          |
 | `turbinia.worker.autoscaling.maxReplicas`                    | Maximum amount of worker pods to run at once                                                                                                                                                                         | `500`                                                                                        |
 | `turbinia.worker.autoscaling.targetCPUUtilizationPercentage` | CPU scaling metric workers will scale based on                                                                                                                                                                       | `80`                                                                                         |
@@ -243,11 +243,11 @@ kubectl delete pvc -l release=my-release
 | `turbinia.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`           |
 | `turbinia.redis.nameOverride`               | Overrides the Redis deployment name                                                          | `turbinia-redis` |
 | `turbinia.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`              |
-| `turbinia.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `8Gi`            |
+| `turbinia.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`            |
 | `turbinia.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`             |
 | `turbinia.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`             |
 | `turbinia.redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`              |
-| `turbinia.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `8Gi`            |
+| `turbinia.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `2Gi`            |
 | `turbinia.redis.replica.resources.limits`   | The resources limits for the Redis replica containers                                        | `{}`             |
 | `turbinia.redis.replica.resources.requests` | The requested resources for the Redis replica containers                                     | `{}`             |
 
