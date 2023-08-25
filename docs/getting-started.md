@@ -65,7 +65,7 @@ The next sections will walk you through these steps in detail.
 
 ### Assumptions and prerequisites
 
-This guide focuses on deploying OSDFIR Infrastructure in a Kubernetes cluster running on Minikube. The example applications within OSDFIR Infrastructure are Timesketch and Turbinia.
+This guide focuses on deploying OSDFIR Infrastructure in a Kubernetes cluster running on Minikube. The example applications within OSDFIR Infrastructure are [Timesketch](https://github.com/google/timesketch), [Turbinia](https://github.com/google/turbinia), and [dfTimewolf](https://github.com/log2timeline/dftimewolf) integration with these applications.
 
 This guide assumes that you have a virtualization software such as [Docker](https://www.docker.com/), [KVM](https://www.linux-kvm.org/page/Downloads), or [VirtualBox](https://www.virtualbox.org/wiki/Downloads) installed and running on your computer. For more examples, see the official [Minikube docs](https://minikube.sigs.k8s.io/docs/start/).
 
@@ -286,7 +286,7 @@ Alternatively, to get it from the Kubernetes Dashboard, follow these instruction
 
 ### Step 7: Uninstall an application using Helm
 
-To uninstall an application, you need to run the *helm uninstall* command. Every Kubernetes resource that is tied to that release will be removed.
+To uninstall an application, you need to run the *helm uninstall* command. Every Kubernetes resource that is tied to that release will be removed except for Persistent Volumes.
 
 > TIP: To get the release name, you can run the *helm list* command.
 
@@ -300,31 +300,36 @@ To delete all Persistent Volumes in the cluster, run:
 
 ```shell
 $ kubectl delete pvc --all
+$ kubectl delete pv --all
 ```
 
-To delete a specific Persistent Volume instead, first run the following command to get the name of the Persistent Volume you want to delete:
+To delete a specific Persistent Volume instead, first run the following commands to get the name of the Persistent Volume Claim and Persistent Volume you want to delete:
 
 ```shell
 $ kubectl get pvc
+$ kubectl get pv
 ```
 
-Then, replace the `PVC-NAME` placeholder with the name you got from the previous command and run the following command to delete the Persistent Volume Claim:
+Then, replace the `PVC-NAME` and `PV-NAME` placeholder with the names you got from the previous command and run the following commands to delete the Persistent Volume Claim and Persistent Volume:
 
 ```shell
-kubectl delete pvc PVC-NAME
+$ kubectl delete pvc PVC-NAME
+$ kubectl delete pv PV-NAME
 ```
 
-To delete the Minikube cluster, run:
+To delete the Minikube cluster and associated resources, run:
 
 ```shell
-minikube delete
+$ minikube delete --all
 ```
 
 ### Useful links
 
 To learn more about the topics discussed in this guide, use the links below:
 
-* [Kubernetes](https://kubernetes.io/)
-* [Helm](https://helm.sh/)
-* [Google Kubernetes Engine](https://cloud.google.com/container-engine/)
 * [Minikube](https://github.com/kubernetes/minikube)
+* [Google Kubernetes Engine](https://cloud.google.com/container-engine/)
+* [Kubernetes](https://kubernetes.io/)
+* [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+* [Kubectl for Docker users](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
+* [Helm](https://helm.sh/)
