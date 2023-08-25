@@ -1,8 +1,8 @@
 ## Troubleshoot OSDFIR Infrastructure Issues
 
-OSDFIR Infrastructure Helm charts provide an easy way to install and manage open source Digital Forensics & Incident Response (DFIR) tools on Kubernetes.
+OSDFIR Infrastructure provides an easy way to install and manage open source Digital Forensics & Incident Response (DFIR) tools on Kubernetes.
 
-This guide explains how to troubleshoot common issues related to OSDFIR Infrastructure's Helm chart.
+This guide explains how to troubleshoot common issues related to OSDFIR Infrastructure's deployment using *kubectl*. A [Kubernetes dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/) can optionally be deployed to troubleshoot the same concepts, but will not be covered as part of this guide.
 
 ### Common issues
 
@@ -56,10 +56,10 @@ $ docker pull IMAGE
 
 > TIP: When using a private GKE cluster in GCP, please ensure you have a [Cloud NAT](https://cloud.google.com/nat/docs/gke-example#gcloud_3) configured with the network router of your cluster so that third party dependencies can be retrieved.
 
-When your pod status is *Init:CrashLoopBackOff* or *Init:Error*, this means that the pod's init container could not run. To investigate, review the logs of the init container, replacing `POD-NAME` with the pod name and `INIT-POD` with the name of the init pod, then run:
+When your pod status is *Init:CrashLoopBackOff* or *Init:Error*, this means that the pod's init container could not run. To investigate, review the logs of the init container, replacing `POD-NAME` with the pod name and `INIT-CONTAINER` with the name of the init pod, then run:
 
 ```shell
-$ kubectl logs POD-NAME -c INIT-POD
+$ kubectl logs POD-NAME -c INIT-CONTAINER
 ```
 
 > TIP: The respective init container name for Turbinia is `init-turbinia` and for Timesketch is `init-timesketch`.
@@ -70,7 +70,7 @@ For more troubleshooting tips, see the official k8s docs for [troubleshooting po
 
 Sometimes, when you start a new installation in Kubernetes you may find that a service doesn’t respond when you try to access it, although it was created by a pod in a deployment.
 
-First you can check that the service you are trying to access actually exists, by running the following (replace SVC-NAME with the name of the service you want to access):
+First you can check that the service you are trying to access actually exists. To do so, grab a list of services by running *kubectl get services*, then run the following command (replace SVC-NAME with the name of the service you want to access):
 
 ```shell
 $ kubectl get SVC-NAME
@@ -87,13 +87,7 @@ You should see an output message providing some information including any servic
 If the service is registered and no issues were detected from the step above, it could also be a DNS problem. DNS problems
 typically occurs when a service is in a different namespace then the pod or if the cluster does not have DNS enabled.
 
-To troubleshoot, run the *kubectl get pods* command to get the name of your pod. Then run the command below, this will give you an indication if the DNS resolution is working or not. (remember to replace the `POD-NAME` placeholder with the pod name and `SVC-NAME` placeholder with the name of the service).
-
-```shell
-$ kubectl exec -it POD-NAME nslookup SVC-NAME
-```
-
-If the error persists, then [confirm that DNS is enabled for your Kubernetes cluster](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/). Check out the Kubernetes official documentation to learn how to [debug DNS resolution](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/).
+To troubleshoot, [confirm that DNS is enabled for your Kubernetes cluster](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/) and follow the official k8s documentation to learn how to [debug DNS resolution](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/).
 
 Lastly, if the service was attached to an [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) (Load Balancer), you can check for issues related to the ingress deployment. To troubleshoot, run the *kubectl get ingress* command to get the name of your ingress. Then, replacing `INGRESS-NAME` placeholder with the ingress name, run:
 
@@ -107,17 +101,40 @@ For more troubleshooting tips, see the official k8s docs for [troubleshooting se
 
 ### Troubleshoot Persistence Volumes
 
-The next common problem to occur is Persistent Volumes failing to provision. To check the status of your persistent volumes, run *kubectl get pvc*. If the output message shows that your PVC status is pending, this may be because your cluster does not support dynamic provisioning (such as a bare metal cluster). In this case, the pod is unable to start because the cluster is unable to fulfil the request to attach the persistent volume to your pod.
+The next common problem to occur is Persistent Volumes failing to provision. Persistence in Kubernetes can be explained by three main components:
 
-To get detailed information around the PVC, replacing `PVC-NAME` with the PVC you want to investigate, run:
+* A [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/) (SC) provides a way for administrators to describe the "classes" of storage they offer.
+* A [PersistentVolume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) (PV) is a piece of storage in the cluster that has been provisioned using Storage Classes.
+* A [PersistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) (PVC) is a request for storage by a user to be attached to a Pod, PVCs consume PV resources.
+
+In order to troubleshoot, first check the status of your Storage Class by running:
 
 ```shell
-$ kubectl describe PVC-NAME
+$ kubectl get sc
+$ kubectl describe sc
 ```
 
-To fix this, you must manually configure some persistent volumes or set up a *StorageClass* resource and provisioner for dynamic volume provisioning, such as the [NFS provisioner](https://github.com/kubernetes-incubator/external-storage/tree/master/nfs). [Learn more about dynamic provisioning and storage classes](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/).
+You should see an output message providing some information including any Storage Class issues.
 
-You can also check out the official K8s documentation for a list of supported [volumes](https://kubernetes.io/docs/concepts/storage/volumes/).
+If there are no issues reported by investigating the Storage Class, the next step is to check the Persistent Volume (PV) by running:
+
+```shell
+$ kubectl get pv
+$ kubectl describe pv
+```
+
+You should see an output message providing some information including any Persistent Volume issues and whether it is still pending.
+
+If there are no issues in the Persistence Volume, the final place to check is the Persistent Volume Claim (PVC):
+
+```shell
+$ kubectl get pvc
+$ kubectl describe pvc
+```
+
+Similar to above, you should see output providing some information including any Persistent Volume Claim issues and whether it is still pending. Note the Volume and cross reference it with the output from *kubectl get pv*.
+
+If the Persistent Volume is still pending and no issues were found from the steps above, please ensure you are using a supported [volume](https://kubernetes.io/docs/concepts/storage/volumes/). A more involved option would be to manually configure a Persistent Volume, or a Storage Class that supports [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/).
 
 ### Troubleshoot Helm Charts
 
@@ -136,10 +153,18 @@ To fix, wait a few minutes then try again. If the problem persists, ensure you a
 
 Another common issue is credential related errors, caused by a [known issue](https://github.com/bitnami/charts/issues/2061) with PostgreSQL authentication failing after re-deployment. This occurs when you delete the deployed Helm chart while keeping the existing persistent volumes as they are not removed by default. When re-deploying the chart using the same release name, this causes the secret generating the credentials to go out-of-sync with the password being persisted.
 
-To prevent, ensure the underlying PVC has also been removed when uninstalling the chart or use a different release name. For example, to delete PVCs related to the PostgreSQL deployment, run:
+To fix, ensure the underlying Persistent Volume is removed when uninstalling the chart or use a different release name. For example, looking for a string containing `postgresql`, run *kubectl get pvc* to note the Persistent Volume Claim and *kubectl get pv* to note the Persistent Volume of the Postgresql deployment. Then replacing `PVC-NAME` and `PV-NAME` with the respective names, delete the Persistent Volumes by running:
 
 ```shell
-$ helm delete pvc -l "app.kubernetes.io/name=postgresql"
+$ kubectl delete pvc PVC-NAME
+$ kubectl delete pv PV-NAME
+```
+
+Another option can be to delete all Persistent Volumes in the cluster by running:
+
+```shell
+$ kubectl delete pvc --all
+$ kubectl delete pv --all
 ```
 
 If persisting the existing data is important, you can also choose to rollback the previous deployment. Use the following [guide](https://docs.bitnami.com/general/how-to/troubleshoot-helm-chart-issues/) for more instructions on rolling back your deployment.
@@ -171,7 +196,8 @@ kubectl get ingress                           # List all ingress in the namespac
 kubectl get configmap                         # List all configmaps in the namespace
 kubectl get secrets                           # List all secrets in the namespace
 kubectl get hpa                               # List horizontal autoscaler
-kubectl get pvc                               # List all persistent volumes in the namespace
+kubectl get pvc                               # List all persistent volume claims in the namespace
+kubectl get pv                                # List all persistent volumes in the namespace
 kubectl get sc                                # List all storage classes
 kubectl get nodes                             # List all nodes in the cluster
 
@@ -183,7 +209,8 @@ kubectl describe ingress INGRESS-NAME         # Detailed information of a given 
 kubectl describe configmap CONFIG-NAME        # Detailed information of a given configmap
 kubectl describe secret SECRET-NAME           # Detailed information of a given secret
 kubectl describe hpa HPA-NAME                 # Detailed information of a given horizontal autoscaler
-kubectl describe pvc PVC-NAME                 # Detailed information of a given persistent volume
+kubectl describe pvc PVC-NAME                 # Detailed information of a given persistent volume claim
+kubectl describe pv PV-NAME                   # Detailed information of a given persistent volume
 kubectl describe sc SC-NAME                   # Detailed information of a given storage class
 kubectl describe node NODE-NAME               # Detailed information of a given node
 
