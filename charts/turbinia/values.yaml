@@ -538,7 +538,7 @@ redis:
 oauth2proxy:
   ## @param oauth2proxy.enabled Enables the Oauth2 Proxy deployment
   ##
-  enabled: true
+  enabled: false
   ## @param oauth2proxy.containerPort Oauth2 Proxy container port
   ##
   containerPort: 4180
