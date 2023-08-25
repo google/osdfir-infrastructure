@@ -25,6 +25,16 @@ This project follows
 
 ## Contribution process
 
+1. Fork this repository, develop, and test your changes.
+2. Submit a pull request.
+
+When submitting a PR make sure that it:
+
+* Must follow [Helm best practices](https://helm.sh/docs/chart_best_practices/).
+* No lint issues from running `helm lint` against your local chart.
+* The changes have been tested locally.
+* Any change to a chart requires a version bump following [semver](https://semver.org/) principles. The only exception is if the change was related to documentation.
+
 ### Code Reviews
 
 All submissions, including submissions by project members, require review. We
