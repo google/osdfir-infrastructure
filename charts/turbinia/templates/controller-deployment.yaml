@@ -60,7 +60,7 @@ spec:
             - mountPath: /mnt/turbiniavolume
               name: turbiniavolume
             - mountPath: /etc/turbinia
-              name: turinia-configs
+              name: turbinia-configs
           ports:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
