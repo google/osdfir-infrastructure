@@ -1,6 +1,6 @@
 name: 🐞 Bug
 description: Create a report to help us improve
-labels: ["bug", "triage"]
+labels: ["bug", "triage", "process"]
 body:
   - type: markdown
     attributes:
