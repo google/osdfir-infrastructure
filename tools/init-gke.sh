@@ -15,8 +15,14 @@ set -e
 # Please review the section below and update to your preference. The default
 # values are for a production level environment.
 #
-# A unique ID used for the OSDFIR Infrastructure cluster name
-INSTANCE_ID='osdfir-cluster'
+# The cluster name, number of minimum and maximum nodes, machine type and disk 
+# size of the deployed cluster and nodes within it. If you enable --no-node-autoscale
+# the `CLUSTER_MIN_NODE_SIZE becomes the `MAX_NODE_SIZE`.
+CLUSTER_NAME='osdfir-cluster'
+CLUSTER_MIN_NODE_SIZE='1'
+CLUSTER_MAX_NODE_SIZE='20'
+CLUSTER_MACHINE_TYPE='e2-standard-32'
+CLUSTER_DISK_SIZE='200'
 # The region and zone where the cluster will run. Note that multi-zone clusters
 # are currently not supported.
 ZONE='us-central1-f'
@@ -28,14 +34,6 @@ VPC_NETWORK='default'
 # private, this is required for the control pane and cluster to communicate
 # privately.
 VPC_CONTROL_PANE='172.16.0.0/28' # Set to default
-# The cluster name, number of minimum and maximum nodes, machine type and disk 
-# size of the deployed cluster and nodes within it. If you enable --no-node-autoscale
-# the `CLUSTER_MIN_NODE_SIZE becomes the `MAX_NODE_SIZE`.
-CLUSTER_NAME='osdfir-cluster'
-CLUSTER_MIN_NODE_SIZE='1'
-CLUSTER_MAX_NODE_SIZE='20'
-CLUSTER_MACHINE_TYPE='e2-standard-32'
-CLUSTER_DISK_SIZE='200'
 # The Turbinia service account name. If you update this name, please be sure to
 # to update the `turbinia.gcp.ServiceAccountName` value in the Helm chart.
 SA_NAME="turbinia"
@@ -96,6 +94,7 @@ if [[ "$*" != *--no-turbinia-sa* ]] ; then
       echo "Grant permissions on service account"
       gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member=$SA_MEMBER --role='roles/compute.instanceAdmin'
       gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member=$SA_MEMBER --role='roles/iam.serviceAccountUser'
+      gcloud iam service-accounts add-iam-policy-binding $SA_NAME@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:$DEVSHELL_PROJECT_ID.svc.id.goog[default/$SA_NAME]"
     else
       echo "The Turbinia GCP service account $SA_NAME already exists. Skipping creation..."
     fi
@@ -142,11 +141,11 @@ if [[ "$*" != *--no-cluster* ]] ; then
   gcloud -q --project $DEVSHELL_PROJECT_ID services enable compute.googleapis.com
   if [[ "$*" != *--no-node-autoscale* ]] ; then
     echo "Creating cluster $CLUSTER_NAME with a minimum node size of $CLUSTER_MIN_NODE_SIZE to scale up to a maximum node size of $CLUSTER_MAX_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
-    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20 --enable-autoscaling --min-nodes=$CLUSTER_MIN_NODE_SIZE --max-nodes=$CLUSTER_MAX_NODE_SIZE
+    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20 --enable-autoscaling --min-nodes=$CLUSTER_MIN_NODE_SIZE --max-nodes=$CLUSTER_MAX_NODE_SIZE --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
   else
     echo "--no-node-autoscale specified. Node size will remain constant at $CLUSTER_MIN_NODE_SIZE node(s)"
     echo "Creating cluster $CLUSTER_NAME with a node size of $CLUSTER_MIN_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
-    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20
+    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20 --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
   fi
 else
   echo "--no-cluster specified. Skipping GKE cluster creation..."
