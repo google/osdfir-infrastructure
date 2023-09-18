@@ -24,6 +24,7 @@ data:
     wget $GITHUB_BASE_URL/data/timesketch.conf -O timesketch.conf
     wget $GITHUB_BASE_URL/data/tags.yaml -O tags.yaml
     wget $GITHUB_BASE_URL/data/plaso.mappings -O plaso.mappings
+    wget $GITHUB_BASE_URL/data/plaso_formatters.yaml -O plaso_formatters.yaml
     wget $GITHUB_BASE_URL/data/generic.mappings -O generic.mappings
     wget $GITHUB_BASE_URL/data/features.yaml -O features.yaml
     wget $GITHUB_BASE_URL/data/ontology.yaml -O ontology.yaml
