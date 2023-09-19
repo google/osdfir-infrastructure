@@ -1,9 +1,9 @@
 dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 17.9.3
+  version: 18.0.4
 - name: oauth2-proxy
   repository: https://charts.bitnami.com/bitnami
-  version: 3.6.1
-digest: sha256:29baea1cdda77d2d9f54d328ded2acb4be04b155828a3bcb8f8299cabbd8b214
-generated: "2023-08-01T21:31:30.386568938Z"
+  version: 4.1.3
+digest: sha256:daa9ae8e7b125661b78c5ccd3edf45db91dea36bf79eb35e504f3e5d08d19fd2
+generated: "2023-09-19T23:20:07.675142702Z"

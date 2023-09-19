@@ -1,6 +1,6 @@
 apiVersion: v2
 name: turbinia
-version: 0.2.0
+version: 0.3.0
 description: A Helm chart for Turbinia Kubernetes deployments.
 keywords:
 - turbinia
@@ -11,12 +11,12 @@ home: "https://github.com/google/turbinia"
 dependencies:
 - condition: redis.enabled
   name: redis
-  version: 17.9.3
+  version: 18.0.4
   repository: https://charts.bitnami.com/bitnami
 - condition: oauth2proxy.enabled
   name: oauth2-proxy
   alias: oauth2proxy
-  version: 3.6.1
+  version: 4.1.3
   repository: https://charts.bitnami.com/bitnami
 maintainers:
   - name: Wajih Yassine
@@ -28,7 +28,7 @@ maintainers:
 sources:
 - https://github.com/google/turbinia
 icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
-appVersion: "20230315"
+appVersion: "20230808"
 annotations:
   category: Security
   licenses: Apache-2.0

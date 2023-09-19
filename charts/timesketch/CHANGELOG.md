@@ -15,6 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 ---
+
+## [0.3.0]
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+* Adds logic to prevent password regen for Timesketch on Helm upgrades
+* Adds missing plaso_formatters.yaml config for Timesketch
+* Keep PVC on helm uninstall as an additional safeguard for data retention
+
+---
 ## [0.2.0]
 ### Added
 
