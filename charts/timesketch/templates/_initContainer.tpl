@@ -27,8 +27,8 @@ Worker pod upon startup.
       valueFrom:
         # Referencing from charts/postgresql/templates/_helpers.tpl
         secretKeyRef:
-          name: {{ include "postgresql.secretName" .Subcharts.postgresql }}
-          key: {{ include "postgresql.adminPasswordKey" .Subcharts.postgresql }}
+          name: {{ include "postgresql.v1.secretName" .Subcharts.postgresql }}
+          key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
     {{- end }}
   volumeMounts:
     - mountPath: /init
