@@ -110,7 +110,7 @@ worker:
     imagePullSecrets: []
   ## @param worker.replicaCount Number of worker pods to run at once
   ## Disabled if the value worker.autoscaling.enabled is enabled.
-  replicaCount: 1
+  replicaCount: 2
   ## Worker autoscaler configuration
   ## ref https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
   ##
