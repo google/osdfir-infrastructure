@@ -315,7 +315,7 @@ nameOverride: ""
 fullnameOverride: ""
 ## Turbinia configuration parameters
 ## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
-## 
+##
 config:
   ## @param config.override Overrides the default Turbinia config to instead use a user specified config. Please ensure
   ## that the config file is either placed in the root of this directory or point the override flag to a path containing
@@ -332,7 +332,7 @@ gcp:
   ##
   enabled: false
   ## @param gcp.projectID GCP Project ID where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
-  ## 
+  ##
   projectID: ""
   ## @param gcp.projectRegion Region where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
   ##
@@ -399,12 +399,12 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
-  ## 
+  ##
   storageClass: ""
   ## @param persistence.accessModes PVC Access Mode for Turbinia volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
-  ## 
+  ##
   accessModes:
     - ReadWriteOnce
 ## Turbinia ingress parameters
@@ -543,7 +543,7 @@ oauth2proxy:
   ##
   containerPort: 4180
   ## OAuth2 Proxy service parameters
-  ## 
+  ##
   service:
     ## @param oauth2proxy.service.type OAuth2 Proxy service type
     ##
@@ -569,10 +569,10 @@ oauth2proxy:
     ## @param oauth2proxy.configuration.clientSecret OAuth client secret for Turbinia Web UI.
     ##
     clientSecret: ""
-    ## @param oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI. 
+    ## @param oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI.
     ##
     nativeClientID: ""
-    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  openssl rand -base64 32) 
+    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  openssl rand -base64 32)
     ##
     cookieSecret: ""
     ## Custom configuration file: oauth2_proxy.cfg

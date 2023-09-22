@@ -35,7 +35,7 @@ image:
   imagePullSecrets: []
 ## @section Timesketch Configuration Parameters
 ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
-## 
+##
 config:
   ## @param config.override Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart
   ## to retrieve the config files from. Please ensure the appropriate configs are in the directory else Timesketch
@@ -202,12 +202,12 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
-  ## 
+  ##
   storageClass: ""
   ## @param persistence.accessModes PVC Access Mode for Timesketch volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
-  ## 
+  ##
   accessModes:
     - ReadWriteOnce
 ## Ingress Parameters
@@ -290,7 +290,7 @@ opensearch:
     enabled: true
   ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
   ## It is recommended to use at least half the system's available ram
-  ## 
+  ##
   opensearchJavaOpts: "-Xmx512M -Xms512M"
   ## @param opensearch.httpPort Opensearch service port
   ##
@@ -426,7 +426,7 @@ postgresql:
     ##
     service:
       ## @param postgresql.primary.service.type PostgreSQL primary service type
-      ## 
+      ##
       type: ClusterIP
       ## @param postgresql.primary.service.ports.postgresql PostgreSQL primary service port
       ##
@@ -453,7 +453,7 @@ postgresql:
       ##    memory: 1Gi
       requests: {}
   ## PostgreSQL read only replica parameters (only used when `architecture` is set to `replication`)
-  ## 
+  ##
   readReplicas:
     ## @param postgresql.readReplicas.replicaCount Number of PostgreSQL read only replicas
     ##
@@ -462,7 +462,7 @@ postgresql:
     ##
     service:
       ## @param postgresql.readReplicas.service.type PostgreSQL read replicas service type
-      ## 
+      ##
       type: ClusterIP
       ## @param postgresql.readReplicas.service.ports.postgresql PostgreSQL read replicas service port
       ##
