@@ -1,6 +1,6 @@
 ## OSDFIR Infrastructure Helm Chart
 ## Please use this Helm chart for deploying Open Source Digital Forensics Tools
-## to a Kubernetes environment. 
+## to a Kubernetes environment.
 ## The following tools are supported in this deployment:
 ## - Timesketch; ref https://github.com/google/timesketch
 ## - Turbinia; ref https://github.com/google/turbinia
@@ -9,7 +9,7 @@
 ## Please, note that this will override the parameters configured to use the global value
 ##
 global:
-  ## Global Persistence Configuration 
+  ## Global Persistence Configuration
   ##
   ## @param global.existingPVC Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)
   ##
@@ -35,12 +35,12 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
-  ## 
+  ##
   storageClass: ""
   ## @param persistence.accessModes PVC Access Mode for the OSDFIR Infrastructure volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
-  ## 
+  ##
   accessModes:
     - ReadWriteOnce
 ## @section Timesketch Configuration
@@ -127,7 +127,7 @@ timesketch:
     ## @param timesketch.redis.enabled Enables the Redis deployment
     ##
     enabled: true
-    ## @param timesketch.redis.nameOverride Overrides the Redis deployment name 
+    ## @param timesketch.redis.nameOverride Overrides the Redis deployment name
     ## This is required since Turbinia and Timesketch both use Redis, we need to differentiate the instances.
     ##
     nameOverride: timesketch-redis
@@ -215,7 +215,7 @@ timesketch:
         ##    memory: 1Gi
         requests: {}
     ## PostgreSQL read only replica parameters (only used when `architecture` is set to `replication`)
-    ## 
+    ##
     readReplicas:
       ## @param timesketch.postgresql.readReplicas.replicaCount Number of PostgreSQL read only replicas
       ##
@@ -344,7 +344,7 @@ turbinia:
     enabled: false
   ## Turbinia configuration parameters
   ## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
-  ## 
+  ##
   config:
     ## @param turbinia.config.override Overrides the default Turbinia config to instead use a user specified config. Please ensure
     ## that the config file is either placed in the root of this directory or point the override flag to a path containing
@@ -361,7 +361,7 @@ turbinia:
     ##
     enabled: false
     ## @param turbinia.gcp.projectID GCP Project ID where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
-    ## 
+    ##
     projectID: ""
     ## @param turbinia.gcp.projectRegion Region where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`
     ##
@@ -528,10 +528,10 @@ turbinia:
       ## @param turbinia.oauth2proxy.configuration.clientSecret OAuth client secret for Turbinia Web UI.
       ##
       clientSecret: ""
-      ## @param turbinia.oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI. 
+      ## @param turbinia.oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI.
       ##
       nativeClientID: ""
-      ## @param turbinia.oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g. openssl rand -base64 32 ) 
+      ## @param turbinia.oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g. openssl rand -base64 32 )
       ##
       cookieSecret: ""
       ## Custom configuration file: oauth2_proxy.cfg
