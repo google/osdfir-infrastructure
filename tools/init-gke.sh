@@ -139,6 +139,8 @@ if [[ "$*" != *--no-cluster* ]] ; then
   gcloud -q --project $DEVSHELL_PROJECT_ID services enable container.googleapis.com
   echo "Enabling Compute API"
   gcloud -q --project $DEVSHELL_PROJECT_ID services enable compute.googleapis.com
+  echo "Enabling Filestore API"
+  gcloud -q --project $DEVSHELL_PROJECT_ID services enable file.googleapis.com
   if [[ "$*" != *--node-autoscale* ]] ; then
     echo "Creating cluster $CLUSTER_NAME with a node size of $CLUSTER_MIN_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
     gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20 --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
