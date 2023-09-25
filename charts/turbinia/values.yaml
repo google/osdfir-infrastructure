@@ -153,7 +153,9 @@ worker:
     ##    cpu: 500m
     ##    memory: 1Gi
     limits: {}
-    requests: {}
+    requests:
+      cpu: 250m
+      memory: 256Mi
   ## @param worker.nodeSelector Node labels for Turbinia worker pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
