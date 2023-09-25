@@ -36,7 +36,7 @@ jobs:
 
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct lint --config .github/ct.yaml --debug
+        run: ct lint --config .github/ct.yaml
 
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
