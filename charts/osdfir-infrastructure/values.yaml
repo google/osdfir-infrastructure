@@ -88,7 +88,9 @@ timesketch:
     ##
     resources:
       limits: {}
-      requests: {}
+      requests:
+        cpu: 250m
+        memory: 256Mi
   ## @section Timesketch Third Party
   ## This section contains all the main configuration for third party dependencies
   ## Timesketch requires to run
@@ -305,7 +307,9 @@ turbinia:
       ##    cpu: 500m
       ##    memory: 1Gi
       limits: {}
-      requests: {}
+      requests:
+        cpu: 250m
+        memory: 256Mi
   ## Turbinia API / Web configuration
   ##
   api:
