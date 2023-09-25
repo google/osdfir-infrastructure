@@ -307,7 +307,9 @@ opensearch:
     ## requests:
     ##    cpu: 500m
     ##    memory: 1Gi
-    requests: {}
+    requests:
+      cpu: 250m
+      memory: 500Mi
   ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -449,7 +451,9 @@ postgresql:
       ## requests:
       ##    cpu: 500m
       ##    memory: 1Gi
-      requests: {}
+      requests:
+        cpu: 250m
+        memory: 500Mi
   ## PostgreSQL read only replica parameters (only used when `architecture` is set to `replication`)
   ##
   readReplicas:
