@@ -60,7 +60,7 @@ Install the chart with the base values in `values.yaml`, the production values i
 ```console
 helm install my-release ../turbinia \
     -f values.yaml -f values-production.yaml \
-    --set gcp.project=true \
+    --set gcp.enabled=true \
     --set gcp.projectID=<GCP_PROJECT_ID> \
     --set gcp.projectRegion=<GKE_CLUSTER_REGION> \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE>
