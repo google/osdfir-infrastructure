@@ -43,9 +43,9 @@ if [[ "$*" == *--help ||  "$*" == *-h ]] ; then
   echo "OSDFIR Infrastructure GKE cluster bootstrap script"
   echo "Options:"
   echo "--no-cluster                   Do not create the cluster"
-  echo "--no-node-autoscale            Do not enable Node autoscaling"
   echo "--no-nat                       Do not deploy the Cloud NAT (use only if you already have a Cloud NAT deployed as it's required by the private cluster to pull third party dependencies)"
   echo "--no-turbinia-sa               Do not create a Turbinia GCP service account (use only if disabling the Turbinia deployment in OSDFIR Infrastructure)"
+  echo "--node-autoscale               Enable Node autoscaling (experimental)"
   exit 1
 fi
 
@@ -139,13 +139,14 @@ if [[ "$*" != *--no-cluster* ]] ; then
   gcloud -q --project $DEVSHELL_PROJECT_ID services enable container.googleapis.com
   echo "Enabling Compute API"
   gcloud -q --project $DEVSHELL_PROJECT_ID services enable compute.googleapis.com
-  if [[ "$*" != *--no-node-autoscale* ]] ; then
-    echo "Creating cluster $CLUSTER_NAME with a minimum node size of $CLUSTER_MIN_NODE_SIZE to scale up to a maximum node size of $CLUSTER_MAX_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
-    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20 --enable-autoscaling --min-nodes=$CLUSTER_MIN_NODE_SIZE --max-nodes=$CLUSTER_MAX_NODE_SIZE --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
-  else
-    echo "--no-node-autoscale specified. Node size will remain constant at $CLUSTER_MIN_NODE_SIZE node(s)"
+  echo "Enabling Filestore API"
+  gcloud -q --project $DEVSHELL_PROJECT_ID services enable file.googleapis.com
+  if [[ "$*" != *--node-autoscale* ]] ; then
     echo "Creating cluster $CLUSTER_NAME with a node size of $CLUSTER_MIN_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
     gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20 --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
+  else
+    echo "--node-autoscale specified. Creating cluster $CLUSTER_NAME with a minimum node size of $CLUSTER_MIN_NODE_SIZE to scale up to a maximum node size of $CLUSTER_MAX_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
+    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --default-max-pods-per-node=20 --enable-autoscaling --min-nodes=$CLUSTER_MIN_NODE_SIZE --max-nodes=$CLUSTER_MAX_NODE_SIZE --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
   fi
 else
   echo "--no-cluster specified. Skipping GKE cluster creation..."

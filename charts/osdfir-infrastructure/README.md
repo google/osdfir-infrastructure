@@ -61,7 +61,7 @@ Install the chart with the base values in `values.yaml`, the production values i
 helm install my-release ../osdfir-infrastructure \
     -f values.yaml \ 
     -f values-production.yaml \
-    --set turbinia.gcp.project=true \
+    --set turbinia.gcp.enabled=true \
     --set turbinia.gcp.projectID=<GCP_PROJECT_ID> \
     --set turbinia.gcp.projectRegion=<GKE_CLUSTER_REGION> \
     --set turbinia.gcp.projectZone=<GKE_ClUSTER_ZONE>
