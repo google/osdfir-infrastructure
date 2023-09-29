@@ -14,10 +14,10 @@ GITHUB_BASE_URL="https://raw.githubusercontent.com/google/timesketch/master"
 wget $GITHUB_BASE_URL/data/timesketch.conf -O configs/timesketch.conf
 wget $GITHUB_BASE_URL/data/tags.yaml -O configs/tags.yaml
 wget $GITHUB_BASE_URL/data/plaso.mappings -O configs/plaso.mappings
+wget $GITHUB_BASE_URL/data/plaso_formatters.yaml -O configs/plaso_formatters.yaml
 wget $GITHUB_BASE_URL/data/generic.mappings -O configs/generic.mappings
 wget $GITHUB_BASE_URL/data/features.yaml -O configs/features.yaml
 wget $GITHUB_BASE_URL/data/ontology.yaml -O configs/ontology.yaml
-wget $GITHUB_BASE_URL/data/sigma_rule_status.csv -O configs/sigma_rule_status.csv
 wget $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml -O configs/intelligence_tag_metadata.yaml
 wget $GITHUB_BASE_URL/data/sigma_config.yaml -O configs/sigma_config.yaml
 wget $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml -O configs/lnx_susp_zmap.yml
