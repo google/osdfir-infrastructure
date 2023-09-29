@@ -28,7 +28,6 @@ data:
     wget $GITHUB_BASE_URL/data/generic.mappings -O generic.mappings
     wget $GITHUB_BASE_URL/data/features.yaml -O features.yaml
     wget $GITHUB_BASE_URL/data/ontology.yaml -O ontology.yaml
-    wget $GITHUB_BASE_URL/data/sigma_rule_status.csv -O sigma_rule_status.csv
     wget $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml -O intelligence_tag_metadata.yaml
     wget $GITHUB_BASE_URL/data/sigma_config.yaml -O sigma_config.yaml
     wget $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml -O lnx_susp_zmap.yml
