@@ -384,6 +384,10 @@ metrics:
   ## @param metrics.port Port to scrape metrics from
   ##
   port: 9200
+versioncheck:
+  ## @param versioncheck.enabled Enable Turbinia runtime version checking
+  ##
+  enabled: true
 ## Turbinia persistence storage parameters
 ##
 persistence:
