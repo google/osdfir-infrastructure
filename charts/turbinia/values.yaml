@@ -117,7 +117,7 @@ worker:
   autoscaling:
     ## @param worker.autoscaling.enabled Enables Turbinia Worker autoscaling
     ##
-    enabled: false
+    enabled: true
     ## @param worker.autoscaling.minReplicas Minimum amount of worker pods to run at once
     ##
     minReplicas: 5
