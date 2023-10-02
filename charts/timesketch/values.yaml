@@ -311,7 +311,7 @@ opensearch:
     ##    memory: 1Gi
     requests:
       cpu: 250m
-      memory: 256Mi
+      memory: 512Mi
   ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
