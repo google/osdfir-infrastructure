@@ -1,0 +1,12 @@
+remote: origin
+target-branch: main
+chart-repos:
+  - bitnami=https://charts.bitnami.com/bitnami
+  - opensearch=https://opensearch-project.github.io/helm-charts
+chart-dirs:
+  - charts
+check-version-increment: true
+validate-maintainers: false
+helm-extra-args: --timeout 800s
+excluded-charts:
+ - osdfir-infrastructure
