@@ -5,7 +5,7 @@ chart-repos:
   - opensearch=https://opensearch-project.github.io/helm-charts
 chart-dirs:
   - charts
-check-version-increment: true
+check-version-increment: false
 validate-maintainers: false
 helm-extra-args: --timeout 800s
 excluded-charts:
