@@ -5,8 +5,7 @@ chart-repos:
   - opensearch=https://opensearch-project.github.io/helm-charts
 chart-dirs:
   - charts
-# TODO(wyassine): Revisit once architecture has been changed to a single Helm chart
-check-version-increment: false
+check-version-increment: true
 validate-maintainers: false
 helm-extra-args: --timeout 800s
 excluded-charts:
