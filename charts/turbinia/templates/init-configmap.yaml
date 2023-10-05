@@ -58,6 +58,11 @@ data:
     # Set up Prometheus metrics
     sed -i -e "s/^PROMETHEUS_ENABLED = .*$/PROMETHEUS_ENABLED = True/g" turbinia.conf
     {{- end }}
+
+    {{- if not .Values.versioncheck.enabled }}
+    # Set up Turbinia server/worker version runtime check
+    sed -i -e "s/^VERSION_CHECK = .*$/VERSION_CHECK = False/g" turbinia.conf
+    {{- end }}
     
     {{- if and .Values.gcp.gcpLogging .Values.gcp.enabled }}
     # Set up GCP Stackdriver Logging
