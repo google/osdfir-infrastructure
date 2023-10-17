@@ -1,0 +1,25 @@
+apiVersion: v2
+name: yeti
+version: 0.3.2
+description: A Helm chart for Yeti Kubernetes deployments.
+keywords:
+- yeti
+- dfir
+- analysis
+home: "https://github.com/google/timesketch"
+dependencies:
+- condition: redis.enabled
+  name: redis
+  version: 18.0.4
+  repository: https://charts.bitnami.com/bitnami
+maintainers:
+  - name: Wajih Yassine
+    url: https://github.com/wajihyassine
+sources:
+- https://github.com/google/timesketch
+- https://timesketch.org/
+icon: https://raw.githubusercontent.com/google/timesketch/master/timesketch/frontend-ng/dist/timesketch-color.png
+appVersion: "20230913"
+annotations:
+  category: Security
+  licenses: Apache-2.0

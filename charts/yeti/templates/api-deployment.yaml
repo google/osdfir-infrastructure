@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  {{ include "yeti.fullname" . }}-api
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: api
+    {{- include "api.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api
+      {{- include "api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Have Deployment restart after each upgrade
+        roll: {{ randAlphaNum 5 | quote }}
+        {{- if .Values.metrics.enabled }} 
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/scrape: "true"
+        {{- end }}
+      labels:
+        app.kubernetes.io/component: api
+        {{- include "api.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.api.podSecurityContext | nindent 8 }}
+      initContainers:
+      {{- include "api.initContainer" . | nindent 8 }}
+      containers:
+        - name: api
+          securityContext:
+              {{- toYaml .Values.api.securityContext | nindent 12 }}
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh", "-c", "./docker-entrypoint.sh timesketch-web"]
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+                  apiVersion: v1
+          volumeMounts:
+            - mountPath: /var/log/timesketch
+              name: timesketchvolume
+              subPathExpr: logs/$(POD_NAME)
+          ports:
+            {{- if .Values.metrics.enabled }}
+            - containerPort: {{ .Values.metrics.port }}
+            {{- end }}
+            - containerPort: {{ .Values.service.port }}
+          resources:
+            {{- toYaml .Values.yeti.resources | nindent 12 }}
+      volumes:
+        - name: yetivolume
+          persistentVolumeClaim:
+            claimName: {{ include "yeti.pvc.name"  . }}
+            readOnly: false
+        - name: init-yeti
+          configMap:
+            name: {{ include "yeti.fullname" . }}-init-configmap
+            defaultMode: 0744
+        - name: yeti-configs
+          emptyDir: {}
+      {{- with .Values.yeti.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.yeti.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.yeti.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
