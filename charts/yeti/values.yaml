@@ -22,7 +22,7 @@ frontend:
   image:
     ## @param frontend.image.repository Yeti frontend image repository
     ##
-    repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server
+    repository: yetiplatform/yeti-frontend
     ## @param frontend.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
@@ -93,7 +93,7 @@ api:
   image:
     ## @param api.image.repository Yeti API image repository
     ##
-    repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server
+    repository: yetiplatform/yeti
     ## @param api.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
@@ -164,7 +164,7 @@ tasks:
   image:
     ## @param tasks.image.repository Yeti tasks image repository
     ##
-    repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server
+    repository: yetiplatform/yeti
     ## @param tasks.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
@@ -229,77 +229,6 @@ tasks:
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ##
   affinity: {}
-## @section Yeti Arangodb configuration
-##
-arangodb:
-  image:
-    ## @param arangodb.image.repository Yeti arangodb image repository
-    ##
-    repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server
-    ## @param arangodb.image.pullPolicy Yeti image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
-    ##
-    pullPolicy: Always
-    ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
-    ##
-    tag: latest
-    ## @param arangodb.image.imagePullSecrets Specify secrets if pulling from a private repository
-    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g.
-    ## imagePullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    imagePullSecrets: []
-  ## @param arangodb.podSecurityContext Holds pod-level security attributes and common server container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param arangodb.securityContext Holds security configuration that will be applied to the arangodb container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
-  ## Yeti arangodb resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a choice for the user in order to increase
-  ## the chances charts run on environments with little resources, such as Minikube.
-  ## If you want to specify resources, uncomment the following lines, adjust them as
-  ## necessary, and remove the curly braces after 'resources:'.
-  ## @param arangodb.resources.limits Resource limits for the arangodb container
-  ## @param arangodb.resources.requests Requested resources for the arangodb container
-  resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
-  ## @param arangodb.nodeSelector Node labels for Yeti arangodb pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
-  nodeSelector: {}
-  ## @param arangodb.tolerations Tolerations for Yeti arangodb pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param arangodb.affinity Affinity for Yeti arangodb pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
 ## @section Common Parameters
 ## @param nameOverride String to partially override names.fullname
 ##
@@ -312,7 +241,7 @@ fullnameOverride: ""
 serviceAccount:
   ## @param serviceAccount.create Specifies whether a service account should be created
   ##
-  create: false
+  create: true
   ## @param serviceAccount.annotations Annotations to add to the service account
   ##
   annotations: {}
@@ -406,6 +335,12 @@ redis:
   ## @param redis.enabled Enables the Redis deployment
   ##
   enabled: true
+  ## Redis Authentication parameters
+  ##
+  auth:
+    ## @param redis.auth.enabled Enables Redis Authentication. Disabled due to incompatibility with Turbinia
+    ##
+    enabled: false
   ## @param redis.sentinel.enabled Enables Redis Sentinel on Redis pods
   ## IMPORTANT: This has not been tested for Yeti so would leave this disabled
   ##
@@ -483,3 +418,74 @@ redis:
       ##    cpu: 500m
       ##    memory: 1Gi
       requests: {}
+## @section Yeti Arangodb configuration
+##
+arangodb:
+  image:
+    ## @param arangodb.image.repository Yeti arangodb image repository
+    ##
+    repository: arangodb
+    ## @param arangodb.image.pullPolicy Yeti image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: Always
+    ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: latest
+    ## @param arangodb.image.imagePullSecrets Specify secrets if pulling from a private repository
+    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ## e.g.
+    ## imagePullSecrets:
+    ##   - myRegistryKeySecretName
+    ##
+    imagePullSecrets: []
+  ## @param arangodb.podSecurityContext Holds pod-level security attributes and common server container settings
+  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
+  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+  ## e.g.
+  ## fsgroup: 2000
+  ##
+  podSecurityContext: {}
+  ## @param arangodb.securityContext Holds security configuration that will be applied to the arangodb container
+  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
+  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+  ## e.g.
+  ## capabilities
+  ##   drop:
+  ##   - ALL
+  ## readOnlyRootFilesystem: true
+  ## runAsNonRoot: true
+  ## runAsUser: 1000
+  ##
+  securityContext: {}
+  ## Yeti arangodb resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## We leave the default resources as a choice for the user in order to increase
+  ## the chances charts run on environments with little resources, such as Minikube.
+  ## If you want to specify resources, uncomment the following lines, adjust them as
+  ## necessary, and remove the curly braces after 'resources:'.
+  ## @param arangodb.resources.limits Resource limits for the arangodb container
+  ## @param arangodb.resources.requests Requested resources for the arangodb container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param arangodb.nodeSelector Node labels for Yeti arangodb pods assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: {}
+  ## @param arangodb.tolerations Tolerations for Yeti arangodb pods assignment
+  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+  ##
+  tolerations: []
+  ## @param arangodb.affinity Affinity for Yeti arangodb pods assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  ##
+  affinity: {}

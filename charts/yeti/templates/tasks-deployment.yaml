@@ -22,49 +22,62 @@ spec:
         prometheus.io/scrape: "true"
         {{- end }}
       labels:
-        app.kubernetes.io/component: yeti
+        app.kubernetes.io/component: tasks
         {{- include "yeti.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "yeti.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.yeti.podSecurityContext | nindent 8 }}
-      initContainers:
-      {{- include "yeti.initContainer" . | nindent 8 }}
+        {{- toYaml .Values.tasks.podSecurityContext | nindent 8 }}
       containers:
         - name: tasks
           securityContext:
-              {{- toYaml .Values.frontend.securityContext | nindent 12 }}
+              {{- toYaml .Values.tasks.securityContext | nindent 12 }}
           image: "{{ .Values.tasks.image.repository }}:{{ .Values.tasks.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.tasks.image.pullPolicy }}
-          command: ["sh", "-c", "./docker-entrypoint.sh tasks"]
+          command: ["sh", "-c", "/docker-entrypoint.sh tasks"]
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
                   apiVersion: v1
+            - name: YETI_REDIS_HOST
+              value: {{ include "yeti.redis.url" . }}
+            - name: YETI_REDIS_PORT
+              value: "{{ .Values.redis.master.service.ports.redis }}"
+            - name: YETI_REDIS_DATABASE
+              value: "0"
+            - name: YETI_ARANGODB_HOST
+              value: {{ include "yeti.fullname" . }}-arangodb
+            - name: YETI_ARANGODB_PORT
+              value: "8529"
+            - name: YETI_ARANGODB_DATABASE
+              value: yeti
+            - name: YETI_ARANGODB_USERNAME
+              value: root
+            - name: YETI_AUTH_SECRET_KEY
+              value: SECRET
+            - name: YETI_AUTH_ALGORITHM
+              value: HS256
+            - name: YETI_AUTH_ACCESS_TOKEN_EXPIRE_MINUTES
+              value: "30"
+            - name: YETI_AUTH_ENABLED
+              value: "False"
           volumeMounts:
-            - mountPath: /var/log/timesketch
-              name: timesketchvolume
-              subPathExpr: logs/$(POD_NAME)
+            - mountPath: /mnt/yeti
+              name: yetivolume
           ports:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
             - containerPort: {{ .Values.service.port }}
           resources:
-            {{- toYaml .Values.yeti.frontend.resources | nindent 12 }}
+            {{- toYaml .Values.tasks.resources | nindent 12 }}
       volumes:
         - name: yetivolume
           persistentVolumeClaim:
             claimName: {{ include "yeti.pvc.name"  . }}
             readOnly: false
-        - name: init-yeti
-          configMap:
-            name: {{ include "yeti.fullname" . }}-init-configmap
-            defaultMode: 0744
-        - name: yeti-configs
-          emptyDir: {}
       {{- with .Values.tasks.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

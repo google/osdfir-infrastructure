@@ -63,19 +63,6 @@ Return the proper Storage Class
 {{- end -}}
 
 {{/*
-Create the upload path.
-*/}}
-{{- define "yeti.uploadPath" -}}
-{{- $pvcName := .Values.persistence.name -}}
-{{- if .Values.global -}}
-    {{- if .Values.global.existingPVC -}}
-        {{- $pvcName = .Values.global.existingPVC -}}
-    {{- end -}}
-{{- printf "/mnt/%s/upload" $pvcName }}
-{{- end }}
-{{- end }}
-
-{{/*
 Common labels
 */}}
 {{- define "yeti.labels" -}}
@@ -114,11 +101,7 @@ Redis subcharts connection url
 {{- if .Values.redis.enabled -}}
 {{- $name := include "common.names.fullname" (dict "Chart" (dict "Name" "redis") "Release" .Release "Values" .Values.redis) -}}
 {{- $port := .Values.redis.master.service.ports.redis -}}
-{{- if .Values.redis.auth.enabled -}}
-{{- printf "redis://default:'$REDIS_PASSWORD'@%s-master:%.0f" $name $port -}}
-{{- else -}}
-{{- printf "redis://%s-master:%.0f" $name $port -}}
-{{- end -}}
+{{- printf "%s-master" $name -}}
 {{- else -}}
 {{ fail "Attempting to use Redis, but the subchart is not enabled. This will lead to misconfiguration" }}
 {{- end -}}

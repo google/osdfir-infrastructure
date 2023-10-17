@@ -28,15 +28,12 @@ spec:
       serviceAccountName: {{ include "yeti.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.frontend.podSecurityContext | nindent 8 }}
-      initContainers:
-      {{- include "yeti.initContainer" . | nindent 8 }}
       containers:
         - name: frontend
           securityContext:
               {{- toYaml .Values.frontend.securityContext | nindent 12 }}
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["sh", "-c", "./docker-entrypoint.sh timesketch-web"]
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           env:
             - name: POD_NAME
               valueFrom:

@@ -1,18 +1,17 @@
-{{- $userconfigs := .Files.Glob .Values.config.override }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  {{ include "timesketch.fullname" . }}
+  name:  {{ include "yeti.fullname" . }}-arangodb
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app.kubernetes.io/component: frontend
-    {{- include "timesketch.labels" . | nindent 4 }}
+    app.kubernetes.io/component: arangodb
+    {{- include "yeti.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: frontend
-      {{- include "timesketch.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: arangodb
+      {{- include "yeti.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -23,81 +22,50 @@ spec:
         prometheus.io/scrape: "true"
         {{- end }}
       labels:
-        app.kubernetes.io/component: frontend
-        {{- include "timesketch.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: arangodb
+        {{- include "yeti.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "timesketch.serviceAccountName" . }}
+      serviceAccountName: {{ include "yeti.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.frontend.podSecurityContext | nindent 8 }}
-      initContainers:
-      {{- include "timesketch.initContainer" . | nindent 8 }}
+        {{- toYaml .Values.arangodb.podSecurityContext | nindent 8 }}
       containers:
         - name: frontend
           securityContext:
-              {{- toYaml .Values.frontend.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["sh", "-c", "./docker-entrypoint.sh timesketch-web"]
-          {{- if .Values.config.createUser }}
-          lifecycle:
-            postStart:
-              exec:
-                command: ["/bin/sh", "-c", "tsctl create-user timesketch --password $TIMESKETCH_USER"]
-          {{- end }}
+              {{- toYaml .Values.arangodb.securityContext | nindent 12 }}
+          image: "{{ .Values.arangodb.image.repository }}:{{ .Values.arangodb.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.arangodb.image.pullPolicy }}
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
                   apiVersion: v1
-            {{- if .Values.config.createUser }}
-            - name: TIMESKETCH_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "timesketch.fullname" . }}-secret 
-                  key: timesketch-user
-            {{- end }}
+            - name: ARANGO_NO_AUTH
+              value: "True"
           volumeMounts:
-            - mountPath: {{ (include "timesketch.uploadPath" .) | quote }}
-              name: timesketchvolume
-              subPath: uploads
-            - mountPath: /var/log/timesketch
-              name: timesketchvolume
-              subPathExpr: logs/$(POD_NAME)
-            - mountPath: /etc/timesketch
-              name: timesketch-configs
+            - mountPath: /mnt/yeti
+              name: yetivolume
           ports:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
             - containerPort: {{ .Values.service.port }}
           resources:
-            {{- toYaml .Values.frontend.resources | nindent 12 }}
+            {{- toYaml .Values.arangodb.resources | nindent 12 }}
       volumes:
-        - name: timesketchvolume
+        - name: yetivolume
           persistentVolumeClaim:
-            claimName: {{ include "timesketch.pvc.name"  . }}
+            claimName: {{ include "yeti.pvc.name"  . }}
             readOnly: false
-        - name: init-timesketch
-          configMap:
-            name: {{ include "timesketch.fullname" . }}-init-configmap
-            defaultMode: 0744
-        - name: timesketch-configs
-          emptyDir: {}
-        {{- if $userconfigs }}
-        - name: uploaded-configs
-          configMap:
-            name: {{ include "timesketch.fullname" . }}-configmap
-        {{- end }}
-      {{- with .Values.frontend.nodeSelector }}
+      {{- with .Values.arangodb.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.frontend.affinity }}
+      {{- with .Values.arangodb.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.frontend.tolerations }}
+      {{- with .Values.arangodb.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
