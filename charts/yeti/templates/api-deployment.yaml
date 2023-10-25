@@ -65,7 +65,7 @@ spec:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.api.service.port }}
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
       volumes:

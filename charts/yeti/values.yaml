@@ -26,7 +26,7 @@ frontend:
     ## @param frontend.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
@@ -37,6 +37,15 @@ frontend:
     ##   - myRegistryKeySecretName
     ##
     imagePullSecrets: []
+  ## Service Parameters
+  ##
+  service:
+    ## @param frontend.service.type Yeti service type
+    ##
+    type: ClusterIP
+    ## @param frontend.service.port Yeti service port
+    ##
+    port: 80
   ## @param frontend.podSecurityContext Holds pod-level security attributes and common server container settings
   ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
   ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
@@ -97,7 +106,7 @@ api:
     ## @param api.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
@@ -108,6 +117,15 @@ api:
     ##   - myRegistryKeySecretName
     ##
     imagePullSecrets: []
+  ## Service Parameters
+  ##
+  service:
+    ## @param api.service.type Yeti service type
+    ##
+    type: ClusterIP
+    ## @param api.service.port Yeti service port
+    ##
+    port: 8000
   ## @param api.podSecurityContext Holds pod-level security attributes and common API container settings
   ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
   ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
@@ -168,7 +186,7 @@ tasks:
     ## @param tasks.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param tasks.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
@@ -257,7 +275,7 @@ service:
   type: ClusterIP
   ## @param service.port Yeti service port
   ##
-  port: 5000
+  port: 80
 ## Metrics Parameters
 ## IMPORTANT: Timesketch utilizes Prometheus to scrape metrics through annotations
 ## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
@@ -428,7 +446,7 @@ arangodb:
     ## @param arangodb.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
@@ -439,6 +457,15 @@ arangodb:
     ##   - myRegistryKeySecretName
     ##
     imagePullSecrets: []
+  ## Service Parameters
+  ##
+  service:
+    ## @param api.service.type Yeti service type
+    ##
+    type: ClusterIP
+    ## @param api.service.port Yeti service port
+    ##
+    port: 8529
   ## @param arangodb.podSecurityContext Holds pod-level security attributes and common server container settings
   ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
   ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core

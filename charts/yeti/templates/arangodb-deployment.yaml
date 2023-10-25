@@ -49,7 +49,7 @@ spec:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.arangodb.service.port }}
           resources:
             {{- toYaml .Values.arangodb.resources | nindent 12 }}
       volumes:
