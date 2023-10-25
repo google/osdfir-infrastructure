@@ -29,7 +29,7 @@ kind: Service
 metadata:
 name: {{ template "fullname" . }}
 labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
 type: {{ .Values.service.type }}
 ports:
