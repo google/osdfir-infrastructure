@@ -1,9 +1,9 @@
 dependencies:
 - name: timesketch
   repository: oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts
-  version: 0.3.1
+  version: 0.3.2
 - name: turbinia
   repository: oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts
-  version: 0.3.1
-digest: sha256:49a3cc4aebcdce6937dc34249ed12b38597464dfb5c0148e4908475e1238bb9f
-generated: "2023-09-29T18:52:03.688555989Z"
+  version: 0.3.2
+digest: sha256:4662c22a7f34e7ba5af9b49ad6aad6e08d74244aade3684403b59728d272cebb
+generated: "2023-10-26T19:56:09.567858169Z"
