@@ -14,11 +14,11 @@ dependencies:
 - condition: timesketch.enabled
   name: timesketch
   repository: oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts
-  version: 0.3.1
+  version: 0.3.2
 - condition: turbinia.enabled
   name: turbinia
   repository: oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts
-  version: 0.3.1
+  version: 0.3.2
 maintainers:
   - name: Wajih Yassine
     url: https://github.com/wajihyassine
