@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "yeti.fullname" . }}-arangodb
+  name: {{ include "yeti.fullname" . }}-api
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "yeti.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.arangodb.service.port }}
+    - port: {{ .Values.api.service.port }}
       protocol: TCP
   selector:
-    app.kubernetes.io/component: arangodb
+    app.kubernetes.io/component: api
     {{- include "yeti.selectorLabels" . | nindent 4 }}

@@ -267,15 +267,6 @@ serviceAccount:
   ## If not set and create is true, a name is generated using the fullname template
   ##
   name: "yeti"
-## Service Parameters
-##
-service:
-  ## @param service.type Yeti service type
-  ##
-  type: ClusterIP
-  ## @param service.port Yeti service port
-  ##
-  port: 80
 ## Metrics Parameters
 ## IMPORTANT: Timesketch utilizes Prometheus to scrape metrics through annotations
 ## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly

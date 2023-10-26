@@ -45,7 +45,7 @@ spec:
             - name: YETI_ARANGODB_HOST
               value: {{ include "yeti.fullname" . }}-arangodb
             - name: YETI_ARANGODB_PORT
-              value: "8529"
+              value: {{ .Values.arangodb.service.port | quote }}
             - name: YETI_ARANGODB_DATABASE
               value: yeti
             - name: YETI_ARANGODB_USERNAME
