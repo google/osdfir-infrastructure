@@ -5,14 +5,14 @@ Digital Forensics tools to Kubernetes clusters using Helm.
 
 Currently, OSDFIR Infrastructure supports the deployment and integration of the following tools:
 
-* [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis
-* [Turbinia](https://github.com/google/turbinia) for automating processing of forensic evidence at scale helping find prevelant badness. Includes built-in integrations to many tools such as:
+* [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis with built-in analyzers to help identitify patterns in data
+* [Turbinia](https://github.com/google/turbinia) for automating processing of forensic evidence at scale helping find prevelant badness and includes built-in integrations to many tools such as:
   * [Container Explorer](https://github.com/google/container-explorer) for container level processing
   * [Docker Explorer](https://github.com/google/docker-explorer) for docker container level processing
   * [Fraken](https://github.com/google/turbinia/tree/master/tools/fraken) for multi-threaded yara scanning
-* [dfTimewolf](https://github.com/log2timeline/dftimewolf) a framework for orchestrating forensic collection, processing and data export, helping data be passed along between tools
-* [Plaso](https://github.com/log2timeline/plaso) used to extract and parse data from a variety of sources into a correlated super timeline and is built into Turbinia and Timesketch containers for timeline generation
-* [Libcloudforensics](https://github.com/google/cloud-forensics-utils/) used for collecting and mounting evidence from cloud platforms, used by dfTimewolf and Turbinia as a library
+* [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating forensic collection, processing and data export, helping pass data between tools
+* [Plaso](https://github.com/log2timeline/plaso) (and related projects such as dfVFS, libyal) for extracting and parsing data from a variety of sources into a correlated super timeline and is built into Turbinia and Timesketch containers for timeline generation
+* [Libcloudforensics](https://github.com/google/cloud-forensics-utils/) for collecting and mounting evidence from cloud platforms and is being used by dfTimewolf and Turbinia as a library
 
 ## Installing the Charts
 
