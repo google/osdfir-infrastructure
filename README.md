@@ -5,9 +5,16 @@ Digital Forensics tools to Kubernetes clusters using Helm.
 
 Currently, OSDFIR Infrastructure supports the deployment and integration of the following tools:
 
-* [Timesketch](https://github.com/google/timesketch)
-* [Turbinia](https://github.com/google/turbinia)
-* [dfTimewolf](https://github.com/log2timeline/dftimewolf)
+* [Turbinia](https://github.com/google/turbinia) for automating processing of forensic evidence at scale helping find prevelant badness and includes built-in integrations to many tools such as:
+  * [Plaso](https://github.com/log2timeline/plaso) (and related projects such as dfVFS, libyal) for extracting data from a variety of sources into a correlated super timeline
+  * [Container Explorer](https://github.com/google/container-explorer) for container level processing
+  * [Docker Explorer](https://github.com/google/docker-explorer) for docker container level processing
+  * [Fraken](https://github.com/google/turbinia/tree/master/tools/fraken) for multi-threaded yara scanning
+  * [Libcloudforensics](https://github.com/google/cloud-forensics-utils/) for mounting evidence from cloud platforms
+* [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis with built-in analyzers to help identitify patterns in data and supports Plaso, JSONL, or CSV file imports
+* [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating forensic collection, processing and data export, helping pass data between tools
+
+These tools can be used independently as well by following the documentation on the tool's repository or by installing a tool specific Helm chart which includes any built-in integrations.
 
 ## Installing the Charts
 
@@ -22,5 +29,5 @@ The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the defau
 For more information on how to install and configure OSDFIR Infrastructure or individual tools, please refer to the links below.
 
 * [OSDFIR Infrastructure Install Guide](charts/osdfir-infrastructure/README.md)
-* [Timesketch Install Guide](charts/timesketch/README.md)
 * [Turbinia Install Guide](charts/turbinia/README.md)
+* [Timesketch Install Guide](charts/timesketch/README.md)
