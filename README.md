@@ -14,6 +14,8 @@ Currently, OSDFIR Infrastructure supports the deployment and integration of the 
 * [Plaso](https://github.com/log2timeline/plaso) (and related projects such as dfVFS, libyal) for extracting and parsing data from a variety of sources into a correlated super timeline and is built into Turbinia and Timesketch containers for timeline generation
 * [Libcloudforensics](https://github.com/google/cloud-forensics-utils/) for collecting and mounting evidence from cloud platforms and is being used by dfTimewolf and Turbinia as a library
 
+These tools can be used independently as well by following the documentation on the tool's repository or by installing a tool specific Helm chart if available.
+
 ## Installing the Charts
 
 To get started, ensure you have [Helm](https://helm.sh) installed and are authenticated to your Kubernetes cluster, then using a release name of your choice, such as `my-release`, run:
