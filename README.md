@@ -6,7 +6,7 @@ Digital Forensics tools to Kubernetes clusters using Helm.
 Currently, OSDFIR Infrastructure supports the deployment and integration of the following tools:
 
 * [Turbinia](https://github.com/google/turbinia) for automating processing of forensic evidence at scale helping find prevelant badness and includes built-in integrations to many tools such as:
-  * [Plaso](https://github.com/log2timeline/plaso) (and related projects such as dfVFS, libyal) for extracting and parsing data from a variety of sources into a correlated super timeline
+  * [Plaso](https://github.com/log2timeline/plaso) (and related projects such as dfVFS, libyal) for extracting data from a variety of sources into a correlated super timeline
   * [Container Explorer](https://github.com/google/container-explorer) for container level processing
   * [Docker Explorer](https://github.com/google/docker-explorer) for docker container level processing
   * [Fraken](https://github.com/google/turbinia/tree/master/tools/fraken) for multi-threaded yara scanning
