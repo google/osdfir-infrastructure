@@ -451,10 +451,10 @@ arangodb:
   ## Service Parameters
   ##
   service:
-    ## @param api.service.type Yeti service type
+    ## @param arangodb.service.type Yeti service type
     ##
     type: ClusterIP
-    ## @param api.service.port Yeti service port
+    ## @param arangodb.service.port Yeti service port
     ##
     port: 8529
   ## @param arangodb.podSecurityContext Holds pod-level security attributes and common server container settings
