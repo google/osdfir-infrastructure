@@ -268,7 +268,7 @@ serviceAccount:
   ##
   name: "yeti"
 ## Metrics Parameters
-## IMPORTANT: Timesketch utilizes Prometheus to scrape metrics through annotations
+## IMPORTANT: Yeti utilizes Prometheus to scrape metrics through annotations
 ## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
 ##
 metrics:
@@ -347,7 +347,7 @@ redis:
   ## Redis Authentication parameters
   ##
   auth:
-    ## @param redis.auth.enabled Enables Redis Authentication. Disabled due to incompatibility with Turbinia
+    ## @param redis.auth.enabled Enables Redis Authentication. Disabled due to incompatibility with Yeti
     ##
     enabled: false
   ## @param redis.sentinel.enabled Enables Redis Sentinel on Redis pods
