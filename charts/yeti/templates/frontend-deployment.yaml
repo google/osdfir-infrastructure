@@ -34,16 +34,13 @@ spec:
               {{- toYaml .Values.frontend.securityContext | nindent 12 }}
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-                  apiVersion: v1
           volumeMounts:
-            - mountPath: /var/log/yeti
+            - mountPath: /mnt/yeti
               name: yetivolume
-              subPathExpr: logs/$(POD_NAME)
+            - mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              name: nginx-config
+              readOnly: true
           ports:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
@@ -56,6 +53,9 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "yeti.pvc.name"  . }}
             readOnly: false
+        - name: nginx-config
+          configMap:
+            name: {{ include "yeti.fullname" . }}-nginx-configmap
       {{- with .Values.frontend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

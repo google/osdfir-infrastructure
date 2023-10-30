@@ -35,13 +35,8 @@ spec:
           image: "{{ .Values.arangodb.image.repository }}:{{ .Values.arangodb.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.arangodb.image.pullPolicy }}
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-                  apiVersion: v1
-            - name: ARANGO_NO_AUTH
-              value: "True"
+            - name: ARANGO_ROOT_PASSWORD
+              value: ""
           volumeMounts:
             - mountPath: /mnt/yeti
               name: yetivolume

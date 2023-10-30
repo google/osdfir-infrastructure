@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "yeti.fullname" . }}-frontend
+  name: {{ include "yeti.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "yeti.labels" . | nindent 4 }}
