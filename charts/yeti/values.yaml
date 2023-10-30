@@ -26,7 +26,7 @@ frontend:
     ## @param frontend.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
@@ -106,7 +106,7 @@ api:
     ## @param api.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
@@ -186,7 +186,7 @@ tasks:
     ## @param tasks.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     ## @param tasks.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
@@ -437,7 +437,7 @@ arangodb:
     ## @param arangodb.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
