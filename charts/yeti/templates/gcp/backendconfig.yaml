@@ -12,6 +12,6 @@ spec:
     healthyThreshold: 2
     unhealthyThreshold: 2
     type: HTTP
-    requestPath: /
+    requestPath: /login/
     port: {{ .Values.frontend.service.port }}
 {{- end }}
