@@ -9,7 +9,7 @@ Timesketch is an open-source tool for collaborative forensic timeline analysis.
 
 ## TL;DR
 
-```console
+```
 helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
 ```
 
