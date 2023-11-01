@@ -38,6 +38,7 @@ jobs:
             file_row_column="${line%%[ ]*}"
             # Split by ':'
             readarray -d : -t strarr < <(printf '%s' "$file_row_column")
+            echo "${#strarr[@]}"
             if [[ "${#strarr[@]}" -eq 3 ]]; then
               echo "::warning file=${strarr[0]},line=${strarr[1]},col=${strarr[2]}::${message}"
             elif [[ "${#strarr[@]}" -eq 2 ]]; then
