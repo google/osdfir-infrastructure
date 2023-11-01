@@ -1,0 +1,35 @@
+name: 'Markdown Linter'
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.md'
+permissions: {}
+
+jobs:
+  markdown-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli@0.33.0
+
+      - name: Checkout project
+        uses: actions/checkout@v3
+        
+      - name: Execute markdownlint
+        env:
+          DIFF_URL: "${{github.event.pull_request.diff_url}}"
+          TEMP_FILE: "${{runner.temp}}/pr-${{github.event.number}}.diff"
+        run: |
+          curl -Lkso $TEMP_FILE $DIFF_URL
+          files_changed="$(sed -nr 's/[\-\+]{3} [ab]\/(.*)/\1/p' $TEMP_FILE | sort | uniq)"
+          md_files="$(echo "$files_changed" | grep -o ".*\.md$" | sort | uniq || true)"
+          exit_code=0
+          markdownlint ${md_files[@]} || exit_code=$?
+          if [[ $exit_code -ne 0 ]]; then
+            echo "::error:: Please review linter messages"
+            exit "$exit_code"
+          fi
