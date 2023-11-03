@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 ### Changed
 
-* Update Timesketch configs download logic to pull git repo instead
+* Update Timesketch configs download logic to pull git repo instead and copy out
+configs from data folder
 
 ### Deprecated
 ### Removed
