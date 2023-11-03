@@ -6,7 +6,7 @@ Worker pod upon startup.
 {{- define "timesketch.initContainer" -}}
 {{- $userconfigs := .Files.Glob .Values.config.override }}
 - name: init-timesketch
-  image: busybox
+  image: alpine/git
   command: ['sh', '-c', '/init/init-timesketch.sh']
   env:
     - name: TIMESKETCH_SECRET
