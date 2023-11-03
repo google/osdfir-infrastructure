@@ -13,11 +13,11 @@ home: "https://github.com/google/osdfir-infrastructure"
 dependencies:
 - condition: timesketch.enabled
   name: timesketch
-  repository: oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts
+  repository: https://google.github.io/osdfir-infrastructure/
   version: 0.3.2
 - condition: turbinia.enabled
   name: turbinia
-  repository: oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts
+  repository: https://google.github.io/osdfir-infrastructure/
   version: 0.3.2
 maintainers:
   - name: Wajih Yassine

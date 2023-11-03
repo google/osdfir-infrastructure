@@ -18,16 +18,35 @@ These tools can be used independently as well by following the documentation on 
 
 ## Installing the Charts
 
-To get started, ensure you have [Helm](https://helm.sh) installed and are authenticated to your Kubernetes cluster, then using a release name of your choice, such as `my-release`, run:
+To get started, ensure you have [Helm](https://helm.sh) installed and are authenticated to your Kubernetes cluster.
+
+Once complete, add the repo containing the Helm charts as follows:
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure
 ```
 
-The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the default configuration. See the [GKE Installations](charts/osdfir-infrastructure/README.md) section for installing to GCP environments or to quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+If you had already added this repo earlier, run `helm repo update` to retrieve the latest versions of the packages.
+You can then run `helm search repo osdfir-charts` to see the available charts.
 
-For more information on how to install and configure OSDFIR Infrastructure or individual tools, please refer to the links below.
+To install the OSDFIR Infrastructure chart using a release name of `my-release`:
 
-* [OSDFIR Infrastructure Install Guide](charts/osdfir-infrastructure/README.md)
-* [Turbinia Install Guide](charts/turbinia/README.md)
-* [Timesketch Install Guide](charts/timesketch/README.md)
+```console
+helm install my-release osdfir-charts/osdfir-infrastructure
+```
+
+To uninstall the chart:
+
+```console
+helm uninstall my-release
+```
+
+Please refer to the links below for more details on configuring OSDFIR Infrastructure,
+using individual tools, and accessing helpful guides.
+
+* [OSDFIR Infrastructure Helm Chart](charts/osdfir-infrastructure/README.md)
+* [Turbinia Helm Chart](charts/turbinia/README.md)
+* [Timesketch Helm Chart](charts/timesketch/README.md)
+* [Getting Started with Minikube](docs/getting-started.md)
+* [Understanding Helm Charts](docs/understanding-helm.md)
+* [Troubleshooting Helm Charts](docs/troubleshooting.md)
