@@ -21,21 +21,9 @@ data:
     echo -n "* Fetching configuration files.." 
     GITHUB_BASE_URL="https://raw.githubusercontent.com/google/timesketch/master"
     # Fetch default Timesketch config files
-    wget $GITHUB_BASE_URL/data/timesketch.conf -O timesketch.conf
-    wget $GITHUB_BASE_URL/data/tags.yaml -O tags.yaml
-    wget $GITHUB_BASE_URL/data/plaso.mappings -O plaso.mappings
-    wget $GITHUB_BASE_URL/data/plaso_formatters.yaml -O plaso_formatters.yaml
-    wget $GITHUB_BASE_URL/data/generic.mappings -O generic.mappings
-    wget $GITHUB_BASE_URL/data/features.yaml -O features.yaml
-    wget $GITHUB_BASE_URL/data/ontology.yaml -O ontology.yaml
-    wget $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml -O intelligence_tag_metadata.yaml
-    wget $GITHUB_BASE_URL/data/sigma_config.yaml -O sigma_config.yaml
-    wget $GITHUB_BASE_URL/data/sigma/rules/lnx_susp_zmap.yml -O lnx_susp_zmap.yml
-    wget $GITHUB_BASE_URL/data/intelligence_tag_metadata.yaml -O intelligence_tag_metadata.yaml
-    wget $GITHUB_BASE_URL/data/context_links.yaml -O context_links.yaml
-    wget $GITHUB_BASE_URL/data/scenarios/facets.yaml -O facets.yaml
-    wget $GITHUB_BASE_URL/data/scenarios/questions.yaml -O questions.yaml
-    wget $GITHUB_BASE_URL/data/scenarios/scenarios.yaml -O scenarios.yaml
+    git clone https://github.com/google/timesketch.git
+    cp -r timesketch/data/* /etc/timesketch/
+    rm -rf timesketch
     echo "OK"
     {{- end}}
 
