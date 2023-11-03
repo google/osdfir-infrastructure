@@ -11,6 +11,6 @@ mkdir -p configs/
 echo -n "* Fetching configuration files.." 
 # Fetch default Timesketch config files
 git clone https://github.com/google/timesketch.git
-cp -r timesketch/data/* configs
+cp -r timesketch/data/* configs/
 rm -rf timesketch
 echo "OK"
