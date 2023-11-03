@@ -27,10 +27,7 @@ configs from data folder
 ### Removed
 ### Fixed
 
-* Adds logic to prevent password regen for Timesketch on Helm upgrades
-* Adds missing plaso_formatters.yaml config for Timesketch
-* Keep PVC on helm uninstall as an additional safeguard for data retention
-
+---
 ## [0.3.0]
 ### Added
 ### Changed
