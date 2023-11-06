@@ -38,7 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Keep PVC on helm uninstall as an additional safeguard for data retention
 
 ### Security
-
 ---
 ## [0.2.0]
 ### Added
