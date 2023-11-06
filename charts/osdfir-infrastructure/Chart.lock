@@ -1,9 +1,9 @@
 dependencies:
 - name: timesketch
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.2
+  version: 0.3.4
 - name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.2
-digest: sha256:eb1202bc47cda8d888b26f12862967fe9b1ab3a990c71434416d20c8d96df8d8
-generated: "2023-11-03T14:21:17.377087-07:00"
+  version: 0.3.3
+digest: sha256:7db5463e62559573a994fdbd00d6e124e60250d4576995845870e802506ef861
+generated: "2023-11-06T11:27:27.847137-08:00"
