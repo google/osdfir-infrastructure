@@ -137,10 +137,18 @@ By executing the *helm install* command the application will be deployed on the 
 
 > IMPORTANT: If you don't specify a release name, one will be automatically assigned.
 
+The first step will be to add the repo and then update to pick up any new changes that were made to
+the Helm charts.
+
+```console
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm repo update
+```
+
 To install the chart, specify any release name of your choice. For example, to install OSDFIR Infrastructure using a release name of `my-release`, run:
 
 ```shell
-$ helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+$ helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
 > NOTE: Check the configurable parameters of the OSDFIR Infrastructure chart and their default values at the [GitHub repository](https://github.com/google/osdfir-infrastructure/tree/main/charts/osdfir-infrastructure#parameters).
@@ -156,7 +164,7 @@ Find how to install Turbinia or Timesketch in the examples below:
 * To install Turbinia on Minikube with a release name of `my-release`, run:
 
     ```shell
-    $ helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/turbinia
+    $ helm install my-release osdfir-charts/turbinia
     ```
 
     > NOTE: Check the configurable parameters of the Turbinia chart and their default values at the [GitHub repository](https://github.com/google/osdfir-infrastructure/tree/main/charts/turbinia#parameters).
@@ -164,7 +172,7 @@ Find how to install Turbinia or Timesketch in the examples below:
 * To install Timesketch on Minikube with a release name of `my-release`, run:
 
     ```shell
-    $ helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+    $ helm install my-release osdfir-charts/timesketch
     ```
 
     > NOTE: Check the configurable parameters of the Timesketch chart and their default values at the [GitHub repository](https://github.com/google/osdfir-infrastructure/tree/main/charts/timesketch#parameters).

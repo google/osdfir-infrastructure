@@ -14,7 +14,8 @@ following tools:
 ## TL;DR
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
@@ -33,10 +34,17 @@ This chart bootstraps a OSDFIR Infrastructure deployment on a [Kubernetes](https
 
 ## Installing the Chart
 
+The first step is to add the repo and then update to pick up any new changes.
+
+```console
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm repo update
+```
+
 To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
 The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
@@ -48,7 +56,7 @@ for a recommended production installation.
 Pull the chart locally then cd into `/osdfir-infrastructure` and review the `values-production.yaml` file for a list of values that will be used for production.
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
+helm pull osdfir-charts/osdfir-infrastructure --untar
 ```
 
 ### GKE Installations
@@ -70,7 +78,7 @@ helm install my-release ../osdfir-infrastructure \
 To upgrade an existing release and externally expose Timesketch through a loadbalancer with SSL through GCP managed certificates, run:
 
 ```console
-helm upgrade my-release
+helm upgrade my-release ../osdfir-infrastructure \
     --set timesketch.ingress.enabled=true \
     --set timesketch.ingress.host=<DOMAIN_NAME> \
     --set timesketch.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
@@ -80,7 +88,7 @@ helm upgrade my-release
 To upgrade an existing and externally expose Turbinia through a load balancer with SSL through GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
 
 ```console
-helm upgrade my-release \
+helm upgrade my-release ../osdfir-infrastructure \
     -f values.yaml -f values-production.yaml \
     --set turbinia.ingress.enabled=true \
     --set turbinia.ingress.host=<DOMAIN> \
@@ -276,9 +284,7 @@ kubectl delete pvc -l release=my-release
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console
-helm install my-release \
-    --set turbinia.enabled=false
-    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm install my-release osdfir-charts/osdfir-infrastructure --set turbinia.enabled=false
 ```
 
 The above command installs OSDFIR Infrastructure without Turbinia deployed.
@@ -287,7 +293,7 @@ Alternatively, the `values.yaml` and `values-production.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
+helm pull osdfir-charts/osdfir-infrastructure --untar
 ```
 
 Then make changes to the downloaded `values.yaml` and once done, install the
@@ -313,7 +319,7 @@ persistent volume size or upgrading to a new release, you can run
 new release and upgrade storage capacity, run:
 
 ```console
-helm upgrade my-release \
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
     --set turbinia.server.image.tag=latest \
     --set timesketch.image.tag=latest \
     --set persistence.size=10T
