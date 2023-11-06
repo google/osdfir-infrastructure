@@ -34,3 +34,4 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_SKIP_EXISTING: true
+          CR_GENERATE_RELEASE_NOTES: true
