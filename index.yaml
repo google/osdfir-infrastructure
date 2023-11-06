@@ -5,6 +5,47 @@ entries:
       category: Security
       licenses: Apache-2.0
     apiVersion: v2
+    created: "2023-11-06T22:24:07.953374022Z"
+    dependencies:
+    - condition: timesketch.enabled
+      name: timesketch
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 0.3.4
+    - condition: turbinia.enabled
+      name: turbinia
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 0.3.3
+    description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
+    digest: 79716fc7343ea83e993fe30565d7ec81ceefa507bf007f1f3c5c428a0104f973
+    home: https://github.com/google/osdfir-infrastructure
+    keywords:
+    - timesketch
+    - turbinia
+    - dfir
+    - analysis
+    - processing
+    - cloud
+    maintainers:
+    - name: Wajih Yassine
+      url: https://github.com/wajihyassine
+    - name: Johan Berggren
+      url: https://github.com/berggren
+    - name: Aaron Peterson
+      url: https://github.com/aarontp
+    - name: hacktobeer
+      url: https://github.com/hacktobeer
+    name: osdfir-infrastructure
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    - https://github.com/google/turbinia
+    - https://github.com/google/timesketch
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-0.3.3/osdfir-infrastructure-0.3.3.tgz
+    version: 0.3.3
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
     created: "2023-10-26T20:27:42.07933259Z"
     dependencies:
     - condition: timesketch.enabled
@@ -237,4 +278,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/turbinia-0.3.2/turbinia-0.3.2.tgz
     version: 0.3.2
-generated: "2023-11-06T19:03:13.714119595Z"
+generated: "2023-11-06T22:24:07.953394122Z"
