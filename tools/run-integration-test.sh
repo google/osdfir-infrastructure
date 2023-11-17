@@ -36,7 +36,7 @@ kubectl --namespace default port-forward service/$RELEASE-turbinia 8000:8000  > 
 
 TS_SECRET=$(kubectl get secret --namespace default $RELEASE-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d)
 export DFTIMEWOLF_NO_CURSES=1
-#dftimewolf gcp_turbinia_ts $GCP_PROJECT $GCP_ZONE --disk_names $DISK --incident_id test213 --timesketch_username timesketch --timesketch_password $TS_SECRET
+dftimewolf gcp_turbinia_ts $GCP_PROJECT $GCP_ZONE --disk_names $DISK --incident_id test213 --timesketch_username timesketch --timesketch_password $TS_SECRET
 
 # Turbinia integration test
 
