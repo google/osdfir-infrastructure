@@ -78,9 +78,14 @@ cat > $HOME/.turbinia_api_config.json <<EOL
 }
 EOL
 
+# Forward k8s services
+echo "Forwarding k8s $RELEASE services"
+kubectl --namespace default port-forward service/$RELEASE-timesketch 5000:5000 > /dev/null 2>&1 &
+kubectl --namespace default port-forward service/$RELEASE-turbinia 8000:8000  > /dev/null 2>&1 &
+
 # Run dfTimewolf recipe
-export DFTIMEWOLF_NO_CURSES=1
 echo "Running dfTimewolf recipe: dftimewolf gcp_turbinia_ts $GCP_PROJECT $GCP_ZONE --disk_names $DISK --incident_id test213 --timesketch_username timesketch --timesketch_password TS_SECRET"
+export DFTIMEWOLF_NO_CURSES=1
 dftimewolf gcp_turbinia_ts $GCP_PROJECT $GCP_ZONE --disk_names $DISK --incident_id test213 --timesketch_username timesketch --timesketch_password $TS_SECRET
 echo "dfTimewolf recipe succeeded!" 
 
@@ -95,7 +100,7 @@ do
 	# Grab all PlasoParserTask or PlasoHasherTask where successful = false
   echo "Checking the status of Turbinia request: $req"
   status=$(turbinia-client status request $req -j)
-	plaso_status=$(echo $status | jq '[.tasks[]] | map({name: .name, id: .id, successful: .successful, worker_name: .worker_name}) | map(select(.name == "PlasoParserTask" or .name == "PlasoHasherTask")) | map(select(.successful==true))')
+	plaso_status=$(echo $status | jq '[.tasks[]] | map({name: .name, id: .id, successful: .successful, worker_name: .worker_name}) | map(select(.name == "PlasoParserTask" or .name == "PlasoHasherTask")) | map(select(.successful==false))')
 	length=$(echo $plaso_status | jq '. | length')
 	if [[ $length > 0 ]]
 	then
@@ -117,7 +122,7 @@ do
       wlogs=$(kubectl exec $server -- find /mnt/turbiniavolume/logs -path "*$w*")
       if [ -n $wlogs ] && [ -n  $server ]
       then
-        echo "Grabbing logs for Turbinia Worker $w..."
+        echo "Grabbing logs for Turbinia worker $w"
         kubectl exec $server -- tail $wlogs 
       fi
     done
@@ -169,7 +174,7 @@ then
   echo $TIMESKETCH_ERR
 
   worker=$(kubectl get pods -o name  | grep timesketch-worker)
-  echo "Grabbing logs for Timesketch Worker $worker..."
+  echo "Grabbing logs for Timesketch worker: $worker"
   kubectl exec $worker -- cat /var/log/timesketch/worker.log
 
   echo "Timesketch integration tests failed. Exiting!"
