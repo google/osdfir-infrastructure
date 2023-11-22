@@ -28,6 +28,11 @@ GCP_ZONE="$2"
 echo -n "Started at "
 date -Iseconds
 
+# Forward k8s services
+echo "Forwarding k8s $RELEASE services"
+kubectl --namespace default port-forward service/$RELEASE-timesketch 5000:5000 > /dev/null 2>&1 &
+kubectl --namespace default port-forward service/$RELEASE-turbinia 8000:8000  > /dev/null 2>&1 &
+
 # Back up existing Timesketch configs else script will attempt to connect to wrong Timesketch instance
 if  [ -f ~/.timesketchrc ] && [ -f ~/.timesketch.token ] 
 then
@@ -74,11 +79,6 @@ cat > $HOME/.turbinia_api_config.json <<EOL
 	}
 }
 EOL
-
-# Forward k8s services
-echo "Forwarding k8s $RELEASE services"
-kubectl --namespace default port-forward service/$RELEASE-timesketch 5000:5000 > /dev/null 2>&1 &
-kubectl --namespace default port-forward service/$RELEASE-turbinia 8000:8000  > /dev/null 2>&1 &
 
 # Run dfTimewolf recipe
 echo "Running dfTimewolf recipe: dftimewolf gcp_turbinia_ts $GCP_PROJECT $GCP_ZONE --disk_names $DISK --incident_id test213 --timesketch_username timesketch --timesketch_password TS_SECRET"
