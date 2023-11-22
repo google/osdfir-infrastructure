@@ -28,9 +28,6 @@ GCP_ZONE="$2"
 echo -n "Started at "
 date -Iseconds
 
-kubectl --namespace default port-forward service/$RELEASE-timesketch 5000:5000 > /dev/null 2>&1 &
-kubectl --namespace default port-forward service/$RELEASE-turbinia 8000:8000  > /dev/null 2>&1 &
-
 # Back up existing Timesketch configs else script will attempt to connect to wrong Timesketch instance
 if  [ -f ~/.timesketchrc ] && [ -f ~/.timesketch.token ] 
 then
@@ -123,7 +120,7 @@ do
       if [ -n $wlogs ] && [ -n  $server ]
       then
         echo "Grabbing logs for Turbinia worker $w"
-        kubectl exec $server -- tail $wlogs 
+        kubectl exec $server -- cat $wlogs 
       fi
     done
   # If no failed Plaso Tasks were detected
