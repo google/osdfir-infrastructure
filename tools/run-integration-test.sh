@@ -9,7 +9,7 @@
 set -o posix
 set -e
 
-RELEASE="os"
+RELEASE="test"
 DISK="disk-1"
 SKETCH_ID="1"
 FAILED=0
