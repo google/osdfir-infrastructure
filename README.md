@@ -1,11 +1,11 @@
-# OSDFIR Infrastructure
+# Introduction
 
 OSDFIR Infrastructure helps setup Open Source
 Digital Forensics tools to Kubernetes clusters using Helm.
 
 Currently, OSDFIR Infrastructure supports the deployment and integration of the following tools:
 
-* [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating forensic collection, processing and data export, helping pass data between tools using recipes (e.g importing Plaso files from Turbinia into Timesketch)
+* [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating forensic collection, processing and data export, helping pass data between tools using recipes (e.g. importing processed Plaso files from Turbinia into Timesketch)
 * [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis with built-in analyzers to help identitify patterns in data and includes integrations such as:
   * [Ability to import data](https://github.com/google/timesketch/blob/master/docs/guides/user/import-from-json-csv.md) from Plaso, JSONL, or CSV files that contain timestamps
   * [DFIQ](https://dfiq.org/) for digital forensics investigative questions and the approaches to answering them
@@ -48,11 +48,11 @@ helm uninstall my-release
 Please refer to the links below for more details on configuring OSDFIR Infrastructure,
 using individual tools, and accessing helpful guides.
 
-* [OSDFIR Infrastructure Helm Chart](charts/osdfir-infrastructure/README.md)
-* [Turbinia Helm Chart](charts/turbinia/README.md)
-* [Timesketch Helm Chart](charts/timesketch/README.md)
 * [Getting Started with Minikube](docs/getting-started.md)
-* [Understanding Helm Charts](docs/understanding-helm.md)
+* [OSDFIR Infrastructure Helm Chart](charts/osdfir-infrastructure/README.md)
+* [Timesketch Helm Chart](charts/timesketch/README.md)
+* [Turbinia Helm Chart](charts/turbinia/README.md)
 * [Troubleshooting Helm Charts](docs/troubleshooting.md)
+* [Understanding Helm Charts](docs/understanding-helm.md)
 
 This is not an officially supported Google product.
