@@ -9,7 +9,7 @@ Currently, OSDFIR Infrastructure supports the deployment and integration of the 
 * [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis with built-in analyzers to help identitify patterns in data and includes integrations such as:
   * [The ability to import data](https://github.com/google/timesketch/blob/master/docs/guides/user/import-from-json-csv.md) from Plaso, JSONL, or CSV files
   * [DFIQ](https://dfiq.org/) for digital forensics investigative questions and the approaches to answering them
-  * [Sigma](https://github.com/SigmaHQ/sigma) for detection and hunting rules
+  * [Sigma](https://github.com/SigmaHQ/sigma) for detection and hunting rules to run across timelines
   * [Unfurl](https://github.com/obsidianforensics/unfurl) for graph analysis of URLs
 * [Turbinia](https://github.com/google/turbinia) for automating processing of forensic evidence at scale helping find prevelant badness and includes built-in integrations to many tools such as:
   * [Plaso](https://github.com/log2timeline/plaso) (and related projects such as dfVFS, libyal) for extracting data from a variety of sources into a correlated super timeline
