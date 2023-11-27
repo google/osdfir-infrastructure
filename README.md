@@ -7,7 +7,7 @@ Currently, OSDFIR Infrastructure supports the deployment and integration of the 
 
 * [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating forensic collection, processing and data export, helping pass data between tools using recipes (e.g. importing processed Plaso files from Turbinia into Timesketch)
 * [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis with built-in analyzers to help identitify patterns in data and includes integrations such as:
-  * [Ability to import data](https://github.com/google/timesketch/blob/master/docs/guides/user/import-from-json-csv.md) from Plaso, JSONL, or CSV files that contain timestamps
+  * [Ability to import data](https://github.com/google/timesketch/blob/master/docs/guides/user/import-from-json-csv.md) from Plaso, JSONL, or CSV files containing timestamps
   * [DFIQ](https://dfiq.org/) for digital forensics investigative questions and the approaches to answering them
   * [Sigma](https://github.com/SigmaHQ/sigma) for detection and hunting rules to run across timelines
   * [Unfurl](https://github.com/obsidianforensics/unfurl) for graph analysis of URLs
