@@ -23,7 +23,7 @@ These tools can be used independently as well by following the documentation on 
 ## Installing the Charts
 
 To get started, ensure you have [Helm](https://helm.sh) installed and are authenticated to your Kubernetes cluster.
-> **IMPORTANT**: Helm charts are currently undergoing compatibility testing for AWS and Azure.
+> **IMPORTANT**: Helm charts are currently undergoing compatibility testing for AWS and Azure
 
 Once complete, add the repo containing the Helm charts as follows:
 
