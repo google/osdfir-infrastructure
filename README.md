@@ -6,7 +6,7 @@ Digital Forensics tools to Kubernetes clusters using Helm.
 Currently, OSDFIR Infrastructure supports the deployment and integration of the following tools:
 
 * [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating forensic collection, processing and data export, helping pass data between tools
-* [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis with built-in analyzers to help identitify patterns in data, and includes integrations such as:
+* [Timesketch](https://github.com/google/timesketch) for collaborative forensic timeline analysis with built-in analyzers to help identitify patterns in data and includes integrations such as:
   * [The ability to import data](https://github.com/google/timesketch/blob/master/docs/guides/user/import-from-json-csv.md) from Plaso, JSONL, or CSV files
   * [DFIQ](https://dfiq.org/) for digital forensics investigative questions and the approaches to answering them
   * [Sigma](https://github.com/SigmaHQ/sigma) for detection and hunting rules
