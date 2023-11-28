@@ -39,6 +39,8 @@ To install the OSDFIR Infrastructure chart using a release name of `my-release`:
 helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
+> **Note**: The default configuration of the Helm chart installs it within your cluster for internal access. To enable external access, follow the instructions provided in the Helm chart's README.
+
 To uninstall the chart:
 
 ```console
