@@ -13,4 +13,4 @@ To connect to the Yeti URL, run:
   $ echo "Visit http://127.0.0.1:8080 to access Yeti"
 
 Login to Yeti with the User `yeti`. To get your password run:
-  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ include "yeti.fullname" . }}-secret -o jsonpath="{.data.yeti-secret}" | base64 -d
+  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ include "yeti.fullname" . }}-secret -o jsonpath="{.data.yeti-user}" | base64 -d

@@ -41,7 +41,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "yeti.fullname" . }}-secret 
-                  key: arangodb-secret
+                  key: yeti-arangodb
           volumeMounts:
             - mountPath: /mnt/yeti
               name: yetivolume

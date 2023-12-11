@@ -38,19 +38,24 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["sh", "-c", "poetry run python yetictl/cli.py create-user yeti $YETI_USER --admin"]
+                command: ["sh", "-c", "poetry run python yetictl/cli.py create-user yeti $YETI_USER --api_key $YETI_API_KEY --admin"]
           env:
           {{- include "yeti.envs" . | nindent 12 }}
             - name: YETI_USER
               valueFrom:
                 secretKeyRef:
                   name: {{ include "yeti.fullname" . }}-secret 
-                  key: yeti-secret
+                  key: yeti-user
             - name: YETI_ARANGODB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "yeti.fullname" . }}-secret 
-                  key: arangodb-secret
+                  key: yeti-arangodb
+            - name: YETI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "yeti.fullname" . }}-secret 
+                  key: yeti-api
           volumeMounts:
             - mountPath: /mnt/yeti
               name: yetivolume
