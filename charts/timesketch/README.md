@@ -10,7 +10,8 @@ Timesketch is an open-source tool for collaborative forensic timeline analysis.
 ## TL;DR
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm install my-release osdfir-charts/timesketch
 ```
 
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
@@ -28,10 +29,17 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](htt
 
 ## Installing the Chart
 
+The first step is to add the repo and then update to pick up any new changes.
+
+```console
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm repo update
+```
+
 To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install my-release osdfir-charts/timesketch
 ```
 
 The command deploys Timesketch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
@@ -46,7 +54,7 @@ chart locally and adding a `configs/` directory at the root of the Helm chart wi
 Pull the chart locally then cd into `/timesketch` and review the `values-production.yaml` file for a list of values that will be used for production.
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
+helm pull osdfir-charts/timesketch --untar
 ```
 
 Install the chart with the base values in `values.yaml` and the production values in `values-production.yaml`, then using a release name such as `my-release`, run:
@@ -58,7 +66,7 @@ helm install my-release ../timesketch -f values.yaml -f values-production.yaml
 To upgrade an existing release with production values, externally expose Timesketch through a loadbalancer, and add SSL through GCP managed certificates, run:
 
 ```console
-helm upgrade my-release
+helm upgrade my-release ../timesketch \
     -f values-production.yaml \
     --set ingress.enabled=true \
     --set ingress.host=<DOMAIN_NAME> \
@@ -224,9 +232,7 @@ Specify each parameter using the --set key=value[,key=value] argument to helm
 install. For example,
 
 ```console
-helm install my-release \
-    --set opensearch.replicas=3
-    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install my-release osdfir-charts/timesketch --set opensearch.replicas=3
 ```
 
 The above command installs Timesketch with 3 Opensearch Replicas.
@@ -235,7 +241,7 @@ Alternatively, the `values.yaml` and `values-production.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
+helm pull osdfir-charts/timesketch --untar
 ```
 
 Then make changes to the downloaded `values.yaml` and once done, install the
@@ -261,8 +267,8 @@ volume size or upgrading to a new release, you can run [helm upgrade](https://he
 For example, to set a new release and upgrade storage capacity, run:
 
 ```console
-helm upgrade my-release \
-    --set image.tag=latest
+helm upgrade my-release ../timesketch \
+    --set image.tag=latest \
     --set persistence.size=10T
 ```
 

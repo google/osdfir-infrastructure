@@ -14,8 +14,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Fixed
 ### Security
----
 
+---
+## [0.3.4]
+### Added
+### Changed
+
+* Update docs to point to new Helm chart repo
+
+### Deprecated
+### Removed
+### Fixed
+
+---
+## [0.3.3]
+### Added
+### Changed
+
+* Update Timesketch configs download logic to pull git repo instead and copy out
+configs from data folder
+
+### Deprecated
+### Removed
+### Fixed
+
+---
 ## [0.3.0]
 ### Added
 ### Changed
