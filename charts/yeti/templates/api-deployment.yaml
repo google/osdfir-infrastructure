@@ -35,8 +35,22 @@ spec:
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
           command: ["sh", "-c", "/docker-entrypoint.sh webserver"]
+          lifecycle:
+            postStart:
+              exec:
+                command: ["sh", "-c", "poetry run python yetictl/cli.py create-user yeti $YETI_USER --admin"]
           env:
           {{- include "yeti.envs" . | nindent 12 }}
+            - name: YETI_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "yeti.fullname" . }}-secret 
+                  key: yeti-secret
+            - name: YETI_ARANGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "yeti.fullname" . }}-secret 
+                  key: arangodb-secret
           volumeMounts:
             - mountPath: /mnt/yeti
               name: yetivolume

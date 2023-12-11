@@ -36,7 +36,10 @@ spec:
           imagePullPolicy: {{ .Values.arangodb.image.pullPolicy }}
           env:
             - name: ARANGO_ROOT_PASSWORD
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "yeti.fullname" . }}-secret 
+                  key: arangodb-secret
           volumeMounts:
             - mountPath: /mnt/yeti
               name: yetivolume

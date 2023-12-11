@@ -18,14 +18,12 @@ Worker pod upon startup.
   value: yeti
 - name: YETI_ARANGODB_USERNAME
   value: root
-- name: YETI_ARANGODB_PASSWORD
-  value: ""
 - name: YETI_AUTH_SECRET_KEY
-  value: SECRET
+  value: {{ randAlphaNum 32 | quote }}
 - name: YETI_AUTH_ALGORITHM
   value: HS256
 - name: YETI_AUTH_ACCESS_TOKEN_EXPIRE_MINUTES
   value: "30"
 - name: YETI_AUTH_ENABLED
-  value: "False"
+  value: "True"
 {{- end }}
