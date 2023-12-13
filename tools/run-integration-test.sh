@@ -106,20 +106,20 @@ do
     # Grab the Task ID
     tasks=$(echo $plaso_status | jq -r '.[] | .id')
 	  FAILED=1
-	  for t in $tasks
+	  for task in $tasks
     do
-	    echo "Failed Plaso Task ID: $t"
-	    turbinia-client status task $t
+	    echo "Failed Plaso Task ID: $task"
+	    turbinia-client status task $task
 	  done
     # Grab Turbinia worker logs from the server pod
     server=$(kubectl get pods -o name  | grep turbinia-server)
     workers=$(echo $plaso_status | jq -r '.[] | .worker_name')
-    for w in $workers
+    for worker in $workers
     do
-      wlogs=$(kubectl exec $server -- find /mnt/turbiniavolume/logs -path "*$w*")
+      wlogs=$(kubectl exec $server -- find /mnt/turbiniavolume/logs -path "*$worker*")
       if [ -n $wlogs ] && [ -n  $server ]
       then
-        echo "Grabbing logs for Turbinia worker $w"
+        echo "Grabbing logs for Turbinia worker $worker"
         kubectl exec $server -- cat $wlogs 
       fi
     done
@@ -156,10 +156,10 @@ timesketch timelines list
 
 # Iterate through timelines for any populated error messages
 echo "Checking for any failed timeline imports for Sketch ID $SKETCH_ID..."
-for tl in $TIMESKETCH_ERR_LENGTH
+for timeline_err in $TIMESKETCH_ERR_LENGTH
 do
   # if error_message field is populated
-  if [[ $tl > 0 ]]
+  if [[ $timeline_err > 0 ]]
   then
     FAILED=1
   fi
