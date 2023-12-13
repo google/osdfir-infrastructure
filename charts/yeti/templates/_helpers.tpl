@@ -108,7 +108,7 @@ Redis subcharts connection url
 {{- end -}}
 
 {{/*
-Timesketch service port
+Yeti service port
 */}}
 {{- define "yeti.service.port" -}}
 {{- if .Values.global.yeti.servicePort -}}
