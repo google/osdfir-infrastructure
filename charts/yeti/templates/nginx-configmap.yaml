@@ -12,7 +12,7 @@ data:
         root /www;
 
         location /api/v2 {
-            proxy_pass http://{{ include "yeti.fullname" . }}-api:{{ include "timesketch.service.port" . }};
+            proxy_pass http://{{ include "yeti.fullname" . }}-api:{{ include "yeti.service.port" . }};
         }
 
         location / {
