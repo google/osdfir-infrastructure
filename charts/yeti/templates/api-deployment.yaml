@@ -38,10 +38,10 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["sh", "-c", "poetry run python yetictl/cli.py create-user yeti $YETI_USER --api_key $YETI_API_KEY --admin"]
+                command: ["sh", "-c", "poetry run python yetictl/cli.py create-user yeti $YETI_USER_PASSWORD --api_key $YETI_API_KEY --admin"]
           env:
           {{- include "yeti.envs" . | nindent 12 }}
-            - name: YETI_USER
+            - name: YETI_USER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "yeti.fullname" . }}-secret 
