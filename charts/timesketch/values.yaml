@@ -11,21 +11,21 @@ global:
     ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: true
-    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`) 
+    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
     ##
-    servicePort: 5999
+    servicePort: 5000
   turbinia:
     ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
-    ## 
+    ##
     enabled: false
-    ## @param global.timesketch.servicePort Turbinia API service port (overrides `turbinia.service.port`) 
+    ## @param global.timesketch.servicePort Turbinia API service port (overrides `turbinia.service.port`)
     ##
     servicePort: 8080
   yeti:
     ## @param global.timesketch.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
-    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`) 
+    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
     ##
     servicePort: 8000
   ## @param global.existingPVC Existing claim for Timesketch persistent volume (overrides `persistent.name`)
