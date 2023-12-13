@@ -19,6 +19,6 @@ spec:
     port: 4180
     {{- else }}
     requestPath: /web
-    port: {{ .Values.service.port }}
+    port: {{ include "turbinia.service.port" . }}
     {{- end }}
 {{- end }}

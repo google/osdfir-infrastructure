@@ -160,3 +160,14 @@ Opensearch subcharts port
 {{ printf "Attempting to use Opensearch, but the subchart is not enabled. This will lead to misconfiguration" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Timesketch service port
+*/}}
+{{- define "timesketch.service.port" -}}
+{{- if .Values.global.timesketch.servicePort -}}
+{{ .Values.global.timesketch.servicePort }}
+{{- else -}}
+{{ .Values.service.port }}
+{{- end -}}
+{{- end -}}

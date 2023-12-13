@@ -7,7 +7,7 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
 
-{{ if .Values.timesketch.enabled -}}
+{{ if .Values.global.timesketch.enabled -}}
 To connect to the Timesketch UI, run:
 
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "timesketch.fullname" .Subcharts.timesketch }} {{ .Values.timesketch.service.port }}:{{ .Values.timesketch.service.port }}
@@ -19,10 +19,19 @@ Login to Timesketch with the User `timesketch`. To get your password run:
 {{- end }}
 {{- end }}
 
-{{ if .Values.turbinia.enabled -}}
+{{ if .Values.global.turbinia.enabled -}}
 To connect to the Turbinia UI, run:
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "turbinia.fullname" .Subcharts.turbinia }} {{ .Values.turbinia.service.port }}:{{ .Values.turbinia.service.port }}
   $ echo "Visit http://127.0.0.1:{{ .Values.turbinia.service.port }} to access the Turbinia Web UI"
+{{- end }}
+
+{{ if .Values.global.yeti.enabled -}}
+To connect to the Yeti URL, run:
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "yeti.fullname" . }} 8000:{{ .Values.frontend.service.port }}
+  $ echo "Visit http://127.0.0.1:8000 to access Yeti"
+
+Login to Yeti with the User `yeti`. To get your password run:
+  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ include "yeti.fullname" . }}-secret -o jsonpath="{.data.yeti-user}" | base64 -d
 {{- end }}
 
 Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:

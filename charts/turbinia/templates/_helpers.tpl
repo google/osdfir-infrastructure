@@ -159,3 +159,14 @@ Redis subcharts host url
 {{ fail "Attempting to use Redis, but the subchart is not enabled. This will lead to misconfiguration" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Turbinia service port
+*/}}
+{{- define "turbinia.service.port" -}}
+{{- if .Values.global.turbinia.servicePort -}}
+{{ .Values.global.turbinia.servicePort }}
+{{- else -}}
+{{ .Values.service.port }}
+{{- end -}}
+{{- end -}}

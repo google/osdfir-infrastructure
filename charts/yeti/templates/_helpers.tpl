@@ -106,3 +106,14 @@ Redis subcharts connection url
 {{ fail "Attempting to use Redis, but the subchart is not enabled. This will lead to misconfiguration" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Timesketch service port
+*/}}
+{{- define "yeti.service.port" -}}
+{{- if .Values.global.yeti.servicePort -}}
+{{ .Values.global.yeti.servicePort }}
+{{- else -}}
+{{ .Values.service.port }}
+{{- end -}}
+{{- end -}}

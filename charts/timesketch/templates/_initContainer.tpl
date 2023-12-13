@@ -30,6 +30,13 @@ Worker pod upon startup.
           name: {{ include "postgresql.v1.secretName" .Subcharts.postgresql }}
           key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
     {{- end }}
+    {{- if .Values.global.yeti.enabled }} 
+    - name: YETI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ printf "%s-yeti-secret" .Release.Name }}
+          key: "yeti-api"
+    {{- end }}
   volumeMounts:
     - mountPath: /init
       name: init-timesketch

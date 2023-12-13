@@ -30,12 +30,12 @@ spec:
               service:
                 name: {{ include "timesketch.fullname" . }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ include "timesketch.service.port" . }}
   defaultBackend:
     service:
       name: {{ include "timesketch.fullname" . }} # Name of the Service targeted by the Ingress
       port:
-        number: {{ .Values.service.port }} # Should match the port used by the Service
+        number: {{ include "timesketch.service.port" . }} # Should match the port used by the Service
 {{- end }}
 {{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
 ---
@@ -66,10 +66,10 @@ spec:
               service:
                 name: {{ include "timesketch.fullname" . }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ include "timesketch.service.port" . }}
   defaultBackend:
     service:
       name: {{ include "timesketch.fullname" . }} # Name of the Service targeted by the Ingress
       port:
-        number: {{ .Values.service.port }} # Should match the port used by the Service
+        number: {{ include "timesketch.service.port" . }} # Should match the port used by the Service
 {{- end }}

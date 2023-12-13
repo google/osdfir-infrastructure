@@ -5,14 +5,14 @@ metadata:
   {{- if and (.Values.ingress.enabled) (not .Values.oauth2proxy.enabled) }}
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
-    cloud.google.com/backend-config: '{"ports": {"{{ .Values.service.port }}": "{{ .Release.Name }}-backend-config"}}'
+    cloud.google.com/backend-config: '{"ports": {"{{ include "turbinia.service.port" . }}": "{{ .Release.Name }}-backend-config"}}'
   {{- end }}
   labels:
     {{- include "turbinia.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ include "turbinia.service.port" . }}
       protocol: TCP
   selector:
     app.kubernetes.io/component: api

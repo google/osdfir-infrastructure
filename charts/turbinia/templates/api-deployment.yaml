@@ -60,7 +60,7 @@ spec:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ include "turbinia.service.port" . }}
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
       volumes:

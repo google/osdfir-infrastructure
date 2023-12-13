@@ -59,7 +59,7 @@ spec:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ include "timesketch.service.port" . }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
       volumes:

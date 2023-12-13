@@ -11,6 +11,27 @@
 global:
   ## Global Persistence Configuration
   ##
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: true
+    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`) 
+    ##
+    servicePort: 5000
+  turbinia:
+    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
+    ## 
+    enabled: true
+    ## @param global.timesketch.servicePort Turbinia API service port (overrides `turbinia.service.port`) 
+    ##
+    servicePort: 8080
+  yeti:
+    ## @param global.timesketch.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: true
+    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`) 
+    ##
+    servicePort: 8000
   ## @param global.existingPVC Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)
   ##
   existingPVC: osdfirvolume
@@ -36,21 +57,18 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
-  storageClass: ""
+  storageClass: "standard-rwx"
   ## @param persistence.accessModes PVC Access Mode for the OSDFIR Infrastructure volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
 ## @section Timesketch Configuration
 ## The following section covers configuration parameters for Timesketch
 ## To see a full list of available values, run helm show values charts/timesketch*
 ##
 timesketch:
-  ## @param timesketch.enabled Enables the Timesketch deployment
-  ##
-  enabled: true
   image:
     ## @param timesketch.image.repository Timesketch image repository
     ##
@@ -243,9 +261,6 @@ timesketch:
 ## To see a full list of available values, run helm show values charts/turbinia*
 ##
 turbinia:
-  ## @param turbinia.enabled Enables the Turbinia deployment
-  ##
-  enabled: true
   ##  Turbinia server configuration
   ##
   server:

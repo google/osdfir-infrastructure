@@ -8,7 +8,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.api.service.port }}
+    - port: {{ include "timesketch.service.port" . }}
       protocol: TCP
   selector:
     app.kubernetes.io/component: api

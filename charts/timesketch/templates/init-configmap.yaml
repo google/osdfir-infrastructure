@@ -48,3 +48,9 @@ data:
     sed -i 's#^SCENARIOS_PATH =.*#SCENARIOS_PATH = "/etc/timesketch/scenarios.yaml"#' timesketch.conf
     sed -i 's#^FACETS_PATH =.*#FACETS_PATH = "/etc/timesketch/facets.yaml"#' timesketch.conf
     sed -i 's#^QUESTIONS_PATH =.*#QUESTIONS_PATH = "/etc/timesketch/questions.yaml"#' timesketch.conf
+    
+    # Yeti integration
+    {{- if .Values.global.yeti.enabled }}
+    sed -i 's#^YETI_API_KEY =.*#YETI_API_KEY = "'$YETI_API_KEY'"#' timesketch.conf
+    sed -i 's#^YETI_API_ROOT =.*#YETI_API_ROOT =  {{ printf "http://%s-yeti-api:%.0f/api/v2" .Release.Name .Values.global.yeti.servicePort | quote }}#' timesketch.conf
+    {{- end }}
