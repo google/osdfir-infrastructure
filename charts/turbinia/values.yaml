@@ -328,12 +328,6 @@ controller:
   affinity: {}
 ## @section Common Parameters
 ##
-## @param nameOverride String to partially override names.fullname
-##
-nameOverride: ""
-## @param fullnameOverride String to fully override names.fullname
-##
-fullnameOverride: ""
 ## Turbinia configuration parameters
 ## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
 ##

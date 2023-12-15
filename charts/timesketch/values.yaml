@@ -169,12 +169,7 @@ worker:
   ##
   affinity: {}
 ## @section Common Parameters
-## @param nameOverride String to partially override names.fullname
 ##
-nameOverride: ""
-## @param fullnameOverride String to fully override names.fullname
-##
-fullnameOverride: ""
 ## Service Account Parameters
 ##
 serviceAccount:
