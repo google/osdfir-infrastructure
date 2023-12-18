@@ -14,10 +14,8 @@ dependencies:
   version: 18.0.4
   repository: https://charts.bitnami.com/bitnami
 maintainers:
-  - name: Thomas Chopitea
-    url: https://github.com/tomchop
-  - name: Wajih Yassine
-    url: https://github.com/wajihyassine
+  - name: Open Source DFIR
+    url: https://github.com/google/osdfir-infrastructure
 sources:
 - https://github.com/yeti-platform/yeti
 - https://yeti-platform.github.io/
