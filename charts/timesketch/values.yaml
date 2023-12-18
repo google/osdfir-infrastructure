@@ -18,11 +18,11 @@ global:
     ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
-    ## @param global.timesketch.servicePort Turbinia API service port (overrides `turbinia.service.port`)
+    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
     ##
     servicePort: 8080
   yeti:
-    ## @param global.timesketch.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
     ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
@@ -318,7 +318,8 @@ opensearch:
     ##
     size: 2Gi
   ## Opensearch resource requests
-  ## @param opensearch.resources.requests Requested resources for the Opensearch containers
+  ## @param opensearch.resources.requests.cpu The requested cpu for the Opensearch container
+  ## @param opensearch.resources.requests.memory The requested memory for the Opensearch container
   ##
   resources:
     ## Example:
@@ -458,7 +459,9 @@ postgresql:
       size: 2Gi
     ## PostgreSQL primary resource requests and limits
     ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
-    ## @param postgresql.primary.resources.requests The requested resources for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.memory The requested memory for the PostgreSQL primary containers
+    ##
     resources:
       ## Example:
       ## limits:

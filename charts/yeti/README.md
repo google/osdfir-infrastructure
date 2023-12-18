@@ -60,10 +60,16 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                  | Description                                                                       | Value |
-| --------------------- | --------------------------------------------------------------------------------- | ----- |
-| `global.existingPVC`  | Existing claim for Yeti persistent volume (overrides `persistent.name`)           | `""`  |
-| `global.storageClass` | StorageClass for the Yeti persistent volume (overrides `persistent.storageClass`) | `""`  |
+| Name                            | Description                                                                                  | Value   |
+| ------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `false` |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `5000`  |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `false` |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `8080`  |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `true`  |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `8000`  |
+| `global.existingPVC`            | Existing claim for Yeti persistent volume (overrides `persistent.name`)                      | `""`    |
+| `global.storageClass`           | StorageClass for the Yeti persistent volume (overrides `persistent.storageClass`)            | `""`    |
 
 ### Yeti configuration
 
@@ -124,8 +130,6 @@ kubectl delete pvc -l release=my-release
 
 | Name                              | Description                                                                                                                        | Value               |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `nameOverride`                    | String to partially override names.fullname                                                                                        | `""`                |
-| `fullnameOverride`                | String to fully override names.fullname                                                                                            | `""`                |
 | `serviceAccount.create`           | Specifies whether a service account should be created                                                                              | `true`              |
 | `serviceAccount.annotations`      | Annotations to add to the service account                                                                                          | `{}`                |
 | `serviceAccount.name`             | The name of the service account to use                                                                                             | `yeti`              |
@@ -150,7 +154,7 @@ kubectl delete pvc -l release=my-release
 | Name                                | Description                                                                                  | Value       |
 | ----------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
 | `redis.enabled`                     | Enables the Redis deployment                                                                 | `true`      |
-| `redis.auth.enabled`                | Enables Redis Authentication. Disabled due to incompatibility with Turbinia                  | `false`     |
+| `redis.auth.enabled`                | Enables Redis Authentication. Disabled due to incompatibility with Yeti                      | `false`     |
 | `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`     |
 | `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
 | `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP` |

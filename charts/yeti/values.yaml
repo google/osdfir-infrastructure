@@ -18,11 +18,11 @@ global:
     ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
-    ## @param global.timesketch.servicePort Turbinia API service port (overrides `turbinia.service.port`)
+    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
     ##
     servicePort: 8080
   yeti:
-    ## @param global.timesketch.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: true
     ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)

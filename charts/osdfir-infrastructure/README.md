@@ -129,10 +129,16 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                  | Description                                                                                                                                          | Value          |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| `global.existingPVC`  | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
-| `global.storageClass` | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
+| Name                            | Description                                                                                                                                          | Value          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                           | `true`         |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                                                                        | `5000`         |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)                                                         | `true`         |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                                                                        | `8080`         |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                                 | `true`         |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                                                                            | `8000`         |
+| `global.existingPVC`            | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
+| `global.storageClass`           | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
 
 ### OSDFIR Infrastructure persistence storage parameters
 
@@ -141,14 +147,13 @@ kubectl delete pvc -l release=my-release
 | `persistence.enabled`      | Enables persistent volume storage for OSDFIR Infrastructure | `true`              |
 | `persistence.name`         | OSDFIR Infrastructure persistent volume name                | `osdfirvolume`      |
 | `persistence.size`         | OSDFIR Infrastructure persistent volume size                | `2Gi`               |
-| `persistence.storageClass` | PVC Storage Class for OSDFIR Infrastructure volume          | `""`                |
-| `persistence.accessModes`  | PVC Access Mode for the OSDFIR Infrastructure volume        | `["ReadWriteOnce"]` |
+| `persistence.storageClass` | PVC Storage Class for OSDFIR Infrastructure volume          | `standard-rwx`      |
+| `persistence.accessModes`  | PVC Access Mode for the OSDFIR Infrastructure volume        | `["ReadWriteMany"]` |
 
 ### Timesketch Configuration
 
 | Name                                          | Description                                                                                                                           | Value                                                     |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `timesketch.enabled`                          | Enables the Timesketch deployment                                                                                                     | `true`                                                    |
 | `timesketch.image.repository`                 | Timesketch image repository                                                                                                           | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
 | `timesketch.image.tag`                        | Overrides the image tag whose default is the chart appVersion                                                                         | `latest`                                                  |
 | `timesketch.config.override`                  | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*`                                               |
@@ -203,7 +208,6 @@ kubectl delete pvc -l release=my-release
 
 | Name                                                         | Description                                                                                                                                                                                                          | Value                                                                                        |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `turbinia.enabled`                                           | Enables the Turbinia deployment                                                                                                                                                                                      | `true`                                                                                       |
 | `turbinia.server.image.repository`                           | Turbinia image repository                                                                                                                                                                                            | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server`                         |
 | `turbinia.server.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                                                                                        | `latest`                                                                                     |
 | `turbinia.server.resources.limits`                           | Resource limits for the server container                                                                                                                                                                             | `{}`                                                                                         |

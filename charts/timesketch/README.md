@@ -98,10 +98,16 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                  | Description                                                                             | Value |
-| --------------------- | --------------------------------------------------------------------------------------- | ----- |
-| `global.existingPVC`  | Existing claim for Timesketch persistent volume (overrides `persistent.name`)           | `""`  |
-| `global.storageClass` | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`) | `""`  |
+| Name                            | Description                                                                                  | Value   |
+| ------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `true`  |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `5000`  |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `false` |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `8080`  |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `8000`  |
+| `global.existingPVC`            | Existing claim for Timesketch persistent volume (overrides `persistent.name`)                | `""`    |
+| `global.storageClass`           | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)      | `""`    |
 
 ### Timesketch image configuration
 
@@ -148,8 +154,6 @@ kubectl delete pvc -l release=my-release
 
 | Name                              | Description                                                                                                                        | Value               |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `nameOverride`                    | String to partially override names.fullname                                                                                        | `""`                |
-| `fullnameOverride`                | String to fully override names.fullname                                                                                            | `""`                |
 | `serviceAccount.create`           | Specifies whether a service account should be created                                                                              | `true`              |
 | `serviceAccount.annotations`      | Annotations to add to the service account                                                                                          | `{}`                |
 | `serviceAccount.name`             | The name of the service account to use                                                                                             | `timesketch`        |
@@ -173,21 +177,22 @@ kubectl delete pvc -l release=my-release
 
 ### Opensearch Configuration Parameters
 
-| Name                               | Description                                                                                                 | Value                                                                                    |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `opensearch.enabled`               | Enables the Opensearch deployment                                                                           | `true`                                                                                   |
-| `opensearch.config.opensearch.yml` | Opensearch configuration file. Can be appended for additional configuration options                         | `{"opensearch.yml":"plugins:\n  security:\n    allow_unsafe_democertificates: false\n"}` |
-| `opensearch.extraEnvs[0].name`     | Environment variable to disable Opensearch Demo config                                                      | `DISABLE_INSTALL_DEMO_CONFIG`                                                            |
-| `opensearch.extraEnvs[0].value`    | Disables Opensearch Demo config                                                                             | `true`                                                                                   |
-| `opensearch.extraEnvs[1].name`     | Environment variable to disable Opensearch Security plugin given that                                       | `DISABLE_SECURITY_PLUGIN`                                                                |
-| `opensearch.extraEnvs[1].value`    | Disables Opensearch Security plugin                                                                         | `true`                                                                                   |
-| `opensearch.replicas`              | Number of Opensearch instances to deploy                                                                    | `1`                                                                                      |
-| `opensearch.sysctlInit.enabled`    | Sets optimal sysctl's through privileged initContainer                                                      | `true`                                                                                   |
-| `opensearch.opensearchJavaOpts`    | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M`                                                                      |
-| `opensearch.httpPort`              | Opensearch service port                                                                                     | `9200`                                                                                   |
-| `opensearch.persistence.size`      | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                                                                                    |
-| `opensearch.resources.requests`    | Requested resources for the Opensearch containers                                                           | `{}`                                                                                     |
-| `opensearch.nodeSelector`          | Node labels for Opensearch pods assignment                                                                  | `{}`                                                                                     |
+| Name                                   | Description                                                                                                 | Value                                                                                    |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `opensearch.enabled`                   | Enables the Opensearch deployment                                                                           | `true`                                                                                   |
+| `opensearch.config.opensearch.yml`     | Opensearch configuration file. Can be appended for additional configuration options                         | `{"opensearch.yml":"plugins:\n  security:\n    allow_unsafe_democertificates: false\n"}` |
+| `opensearch.extraEnvs[0].name`         | Environment variable to disable Opensearch Demo config                                                      | `DISABLE_INSTALL_DEMO_CONFIG`                                                            |
+| `opensearch.extraEnvs[0].value`        | Disables Opensearch Demo config                                                                             | `true`                                                                                   |
+| `opensearch.extraEnvs[1].name`         | Environment variable to disable Opensearch Security plugin given that                                       | `DISABLE_SECURITY_PLUGIN`                                                                |
+| `opensearch.extraEnvs[1].value`        | Disables Opensearch Security plugin                                                                         | `true`                                                                                   |
+| `opensearch.replicas`                  | Number of Opensearch instances to deploy                                                                    | `1`                                                                                      |
+| `opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                      | `true`                                                                                   |
+| `opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M`                                                                      |
+| `opensearch.httpPort`                  | Opensearch service port                                                                                     | `9200`                                                                                   |
+| `opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                                                                                    |
+| `opensearch.resources.requests.cpu`    | The requested cpu for the Opensearch container                                                              | `250m`                                                                                   |
+| `opensearch.resources.requests.memory` | The requested memory for the Opensearch container                                                           | `512Mi`                                                                                  |
+| `opensearch.nodeSelector`              | Node labels for Opensearch pods assignment                                                                  | `{}`                                                                                     |
 
 ### Redis Configuration Parameters
 
@@ -220,7 +225,8 @@ kubectl delete pvc -l release=my-release
 | `postgresql.primary.service.ports.postgresql`      | PostgreSQL primary service port                                             | `5432`       |
 | `postgresql.primary.persistence.size`              | PostgreSQL Persistent Volume size                                           | `2Gi`        |
 | `postgresql.primary.resources.limits`              | The resources limits for the PostgreSQL primary containers                  | `{}`         |
-| `postgresql.primary.resources.requests`            | The requested resources for the PostgreSQL primary containers               | `{}`         |
+| `postgresql.primary.resources.requests.cpu`        | The requested cpu for the PostgreSQL primary containers                     | `250m`       |
+| `postgresql.primary.resources.requests.memory`     | The requested memory for the PostgreSQL primary containers                  | `256Mi`      |
 | `postgresql.readReplicas.replicaCount`             | Number of PostgreSQL read only replicas                                     | `0`          |
 | `postgresql.readReplicas.service.type`             | PostgreSQL read replicas service type                                       | `ClusterIP`  |
 | `postgresql.readReplicas.service.ports.postgresql` | PostgreSQL read replicas service port                                       | `5432`       |
