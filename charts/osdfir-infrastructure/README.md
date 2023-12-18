@@ -7,9 +7,10 @@ Digital Forensics tools to Kubernetes clusters using Helm.
 Currently, OSDFIR Infrastructure supports the deployment and integration of the
 following tools:
 
+* [dfTimewolf](https://github.com/log2timeline/dftimewolf)
 * [Timesketch](https://github.com/google/timesketch)
 * [Turbinia](https://github.com/google/turbinia)
-* [dfTimewolf](https://github.com/log2timeline/dftimewolf)
+* [Yeti](https://github.com/yeti-platform/yeti)
 
 ## TL;DR
 
