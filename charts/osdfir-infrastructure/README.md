@@ -251,7 +251,7 @@ kubectl delete pvc -l release=my-release
 | `turbinia.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`           |
 | `turbinia.redis.nameOverride`               | Overrides the Redis deployment name                                                          | `turbinia-redis` |
 | `turbinia.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`              |
-| `turbinia.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`            |
+| `turbinia.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `3Gi`            |
 | `turbinia.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`             |
 | `turbinia.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`             |
 | `turbinia.redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`              |
