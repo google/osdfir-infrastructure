@@ -1,24 +1,26 @@
 apiVersion: v2
 name: yeti
-version: 1.0.0
+version: 0.1.0
 description: A Helm chart for Yeti Kubernetes deployments.
 keywords:
 - yeti
 - dfir
 - threatintel
 - threat-hunting
-home: "https://yeti-platform.io/"
+home: "https://github.com/google/timesketch"
 dependencies:
 - condition: redis.enabled
   name: redis
   version: 18.0.4
   repository: https://charts.bitnami.com/bitnami
 maintainers:
-  - name: Open Source DFIR
-    url: https://github.com/google/osdfir-infrastructure
+  - name: Thomas Chopitea
+    url: https://github.com/tomchop
+  - name: Wajih Yassine
+    url: https://github.com/wajihyassine
 sources:
 - https://github.com/yeti-platform/yeti
-- https://yeti-platform.io/
+- https://yeti-platform.github.io/
 appVersion: "latest"
 annotations:
   category: Security
