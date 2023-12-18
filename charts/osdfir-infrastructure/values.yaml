@@ -450,7 +450,7 @@ turbinia:
       persistence:
         ## @param turbinia.redis.master.persistence.size Redis master Persistent Volume size
         ##
-        size: 3Gi
+        size: 2Gi
       ## Redis master resource requests and limits
       ## @param turbinia.redis.master.resources.limits The resources limits for the Redis master containers
       ## @param turbinia.redis.master.resources.requests The requested resources for the Redis master containers
