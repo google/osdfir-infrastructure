@@ -18,7 +18,7 @@ maintainers:
     url: https://github.com/google/osdfir-infrastructure
 sources:
 - https://github.com/yeti-platform/yeti
-- https://yeti-platform.github.io/
+- https://yeti-platform.io/
 appVersion: "latest"
 annotations:
   category: Security
