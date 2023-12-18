@@ -41,6 +41,10 @@ jobs:
         run: |
           # Push all the changes
           cd charts
+          git status
+          echo "blah"
+          ls
+          echo "blah2"
           if git status -s | grep charts; then
             git config user.name "$GITHUB_ACTOR"
             git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
