@@ -9,7 +9,11 @@ Expand the name of the chart.
 Create a default fully qualified app name.
 */}}
 {{- define "turbinia.fullname" -}}
+{{- if contains .Chart.Name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
 {{- printf "%s-%s" .Release.Name "turbinia" | trunc 63 | trimSuffix "-" }}
+{{- end }}
 {{- end }}
 
 {{/*

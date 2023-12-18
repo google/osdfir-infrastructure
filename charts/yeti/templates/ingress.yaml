@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "yeti.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "yeti.fullname" . }}-managed-ssl
     {{- end }}
@@ -47,7 +47,7 @@ metadata:
   labels:
     {{- include "yeti.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "yeti.fullname" . }}-managed-ssl
     {{- end }}
