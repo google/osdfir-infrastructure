@@ -476,7 +476,7 @@ turbinia:
       persistence:
         ## @param turbinia.redis.replica.persistence.size Redis replica Persistent Volume size
         ##
-        size: 2Gi
+        size: 3Gi
       ## Redis Replica resource requests and limits
       ## @param turbinia.redis.replica.resources.limits The resources limits for the Redis replica containers
       ## @param turbinia.redis.replica.resources.requests The requested resources for the Redis replica containers
