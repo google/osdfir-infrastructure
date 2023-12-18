@@ -147,8 +147,8 @@ kubectl delete pvc -l release=my-release
 | `persistence.enabled`      | Enables persistent volume storage for OSDFIR Infrastructure | `true`              |
 | `persistence.name`         | OSDFIR Infrastructure persistent volume name                | `osdfirvolume`      |
 | `persistence.size`         | OSDFIR Infrastructure persistent volume size                | `2Gi`               |
-| `persistence.storageClass` | PVC Storage Class for OSDFIR Infrastructure volume          | `standard-rwx`      |
-| `persistence.accessModes`  | PVC Access Mode for the OSDFIR Infrastructure volume        | `["ReadWriteMany"]` |
+| `persistence.storageClass` | PVC Storage Class for OSDFIR Infrastructure volume          | `""`                |
+| `persistence.accessModes`  | PVC Access Mode for the OSDFIR Infrastructure volume        | `["ReadWriteOnce"]` |
 
 ### Timesketch Configuration
 

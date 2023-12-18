@@ -57,13 +57,13 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
-  storageClass: "standard-rwx"
+  storageClass: ""
   ## @param persistence.accessModes PVC Access Mode for the OSDFIR Infrastructure volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
 ## @section Timesketch Configuration
 ## The following section covers configuration parameters for Timesketch
 ## To see a full list of available values, run helm show values charts/timesketch*
