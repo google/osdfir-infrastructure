@@ -445,7 +445,7 @@ turbinia:
       ## @param turbinia.redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
       ##
       count: 1
-      ## Redis master persistence configuration
+      ## Redis master persistence configurations
       ##
       persistence:
         ## @param turbinia.redis.master.persistence.size Redis master Persistent Volume size
