@@ -471,7 +471,7 @@ turbinia:
       ## @param turbinia.redis.replica.replicaCount Number of Redis replicas to deploy
       ##
       replicaCount: 0
-      ## Redis replicas persistence configuration
+      ## Redis replicas persistence configurationss
       ##
       persistence:
         ## @param turbinia.redis.replica.persistence.size Redis replica Persistent Volume size
