@@ -10,7 +10,8 @@ in a single, unified repository
 ## TL;DR
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/yeti
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm install my-release osdfir-charts/yeti
 ```
 
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
@@ -28,10 +29,17 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](htt
 
 ## Installing the Chart
 
+The first step is to add the repo and then update to pick up any new changes.
+
+```console
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm repo update
+```
+
 To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/yeti
+helm install my-release osdfir-charts/yeti
 ```
 
 The command deploys Yeti on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -202,7 +210,7 @@ Alternatively, the `values.yaml` file can be directly updated if the Helm chart
 was pulled locally. For example,
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/yeti --untar
+helm pull osdfir-charts/yeti --untar
 ```
 
 Then make changes to the downloaded `values.yaml` and once done, install the
