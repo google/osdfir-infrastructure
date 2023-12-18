@@ -439,7 +439,7 @@ turbinia:
     ## This is required since Turbinia and Timesketch both use Redis, we need to differentiate the instances.
     ##
     nameOverride: turbinia-redis
-    ## Master Redis Service configuration
+    ## Master Redis Service configurations
     ##
     master:
       ## @param turbinia.redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
