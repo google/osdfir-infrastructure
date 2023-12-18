@@ -16,7 +16,7 @@ Currently, OSDFIR Infrastructure supports the deployment and integration of the 
   * [Fraken](https://github.com/google/turbinia/tree/master/tools/fraken) for multi-threaded yara scanning
   * [Libcloudforensics](https://github.com/google/cloud-forensics-utils/) for mounting evidence from cloud platforms
   * [Plaso](https://github.com/log2timeline/plaso) (and related projects such as dfVFS, libyal) for extracting data from a variety of sources into a correlated super timeline
-* [Yeti](https://github.com/yeti-platform/yeti) for DFIR and threat intelligence tracking, enabling responders to store and analyze CTI (observables, TTPs, campaigns, etc.) from internal and external systems and Timesketch integration
+* [Yeti](https://github.com/yeti-platform/yeti) for DFIR and threat intelligence tracking, enabling responders to store and analyze CTI (observables, TTPs, campaigns, etc.) from internal and external systems and integrates with Timesketch
 
 These tools can be used independently as well by following the documentation on the tool's repository or by installing a tool specific Helm chart which includes any built-in integrations.
 
