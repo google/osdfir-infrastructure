@@ -597,3 +597,177 @@ turbinia:
       ## @param turbinia.oauth2proxy.redis.enabled Enable Redis for OAuth Session Storage
       ##
       enabled: false
+## @section Yeti Configuration
+## The following section covers configuration parameters for Yeti
+## To see a full list of available values, run helm show values charts/yeti*
+##
+yeti:
+  ## Yeti frontend configuration
+  ##
+  frontend:
+    image:
+      ## @param yeti.frontend.image.repository Yeti frontend image repository
+      ##
+      repository: yetiplatform/yeti-frontend
+      ## @param yeti.frontend.image.pullPolicy Yeti image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: Always
+      ## @param yeti.frontend.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+    ## Yeti frontend resource requests and limits
+    ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+    ## @param yeti.frontend.resources.limits Resource limits for the frontend container
+    ## @param yeti.frontend.resources.requests Requested resources for the frontend container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## Yeti api configuration
+  ##
+  api:
+    image:
+      ## @param yeti.api.image.repository Yeti API image repository
+      ##
+      repository: yetiplatform/yeti
+      ## @param yeti.api.image.pullPolicy Yeti image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: Always
+      ## @param yeti.api.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+    ## Service Parameters
+    ##
+    service:
+      ## @param yeti.api.service.type Yeti service type
+      ##
+      type: ClusterIP
+      ## @param yeti.api.service.port Yeti service port
+      ##
+      port: 8000
+    ## Yeti api resource requests and limits
+    ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+    ## @param yeti.api.resources.limits Resource limits for the API container
+    ## @param yeti.api.resources.requests Requested resources for the API container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## Yeti Tasks configuration
+  ##
+  tasks:
+    image:
+      ## @param yeti.tasks.image.repository Yeti tasks image repository
+      ##
+      repository: yetiplatform/yeti
+      ## @param yeti.tasks.image.pullPolicy Yeti image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: Always
+      ## @param yeti.tasks.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+    ## Yeti tasks resource requests and limits
+    ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+    ## @param yeti.tasks.resources.limits Resource limits for the tasks container
+    ## @param yeti.tasks.resources.requests Requested resources for the tasks container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## @section Yeti Third Party
+  ##
+  ## Redis Configuration Parameters
+  ##
+  redis:
+    ## @param yeti.redis.enabled Enables the Redis deployment
+    ##
+    enabled: true
+    ## Master Redis Service configuration
+    ##
+    master:
+      ## @param yeti.redis.master.count Number of Redis master instances to deploy (experimental, requires additional configuration)
+      ##
+      count: 1
+      ## Redis master service parameters
+      ##
+      service:
+        ## @param yeti.redis.master.service.type Redis master service type
+        ##
+        type: ClusterIP
+        ## @param yeti.redis.master.service.ports.redis Redis master service port
+        ##
+        ports:
+          redis: 6379
+      ## Redis master persistence configuration
+      ##
+      persistence:
+        ## @param yeti.redis.master.persistence.size Redis master Persistent Volume size
+        ##
+        size: 2Gi
+      ## Redis master resource requests and limits
+      ## @param yeti.redis.master.resources.limits The resources limits for the Redis master containers
+      ## @param yeti.redis.master.resources.requests The requested resources for the Redis master containers
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        limits: {}
+        ## Example:
+        ## requests:
+        ##    cpu: 500m
+        ##    memory: 1Gi
+        requests: {}
+  ## ArangoDB Configuration Parameters
+  ##
+  arangodb:
+    image:
+      ## @param yeti.arangodb.image.repository Yeti arangodb image repository
+      ##
+      repository: arangodb
+      ## @param yeti.arangodb.image.pullPolicy Yeti image pull policy
+      ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+      ##
+      pullPolicy: Always
+      ## @param yeti.arangodb.image.tag Overrides the image tag whose default is the chart appVersion
+      ##
+      tag: latest
+    ## Yeti arangodb resource requests and limits
+    ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+    ## @param yeti.arangodb.resources.limits Resource limits for the arangodb container
+    ## @param yeti.arangodb.resources.requests Requested resources for the arangodb container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}

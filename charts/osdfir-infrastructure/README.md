@@ -286,6 +286,45 @@ kubectl delete pvc -l release=my-release
 | `turbinia.oauth2proxy.configuration.redirectUrl`                            | OAuth Redirect URL                                                                                                                                                    | `""`                          |
 | `turbinia.oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                       |
 
+### Yeti Configuration
+
+| Name                               | Description                                                   | Value                        |
+| ---------------------------------- | ------------------------------------------------------------- | ---------------------------- |
+| `yeti.frontend.image.repository`   | Yeti frontend image repository                                | `yetiplatform/yeti-frontend` |
+| `yeti.frontend.image.pullPolicy`   | Yeti image pull policy                                        | `Always`                     |
+| `yeti.frontend.image.tag`          | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.frontend.resources.limits`   | Resource limits for the frontend container                    | `{}`                         |
+| `yeti.frontend.resources.requests` | Requested resources for the frontend container                | `{}`                         |
+| `yeti.api.image.repository`        | Yeti API image repository                                     | `yetiplatform/yeti`          |
+| `yeti.api.image.pullPolicy`        | Yeti image pull policy                                        | `Always`                     |
+| `yeti.api.image.tag`               | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.api.service.type`            | Yeti service type                                             | `ClusterIP`                  |
+| `yeti.api.service.port`            | Yeti service port                                             | `8000`                       |
+| `yeti.api.resources.limits`        | Resource limits for the API container                         | `{}`                         |
+| `yeti.api.resources.requests`      | Requested resources for the API container                     | `{}`                         |
+| `yeti.tasks.image.repository`      | Yeti tasks image repository                                   | `yetiplatform/yeti`          |
+| `yeti.tasks.image.pullPolicy`      | Yeti image pull policy                                        | `Always`                     |
+| `yeti.tasks.image.tag`             | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.tasks.resources.limits`      | Resource limits for the tasks container                       | `{}`                         |
+| `yeti.tasks.resources.requests`    | Requested resources for the tasks container                   | `{}`                         |
+
+### Yeti Third Party
+
+| Name                                    | Description                                                                                  | Value       |
+| --------------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
+| `yeti.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`      |
+| `yeti.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
+| `yeti.redis.master.service.type`        | Redis master service type                                                                    | `ClusterIP` |
+| `yeti.redis.master.service.ports.redis` | Redis master service port                                                                    | `6379`      |
+| `yeti.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`       |
+| `yeti.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`        |
+| `yeti.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`        |
+| `yeti.arangodb.image.repository`        | Yeti arangodb image repository                                                               | `arangodb`  |
+| `yeti.arangodb.image.pullPolicy`        | Yeti image pull policy                                                                       | `Always`    |
+| `yeti.arangodb.image.tag`               | Overrides the image tag whose default is the chart appVersion                                | `latest`    |
+| `yeti.arangodb.resources.limits`        | Resource limits for the arangodb container                                                   | `{}`        |
+| `yeti.arangodb.resources.requests`      | Requested resources for the arangodb container                                               | `{}`        |
+
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console

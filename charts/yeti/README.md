@@ -237,7 +237,7 @@ of the volume that backs the underlying PersistentVolume. See [here](https://kub
 
 ## License
 
-Copyright &copy; 2023 Yeti
+Copyright &copy; 2023 OSDFIR Infrastructure
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
