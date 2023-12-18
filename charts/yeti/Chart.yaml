@@ -1,13 +1,13 @@
 apiVersion: v2
 name: yeti
-version: 0.1.0
+version: 1.0.0
 description: A Helm chart for Yeti Kubernetes deployments.
 keywords:
 - yeti
 - dfir
 - threatintel
 - threat-hunting
-home: "https://github.com/google/timesketch"
+home: "https://yeti-platform.io/"
 dependencies:
 - condition: redis.enabled
   name: redis
