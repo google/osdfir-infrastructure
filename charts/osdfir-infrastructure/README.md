@@ -255,7 +255,7 @@ kubectl delete pvc -l release=my-release
 | `turbinia.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`             |
 | `turbinia.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`             |
 | `turbinia.redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`              |
-| `turbinia.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `2Gi`            |
+| `turbinia.redis.replica.persistence.size`   | Redis replica Persistent Volume size                                                         | `3Gi`            |
 | `turbinia.redis.replica.resources.limits`   | The resources limits for the Redis replica containers                                        | `{}`             |
 | `turbinia.redis.replica.resources.requests` | The requested resources for the Redis replica containers                                     | `{}`             |
 
