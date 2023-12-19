@@ -16,7 +16,7 @@ global:
 ## @section Turbinia configuration
 ## The following section covers configuration parameters for Turbinia
 ##
-## @section Turbinia server configuration
+## @section Turbinia server configurationss
 ##
 server:
   image:
