@@ -130,7 +130,7 @@ kubectl delete pvc -l release=my-release
 ### Turbinia configuration
 
 
-### Turbinia server configuration
+### Turbinia server configurationss
 
 | Name                            | Description                                                               | Value                                                                |
 | ------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -223,8 +223,7 @@ kubectl delete pvc -l release=my-release
 | `service.port`                    | Turbinia api service port                                                                                                                                                                                            | `8000`                                                                                       |
 | `metrics.enabled`                 | Enables metrics scraping                                                                                                                                                                                             | `true`                                                                                       |
 | `metrics.port`                    | Port to scrape metrics from                                                                                                                                                                                          | `9200`                                                                                       |
-| `versioncheck.enabled`            | Turbinia runtime version checking
-| `true`                                                                                                                         |
+| `versioncheck.enabled`            | Enable Turbinia runtime version checking                                                                                                                                                                             | `true`                                                                                       |
 | `persistence.name`                | Turbinia persistent volume name                                                                                                                                                                                      | `turbiniavolume`                                                                             |
 | `persistence.size`                | Turbinia persistent volume size                                                                                                                                                                                      | `2Gi`                                                                                        |
 | `persistence.storageClass`        | PVC Storage Class for Turbinia volume                                                                                                                                                                                | `""`                                                                                         |
