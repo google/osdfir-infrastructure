@@ -20,7 +20,7 @@ global:
 ##
 server:
   image:
-    ## @param server.image.repository Turbinia image repository
+    ## @param servers.image.repository Turbinia image repository
     ##
     repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server
     ## @param server.image.pullPolicy Turbinia image pull policy
