@@ -26,4 +26,6 @@ Worker pod upon startup.
   value: "30"
 - name: YETI_AUTH_ENABLED
   value: "True"
+- name: YETI_SYSTEM_PLUGINS_PATH
+  value: "./plugins"
 {{- end }}
