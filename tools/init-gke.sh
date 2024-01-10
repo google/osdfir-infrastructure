@@ -1,6 +1,6 @@
 #!/bin/bash
 # OSDFIR Infrastructure GKE cluster bootstrap helper.
-# This script can be used to bootstrap a private GKE cluster in GCP. 
+# This script can be used to bootstrap a private GKE cluster in GCP.
 # You can optionally route traffic through the GCP Load Balancer enabled through the Helm chart.
 # Requirements:
 # - have 'gcloud' installed.
@@ -15,7 +15,7 @@ set -e
 # Please review the section below and update to your preference. The default
 # values are for a production level environment.
 #
-# The cluster name, number of minimum and maximum nodes, machine type and disk 
+# The cluster name, number of minimum and maximum nodes, machine type and disk
 # size of the deployed cluster and nodes within it. If you enable --no-node-autoscale
 # the `CLUSTER_MIN_NODE_SIZE becomes the `MAX_NODE_SIZE`.
 CLUSTER_NAME='osdfir-cluster'
@@ -113,20 +113,20 @@ fi
 # Allow Egress connectivity through GCP Cloud Router & NAT
 if [[ "$*" != *--no-nat* ]] ; then
     # Deploy the GCP Cloud router if it does not already exist
-    routers=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute routers list --filter="name=$VPC_NETWORK" | wc -l)
+    routers=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute routers list --regions="$REGION" --filter="name=$VPC_NETWORK" | wc -l)
     if [[ "${routers}" -lt "2" ]]; then
-      echo "GCP router $VPC_NETWORK not found. Creating GCP router $VPC_NETWORK..."
+      echo "GCP router $VPC_NETWORK not found in $REGION. Creating GCP router $VPC_NETWORK for $REGION ..."
       gcloud compute routers create $VPC_NETWORK --network $VPC_NETWORK --region $REGION
     else
-      echo "GCP router $VPC_NETWORK found. Skipping GCP router creation..."
+      echo "GCP router $VPC_NETWORK found in $REGION. Skipping GCP router creation..."
     fi
     # Deploy the GCP NAT if it does not already exist
     nat=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute routers nats list --router=$VPC_NETWORK --router-region $REGION | wc -l)
     if [[ "${routers}" -lt "2" ]]; then
-      echo "Cloud NAT $VPC_NETWORK not found. Creating Cloud NAT $VPC_NETWORK..." 
+      echo "Cloud NAT $VPC_NETWORK not found in $REGION. Creating Cloud NAT $VPC_NETWORK for $REGION ..."
       gcloud compute routers nats create $VPC_NETWORK --router-region $REGION --router $VPC_NETWORK --nat-all-subnet-ip-ranges --auto-allocate-nat-external-ips
     else
-      echo "Cloud NAT $VPC_NETWORK found. Skipping Cloud NAT creation..."
+      echo "Cloud NAT $VPC_NETWORK found in $REGION. Skipping Cloud NAT creation..."
     fi
 else
   echo "--no-nat specified. Skipping Cloud Router and NAT creation..."
