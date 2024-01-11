@@ -7,7 +7,6 @@
 # - have the 'dfTimewolf', 'turbinia-client', and 'timesketch' CLI's installed
 
 set -o posix
-set -e
 
 RELEASE="test"
 DISK="disk-1"
@@ -79,6 +78,24 @@ cat > $HOME/.turbinia_api_config.json <<EOL
 	}
 }
 EOL
+
+# Ensure connection is stable before running test
+turbinia-client status summary
+if [ $? != "0" ]
+then
+  echo "Connection to the Turbinia service failed. Retrying k8s port-forward..."
+  kubectl --namespace default port-forward service/$RELEASE-turbinia 8000:8000  > /dev/null 2>&1 &
+fi
+
+timesketch timelines
+if [ $? != "0" ]
+then
+  echo "Connection to the Timesketch service failed. Retrying k8s port-forward..."
+  kubectl --namespace default port-forward service/$RELEASE-timesketch 5000:5000 > /dev/null 2>&1 &
+fi
+
+# Exit on any failures after this point
+set -e
 
 # Run dfTimewolf recipe
 echo "Running dfTimewolf recipe: dftimewolf gcp_turbinia_ts $GCP_PROJECT $GCP_ZONE --disk_names $DISK --incident_id test213 --timesketch_username timesketch --timesketch_password TS_SECRET"
