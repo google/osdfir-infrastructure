@@ -4,6 +4,6 @@ dependencies:
   version: 0.3.4
 - name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.3
-digest: sha256:7db5463e62559573a994fdbd00d6e124e60250d4576995845870e802506ef861
-generated: "2023-11-06T11:27:27.847137-08:00"
+  version: 0.3.2
+digest: sha256:69fa37b9652ee6fc530d755b49520a274b415bf5d0214e13050fbd9d33a4009a
+generated: "2024-01-12T14:04:08.871943-08:00"
