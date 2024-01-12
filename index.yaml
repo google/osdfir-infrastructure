@@ -5,6 +5,53 @@ entries:
       category: Security
       licenses: Apache-2.0
     apiVersion: v2
+    created: "2024-01-12T22:29:51.790265711Z"
+    dependencies:
+    - condition: global.timesketch.enabled
+      name: timesketch
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 0.3.5
+    - condition: global.turbinia.enabled
+      name: turbinia
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 0.3.4
+    - condition: global.yeti.enabled
+      name: yeti
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 0.1.0
+    description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
+    digest: 47db4d03708114044b38c677acb4ec80661f7d834c8cd8871e5d031fd0bc01f5
+    home: https://github.com/google/osdfir-infrastructure
+    keywords:
+    - timesketch
+    - turbinia
+    - yeti
+    - dfir
+    - analysis
+    - processing
+    - cloud
+    maintainers:
+    - name: Wajih Yassine
+      url: https://github.com/wajihyassine
+    - name: Johan Berggren
+      url: https://github.com/berggren
+    - name: Aaron Peterson
+      url: https://github.com/aarontp
+    - name: hacktobeer
+      url: https://github.com/hacktobeer
+    name: osdfir-infrastructure
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    - https://github.com/google/turbinia
+    - https://github.com/google/timesketch
+    - https://github.com/yeti-platform/yeti
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-0.3.6/osdfir-infrastructure-0.3.6.tgz
+    version: 0.3.6
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
     created: "2024-01-12T22:15:25.889180792Z"
     dependencies:
     - condition: global.timesketch.enabled
@@ -475,4 +522,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-12T22:15:25.889220005Z"
+generated: "2024-01-12T22:29:51.790289135Z"
