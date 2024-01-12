@@ -27,7 +27,7 @@ To connect to the Turbinia UI, run:
 
 {{ if .Values.global.yeti.enabled -}}
 To connect to the Yeti URL, run:
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "yeti.fullname" . }} 8000:{{ .Values.frontend.service.port }}
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "yeti.fullname" . }} 8000:{{ .Values.yeti.frontend.service.port }}
   $ echo "Visit http://127.0.0.1:8000 to access Yeti"
 
 Login to Yeti with the User `yeti`. To get your password run:
