@@ -14,6 +14,10 @@ data:
         location /api/v2 {
             proxy_pass http://{{ include "yeti.fullname" . }}-api:{{ include "yeti.service.port" . }};
         }
+        
+        location ~(^/docs|^/openapi.json) {
+            proxy_pass http://api:8000;
+        }
 
         location / {
             try_files $uri $uri/ /index.html;
