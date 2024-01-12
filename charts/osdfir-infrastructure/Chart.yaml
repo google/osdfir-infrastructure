@@ -15,11 +15,15 @@ dependencies:
 - condition: global.timesketch.enabled
   name: timesketch
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.4
+  version: 0.3.5
 - condition: global.turbinia.enabled
   name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.2
+  version: 0.3.4
+- condition: global.yeti.enabled
+  name: yeti
+  repository: https://google.github.io/osdfir-infrastructure/
+  version: 0.1.0
 maintainers:
   - name: Wajih Yassine
     url: https://github.com/wajihyassine
