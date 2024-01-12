@@ -5,6 +5,49 @@ entries:
       category: Security
       licenses: Apache-2.0
     apiVersion: v2
+    created: "2024-01-12T22:05:33.061499607Z"
+    dependencies:
+    - condition: global.timesketch.enabled
+      name: timesketch
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 0.3.4
+    - condition: global.turbinia.enabled
+      name: turbinia
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 0.3.2
+    description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
+    digest: 3107fe67206c2492353284307650cc5acdb7581e687a39bb8155a1f9e4c339b8
+    home: https://github.com/google/osdfir-infrastructure
+    keywords:
+    - timesketch
+    - turbinia
+    - yeti
+    - dfir
+    - analysis
+    - processing
+    - cloud
+    maintainers:
+    - name: Wajih Yassine
+      url: https://github.com/wajihyassine
+    - name: Johan Berggren
+      url: https://github.com/berggren
+    - name: Aaron Peterson
+      url: https://github.com/aarontp
+    - name: hacktobeer
+      url: https://github.com/hacktobeer
+    name: osdfir-infrastructure
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    - https://github.com/google/turbinia
+    - https://github.com/google/timesketch
+    - https://github.com/yeti-platform/yeti
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-0.3.4/osdfir-infrastructure-0.3.4.tgz
+    version: 0.3.4
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
     created: "2023-11-06T22:24:07.953374022Z"
     dependencies:
     - condition: timesketch.enabled
@@ -84,6 +127,45 @@ entries:
     - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-0.3.2/osdfir-infrastructure-0.3.2.tgz
     version: 0.3.2
   timesketch:
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: "20230913"
+    created: "2024-01-12T22:05:33.205994472Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.11.1
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.0.4
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts/
+      version: 2.14.1
+    description: A Helm chart for Timesketch Kubernetes deployments.
+    digest: 4b09d84a7c9ca7615c6636146d7243e56cdcbe8dfdad12363d79edc9407a4727
+    home: https://github.com/google/timesketch
+    icon: https://raw.githubusercontent.com/google/timesketch/master/timesketch/frontend-ng/dist/timesketch-color.png
+    keywords:
+    - timesketch
+    - dfir
+    - analysis
+    maintainers:
+    - name: Wajih Yassine
+      url: https://github.com/wajihyassine
+    - name: Johan Berggren
+      url: https://github.com/berggren
+    name: timesketch
+    sources:
+    - https://github.com/google/timesketch
+    - https://timesketch.org/
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/timesketch-0.3.5/timesketch-0.3.5.tgz
+    version: 0.3.5
   - annotations:
       category: Security
       licenses: Apache-2.0
@@ -207,6 +289,44 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: "20230808"
+    created: "2024-01-12T22:05:33.355586101Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.0.4
+    - alias: oauth2proxy
+      condition: oauth2proxy.enabled
+      name: oauth2-proxy
+      repository: https://charts.bitnami.com/bitnami
+      version: 4.1.3
+    description: A Helm chart for Turbinia Kubernetes deployments.
+    digest: ccc86e8e37ede87d9346264c26bc09e0b61febe86350d5e895c97821a1bb5ba8
+    home: https://github.com/google/turbinia
+    icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
+    keywords:
+    - turbinia
+    - dfir
+    - processing
+    - scaling
+    maintainers:
+    - name: Wajih Yassine
+      url: https://github.com/wajihyassine
+    - name: Aaron Peterson
+      url: https://github.com/aarontp
+    - name: hacktobeer
+      url: https://github.com/hacktobeer
+    name: turbinia
+    sources:
+    - https://github.com/google/turbinia
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/turbinia-0.3.4/turbinia-0.3.4.tgz
+    version: 0.3.4
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: "20230808"
     created: "2023-11-06T19:03:13.71410082Z"
     dependencies:
     - condition: redis.enabled
@@ -278,4 +398,34 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/turbinia-0.3.2/turbinia-0.3.2.tgz
     version: 0.3.2
-generated: "2023-11-06T22:24:07.953394122Z"
+  yeti:
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
+    created: "2024-01-12T22:05:33.518445237Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.0.4
+    description: A Helm chart for Yeti Kubernetes deployments.
+    digest: f35d655e1a0665492937e5f103a9bb2d0c587778cf6365b632e52eca38d80891
+    home: https://yeti-platform.io/
+    keywords:
+    - yeti
+    - dfir
+    - threatintel
+    - threat-hunting
+    maintainers:
+    - name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: yeti
+    sources:
+    - https://github.com/yeti-platform/yeti
+    - https://yeti-platform.io/
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-01-12T22:05:33.518474441Z"
