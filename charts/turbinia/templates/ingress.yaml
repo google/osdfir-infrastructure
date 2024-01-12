@@ -35,7 +35,7 @@ spec:
                 {{- else }}
                 name: {{ include "turbinia.fullname" . }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ include "turbinia.service.port" . }}
                 {{- end }}
   defaultBackend:
     service:
@@ -46,7 +46,7 @@ spec:
       {{- else }}
       name: {{ include "turbinia.fullname" . }}
       port:
-        number: {{ .Values.service.port }}
+        number: {{ include "turbinia.service.port" . }}
       {{- end }}
 {{- end }}
 {{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
@@ -83,7 +83,7 @@ spec:
                 {{- else }}
                 name: {{ include "turbinia.fullname" . }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ include "turbinia.service.port" . }}
                 {{- end }}
   defaultBackend:
     service:
@@ -94,6 +94,6 @@ spec:
       {{- else }}
       name: {{ include "turbinia.fullname" . }}
       port:
-        number: {{ .Values.service.port }}
+        number: {{ include "turbinia.service.port" . }}
       {{- end }}
 {{- end }}

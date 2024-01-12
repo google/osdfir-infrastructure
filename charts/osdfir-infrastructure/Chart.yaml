@@ -1,24 +1,29 @@
 apiVersion: v2
 name: osdfir-infrastructure
-version: 0.3.3
+version: 0.3.4
 description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
 keywords:
 - timesketch
 - turbinia
+- yeti
 - dfir
 - analysis
 - processing
 - cloud
 home: "https://github.com/google/osdfir-infrastructure"
 dependencies:
-- condition: timesketch.enabled
+- condition: global.timesketch.enabled
   name: timesketch
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.4
-- condition: turbinia.enabled
+  version: 0.3.5
+- condition: global.turbinia.enabled
   name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
   version: 0.3.3
+- condition: global.yeti.enabled
+  name: yeti
+  repository: https://google.github.io/osdfir-infrastructure/
+  version: 0.1.0
 maintainers:
   - name: Wajih Yassine
     url: https://github.com/wajihyassine
@@ -32,6 +37,7 @@ sources:
 - https://github.com/google/osdfir-infrastructure
 - https://github.com/google/turbinia
 - https://github.com/google/timesketch
+- https://github.com/yeti-platform/yeti
 annotations:
   category: Security
   licenses: Apache-2.0

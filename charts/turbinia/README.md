@@ -122,10 +122,16 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                  | Description                                                                           | Value |
-| --------------------- | ------------------------------------------------------------------------------------- | ----- |
-| `global.existingPVC`  | Existing claim for Turbinia persistent volume (overrides `persistent.name`)           | `""`  |
-| `global.storageClass` | StorageClass for the Turbinia persistent volume (overrides `persistent.storageClass`) | `""`  |
+| Name                            | Description                                                                                  | Value   |
+| ------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `false` |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `5000`  |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `true`  |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `8080`  |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `8000`  |
+| `global.existingPVC`            | Existing claim for Turbinia persistent volume (overrides `persistent.name`)                  | `""`    |
+| `global.storageClass`           | StorageClass for the Turbinia persistent volume (overrides `persistent.storageClass`)        | `""`    |
 
 ### Turbinia configuration
 
@@ -205,8 +211,6 @@ kubectl delete pvc -l release=my-release
 
 | Name                              | Description                                                                                                                                                                                                          | Value                                                                                        |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `nameOverride`                    | String to partially override names.fullname                                                                                                                                                                          | `""`                                                                                         |
-| `fullnameOverride`                | String to fully override names.fullname                                                                                                                                                                              | `""`                                                                                         |
 | `config.override`                 | Overrides the default Turbinia config to instead use a user specified config. Please ensure                                                                                                                          | `turbinia.conf`                                                                              |
 | `config.disabledJobs`             | List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.                                                                                                                                    | `['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']` |
 | `gcp.enabled`                     | Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks. | `false`                                                                                      |
@@ -223,8 +227,7 @@ kubectl delete pvc -l release=my-release
 | `service.port`                    | Turbinia api service port                                                                                                                                                                                            | `8000`                                                                                       |
 | `metrics.enabled`                 | Enables metrics scraping                                                                                                                                                                                             | `true`                                                                                       |
 | `metrics.port`                    | Port to scrape metrics from                                                                                                                                                                                          | `9200`                                                                                       |
-| `versioncheck.enabled`            | Turbinia runtime version checking
-| `true`                                                                                                                         |
+| `versioncheck.enabled`            | Enable Turbinia runtime version checking                                                                                                                                                                             | `true`                                                                                       |
 | `persistence.name`                | Turbinia persistent volume name                                                                                                                                                                                      | `turbiniavolume`                                                                             |
 | `persistence.size`                | Turbinia persistent volume size                                                                                                                                                                                      | `2Gi`                                                                                        |
 | `persistence.storageClass`        | PVC Storage Class for Turbinia volume                                                                                                                                                                                | `""`                                                                                         |

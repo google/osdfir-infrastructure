@@ -7,9 +7,10 @@ Digital Forensics tools to Kubernetes clusters using Helm.
 Currently, OSDFIR Infrastructure supports the deployment and integration of the
 following tools:
 
+* [dfTimewolf](https://github.com/log2timeline/dftimewolf)
 * [Timesketch](https://github.com/google/timesketch)
 * [Turbinia](https://github.com/google/turbinia)
-* [dfTimewolf](https://github.com/log2timeline/dftimewolf)
+* [Yeti](https://github.com/yeti-platform/yeti)
 
 ## TL;DR
 
@@ -129,10 +130,16 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                  | Description                                                                                                                                          | Value          |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| `global.existingPVC`  | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
-| `global.storageClass` | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
+| Name                            | Description                                                                                                                                          | Value          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                           | `true`         |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                                                                        | `5000`         |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)                                                         | `true`         |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                                                                        | `8080`         |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                                 | `true`         |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                                                                            | `8000`         |
+| `global.existingPVC`            | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
+| `global.storageClass`           | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
 
 ### OSDFIR Infrastructure persistence storage parameters
 
@@ -148,7 +155,6 @@ kubectl delete pvc -l release=my-release
 
 | Name                                          | Description                                                                                                                           | Value                                                     |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `timesketch.enabled`                          | Enables the Timesketch deployment                                                                                                     | `true`                                                    |
 | `timesketch.image.repository`                 | Timesketch image repository                                                                                                           | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
 | `timesketch.image.tag`                        | Overrides the image tag whose default is the chart appVersion                                                                         | `latest`                                                  |
 | `timesketch.config.override`                  | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*`                                               |
@@ -203,7 +209,6 @@ kubectl delete pvc -l release=my-release
 
 | Name                                                         | Description                                                                                                                                                                                                          | Value                                                                                        |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `turbinia.enabled`                                           | Enables the Turbinia deployment                                                                                                                                                                                      | `true`                                                                                       |
 | `turbinia.server.image.repository`                           | Turbinia image repository                                                                                                                                                                                            | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server`                         |
 | `turbinia.server.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                                                                                        | `latest`                                                                                     |
 | `turbinia.server.resources.limits`                           | Resource limits for the server container                                                                                                                                                                             | `{}`                                                                                         |
@@ -280,6 +285,45 @@ kubectl delete pvc -l release=my-release
 | `turbinia.oauth2proxy.configuration.oidcIssuerUrl`                          | OpenID Connect issuer URL                                                                                                                                             | `https://accounts.google.com` |
 | `turbinia.oauth2proxy.configuration.redirectUrl`                            | OAuth Redirect URL                                                                                                                                                    | `""`                          |
 | `turbinia.oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                       |
+
+### Yeti Configuration
+
+| Name                               | Description                                                   | Value                        |
+| ---------------------------------- | ------------------------------------------------------------- | ---------------------------- |
+| `yeti.frontend.image.repository`   | Yeti frontend image repository                                | `yetiplatform/yeti-frontend` |
+| `yeti.frontend.image.pullPolicy`   | Yeti image pull policy                                        | `Always`                     |
+| `yeti.frontend.image.tag`          | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.frontend.resources.limits`   | Resource limits for the frontend container                    | `{}`                         |
+| `yeti.frontend.resources.requests` | Requested resources for the frontend container                | `{}`                         |
+| `yeti.api.image.repository`        | Yeti API image repository                                     | `yetiplatform/yeti`          |
+| `yeti.api.image.pullPolicy`        | Yeti image pull policy                                        | `Always`                     |
+| `yeti.api.image.tag`               | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.api.service.type`            | Yeti service type                                             | `ClusterIP`                  |
+| `yeti.api.service.port`            | Yeti service port                                             | `8000`                       |
+| `yeti.api.resources.limits`        | Resource limits for the API container                         | `{}`                         |
+| `yeti.api.resources.requests`      | Requested resources for the API container                     | `{}`                         |
+| `yeti.tasks.image.repository`      | Yeti tasks image repository                                   | `yetiplatform/yeti`          |
+| `yeti.tasks.image.pullPolicy`      | Yeti image pull policy                                        | `Always`                     |
+| `yeti.tasks.image.tag`             | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.tasks.resources.limits`      | Resource limits for the tasks container                       | `{}`                         |
+| `yeti.tasks.resources.requests`    | Requested resources for the tasks container                   | `{}`                         |
+
+### Yeti Third Party
+
+| Name                                    | Description                                                                                  | Value       |
+| --------------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
+| `yeti.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`      |
+| `yeti.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
+| `yeti.redis.master.service.type`        | Redis master service type                                                                    | `ClusterIP` |
+| `yeti.redis.master.service.ports.redis` | Redis master service port                                                                    | `6379`      |
+| `yeti.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`       |
+| `yeti.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`        |
+| `yeti.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`        |
+| `yeti.arangodb.image.repository`        | Yeti arangodb image repository                                                               | `arangodb`  |
+| `yeti.arangodb.image.pullPolicy`        | Yeti image pull policy                                                                       | `Always`    |
+| `yeti.arangodb.image.tag`               | Overrides the image tag whose default is the chart appVersion                                | `latest`    |
+| `yeti.arangodb.resources.limits`        | Resource limits for the arangodb container                                                   | `{}`        |
+| `yeti.arangodb.resources.requests`      | Requested resources for the arangodb container                                               | `{}`        |
 
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 

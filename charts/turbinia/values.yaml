@@ -7,6 +7,27 @@
 global:
   ## Global Persistence Configuration
   ##
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
+    ##
+    servicePort: 5000
+  turbinia:
+    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: true
+    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
+    ##
+    servicePort: 8080
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
+    ##
+    servicePort: 8000
   ## @param global.existingPVC Existing claim for Turbinia persistent volume (overrides `persistent.name`)
   ##
   existingPVC: ""
@@ -307,12 +328,6 @@ controller:
   affinity: {}
 ## @section Common Parameters
 ##
-## @param nameOverride String to partially override names.fullname
-##
-nameOverride: ""
-## @param fullnameOverride String to fully override names.fullname
-##
-fullnameOverride: ""
 ## Turbinia configuration parameters
 ## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
 ##

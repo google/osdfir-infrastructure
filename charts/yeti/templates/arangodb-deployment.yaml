@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  {{ include "yeti.fullname" . }}-arangodb
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: arangodb
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: arangodb
+      {{- include "yeti.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Have Deployment restart after each upgrade
+        roll: {{ randAlphaNum 5 | quote }}
+        {{- if .Values.metrics.enabled }} 
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/scrape: "true"
+        {{- end }}
+      labels:
+        app.kubernetes.io/component: arangodb
+        {{- include "yeti.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "yeti.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.arangodb.podSecurityContext | nindent 8 }}
+      containers:
+        - name: frontend
+          securityContext:
+              {{- toYaml .Values.arangodb.securityContext | nindent 12 }}
+          image: "{{ .Values.arangodb.image.repository }}:{{ .Values.arangodb.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.arangodb.image.pullPolicy }}
+          env:
+            - name: ARANGO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "yeti.fullname" . }}-secret 
+                  key: yeti-arangodb
+          volumeMounts:
+            - mountPath: /mnt/yeti
+              name: yetivolume
+          ports:
+            {{- if .Values.metrics.enabled }}
+            - containerPort: {{ .Values.metrics.port }}
+            {{- end }}
+            - containerPort: {{ .Values.arangodb.service.port }}
+          resources:
+            {{- toYaml .Values.arangodb.resources | nindent 12 }}
+      volumes:
+        - name: yetivolume
+          persistentVolumeClaim:
+            claimName: {{ include "yeti.pvc.name"  . }}
+            readOnly: false
+      {{- with .Values.arangodb.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.arangodb.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.arangodb.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

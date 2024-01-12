@@ -7,6 +7,27 @@
 global:
   ## Global Persistence Configuration
   ##
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: true
+    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
+    ##
+    servicePort: 5000
+  turbinia:
+    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
+    ##
+    servicePort: 8080
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
+    ##
+    servicePort: 8000
   ## @param global.existingPVC Existing claim for Timesketch persistent volume (overrides `persistent.name`)
   ##
   existingPVC: ""
@@ -148,12 +169,7 @@ worker:
   ##
   affinity: {}
 ## @section Common Parameters
-## @param nameOverride String to partially override names.fullname
 ##
-nameOverride: ""
-## @param fullnameOverride String to fully override names.fullname
-##
-fullnameOverride: ""
 ## Service Account Parameters
 ##
 serviceAccount:
@@ -302,7 +318,8 @@ opensearch:
     ##
     size: 2Gi
   ## Opensearch resource requests
-  ## @param opensearch.resources.requests Requested resources for the Opensearch containers
+  ## @param opensearch.resources.requests.cpu The requested cpu for the Opensearch container
+  ## @param opensearch.resources.requests.memory The requested memory for the Opensearch container
   ##
   resources:
     ## Example:
@@ -442,7 +459,9 @@ postgresql:
       size: 2Gi
     ## PostgreSQL primary resource requests and limits
     ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
-    ## @param postgresql.primary.resources.requests The requested resources for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.memory The requested memory for the PostgreSQL primary containers
+    ##
     resources:
       ## Example:
       ## limits:

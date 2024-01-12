@@ -2,19 +2,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name:  {{ include "timesketch.fullname" . }}-ingress
+  name:  {{ include "yeti.fullname" . }}-ingress
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    {{- include "timesketch.labels" . | nindent 4 }}
+    {{- include "yeti.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
-    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
+    networking.gke.io/managed-certificates: {{ include "yeti.fullname" . }}-managed-ssl
     {{- end }}
     {{- if (eq .Values.ingress.className "gce") }}
     {{- if .Values.ingress.gcp.staticIPName }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPName }}
-    networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "yeti.fullname" . }}-frontend-config
     {{- else }}
     {{- fail "A valied .Values.ingress.gcp.staticIPName entry is required when using the GCE Ingress" }}
     {{- end }}
@@ -28,32 +28,32 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "timesketch.fullname" . }}
+                name: {{ include "yeti.fullname" . }}
                 port:
-                  number: {{ include "timesketch.service.port" . }}
+                  number: {{ .Values.frontend.service.port }}
   defaultBackend:
     service:
-      name: {{ include "timesketch.fullname" . }} # Name of the Service targeted by the Ingress
+      name: {{ include "yeti.fullname" . }} # Name of the Service targeted by the Ingress
       port:
-        number: {{ include "timesketch.service.port" . }} # Should match the port used by the Service
+        number: {{ .Values.frontend.service.port }} # Should match the port used by the Service
 {{- end }}
 {{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name:  {{ include "timesketch.fullname" . }}-ingress-ipv6
+  name:  {{ include "yeti.fullname" . }}-ingress-ipv6
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    {{- include "timesketch.labels" . | nindent 4 }}
+    {{- include "yeti.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
-    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
+    networking.gke.io/managed-certificates: {{ include "yeti.fullname" . }}-managed-ssl
     {{- end }}
     {{- if (eq .Values.ingress.className "gce") }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPV6Name }}
-    networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "yeti.fullname" . }}-frontend-config
     {{- end }}
 spec:
   rules:
@@ -64,12 +64,12 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "timesketch.fullname" . }}
+                name: {{ include "yeti.fullname" . }}
                 port:
-                  number: {{ include "timesketch.service.port" . }}
+                  number: {{ .Values.frontend.service.port }}
   defaultBackend:
     service:
-      name: {{ include "timesketch.fullname" . }} # Name of the Service targeted by the Ingress
+      name: {{ include "yeti.fullname" . }} # Name of the Service targeted by the Ingress
       port:
-        number: {{ include "timesketch.service.port" . }} # Should match the port used by the Service
+        number: {{ .Values.frontend.service.port }} # Should match the port used by the Service
 {{- end }}
