@@ -105,7 +105,7 @@ fi
 networks=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute networks list --filter="name=$VPC_NETWORK" |wc -l)
 if [[ "${networks}" -lt "2" ]]; then
   echo "VPC network $VPC_NETWORK not found. Creating VPC network $VPC_NETWORK..."
-  gcloud compute networks create $VPC_NETWORK --subnet-mode=auto
+  gcloud compute networks create $VPC_NETWORK --subnet-mode=auto --project $DEVSHELL_PROJECT_ID
 else
   echo "VPC network $VPC_NETWORK found. Skipping VPC network creation...."
 fi
@@ -116,7 +116,7 @@ if [[ "$*" != *--no-nat* ]] ; then
     routers=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute routers list --regions="$REGION" --filter="name=$VPC_NETWORK" | wc -l)
     if [[ "${routers}" -lt "2" ]]; then
       echo "GCP router $VPC_NETWORK not found in $REGION. Creating GCP router $VPC_NETWORK for $REGION ..."
-      gcloud compute routers create $VPC_NETWORK --network $VPC_NETWORK --region $REGION
+      gcloud compute routers create $VPC_NETWORK --network $VPC_NETWORK --region $REGION --project $DEVSHELL_PROJECT_ID
     else
       echo "GCP router $VPC_NETWORK found in $REGION. Skipping GCP router creation..."
     fi
@@ -124,7 +124,7 @@ if [[ "$*" != *--no-nat* ]] ; then
     nat=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute routers nats list --router=$VPC_NETWORK --router-region $REGION | wc -l)
     if [[ "${routers}" -lt "2" ]]; then
       echo "Cloud NAT $VPC_NETWORK not found in $REGION. Creating Cloud NAT $VPC_NETWORK for $REGION ..."
-      gcloud compute routers nats create $VPC_NETWORK --router-region $REGION --router $VPC_NETWORK --nat-all-subnet-ip-ranges --auto-allocate-nat-external-ips
+      gcloud compute routers nats create $VPC_NETWORK --project $DEVSHELL_PROJECT_ID --router-region $REGION --router $VPC_NETWORK --nat-all-subnet-ip-ranges --auto-allocate-nat-external-ips
     else
       echo "Cloud NAT $VPC_NETWORK found in $REGION. Skipping Cloud NAT creation..."
     fi
@@ -148,7 +148,7 @@ if [[ "$*" != *--no-cluster* ]] ; then
     gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --enable-autoscaling --min-nodes=$CLUSTER_MIN_NODE_SIZE --max-nodes=$CLUSTER_MAX_NODE_SIZE --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
   fi
   # Add Workload Identity bind
-  gcloud iam service-accounts add-iam-policy-binding $SA_NAME@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:$DEVSHELL_PROJECT_ID.svc.id.goog[default/$SA_NAME]"
+  gcloud iam service-accounts add-iam-policy-binding $SA_NAME@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:$DEVSHELL_PROJECT_ID.svc.id.goog[default/$SA_NAME]" --project $DEVSHELL_PROJECT_ID
 else
   echo "--no-cluster specified. Skipping GKE cluster creation..."
 fi
