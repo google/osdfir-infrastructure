@@ -74,7 +74,7 @@ spec:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
-            - containerPort: {{ include "yeti.service.port" . }}
+            - containerPort: 8000
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
       volumes:

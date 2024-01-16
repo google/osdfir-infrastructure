@@ -12,11 +12,11 @@ data:
         root /www;
 
         location /api/v2 {
-            proxy_pass http://{{ include "yeti.fullname" . }}-api:{{ include "yeti.service.port" . }};
+            proxy_pass http://{{ include "yeti.fullname" . }}-api:8000;
         }
         
         location ~(^/docs|^/openapi.json) {
-            proxy_pass http://{{ include "yeti.fullname" . }}-api:{{ include "yeti.service.port" . }};
+            proxy_pass http://{{ include "yeti.fullname" . }}-api:8000;
         }
 
         location / {

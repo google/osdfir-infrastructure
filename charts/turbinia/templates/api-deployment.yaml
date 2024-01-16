@@ -1,4 +1,3 @@
-{{- $userconfigs := .Files.Get .Values.config.override }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -60,7 +59,7 @@ spec:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
-            - containerPort: {{ include "turbinia.service.port" . }}
+            - containerPort: 8000
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
       volumes:
@@ -76,11 +75,10 @@ spec:
             defaultMode: 0777
         - name: turbinia-configs
           emptyDir: {}
-        {{- if $userconfigs }}
         - name: user-configs
           configMap:
             name: {{ include "turbinia.fullname" . }}-configmap
-        {{- end }}
+            optional: true
       {{- with .Values.api.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

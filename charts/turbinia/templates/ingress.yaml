@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "turbinia.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "turbinia.fullname" . }}-managed-ssl
     {{- end }}
@@ -59,7 +59,7 @@ metadata:
   labels:
     {{- include "turbinia.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "turbinia.fullname" . }}-managed-ssl
     {{- end }}

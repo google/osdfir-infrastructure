@@ -30,12 +30,12 @@ spec:
               service:
                 name: {{ include "yeti.fullname" . }}
                 port:
-                  number: {{ .Values.frontend.service.port }}
+                  number: {{ include "yeti.service.port" . }}
   defaultBackend:
     service:
       name: {{ include "yeti.fullname" . }} # Name of the Service targeted by the Ingress
       port:
-        number: {{ .Values.frontend.service.port }} # Should match the port used by the Service
+        number: {{ include "yeti.service.port" . }} # Should match the port used by the Service
 {{- end }}
 {{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
 ---
@@ -66,10 +66,10 @@ spec:
               service:
                 name: {{ include "yeti.fullname" . }}
                 port:
-                  number: {{ .Values.frontend.service.port }}
+                  number: {{ include "yeti.service.port" . }}
   defaultBackend:
     service:
       name: {{ include "yeti.fullname" . }} # Name of the Service targeted by the Ingress
       port:
-        number: {{ .Values.frontend.service.port }} # Should match the port used by the Service
+        number: {{ include "yeti.service.port" . }} # Should match the port used by the Service
 {{- end }}

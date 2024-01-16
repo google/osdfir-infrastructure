@@ -16,18 +16,17 @@ data:
     # Create turbinia config directory
     mkdir -p /etc/turbinia
     cd /etc/turbinia
-    
-    # Pull default config if one is not already provided
-    {{- $userconfigs := .Files.Get .Values.config.override }}
-    {{- if $userconfigs }}
-    ls -lh /tmp/turbinia
-    cp /tmp/turbinia/* /etc/turbinia/
-    {{- else }}
-    echo -n "* Fetching configuration files.." 
-    # Fetch default Turbinia config file
-    wget "https://raw.githubusercontent.com/google/turbinia/master/turbinia/config/turbinia_config_tmpl.py" -O turbinia.conf
-    echo "OK"
-    {{- end }}
+
+    if [  $(ls /tmp/turbinia/ | wc -l) -gt 0 ]; then
+      echo "Using exisiting configuration file provided."
+      cp /tmp/turbinia/* /etc/turbinia/
+    else 
+      # Pull default config if one is not already provided
+      echo -n "* Fetching configuration files.." 
+      # Fetch default Turbinia config file
+      wget "https://raw.githubusercontent.com/google/turbinia/master/turbinia/config/turbinia_config_tmpl.py" -O turbinia.conf
+      echo "OK"
+    fi
 
     # Set up the Redis connection
     sed -i -e "s/^TASK_MANAGER = .*$/TASK_MANAGER = 'Celery'/g" turbinia.conf

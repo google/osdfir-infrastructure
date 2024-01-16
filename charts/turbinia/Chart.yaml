@@ -1,12 +1,13 @@
 apiVersion: v2
 name: turbinia
-version: 0.3.4
+version: 1.0.0
 description: A Helm chart for Turbinia Kubernetes deployments.
 keywords:
 - turbinia
 - dfir
 - processing
 - scaling
+- security
 home: "https://github.com/google/turbinia"
 dependencies:
 - condition: redis.enabled
@@ -19,16 +20,13 @@ dependencies:
   version: 4.1.3
   repository: https://charts.bitnami.com/bitnami
 maintainers:
-  - name: Wajih Yassine
-    url: https://github.com/wajihyassine
-  - name: Aaron Peterson
-    url: https://github.com/aarontp
-  - name: hacktobeer
-    url: https://github.com/hacktobeer
+  - name: Open Source DFIR
+    email: osdfir-maintainers@googlegroups.com
+    url: https://github.com/google/osdfir-infrastructure
 sources:
-- https://github.com/google/turbinia
+- https://github.com/google/osdfir-infrastructure
 icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
-appVersion: "20230808"
+appVersion: "latest"
 annotations:
   category: Security
   licenses: Apache-2.0
