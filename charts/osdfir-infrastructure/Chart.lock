@@ -1,12 +1,12 @@
 dependencies:
 - name: timesketch
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.5
+  version: 1.0.0
 - name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.4
+  version: 1.0.0
 - name: yeti
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.1.0
-digest: sha256:57cb84884f0622f7c6a2aea128ba144491bc7374f476c2d1157a9e9d2128e169
-generated: "2024-01-12T14:08:16.990668-08:00"
+  version: 1.0.0
+digest: sha256:69a93d63cdb4be306688ed66fab125e05390032443210ecd0ce51e3a62626f5a
+generated: "2024-01-16T17:11:28.675816-08:00"
