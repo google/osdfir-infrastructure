@@ -24,14 +24,14 @@ global:
     enabled: true
     ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
     ##
-    servicePort: 8080
+    servicePort: 8000
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: true
     ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
     ##
-    servicePort: 8000
+    servicePort: 9000
   ## @param global.existingPVC Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)
   ##
   existingPVC: osdfirvolume

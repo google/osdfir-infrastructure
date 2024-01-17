@@ -10,8 +10,8 @@ To learn more about the release, try:
 {{ if .Values.global.timesketch.enabled -}}
 To connect to the Timesketch UI, run:
 
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "timesketch.fullname" .Subcharts.timesketch }} {{ .Values.timesketch.service.port }}:{{ .Values.timesketch.service.port }}
-  $ echo "Visit http://127.0.0.1:{{ .Values.timesketch.service.port }} to access Timesketch"
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "timesketch.fullname" .Subcharts.timesketch }} {{ include "timesketch.service.port" . }}:{{ include "timesketch.service.port" . }}
+  $ echo "Visit http://127.0.0.1:{{ include "timesketch.service.port" . }} to access Timesketch"
 
 {{ if .Values.timesketch.config.createUser -}}
 Login to Timesketch with the User `timesketch`. To get your password run:
@@ -21,14 +21,14 @@ Login to Timesketch with the User `timesketch`. To get your password run:
 
 {{ if .Values.global.turbinia.enabled -}}
 To connect to the Turbinia UI, run:
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "turbinia.fullname" .Subcharts.turbinia }} {{ .Values.turbinia.service.port }}:{{ .Values.turbinia.service.port }}
-  $ echo "Visit http://127.0.0.1:{{ .Values.turbinia.service.port }} to access the Turbinia Web UI"
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "turbinia.fullname" .Subcharts.turbinia }} {{ include "turbinia.service.port" . }}:{{ include "turbinia.service.port" . }}
+  $ echo "Visit http://127.0.0.1:{{ include "turbinia.service.port" . }} to access the Turbinia Web UI"
 {{- end }}
 
 {{ if .Values.global.yeti.enabled -}}
 To connect to the Yeti URL, run:
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "yeti.fullname" . }} 8000:{{ .Values.yeti.frontend.service.port }}
-  $ echo "Visit http://127.0.0.1:8000 to access Yeti"
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "yeti.fullname" . }} {{ include "yeti.service.port" . }}:{{ include "yeti.service.port" . }}
+  $ echo "Visit http://127.0.0.1:{{ include "yeti.service.port" . }} to access Yeti"
 
 Login to Yeti with the User `yeti`. To get your password run:
   $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ include "yeti.fullname" . }}-secret -o jsonpath="{.data.yeti-user}" | base64 -d
