@@ -135,9 +135,9 @@ kubectl delete pvc -l release=my-release
 | `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                           | `true`         |
 | `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                                                                        | `5000`         |
 | `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)                                                         | `true`         |
-| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                                                                        | `8080`         |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                                                                        | `8000`         |
 | `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                                 | `true`         |
-| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                                                                            | `8000`         |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                                                                            | `9000`         |
 | `global.existingPVC`            | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
 | `global.storageClass`           | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
 

@@ -1,7 +1,7 @@
 # OSDFIR Infrastructure
 
-OSDFIR Infrastructure helps setup Open Source
-Digital Forensics tools to Kubernetes clusters using Helm.
+OSDFIR Infrastructure simplifies the deployment and integration of Open Source
+Digital Forensics tools to Kubernetes clusters (local or cloud) using Helm.
 
 Currently, OSDFIR Infrastructure supports the deployment and integration of the following tools:
 

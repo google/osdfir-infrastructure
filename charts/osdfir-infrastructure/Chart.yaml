@@ -1,6 +1,6 @@
 apiVersion: v2
 name: osdfir-infrastructure
-version: 0.3.6
+version: 1.0.0
 description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
 keywords:
 - timesketch
@@ -9,30 +9,25 @@ keywords:
 - dfir
 - analysis
 - processing
-- cloud
+- security
 home: "https://github.com/google/osdfir-infrastructure"
 dependencies:
 - condition: global.timesketch.enabled
   name: timesketch
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.5
+  version: 1.0.0
 - condition: global.turbinia.enabled
   name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.3.4
+  version: 1.0.0
 - condition: global.yeti.enabled
   name: yeti
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 0.1.0
+  version: 1.0.0
 maintainers:
-  - name: Wajih Yassine
-    url: https://github.com/wajihyassine
-  - name: Johan Berggren
-    url: https://github.com/berggren
-  - name: Aaron Peterson
-    url: https://github.com/aarontp
-  - name: hacktobeer
-    url: https://github.com/hacktobeer
+  - name: Open Source DFIR
+    email: osdfir-maintainers@googlegroups.com
+    url: https://github.com/google/osdfir-infrastructure
 sources:
 - https://github.com/google/osdfir-infrastructure
 - https://github.com/google/turbinia
