@@ -268,10 +268,10 @@ serviceAccount:
 ## Service Parameters
 ##
 service:
-  ## @param frontend.service.type Yeti service type
+  ## @param service.type Yeti service type
   ##
   type: ClusterIP
-  ## @param frontend.service.port Yeti service port
+  ## @param service.port Yeti service port
   ##
   port: 9000
 ## Metrics Parameters
