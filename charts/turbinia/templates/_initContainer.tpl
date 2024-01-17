@@ -4,7 +4,6 @@ this file has been created which then applies to both the Turbinia Server, API,
 and Worker pod upon startup.
 */}}
 {{- define "turbinia.initContainer" -}}
-{{- $userconfigs := .Files.Get .Values.config.override -}}
 - name: init-turbinia
   image: busybox
   command: ['sh', '-c', '/init/init-turbinia.sh']
@@ -24,8 +23,6 @@ and Worker pod upon startup.
       name: init-turbinia
     - mountPath: /etc/turbinia
       name: turbinia-configs
-    {{- if $userconfigs }}
     - mountPath: /tmp/turbinia
       name: user-configs
-    {{- end }}
 {{- end }}

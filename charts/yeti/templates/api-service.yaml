@@ -8,8 +8,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ include "yeti.service.port" . }}
+    - port: 8000
       protocol: TCP
+      targetPort: 8000
   selector:
     app.kubernetes.io/component: api
     {{- include "yeti.selectorLabels" . | nindent 4 }}

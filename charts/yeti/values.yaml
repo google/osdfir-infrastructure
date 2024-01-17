@@ -13,21 +13,21 @@ global:
     enabled: false
     ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
     ##
-    servicePort: 5000
+    servicePort:
   turbinia:
     ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
     ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
     ##
-    servicePort: 8080
+    servicePort:
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    enabled: true
+    enabled: false
     ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
     ##
-    servicePort: 8000
+    servicePort:
   ## @param global.existingPVC Existing claim for Yeti persistent volume (overrides `persistent.name`)
   ##
   existingPVC: ""
@@ -58,15 +58,6 @@ frontend:
     ##   - myRegistryKeySecretName
     ##
     imagePullSecrets: []
-  ## Service Parameters
-  ##
-  service:
-    ## @param frontend.service.type Yeti service type
-    ##
-    type: ClusterIP
-    ## @param frontend.service.port Yeti service port
-    ##
-    port: 80
   ## @param frontend.podSecurityContext Holds pod-level security attributes and common server container settings
   ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
   ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
@@ -138,15 +129,6 @@ api:
     ##   - myRegistryKeySecretName
     ##
     imagePullSecrets: []
-  ## Service Parameters
-  ##
-  service:
-    ## @param api.service.type Yeti service type
-    ##
-    type: ClusterIP
-    ## @param api.service.port Yeti service port
-    ##
-    port: 8000
   ## @param api.podSecurityContext Holds pod-level security attributes and common API container settings
   ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
   ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
@@ -283,6 +265,15 @@ serviceAccount:
   ## If not set and create is true, a name is generated using the fullname template
   ##
   name: "yeti"
+## Service Parameters
+##
+service:
+  ## @param service.type Yeti service type
+  ##
+  type: ClusterIP
+  ## @param service.port Yeti service port
+  ##
+  port: 9000
 ## Metrics Parameters
 ## IMPORTANT: Yeti utilizes Prometheus to scrape metrics through annotations
 ## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly

@@ -1,4 +1,3 @@
-{{- $userconfigs := .Files.Glob .Values.config.override }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -59,7 +58,7 @@ spec:
             {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.port }}
             {{- end }}
-            - containerPort: {{ include "timesketch.service.port" . }}
+            - containerPort: 5000
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
       volumes:
@@ -73,11 +72,10 @@ spec:
             defaultMode: 0744
         - name: timesketch-configs
           emptyDir: {}
-        {{- if $userconfigs }}
         - name: uploaded-configs
           configMap:
             name: {{ include "timesketch.fullname" . }}-configmap
-        {{- end }}
+            optional: true
       {{- with .Values.worker.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
