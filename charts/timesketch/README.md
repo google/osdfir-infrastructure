@@ -100,12 +100,12 @@ kubectl delete pvc -l release=my-release
 
 | Name                            | Description                                                                                  | Value   |
 | ------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
-| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `true`  |
-| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `5000`  |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `false` |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `nil`   |
 | `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `false` |
-| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `8080`  |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `nil`   |
 | `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
-| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `8000`  |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `nil`   |
 | `global.existingPVC`            | Existing claim for Timesketch persistent volume (overrides `persistent.name`)                | `""`    |
 | `global.storageClass`           | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)      | `""`    |
 
