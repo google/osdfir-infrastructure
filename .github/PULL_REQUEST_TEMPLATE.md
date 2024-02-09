@@ -24,5 +24,5 @@
 <!-- [Place an '[X]' (no spaces) in all applicable fields. Please remove unrelated fields.] -->
 
 - [ ] Chart version bumped in `Chart.yaml` according to [semver](http://semver.org/). This is *not necessary* when the changes only affect README.md files.
-- [ ] Variables are documented in the values.yaml and added to the `README.md` using[readme-generator-for-helm](https://github.com/bitnami-labs/readme-generator-for-helm)
-- [ ] Title of the pull request follows this pattern [charts/<name_of_the_chart>] Descriptive title
+- [ ] Newly added variables are documented in the values.yaml
+- [ ] Title of the pull request is descriptive
