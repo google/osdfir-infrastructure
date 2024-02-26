@@ -26,6 +26,16 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 - kubectl v1.29.2+
 - Helm 3.14.1+
 
+## Setup the mysql database
+```
+kubectl apply -f charts/grr/mysql.yaml
+```
+
+## Setup minikube tunneling
+```
+minikube tunnel &
+```
+
 ## Installing the Chart
 
 The first step is to add the repo and then update to pick up any new changes.
@@ -42,6 +52,33 @@ helm install grr-on-k8s osdfir-charts/grr
 ```
 
 The command deploys GRR on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+
+## Deploy a GRR client as a daemonset
+For test and demo purposes we will deploy a GRR client as a Kubernetes daemonset.  
+To do so we will
+- first retrieve the values for some configuration parameters,
+- then build a Docker container with the GRR client and its dependencies, and
+- finally deploy the container as a daemonset.
+
+### Retrieve the configuration parameter values
+```
+cd charts/grr/containers/grr/daemon/
+export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
+export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect $FLEETSPEAK_FRONTEND_IP:4443 < /dev/null | \
+              openssl x509 -outform pem | sed ':a;N;$!ba;s/\n/\\\\n/g')
+sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
+```
+
+### Build the GRR client Docker container
+```
+eval $(minikube docker-env)
+docker build -t grr-daemon:v0.1 .
+```
+
+### Deploy the GRR client daemonset
+```
+kubectl label nodes minikube grrclient=installed
+```
 
 ## Uninstalling the Chart
 
