@@ -1,0 +1,49 @@
+# Default values for grr.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Fleetspeak
+fleetspeakAdminImage: "ghcr.io/google/fleetspeak:cl-601420666"
+fleetspeakAdminReplicas: 1
+fleetspeakFrontendImage: "ghcr.io/google/fleetspeak:cl-601420666"
+fleetspeakFrontendReplicas: 1
+fleetspeakGenerateCert: true
+fleetspeakMysqlDbAddress: "mysql"
+fleetspeakMysqlDbName: "fleetspeak"
+fleetspeakMysqlDbPort: 3306
+fleetspeakMysqlDbUserName: "fleetspeak-user"
+fleetspeakMysqlDbUserPassword: "fleetspeak-password"
+fleetspeakSubjectCommonName: "fleetspeak-frontend"
+
+# Fleetspeak Admin
+fleetspeakAdminListenPort: 4444
+
+# Fleetspeak Frontend
+fleetspeakFrontendHealthCheckPort: 8080
+fleetspeakFrontendListenPort: 4443
+fleetspeakFrontendNotificationPort: 12000
+
+# GRR
+grrAdminImage: "ghcr.io/google/grr:latest"
+grrAdminReplicas: 1
+grrDaemonImage: "grr-daemon:v0.1"
+grrDaemonImagePullPolicy: "Never"
+grrFrontendImage: "ghcr.io/google/grr:latest"
+grrFrontendReplicas: 1
+grrGenerateCert: true
+grrMysqlDbAddress: "mysql"
+grrMysqlDbName: "grr"
+grrMysqlDbPort: 3306
+grrMysqlDbUserName: "grr-user"
+grrMysqlDbUserPassword: "grr-password"
+grrSubjectCommonName: "grr-frontend"
+grrWorkerImage: "ghcr.io/google/grr:latest"
+
+# GRR Admin
+grrAdminListenPort: 8000
+
+# GRR Frontend
+grrFrontendListenPort: 11111
+
+# Prometheus
+prometheusMetricsPort: 19090

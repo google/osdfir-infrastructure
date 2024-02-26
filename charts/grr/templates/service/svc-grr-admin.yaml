@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-grr-admin
+spec:
+  selector:
+    app.kubernetes.io/name: grr-admin
+  ports:
+    - protocol: TCP
+      name: admin
+      port: {{ .Values.grrAdminListenPort }}
+      targetPort: {{ .Values.grrAdminListenPort }}
