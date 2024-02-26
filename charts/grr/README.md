@@ -29,6 +29,12 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 ## Setup the mysql database
 ```
 kubectl apply -f charts/grr/mysql.yaml
+
+# Verify that the mysql pod is in the the 'Running' status
+kubectl get pods
+# The output should look similar to the below:
+# NAME                     READY   STATUS    RESTARTS   AGE
+# mysql-5cd45cc59f-bgwlv   1/1     Running   0          15s
 ```
 
 ## Setup minikube tunneling
@@ -49,6 +55,17 @@ To install the chart, specify any release name of your choice. For example, usin
 
 ```console
 helm install grr-on-k8s osdfir-charts/grr
+
+# Verify that all the GRR component pods are in 'Running' state (this might take a moment)
+kubectl get pods
+# The output should look similar to the below:
+# NAME                                      READY   STATUS    RESTARTS   AGE
+# dpl-fleetspeak-admin-576754755b-hj27p     1/1     Running   0          1m1s
+# dpl-fleetspeak-frontend-78bd9889d-jvb5v   1/1     Running   0          1m1s
+# dpl-grr-admin-6b84cd996b-d54zn            1/1     Running   0          1m1s
+# dpl-grr-frontend-5fc7f8dc5b-7hsbd         1/1     Running   0          1m1s
+# dpl-grr-worker-cc96f574c-kxr9l            1/1     Running   0          1m1s
+# mysql-5cd45cc59f-bgwlv                    1/1     Running   0          3m59s
 ```
 
 The command deploys GRR on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -78,7 +95,22 @@ docker build -t grr-daemon:v0.1 .
 ### Deploy the GRR client daemonset
 ```
 kubectl label nodes minikube grrclient=installed
+
+# Verify that the GRR client daemonset got deployed.
+kubectl get daemonset -n grr
+# The output should look similar to the below:
+NAME   DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR         AGE
+grr    1         1         1       1            1           grrclient=installed   53s
 ```
+
+## Connect to the GRR Admin Frontend
+You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
+```
+export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin --output jsonpath='{.spec.clusterIP}')
+```
+The GRR Admin Frontend can now be reached on the following URL (note that you might have to tunnel to your server first):   
+[http://${GRR_ADMIN_IP}:8000](http://${GRR_ADMIN_IP}:8000)
+
 
 ## Uninstalling the Chart
 
