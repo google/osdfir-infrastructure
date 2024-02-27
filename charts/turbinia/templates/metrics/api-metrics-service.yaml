@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
     - port: {{ .Values.metrics.port }}
-      targetPort: http
+      targetPort: {{ .Values.metrics.port }}
       protocol: TCP
       name: http
   selector:
