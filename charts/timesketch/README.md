@@ -160,7 +160,7 @@ kubectl delete pvc -l release=my-release
 | `service.type`                    | Timesketch service type                                                                                                            | `ClusterIP`         |
 | `service.port`                    | Timesketch service port                                                                                                            | `5000`              |
 | `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
-| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `9200`              |
+| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `8080`              |
 | `persistence.name`                | Timesketch persistent volume name                                                                                                  | `timesketchvolume`  |
 | `persistence.size`                | Timesketch persistent volume size                                                                                                  | `2Gi`               |
 | `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                            | `""`                |
@@ -196,22 +196,23 @@ kubectl delete pvc -l release=my-release
 
 ### Redis Configuration Parameters
 
-| Name                                | Description                                                                                  | Value       |
-| ----------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
-| `redis.enabled`                     | Enables the Redis deployment                                                                 | `true`      |
-| `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`     |
-| `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
-| `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP` |
-| `redis.master.service.ports.redis`  | Redis master service port                                                                    | `6379`      |
-| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `2Gi`       |
-| `redis.master.resources.limits`     | The resources limits for the Redis master containers                                         | `{}`        |
-| `redis.master.resources.requests`   | The requested resources for the Redis master containers                                      | `{}`        |
-| `redis.replica.replicaCount`        | Number of Redis replicas to deploy                                                           | `0`         |
-| `redis.replica.service.type`        | Redis replicas service type                                                                  | `ClusterIP` |
-| `redis.replica.service.ports.redis` | Redis replicas service port                                                                  | `6379`      |
-| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `2Gi`       |
-| `redis.replica.resources.limits`    | The resources limits for the Redis replica containers                                        | `{}`        |
-| `redis.replica.resources.requests`  | The requested resources for the Redis replica containers                                     | `{}`        |
+| Name                                | Description                                                                                  | Value        |
+| ----------------------------------- | -------------------------------------------------------------------------------------------- | ------------ |
+| `redis.enabled`                     | Enables the Redis deployment                                                                 | `true`       |
+| `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`      |
+| `redis.architecture`                | Specifies the Redis architecture. Allowed values: `standalone` or `replication`              | `standalone` |
+| `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`          |
+| `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP`  |
+| `redis.master.service.ports.redis`  | Redis master service port                                                                    | `6379`       |
+| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `2Gi`        |
+| `redis.master.resources.limits`     | The resources limits for the Redis master containers                                         | `{}`         |
+| `redis.master.resources.requests`   | The requested resources for the Redis master containers                                      | `{}`         |
+| `redis.replica.replicaCount`        | Number of Redis replicas to deploy                                                           | `0`          |
+| `redis.replica.service.type`        | Redis replicas service type                                                                  | `ClusterIP`  |
+| `redis.replica.service.ports.redis` | Redis replicas service port                                                                  | `6379`       |
+| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `2Gi`        |
+| `redis.replica.resources.limits`    | The resources limits for the Redis replica containers                                        | `{}`         |
+| `redis.replica.resources.requests`  | The requested resources for the Redis replica containers                                     | `{}`         |
 
 ### Postgresql Configuration Parameters
 
