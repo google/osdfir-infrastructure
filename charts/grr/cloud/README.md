@@ -1,7 +1,7 @@
-# GRR / Fleetspeak Demo with Google Cloud
+#Provision Google Cloud infrastructure for GRR / Fleetspeak Demo
 
 ## Introduction
-This repository hosts the code and configuration example the GRR / Fleetspeak Demo with Google Cloud infrastructure.
+This repository hosts the code and configuration example the [GRR](https://github.com/google/grr) / [Fleetspeak](https://github.com/google/fleetspeak) Demo with Google Cloud infrastructure.
 
 ## 1. Preliminary Setup Instructions
 
@@ -87,7 +87,7 @@ echo $LOADBALANCER_CERT
 ```
 
 ## 3. Deploy the GRR application on GKE
-You can now return to the instructions on how to [install GRR on GKE](./#gke-installations).
+You can now return to the instructions on how to [install GRR on GKE](../README.md#gke-installations).
 
 ## 4. Cleaning up
 We recommend that you clean up the installation after you are done with your testing to avoid any future charges.  

@@ -12,6 +12,7 @@ git clone https://github.com/google/osdfir-infrastructure.git
 ```
 
 ## TL;DR
+> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ```console
 kubectl apply -f charts/grr/mysql.yaml
@@ -19,7 +20,7 @@ minikube tunnel &
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 ```
 
-> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+> **Note**: For a more real life scenario see [GKE Installations](#gke-installations) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
 
 ## Introduction
 
@@ -32,9 +33,10 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 - kubectl v1.29.2+
 - Helm 3.14.1+
 
-> **Note**: See [GKE Installations](#gke-installations) for deploying GRR on GKE.   
-
 ## Setup the mysql database
+Both [GRR](https://github.com/google/grr) and its underlying communication layer [Fleetspeak](https://github.com/google/fleetspeak) need a mysql database store.   
+The following command deploys a container based mysql instance into the cluster.  
+> **Note**: This way to deploy mysql is only suitable for demo purposes.
 ```
 kubectl apply -f charts/grr/mysql.yaml
 
@@ -114,9 +116,9 @@ The GRR Admin Frontend can now be reached on the following URL (note that you mi
 [http://${GRR_ADMIN_IP}:8000](http://${GRR_ADMIN_IP}:8000)
 
 ## Installing on Cloud
-After installing GRR on minikube and kicking the tires you likely would like to run GRR in a more real life scenario.  
-For this you would like to consider installing GRR on a managed Kubernetes cluster like [Google Cloud's Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).  
-We have you covered by documenting two flavours below on how you can get up to speed with a GKE based GRR installation quickly:
+After installing GRR on minikube and kicking the tires you likely aim for running GRR in a more real life scenario.  
+For this you could consider installing GRR on a managed Kubernetes cluster in the cloud like on [Google Cloud's Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).  
+We have you covered by documenting two flavours below on how you can quickly get up to speed with a GKE based GRR installation:
 - GRR on GKE with layer 4 load balancer
 - GRR on GKE with layer 7 load balancer
 
@@ -136,6 +138,7 @@ Once you have provisioned your infrastructure you can continue with the instruct
 ### Install GRR on GKE
 
 #### Build the grr daemon image
+```
 cd charts/grr/containers/grr-daemon
 sed "s'FLEETSPEAK_FRONTEND'$FLEETSPEAK_FRONTEND'g" config/config.textrepo.tmpl config/config.textproto
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
