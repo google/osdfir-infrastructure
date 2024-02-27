@@ -127,7 +127,7 @@ You can find more details and background on the different modes of exposing GRR'
 
 ### GKE Installations
 Before we can install GRR we need to provision a GKE cluster and its related infrastructure.  
-The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [build instructions](.cloud/README.md).  
+The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [build instructions](../../cloud/README.md).  
 
 We recommend that you start with cloning this repo again to avoid carrying over any configurations from the minikube based instructions above.
 ```
@@ -140,8 +140,9 @@ Once you have provisioned your infrastructure you can continue with the instruct
 #### Build the grr daemon image
 ```
 cd charts/grr/containers/grr-daemon
-sed "s'FLEETSPEAK_FRONTEND'$FLEETSPEAK_FRONTEND'g" config/config.textrepo.tmpl config/config.textproto
+sed "s'fleetspeak-frontend'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
+echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
 gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
 
 cd -
@@ -159,14 +160,14 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 
 ##### Set the default values for the GRR chart
 ```
-sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values.yaml
-sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values.yaml
-sed -i "s'GRR_DB_IP_ADDRESS'$MYSQL_DB_IP_ADDRESS'g" charts/grr/values.yaml
+sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gke.yaml
+sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gke.yaml
+sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gke.yaml
 ```
 
 ##### Option 1: Install GRR with helm
 ```
-helm install grr-on-gke ./charts/grr -f ./charts/grr/values.yaml
+helm install grr-on-gke ./charts/grr -f ./charts/grr/values-gke.yaml
 ```
 
 ##### Option 2: Install GRR with Kubernetes Operator
