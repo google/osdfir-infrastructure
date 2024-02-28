@@ -33,14 +33,14 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 - kubectl v1.29.2+
 - Helm 3.14.1+
 
-## Setup the mysql database
-Both [GRR](https://github.com/google/grr) and its underlying communication layer [Fleetspeak](https://github.com/google/fleetspeak) need a mysql database store.   
-The following command deploys a container based mysql instance into the cluster.  
-> **Note**: This way to deploy mysql is only suitable for demo purposes.
+## Setup the MySQL database
+Both [GRR](https://github.com/google/grr) and its underlying communication layer [Fleetspeak](https://github.com/google/fleetspeak) need a MySQL database store.   
+The following command deploys a container based MySQL instance into the cluster.  
+> **Note**: This way to deploy MySQL is only suitable for demo purposes.
 ```
 kubectl apply -f charts/grr/mysql.yaml
 
-# Verify that the mysql pod is in the the 'Running' status
+# Verify that the MySQL pod is in the the 'Running' status
 kubectl get pods
 # The output should look similar to the below:
 # NAME                     READY   STATUS    RESTARTS   AGE
@@ -129,7 +129,7 @@ You can find more details and background on the different modes of exposing GRR'
 
 ### GKE Installations
 Before we can install GRR we need to provision a GKE cluster and its related infrastructure.  
-The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [build instructions](../../cloud/README.md).  
+The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [installation instructions](../../cloud/README.md).  
 
 We recommend that you start with cloning this repo again to avoid carrying over any configurations from the minikube based instructions above.
 ```
@@ -138,6 +138,21 @@ git clone https://github.com/google/osdfir-infrastructure.git
 Once you have provisioned your infrastructure you can continue with the instructions below.   
 
 ### Install GRR on GKE
+In case you followed the Google Cloud environment installation instructions you should already have the following environment variables configured.  
+Otherwise, either run the [installation instruction step](../../cloud/README.md#22-capture-environment-variables-for-later-use) again or set the environment variables to values that match your setup.  
+You can check that they have a value assigned by runnig the commands below.
+```
+echo $ARTIFACT_REGISTRY
+echo $FLEETSPEAK_FRONTEND
+echo $GKE_CLUSTER_LOCATION
+echo $GKE_CLUSTER_NAME
+echo $GRR_DAEMON_IMAGE
+echo $GRR_OPERATOR_IMAGE
+echo $LOADBALANCER_CERT
+echo $MYSQL_DB_ADDRESS
+echo $PROJECT_ID
+echo $REGION
+```
 
 #### Build the grr daemon image
 ```
@@ -162,6 +177,8 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 ```
 
 ##### Set the default values for the GRR chart
+> **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self host the MySQL database you can run the [steps above](#setup-the-mysql-database). Make sure you adjust the ```MYSQL_DB_ADDRESS``` in the commands below accordingly.
+
 ```
 sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gke.yaml
 sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gke.yaml
