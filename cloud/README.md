@@ -1,7 +1,10 @@
-# Provision Google Cloud infrastructure for GRR / Fleetspeak Demo
+# Provision Google Cloud Environment for OSDFIR Infrastructure
 
 ## Introduction
-This repository hosts the code and configuration example the [GRR](https://github.com/google/grr) / [Fleetspeak](https://github.com/google/fleetspeak) Demo with Google Cloud infrastructure.
+This repository hosts the code and configuration for provisioning a Google Cloud environment for OSDFIR Infrastructure deployments.  
+At this stage the [GRR application](../charts/grr/README.md) is using the Google Cloud environment provisioned here.   
+In the future other OSDFIR deployments might also be provisioned in such a fashion.
+
 
 ## 1. Preliminary Setup Instructions
 

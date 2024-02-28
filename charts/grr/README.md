@@ -1,6 +1,6 @@
 # GRR Helm Chart
 
-GRR Rapid Response is an incident response framework focused on remote live forensics.
+[GRR](https://github.com/google/grr) Rapid Response is an incident response framework focused on remote live forensics.
 
 [Overview of GRR](https://grr-doc.readthedocs.io/)
 
@@ -87,7 +87,9 @@ cd charts/grr/containers/grr-daemon/
 export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
 export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect $FLEETSPEAK_FRONTEND_IP:4443 < /dev/null | \
               openssl x509 -outform pem | sed ':a;N;$!ba;s/\n/\\\\n/g')
-sed "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto.tmpl > config/config.textproto
+sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
+sed -i "s'FLEETSPEAK_FRONTEND_PORT'4443'" config/config.textproto
+sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
 ```
 
 ### Build the GRR client Docker container
@@ -140,7 +142,8 @@ Once you have provisioned your infrastructure you can continue with the instruct
 #### Build the grr daemon image
 ```
 cd charts/grr/containers/grr-daemon
-sed "s'fleetspeak-frontend'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
+sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
+sed -i "s'FLEETSPEAK_FRONTEND_PORT'443'" config/config.textproto
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
 echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
 gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE

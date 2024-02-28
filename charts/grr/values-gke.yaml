@@ -8,6 +8,7 @@ fleetspeakAdminReplicas: 1
 fleetspeakFrontendImage: "ghcr.io/google/fleetspeak:cl-601420666"
 fleetspeakFrontendReplicas: 1
 fleetspeakGenerateCert: true
+fleetspeakHttpsHeaderChecksum: true
 fleetspeakMysqlDbAddress: "FLEETSPEAK_DB_ADDRESS"
 fleetspeakMysqlDbName: "fleetspeak"
 fleetspeakMysqlDbPort: 3306
