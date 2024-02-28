@@ -20,7 +20,7 @@ minikube tunnel &
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 ```
 
-> **Note**: For a more real life scenario see [GKE Installations](#gke-installations) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
+> **Note**: For a more real life scenario see [GKE Installations](#61-gke-installations) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
 
 ## Introduction
 
@@ -121,7 +121,7 @@ The GRR Admin Frontend can now be reached on the following URL (note that you mi
 After installing GRR on minikube and kicking the tires you likely aim for running GRR in a more real life scenario.  
 For this you could consider installing GRR on a managed Kubernetes cluster in the cloud like on [Google Cloud's Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).  
 We have you covered by documenting two flavours below on how you can quickly get up to speed with a GKE based GRR installation:
-- GRR on GKE with layer 4 load balancer
+- GRR on GKE with layer 4 load balancer (TODO)
 - GRR on GKE with layer 7 load balancer
 
 Your choice of load balancer will determine how your GRR client fleet communicates with GRR's [Fleetspeak](https://github.com/google/fleetspeak) based communication layer.  
@@ -153,7 +153,7 @@ echo "PROJECT_ID: $PROJECT_ID"
 echo "REGION: $REGION"
 ```
 
-#### 6.2.1. Build the grr daemon image
+#### 6.2.1. Build the GRR daemon container image
 ```
 cd charts/grr/containers/grr-daemon
 sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
@@ -176,7 +176,7 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 ```
 
 ##### 6.2.2.2. Set the default values for the GRR chart
-> **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self host the MySQL database you can run the [steps above](#setup-the-mysql-database). Make sure you adjust the ```MYSQL_DB_ADDRESS``` in the commands below accordingly.
+> **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self host the MySQL database you can run the [steps above](#1-setup-the-mysql-database). Make sure you adjust the ```MYSQL_DB_ADDRESS``` in the commands below accordingly.
 
 ```
 sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gke.yaml
