@@ -96,7 +96,7 @@ echo $LOADBALANCER_CERT
 ```
 
 ## 3. Deploy the GRR application on GKE
-You can now return to the instructions on how to [install GRR on GKE](../charts/grr/README.md#install-grr-on-gke).
+You can now return to the instructions on how to [install GRR on GKE](../charts/grr/README.md#62-install-grr-on-gke).
 
 ## 4. Cleaning up
 We recommend that you clean up the installation after you are done with your testing to avoid any future charges.  
