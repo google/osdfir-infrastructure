@@ -9,6 +9,8 @@
 Before we get started make sure you clone the repo onto your machine.
 ```
 git clone https://github.com/google/osdfir-infrastructure.git
+cd osdfir-infrastructure
+export REPO=$(pwd)
 ```
 
 ## TL;DR
@@ -17,7 +19,7 @@ git clone https://github.com/google/osdfir-infrastructure.git
 ```console
 kubectl apply -f charts/grr/mysql.yaml
 minikube tunnel &
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
+helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-minikube.yaml
 ```
 
 > **Note**: For a more real life scenario see [GKE Installations](#61-gke-installations) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
@@ -62,7 +64,7 @@ minikube tunnel &
 To install the chart, specify any release name of your choice. For example, using `grr-on-k8s' as the release name, run:
 
 ```console
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
+helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-minikube.yaml
 
 # Verify that all the GRR component pods are in 'Running' state (this might take a moment)
 kubectl get pods
@@ -141,6 +143,8 @@ The quickest way to provision a ready to run environment on Google Cloud is by f
 We recommend that you start with cloning this repo again to avoid carrying over any configurations from the minikube based instructions above.
 ```
 git clone https://github.com/google/osdfir-infrastructure.git
+cd osdfir-infrastructure
+export REPO=$(pwd)
 ```
 Once you have provisioned your infrastructure you can continue with the instructions below.   
 
@@ -162,7 +166,7 @@ echo "REGION: $REGION"
 
 #### 6.2.1. Build the GRR daemon container image
 ```
-cd charts/grr/containers/grr-daemon
+cd $REPO/charts/grr/containers/grr-daemon
 export FLEETSPEAK_FRONTEND_PORT=443
 sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
 sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
@@ -170,7 +174,7 @@ sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.text
 echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
 gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
 
-cd -
+cd $REPO
 ```
 
 #### 6.2.2. Deploy the application on GKE
@@ -187,14 +191,14 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 > **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self host the MySQL database you can run the [steps above](#1-setup-the-mysql-database). Make sure you adjust the ```MYSQL_DB_ADDRESS``` in the commands below accordingly.
 
 ```
-sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gke.yaml
-sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gke.yaml
-sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gke.yaml
+sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values.yaml
+sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values.yaml
+sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values.yaml
 ```
 
 ##### 6.2.2.3. Option 1: Install GRR with helm
 ```
-helm install grr-on-gke ./charts/grr -f ./charts/grr/values-gke.yaml
+helm install grr-on-gke ./charts/grr -f ./charts/grr/values.yaml
 ```
 
 ##### 6.2.2.4. Option 2: Install GRR with Kubernetes Operator
@@ -309,7 +313,7 @@ kubectl get pods -n grr
 
 ### 7.2. Create a tunnel to access the GRR Admin UI
 ```
-gcloud container clusters get-credentials grr-cluster --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
+gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
  && kubectl port-forward $(kubectl get pod --selector="app.kubernetes.io/name=grr-admin" --output jsonpath='{.items[0].metadata.name}') 8000:8000
 ```
 You can now point your browser at: http://127.0.0.1:8000 to access the GRR Admin UI.   

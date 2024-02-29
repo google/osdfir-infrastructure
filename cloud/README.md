@@ -49,6 +49,8 @@ We assume that you have already cloned this repository to your machine.
 If not then go ahead and issue the `git clone` command below:
 ```
 git clone https://github.com/google/osdfir-infrastructure.git
+cd osdfir-infrastructure
+export REPO=$(pwd)
 ```
 We are good to go now!
 
@@ -92,7 +94,9 @@ LOADBALANCER_CERT=$(terraform output -json | jq .fleetspeak_cert_loadbalancer.va
 
 # Check the value of the loadbalancer certificate.
 # It should now show a certificate.
-echo $LOADBALANCER_CERT
+echo $LOADBALANCER_CER
+
+cd $REPOT
 ```
 
 ## 3. Deploy the GRR application on GKE
