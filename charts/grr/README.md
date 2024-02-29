@@ -92,7 +92,7 @@ To do so we will
 ```
 cd charts/grr/containers/grr-daemon/
 export FLEETSPEAK_FRONTEND_ADDRESS="fleetspeak-frontend"
-export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
+export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc -n grr svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
 export FLEETSPEAK_FRONTEND_PORT=4443
 export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect \
                          $FLEETSPEAK_FRONTEND_IP:$FLEETSPEAK_FRONTEND_PORT< /dev/null | \
