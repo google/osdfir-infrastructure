@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dpl-grr-frontend
+  namespace: grr
   labels:
     app: grr-frontend
 spec:
@@ -15,6 +16,16 @@ spec:
         app.kubernetes.io/name: grr-frontend
         prometheus: enabled
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: nodepool
+                operator: In
+                values:
+                - grr
       containers:
       - name: grr-frontend
         image: {{ .Values.grrFrontendImage }}

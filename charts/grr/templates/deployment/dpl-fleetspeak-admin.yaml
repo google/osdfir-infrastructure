@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dpl-fleetspeak-admin
+  namespace: grr
   labels:
     app: fleetspeak-admin
 spec:
@@ -15,6 +16,16 @@ spec:
         app.kubernetes.io/name: fleetspeak-admin
         prometheus: enabled
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: nodepool
+                operator: In
+                values:
+                - grr
       containers:
       - name: fleetspeak-admin
         image: {{ .Values.fleetspeakAdminImage }}

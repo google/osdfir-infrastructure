@@ -30,10 +30,11 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 
 ## Prerequisites
 
-- Docker 25.0.3+
-- Kubernetes 1.27.8+
-- kubectl v1.29.2+
-- Helm 3.14.1+
+- [Docker](https://docs.docker.com/engine/install/) 25.0.3+
+- [Kubernetes](https://kubernetes.io/) 1.27.8+
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl) v1.29.2+
+- [Helm](https://helm.sh/docs/intro/install/) 3.14.1+
+- (optional) [operator-sdk](https://sdk.operatorframework.io/docs/installation/) v1.33.0+
 
 ```
 minikube start
@@ -47,7 +48,7 @@ The following command deploys a container based MySQL instance into the cluster.
 kubectl apply -f charts/grr/mysql.yaml
 
 # Verify that the MySQL pod is in the the 'Running' status
-kubectl get pods
+kubectl get pods -n grr
 # The output should look similar to the below:
 # NAME                     READY   STATUS    RESTARTS   AGE
 # mysql-5cd45cc59f-bgwlv   1/1     Running   0          15s
@@ -67,7 +68,7 @@ To install the chart, specify any release name of your choice. For example, usin
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-minikube.yaml
 
 # Verify that all the GRR component pods are in 'Running' state (this might take a moment)
-kubectl get pods
+kubectl get pods -n grr
 # The output should look similar to the below:
 # NAME                                      READY   STATUS    RESTARTS   AGE
 # dpl-fleetspeak-admin-576754755b-hj27p     1/1     Running   0          1m1s
@@ -112,7 +113,7 @@ docker build -t grr-daemon:v0.1 .
 kubectl label nodes minikube grrclient=installed
 
 # Verify that the GRR client DaemonSet got deployed.
-kubectl get daemonset -n grr
+kubectl get daemonset -n grr-client
 # The output should look similar to the below:
 # NAME   DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR         AGE
 # grr    1         1         1       1            1           grrclient=installed   53s
@@ -121,7 +122,7 @@ kubectl get daemonset -n grr
 ## 5. Connect to the GRR Admin Frontend
 You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
 ```
-export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin --output jsonpath='{.spec.clusterIP}')
+export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin -n grr --output jsonpath='{.spec.clusterIP}')
 ```
 The GRR Admin Frontend can now be reached on the following URL (note that you might have to tunnel to your server first):   
 [http://${GRR_ADMIN_IP}:8000](http://${GRR_ADMIN_IP}:8000)
@@ -132,6 +133,8 @@ For this you could consider installing GRR on a managed Kubernetes cluster in th
 We have you covered by documenting two flavours below on how you can quickly get up to speed with a GKE based GRR installation:
 - GRR on GKE with layer 4 load balancer (TODO)
 - GRR on GKE with layer 7 load balancer
+
+![GRR / Fleetspeak Demo Architecture](../../docs/images/grr-fleetspeak-demo-architecture.png "GRR / Fleetspeak Demo Architecture")`
 
 Your choice of load balancer will determine how your GRR client fleet communicates with GRR's [Fleetspeak](https://github.com/google/fleetspeak) based communication layer.  
 You can find more details and background on the different modes of exposing GRR's Fleetspeak based communication layer in this [blog post](https://osdfir.blogspot.com/2023/12/running-grr-everywhrr.html).
@@ -229,9 +232,12 @@ This will create a GRR [Custom Resource](https://kubernetes.io/docs/concepts/ext
 ```
 # Install GRR
 kubectl apply -f config/samples/grr_v1alpha1_grr.yaml
+```
 
+##### 6.2.2.5. Wait for all GRR pods to be in 'Running' status
+```
 # Check that all the pods are in the 'Running' status.
-kubectl get pods 
+kubectl get pods -n grr
 # The output should look something like the below:
 # NAME                                     READY STATUS  RESTARTS AGE
 # dpl-fleetspeak-admin-7f5c6ff877-4x89d    1/1   Running 0        1m34s
@@ -240,7 +246,7 @@ kubectl get pods
 # dpl-grr-frontend-69fd89c495-vlk54        1/1   Running 0        1m34s
 # dpl-grr-worker-7d69984fc8-z82k7          1/1   Running 0        1m33s
 
-cd ..
+cd $REPO
 ```
  
 #### 6.3. Add the NEG to the Backend Service
@@ -289,23 +295,23 @@ We can interact with in the next step.
 # Find your node names
 kubectl get nodes
 # The output should look similar to the below:
-# NAME                                        STATUS   ROLES    AGE   VERSION
-# gke-grr-cluster-grr-cluster-47073a05-43vf   Ready    <none>   21m   v1.27.7-gke.1121000
-# gke-grr-cluster-grr-cluster-47073a05-vvbc   Ready    <none>   21m   v1.27.7-gke.1121000
+# NAME                                             STATUS   ROLES    AGE   VERSION
+# gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g   Ready    <none>   18m   v1.27.8-gke.1067004
+# gke-osdfir-cluster-grr-node-pool-7b71cc80-z8wp   Ready    <none>   18m   v1.27.8-gke.1067004
 
 # Chose one of the node names and replace it in the command below.
 # Then run the below command to label the node so it receives a grr daemonset.
-kubectl label nodes gke-grr-cluster-grr-cluster-47073a05-43vf grrclient=installed
+kubectl label nodes gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g grrclient=installed
 
 # This will trigger the grr daemonset to be deployed to this node.
 # You can check that the daemonset is running by issueing the command below:
-kubectl get daemonset -n grr
+kubectl get daemonset -n grr-client
 # The output should look something like the below:
 # NAME DESIRED CURRENT READY UP-TO-DATE AVAILABLE NODE SELECTOR       AGE
 # grr  1       1       1     1          1         grrclient=installed 15m
 
 # You can also check that the pod is in the 'Running' status.
-kubectl get pods -n grr
+kubectl get pods -n grr-client
 # The output should look something like the below:
 # NAME      READY STATUS  RESTARTS AGE
 # grr-7cc7l 1/1   Running 0        13s
@@ -314,7 +320,8 @@ kubectl get pods -n grr
 ### 7.2. Create a tunnel to access the GRR Admin UI
 ```
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
- && kubectl port-forward $(kubectl get pod --selector="app.kubernetes.io/name=grr-admin" --output jsonpath='{.items[0].metadata.name}') 8000:8000
+ && kubectl port-forward -n grr \
+    $(kubectl get pod -n grr --selector="app.kubernetes.io/name=grr-admin" --output jsonpath='{.items[0].metadata.name}') 8000:8000
 ```
 You can now point your browser at: http://127.0.0.1:8000 to access the GRR Admin UI.   
 
@@ -347,7 +354,7 @@ gcloud compute backend-services remove-backend l7-xlb-backend-service \
 
 # Remove the GRR client (daemonset)
 # Make sure you substitue the node name with your value
-kubectl label nodes --overwrite gke-grr-cluster-grr-cluster-47073a05-43vf grrclient=
+kubectl label nodes --overwrite gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g grrclient=
 
 # Remove the GRR application (make sure you are in the grr-operator directory)
 cd grr-operator # optional in case you are not in the grr-operator directory yet

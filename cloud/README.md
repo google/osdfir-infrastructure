@@ -89,14 +89,14 @@ echo $LOADBALANCER_CERT
 # ""
 
 # Run terraform again to pick up the loadbalancer certificate
-terraform apply -var "project_id=$PROJECT_ID"
+terraform apply -auto-approve -var "project_id=$PROJECT_ID"
 LOADBALANCER_CERT=$(terraform output -json | jq .fleetspeak_cert_loadbalancer.value | sed 's/\\n/\\\\n/g')
 
 # Check the value of the loadbalancer certificate.
 # It should now show a certificate.
-echo $LOADBALANCER_CER
+echo $LOADBALANCER_CERT
 
-cd $REPOT
+cd $REPO
 ```
 
 ## 3. Deploy the GRR application on GKE

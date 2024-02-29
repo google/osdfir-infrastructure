@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: grr
-  namespace: grr
+  namespace: grr-client
   labels:
     app: grr
 spec:

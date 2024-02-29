@@ -227,8 +227,8 @@ data "google_container_engine_versions" "gke_version" {
   version_prefix = "1.27."
 }
 
-resource "google_container_cluster" "grr" {
-  name     = "grr-cluster"
+resource "google_container_cluster" "osdfir_cluster" {
+  name     = "osdfir-cluster"
   location = var.zone
 
   # We can't create a cluster with no node pool defined, but we want to only use
@@ -247,10 +247,10 @@ resource "google_container_cluster" "grr" {
 }
 
 # Node Pool for GRR / Fleetspeak server nodes
-resource "google_container_node_pool" "grr" {
-  name       = google_container_cluster.grr.name
+resource "google_container_node_pool" "grr-node-pool" {
+  name       = "grr-node-pool"
   location   = var.zone
-  cluster    = google_container_cluster.grr.name
+  cluster    = google_container_cluster.osdfir_cluster.name
   
   version = data.google_container_engine_versions.gke_version.release_channel_latest_version["STABLE"]
   node_count = var.grr_pool_num_nodes
@@ -263,7 +263,8 @@ resource "google_container_node_pool" "grr" {
     ]
 
     labels = {
-      env = var.project_id
+      env      = var.project_id
+      nodepool = var.nodepool
     }
 
     # preemptible  = true

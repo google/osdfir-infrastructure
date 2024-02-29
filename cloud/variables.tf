@@ -33,6 +33,11 @@ variable "grr_pool_num_nodes" {
   default     = 2
 }
 
+variable "nodepool" {
+  description = "GRR nodepool"
+  default     = "grr"
+}
+
 variable "address_name" {
   description = "name for the fleetspeak public IP address"
   default     = "fleetspeak-frontend"

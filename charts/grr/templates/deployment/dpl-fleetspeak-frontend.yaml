@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dpl-fleetspeak-frontend
+  namespace: grr
   labels:
     app: fleetspeak-frontend
 spec:
@@ -15,6 +16,16 @@ spec:
         app.kubernetes.io/name: fleetspeak-frontend
         prometheus: enabled
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: nodepool
+                operator: In
+                values:
+                - grr
       initContainers:
       - name: init-fleetspeak-frontend
         env:
