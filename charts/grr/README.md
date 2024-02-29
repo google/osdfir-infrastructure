@@ -232,6 +232,8 @@ This will create a GRR [Custom Resource](https://kubernetes.io/docs/concepts/ext
 ```
 # Install GRR
 kubectl apply -f config/samples/grr_v1alpha1_grr.yaml
+
+cd $REPO
 ```
 
 ##### 6.2.2.5. Wait for all GRR pods to be in 'Running' status
@@ -245,8 +247,6 @@ kubectl get pods -n grr
 # dpl-grr-admin-78b67cfc76-rjwp2           1/1   Running 0        1m33s
 # dpl-grr-frontend-69fd89c495-vlk54        1/1   Running 0        1m34s
 # dpl-grr-worker-7d69984fc8-z82k7          1/1   Running 0        1m33s
-
-cd $REPO
 ```
  
 #### 6.3. Add the NEG to the Backend Service
