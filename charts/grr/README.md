@@ -33,6 +33,10 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 - kubectl v1.29.2+
 - Helm 3.14.1+
 
+```
+minikube start
+```
+
 ## 1. Setup the MySQL database
 Both [GRR](https://github.com/google/grr) and its underlying communication layer [Fleetspeak](https://github.com/google/fleetspeak) need a MySQL database store.   
 The following command deploys a container based MySQL instance into the cluster.  
@@ -84,11 +88,14 @@ To do so we will
 ### 4.1. Retrieve the configuration parameter values
 ```
 cd charts/grr/containers/grr-daemon/
+export FLEETSPEAK_FRONTEND_ADDRESS="fleetspeak-frontend"
 export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
-export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect $FLEETSPEAK_FRONTEND_IP:4443 < /dev/null | \
-              openssl x509 -outform pem | sed ':a;N;$!ba;s/\n/\\\\n/g')
-sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
-sed -i "s'FLEETSPEAK_FRONTEND_PORT'4443'" config/config.textproto
+export FLEETSPEAK_FRONTEND_PORT=4443
+export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect \
+                         $FLEETSPEAK_FRONTEND_IP:$FLEETSPEAK_FRONTEND_PORT< /dev/null | \
+                         openssl x509 -outform pem | sed ':a;N;$!ba;s/\n/\\\\n/g')
+sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND_ADDRESS'g" config/config.textproto.tmpl > config/config.textproto
+sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
 ```
 
@@ -156,8 +163,9 @@ echo "REGION: $REGION"
 #### 6.2.1. Build the GRR daemon container image
 ```
 cd charts/grr/containers/grr-daemon
+export FLEETSPEAK_FRONTEND_PORT=443
 sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
-sed -i "s'FLEETSPEAK_FRONTEND_PORT'443'" config/config.textproto
+sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
 echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
 gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
