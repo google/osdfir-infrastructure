@@ -30,6 +30,7 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 
 ## Prerequisites
 
+- [minikube](https://minikube.sigs.k8s.io/docs/start/) v1.32.0+
 - [Docker](https://docs.docker.com/engine/install/) 25.0.3+
 - [Kubernetes](https://kubernetes.io/) 1.27.8+
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl) v1.29.2+
