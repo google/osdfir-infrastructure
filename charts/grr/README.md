@@ -201,7 +201,7 @@ sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values.yaml
 
 ##### 6.2.2.3. Option 1: Install GRR with helm
 ```
-helm install grr-on-gke ./charts/grr -f ./charts/grr/values.yaml
+helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 ```
 
 ##### 6.2.2.4. Option 2: Install GRR with Kubernetes Operator
@@ -366,10 +366,10 @@ make undeploy
 
 ## 9. Uninstalling the Chart
 
-To uninstall/delete a Helm deployment with a release name of `grr-on-k8s` or `grr-on-gke` (depending on your environment):
+To uninstall/delete a Helm deployment with a release name of `grr-on-k8s`:
 
 ```
-helm uninstall [grr-on-k8s|grr-on-gke]
+helm uninstall grr-on-k8s
 ```
 
 > **Tip**: Please update based on the release name chosen. You can list all releases using `helm list`
