@@ -12,6 +12,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql
+  namespace: grr
 spec:
   ports:
   - port: 3306
@@ -23,6 +24,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: sec-mysql
+  namespace: grr
 stringData:
   fleetspeak-password: fleetspeak-password
   grr-password: grr-password
@@ -32,6 +34,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cfm-mysql-init
+  namespace: grr
 data:
   init.sh: |
     #!/bin/bash
@@ -51,6 +54,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
+  namespace: grr
 spec:
   selector:
     matchLabels:
