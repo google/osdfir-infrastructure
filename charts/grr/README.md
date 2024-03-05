@@ -104,7 +104,7 @@ kubectl get daemonset -n grr-client
 # grr    1         1         1       1            1           grrclient=installed   53s
 ```
 
-## 1.3. Connect to the GRR Admin Frontend
+### 1.3. Connect to the GRR Admin Frontend
 You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
 ```
 export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin -n grr --output jsonpath='{.spec.clusterIP}')
