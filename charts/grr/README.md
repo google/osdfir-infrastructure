@@ -22,7 +22,7 @@ minikube tunnel &
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 ```
 
-> **Note**: For a more real life scenario see [Installating on Cloud](#2-installating-on-cloud) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
+> **Note**: For a more real life scenario see [Installing on Cloud](#2-installing-on-cloud) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
 
 ## Introduction
 
@@ -166,15 +166,12 @@ gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
 cd $REPO
 ```
 
-#### 2.2.2. Deploy the application on GKE
-In this section we cover how to deploy GRR on GKE.
-
-##### 2.2.2.1. Fetch the GKE cluster credentials
+#### 2.2.2. Fetch the GKE cluster credentials
 ```
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID
 ```
 
-##### 2.2.2.2. Set the default values for the GRR chart
+#### 2.2.3. Set the default values for the GRR chart
 > **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self-manage the MySQL database you can enable it by setting ```selfManagedMysql: true``` in the ```values-gcp.yaml``` configuration file. Make sure you adjust the ```MYSQL_DB_ADDRESS=mysql``` in the commands below accordingly.
 
 ```
@@ -183,12 +180,12 @@ sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.3. Install the Chart 
+#### 2.2.4. Install the Chart 
 ```
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.4. Wait for all GRR pods to be in 'Running' status
+#### 2.2.5. Wait for all GRR pods to be in 'Running' status
 ```
 # Check that all the pods are in the 'Running' status.
 kubectl get pods -n grr
@@ -201,7 +198,7 @@ kubectl get pods -n grr
 # dpl-grr-worker-7d69984fc8-z82k7          1/1   Running 0        1m33s
 ```
  
-#### 2.3. Add the NEG to the Backend Service
+### 2.3. Add the NEG to the Backend Service
 This step is very important. We need to add the Standalone Network Endpoint Group (NEG) to the Backend Service of our GLB7.   
 See the [Google Cloud online docs](https://cloud.google.com/kubernetes-engine/docs/how-to/standalone-neg#standalone_negs) for more info on Standalone NEGs.
 
@@ -269,7 +266,7 @@ kubectl get pods -n grr-client
 # grr-7cc7l 1/1   Running 0        13s
 ```
 
-### 2.4.2. Create a tunnel to access the GRR Admin UI
+#### 2.4.2. Create a tunnel to access the GRR Admin UI
 ```
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
  && kubectl port-forward -n grr \
@@ -307,16 +304,9 @@ gcloud compute backend-services remove-backend l7-xlb-backend-service \
 # Remove the GRR client (daemonset)
 # Make sure you substitue the node name with your value
 kubectl label nodes --overwrite gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g grrclient=
-
-# Remove the GRR application (make sure you are in the grr-operator directory)
-cd grr-operator # optional in case you are not in the grr-operator directory yet
-kubectl delete -f config/samples/grr_v1alpha1_grr.yaml
-
-# Remove the GRR operator
-make undeploy
 ```
 
-## 4. Uninstalling the Chart
+### 3.3. Uninstalling the Chart
 
 To uninstall/delete a Helm deployment with a release name of `grr-on-k8s`:
 
