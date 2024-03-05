@@ -479,6 +479,9 @@ redis:
   ##
   sentinel:
     enabled: false
+  ## @param redis.architecture Specifies the Redis architecture. Allowed values: `standalone` or `replication`
+  ##
+  architecture: standalone
   ## Master Redis Service configuration
   ##
   master:

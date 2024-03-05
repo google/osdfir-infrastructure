@@ -202,7 +202,7 @@ metrics:
   enabled: true
   ## @param metrics.port Port to scrape metrics from
   ##
-  port: 9200
+  port: 8080
 ## Persistence Storage Parameters
 ##
 persistence:
@@ -346,6 +346,9 @@ redis:
   ##
   sentinel:
     enabled: false
+  ## @param redis.architecture Specifies the Redis architecture. Allowed values: `standalone` or `replication`
+  ##
+  architecture: standalone
   ## Master Redis Service configuration
   ##
   master:
