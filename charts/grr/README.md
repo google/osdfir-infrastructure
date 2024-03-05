@@ -17,12 +17,12 @@ export REPO=$(pwd)
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ```console
-kubectl apply -f charts/grr/mysql.yaml
+minikube start
 minikube tunnel &
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-minikube.yaml
+helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 ```
 
-> **Note**: For a more real life scenario see [GKE Installations](#61-gke-installations) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
+> **Note**: For a more real life scenario see [Installating on Cloud](#2-installating-on-cloud) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).   
 
 ## Introduction
 
@@ -35,38 +35,22 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 - [Kubernetes](https://kubernetes.io/) 1.27.8+
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl) v1.29.2+
 - [Helm](https://helm.sh/docs/intro/install/) 3.14.1+
-- (optional) [operator-sdk](https://sdk.operatorframework.io/docs/installation/) v1.33.0+
+
+## 1. Installing GRR on minikube
+Let's start ```minikube``` and set up tunneling for later interactions.   
+The [minikube tunnel](https://minikube.sigs.k8s.io/docs/commands/tunnel/) feature creates a network route on the host to Kubernetes services using the cluster’s IP address as a gateway.  
+The tunnel command exposes the IP address to any program running on the host operating system.
 
 ```
 minikube start
-```
-
-## 1. Setup the MySQL database
-Both [GRR](https://github.com/google/grr) and its underlying communication layer [Fleetspeak](https://github.com/google/fleetspeak) need a MySQL database store.   
-The following command deploys a container based MySQL instance into the cluster.  
-> **Note**: This way to deploy MySQL is only suitable for demo purposes.
-```
-kubectl apply -f charts/grr/mysql.yaml
-
-# Verify that the MySQL pod is in the the 'Running' status
-kubectl get pods -n grr
-# The output should look similar to the below:
-# NAME                     READY   STATUS    RESTARTS   AGE
-# mysql-5cd45cc59f-bgwlv   1/1     Running   0          15s
-```
-
-## 2. Setup minikube tunnel
-The [minikube tunnel](https://minikube.sigs.k8s.io/docs/commands/tunnel/) feature creates a network route on the host to Kubernetes services using the cluster’s IP address as a gateway.  
-The tunnel command exposes the IP address to any program running on the host operating system.
-```
 minikube tunnel &
 ```
 
-## 3. Installing the Chart
+### 1.1. Installing the Chart
 To install the chart, specify any release name of your choice. For example, using `grr-on-k8s' as the release name, run:
 
 ```console
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-minikube.yaml
+helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 
 # Verify that all the GRR component pods are in 'Running' state (this might take a moment)
 kubectl get pods -n grr
@@ -82,14 +66,14 @@ kubectl get pods -n grr
 
 The command deploys GRR on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
-## 4. Deploy a GRR client as a Kubernetes DaemonSet
+### 1.2. Deploy a GRR client as a Kubernetes DaemonSet
 For test and demo purposes we will deploy a GRR client as a [Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/).  
 To do so we will
 - first retrieve the values for some configuration parameters,
 - then build a Docker container with the GRR client and its dependencies, and
 - finally deploy the container as a DaemonSet.
 
-### 4.1. Retrieve the configuration parameter values
+#### 1.2.1. Retrieve the configuration parameter values
 ```
 cd charts/grr/containers/grr-daemon/
 export FLEETSPEAK_FRONTEND_ADDRESS="fleetspeak-frontend"
@@ -103,13 +87,13 @@ sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.tex
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
 ```
 
-### 4.2. Build the GRR client Docker container
+#### 1.2.2. Build the GRR client Docker container
 ```
 eval $(minikube docker-env)
 docker build -t grr-daemon:v0.1 .
 ```
 
-### 4.3. Deploy the GRR client DaemonSet
+#### 1.2.3. Deploy the GRR client DaemonSet
 ```
 kubectl label nodes minikube grrclient=installed
 
@@ -120,15 +104,16 @@ kubectl get daemonset -n grr-client
 # grr    1         1         1       1            1           grrclient=installed   53s
 ```
 
-## 5. Connect to the GRR Admin Frontend
+## 1.3. Connect to the GRR Admin Frontend
 You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
 ```
 export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin -n grr --output jsonpath='{.spec.clusterIP}')
+echo http://${GRR_ADMIN_IP}:8000}
 ```
 The GRR Admin Frontend can now be reached on the following URL (note that you might have to tunnel to your server first):   
 [http://${GRR_ADMIN_IP}:8000](http://${GRR_ADMIN_IP}:8000)
 
-## 6. Installing on Cloud
+## 2. Installing GRR on Cloud
 After installing GRR on minikube and kicking the tires you likely aim for running GRR in a more real life scenario.  
 For this you could consider installing GRR on a managed Kubernetes cluster in the cloud like on [Google Cloud's Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).  
 We have you covered by documenting two flavours below on how you can quickly get up to speed with a GKE based GRR installation:
@@ -140,7 +125,7 @@ We have you covered by documenting two flavours below on how you can quickly get
 Your choice of load balancer will determine how your GRR client fleet communicates with GRR's [Fleetspeak](https://github.com/google/fleetspeak) based communication layer.  
 You can find more details and background on the different modes of exposing GRR's Fleetspeak based communication layer in this [blog post](https://osdfir.blogspot.com/2023/12/running-grr-everywhrr.html).
 
-### 6.1. GKE Installations
+### 2.1. GKE Installation
 Before we can install GRR we need to provision a GKE cluster and its related infrastructure.  
 The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [installation instructions](../../cloud/README.md).  
 
@@ -152,7 +137,7 @@ export REPO=$(pwd)
 ```
 Once you have provisioned your infrastructure you can continue with the instructions below.   
 
-### 6.2. Install GRR on GKE
+### 2.2. Installing GRR on GKE
 In case you followed the Google Cloud environment installation instructions you should already have the following environment variables configured.  
 Otherwise, either run the [installation instruction step](../../cloud/README.md#22-capture-environment-variables-for-later-use) again or set the environment variables to values that match your setup.  
 You can check that they have a value assigned by runnig the commands below.
@@ -168,7 +153,7 @@ echo "PROJECT_ID: $PROJECT_ID"
 echo "REGION: $REGION"
 ```
 
-#### 6.2.1. Build the GRR daemon container image
+#### 2.2.1. Build the GRR daemon container image
 ```
 cd $REPO/charts/grr/containers/grr-daemon
 export FLEETSPEAK_FRONTEND_PORT=443
@@ -181,63 +166,29 @@ gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
 cd $REPO
 ```
 
-#### 6.2.2. Deploy the application on GKE
-In this section we cover two alternative options to install GRR on GKE (or Kubernetes in general).
-- Option 1: Install GRR with ```helm```.
-- Option 2: Install GRR with a [Kubernetes Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
+#### 2.2.2. Deploy the application on GKE
+In this section we cover how to deploy GRR on GKE.
 
-##### 6.2.2.1. Fetch the GKE cluster credentials
+##### 2.2.2.1. Fetch the GKE cluster credentials
 ```
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID
 ```
 
-##### 6.2.2.2. Set the default values for the GRR chart
-> **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self host the MySQL database you can run the [steps above](#1-setup-the-mysql-database). Make sure you adjust the ```MYSQL_DB_ADDRESS``` in the commands below accordingly.
+##### 2.2.2.2. Set the default values for the GRR chart
+> **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self-manage the MySQL database you can enable it by setting ```selfManagedMysql: true``` in the ```values-gcp.yaml``` configuration file. Make sure you adjust the ```MYSQL_DB_ADDRESS=mysql``` in the commands below accordingly.
 
 ```
-sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values.yaml
-sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values.yaml
-sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values.yaml
+sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
+sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gcp.yaml
+sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
 ```
 
-##### 6.2.2.3. Option 1: Install GRR with helm
+#### 2.2.3. Install the Chart 
 ```
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
-```
-
-##### 6.2.2.4. Option 2: Install GRR with Kubernetes Operator
-In case you choose to use this installation option you need to have the ```operator-sdk``` CLI installed on your machine.   
-Follow the steps in the [installation guide](https://sdk.operatorframework.io/docs/installation/) to learn how to install the ```operator-sdk``` CLI tool.
-
-###### 6.2.2.4.1. Build and install the operator
-This needs to be done only once.
-```
-# Create the helm-based grr-operator
-mkdir grr-operator
-cd grr-operator
-operator-sdk init --plugins helm --domain grr-response.com --group grr --helm-chart ../charts/grr
-
-# Build and install the controller
-make IMG=$GRR_OPERATOR_IMAGE docker-build docker-push
-make IMG=$GRR_OPERATOR_IMAGE deploy
-
-# Check that the controller is in the 'Running' status.
-kubectl get pods -n grr-operator-system
-# The output should look something like the below:
-# NAME                                             READY STATUS  RESTARTS AGE
-# grr-operator-controller-manager-5574fc9979-h8bd6 2/2   Running 0        42s
+helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-gcp.yaml
 ```
 
-###### 6.2.2.4.2. Install GRR with the Custom Resource
-This will create a GRR [Custom Resource](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) that the [Controller](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#custom-controllers) will pick up and instantiate.
-```
-# Install GRR
-kubectl apply -f config/samples/grr_v1alpha1_grr.yaml
-
-cd $REPO
-```
-
-##### 6.2.2.5. Wait for all GRR pods to be in 'Running' status
+#### 2.2.4. Wait for all GRR pods to be in 'Running' status
 ```
 # Check that all the pods are in the 'Running' status.
 kubectl get pods -n grr
@@ -250,7 +201,7 @@ kubectl get pods -n grr
 # dpl-grr-worker-7d69984fc8-z82k7          1/1   Running 0        1m33s
 ```
  
-#### 6.3. Add the NEG to the Backend Service
+#### 2.3. Add the NEG to the Backend Service
 This step is very important. We need to add the Standalone Network Endpoint Group (NEG) to the Backend Service of our GLB7.   
 See the [Google Cloud online docs](https://cloud.google.com/kubernetes-engine/docs/how-to/standalone-neg#standalone_negs) for more info on Standalone NEGs.
 
@@ -282,13 +233,13 @@ gcloud compute backend-services add-backend l7-xlb-backend-service \
   --max-rate-per-endpoint 5
 ```
 
-## 7. Testing
+### 2.4. Testing
 Let's go and test the setup.  
 To do so we need three things:
 - Create a GRR client, and
 - Access to the GRR Admin UI
 
-### 7.1. Deploy the GRR client
+#### 2.4.1. Deploy the GRR client
 This will spin up a pod with the GRR client as a daemonset on the selected node.  
 We can interact with in the next step.
 
@@ -318,7 +269,7 @@ kubectl get pods -n grr-client
 # grr-7cc7l 1/1   Running 0        13s
 ```
 
-### 7.2. Create a tunnel to access the GRR Admin UI
+### 2.4.2. Create a tunnel to access the GRR Admin UI
 ```
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
  && kubectl port-forward -n grr \
@@ -331,17 +282,17 @@ This file contains an artifact group with a set of 6 ```containerd``` specific a
 Note: These artifacts are enabled in the container image we use for the ```daemonset``` based GRR client we installed above.   
 You will not be able to run these artifacts on a 'standard' GRR client.
 
-## 8. Cleaning up
+## 3. Cleaning up
 We recommend that you clean up the installation after you are done with your testing to avoid any future charges.  
 To do so you have two options to clean up the installation.
 1. Delete the Google Cloud Project and with it all the resources contained in it.
 2. Build back sequentially what we installed (this can be useful in case you want to make some adjustments and re-install bits an pieces).
 
-### 8.1. Delete the Google Cloud Project
+### 3.1. Delete the Google Cloud Project
 You can delete the entire Google Cloud Project (and all resources contained in it) by going to the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager), select your Project and delete it (you will need to confirm your action by copying the Project ID).  
 You can find more info in the [online documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects).
 
-### 8.2. Build back sequentially
+### 3.2. Build back sequentially
 Sequentially building back the installation can be useful for cases where you would like to make some adjustments to your current installtion.  
 For such cases just build back as far as needed to make your adjustments and then roll forward the installation again following the original instructions.
 
@@ -365,7 +316,7 @@ kubectl delete -f config/samples/grr_v1alpha1_grr.yaml
 make undeploy
 ```
 
-## 9. Uninstalling the Chart
+## 4. Uninstalling the Chart
 
 To uninstall/delete a Helm deployment with a release name of `grr-on-k8s`:
 

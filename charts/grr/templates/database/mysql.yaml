@@ -1,13 +1,4 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: grr
-  labels:
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    meta.helm.sh/release-name: grr-on-k8s
-    meta.helm.sh/release-namespace: default
----
+{{- if .Values.selfManagedMysql }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -99,3 +90,4 @@ spec:
           items:
           - key: init.sh
             path: init.sh
+{{- end }}
