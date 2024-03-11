@@ -5,3 +5,5 @@ Logging.verbose: true
 Logging.engines: file,stderr
 Logging.path: /
 Logging.filename: /grr-client.log
+
+Config.writeback: /config/grr-client.local.yaml

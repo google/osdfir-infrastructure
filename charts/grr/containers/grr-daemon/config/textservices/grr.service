@@ -1,11 +1,16 @@
 name: "GRR"
 factory: "Daemon"
-config: {
-  [type.googleapis.com/fleetspeak.daemonservice.Config]: {
-    argv: "python"
-    argv: "-m"
-    argv: "grr_response_client.client"
-    argv: "--secondary_configs"
-    argv: "/config/grr.client.yaml"
+required_labels {
+  service_name: "client"
+  label: "linux"
+}
+config {
+  [type.googleapis.com/fleetspeak.daemonservice.Config] {
+    argv: "/usr/sbin/grrd"
+    argv: "--config=/config/grr.client.yaml"
+
+    monitor_heartbeats: true
+    heartbeat_unresponsive_grace_period_seconds: 600  # 10 minutes.
+    heartbeat_unresponsive_kill_period_seconds: 120  # 2 minutes.
   }
 }
