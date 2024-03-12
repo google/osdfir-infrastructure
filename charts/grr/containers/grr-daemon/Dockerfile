@@ -18,7 +18,8 @@ COPY grr-client-config.yaml /config/grr.client.yaml
 
 WORKDIR /
 
-# Fetch the Client.executable_signing_public_key (if it exists)
+# Create a dummy Client.executable_signing_public_key if none is provided in the config file
+# Reasoning: This ensures that the repackaging runs through (see below)
 RUN if [ $(grep -ic "Client.executable_signing_public_key:" /config/grr.client.yaml) -eq 0 ]; \
     then \
       grr_config_updater generate_keys; \
@@ -38,9 +39,6 @@ COPY config /config
 COPY --from=grr /config/grr.client.yaml /config/grr.client.yaml
 
 COPY --from=fleetspeak /fleetspeak/bin/client /usr/local/bin/fleetspeak-client
-RUN apt-get update && \
-    apt-get install -y python3 && \
-    ln -s /usr/bin/python3 /usr/bin/python
 COPY --from=grr /grr.client/grr_*_amd64.deb .
 RUN dpkg -i grr_*_amd64.deb && rm grr_*_amd64.deb
 ENTRYPOINT ["fleetspeak-client", "-config" , "/config/config.textproto", "-alsologtostderr"]
