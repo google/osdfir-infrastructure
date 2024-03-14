@@ -26,8 +26,6 @@ This chart bootstraps a [dfDewey datastore](https://github.com/google/dfdewey) d
 * Helm 3.2.0+
 * PV provisioner support in the underlying infrastructure
 
-> **Note**: See [GKE Installations](#gke-installations) for deploying to GKE.
-
 ## Installing the Chart
 
 The first step is to add the repo and then update to pick up any new changes.
@@ -43,8 +41,7 @@ To install the chart, specify any release name of your choice. For example, usin
 helm install my-release osdfir-charts/dfdewey
 ```
 
-The command deploys the dfDewey datastores on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
-during installation or see [Installating for Production](#installing-for-production)
+The command deploys the dfDewey datastores on the Kubernetes cluster in the default configuration. See [Installating for Production](#installing-for-production)
 for a recommended production installation.
 
 ## Installing for Production
