@@ -71,3 +71,5 @@ kubectl delete pvc -l release=my-release
 ```
 
 > **Note**: Deleting the PVC's will delete any data in the dfDewey datastores as well. Please be cautious before doing it.
+
+## Parameters
