@@ -71,7 +71,10 @@ opensearch:
   ## It is recommended to use at least half the system's available ram
   ##
   opensearchJavaOpts: "-Xms32g -Xmx32g"
-  ## @param opensearch.config Add any config files in /usr/share/opensearch/config/
+  ## @param opensearch.config.opensearch.yml Opensearch configuration file. Can be appended for additional configuration options
+  ## Values must be YAML literal style scalar / YAML multiline string
+  ## <filename>: |
+  ##   <formatted-value(s)>
   ##
   config:
     opensearch.yml: |
@@ -80,7 +83,6 @@ opensearch:
       plugins:
         security:
           disabled: true
-  ## @param opensearch.extraEnvs Extra environments variables to be passed to OpenSearch services
   extraEnvs:
   ## @param opensearch.extraEnvs[0].name Environment variable to set the initial admin password
   ##
