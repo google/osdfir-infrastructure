@@ -5,5 +5,8 @@ dependencies:
 - name: oauth2-proxy
   repository: https://charts.bitnami.com/bitnami
   version: 4.1.3
-digest: sha256:daa9ae8e7b125661b78c5ccd3edf45db91dea36bf79eb35e504f3e5d08d19fd2
-generated: "2023-09-19T23:20:07.675142702Z"
+- name: dfdewey
+  repository: https://google.github.io/osdfir-infrastructure/
+  version: 1.0.0
+digest: sha256:70d4b366b260d85953ec95b4ed1679acb995f1139813f940eec064b2183b5649
+generated: "2024-03-18T12:57:01.522970858+11:00"

@@ -43,6 +43,12 @@ data:
     sed -i -e "s/^TURBINIA_ZONE = .*$/TURBINIA_ZONE = '{{ include "turbinia.gcp.zone" . }}'/g" turbinia.conf
     sed -i -e "s/^TURBINIA_REGION = .*$/TURBINIA_REGION = '{{ include "turbinia.gcp.region" . }}'/g" turbinia.conf
     {{- end }}
+
+    {{- if .Values.global.dfdewey.enabled }}
+    # Set up dfDewey config
+    sed -i -e "s/^DFDEWEY_PG_HOST = .*$/DFDEWEY_PG_HOST = \'{{- printf "%s-%s" .Release.Name .Values.dfdewey.postgresql.nameOverride -}}\'/g" turbinia.conf
+    sed -i -e "s/^DFDEWEY_OS_HOST = .*$/DFDEWEY_OS_HOST = \'{{ .Values.dfdewey.opensearch.masterService }}\'/g" turbinia.conf
+    {{- end}}
     
     # Setup logging, mount, and output paths
     sed -i -e "s/^SHARED_FILESYSTEM = .*$/SHARED_FILESYSTEM = True/g" turbinia.conf
