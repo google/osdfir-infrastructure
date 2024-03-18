@@ -353,7 +353,61 @@ helm uninstall grr-on-k8s
 
 ## Parameters
 
-## License
+### Global parameters
+
+| Name                      | Description                                                    | Value  |
+| ------------------------- | -------------------------------------------------------------- | ------ |
+| `global.selfManagedMysql` | Enables a mySQL DB containter to be deployed into the cluster. | `true` |
+
+### Fleetspeak parameters
+
+| Name                                   | Description                                                                                       | Value                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `fleetspeak.generateCert`              | Enables the generation of self-signed Fleetspeak x509 certificate.                                | `true`                                   |
+| `fleetspeak.httpsHeaderChecksum`       | Defines on whether to add a HTTPS header checksum                                                 | `false`                                  |
+| `fleetspeak.subjectCommonName`         | Sets the Fleetspeak x509 certificate subject common name.                                         | `fleetspeak-frontend`                    |
+| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:cl-616106372` |
+| `fleetspeak.admin.listenPort`          | Sets the Fleetspeak admin listen port to use.                                                     | `4444`                                   |
+| `fleetspeak.admin.replicas`            | Sets the amount of Fleetspeak admin pods to run.                                                  | `1`                                      |
+| `fleetspeak.frontend.healthCheckPort`  | Sets the Fleetspeak frontend health check port to use.                                            | `8080`                                   |
+| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:cl-616106372` |
+| `fleetspeak.frontend.listenPort`       | Sets the Fleetspeak frontend listen port to use.                                                  | `4443`                                   |
+| `fleetspeak.frontend.neg`              | Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service. | `false`                                  |
+| `fleetspeak.frontend.notificationPort` | Sets the Fleetspeak frontend notificaton port to use.                                             | `12000`                                  |
+| `fleetspeak.frontend.replicas`         | Sets the amount of Fleetspeak frontend pods to run.                                               | `1`                                      |
+| `fleetspeak.mysqlDb.address`           | Sets the Fleetspeak DB address to use.                                                            | `mysql`                                  |
+| `fleetspeak.mysqlDb.name`              | Sets the Fleetspeak DB name to use.                                                               | `fleetspeak`                             |
+| `fleetspeak.mysqlDb.port`              | Sets the Fleetspeak DB port to use.                                                               | `3306`                                   |
+| `fleetspeak.mysqlDb.userName`          | Sets the Fleetspeak DB user name to use.                                                          | `fleetspeak-user`                        |
+| `fleetspeak.mysqlDb.userPassword`      | Sets the Fleetspeak DB password to use.                                                           | `fleetspeak-password`                    |
+
+### GRR parameters
+
+| Name                         | Description                                                 | Value                       |
+| ---------------------------- | ----------------------------------------------------------- | --------------------------- |
+| `grr.generateCert`           | Enables the generation of self-signed GRR x509 certificate. | `true`                      |
+| `grr.subjectCommonName`      | Sets the GRR x509 certificate subject common name.          | `grr-frontend`              |
+| `grr.admin.image`            | Sets the GRR admin container image to use.                  | `ghcr.io/google/grr:latest` |
+| `grr.admin.listenPort`       | Sets the GRR admin listen port to use.                      | `8000`                      |
+| `grr.admin.replicas`         | Sets the amount of GRR admin pods to run.                   | `1`                         |
+| `grr.daemon.image`           | Sets the GRR daemon container image to use.                 | `grr-daemon:v0.1`           |
+| `grr.daemon.imagePullPolicy` | Sets the GRR daemon container image pull policy to use.     | `Never`                     |
+| `grr.frontend.image`         | Sets the GRR frontend container image to use.               | `ghcr.io/google/grr:latest` |
+| `grr.frontend.listenPort`    | Sets the GRR frontend listen port to use.                   | `11111`                     |
+| `grr.frontend.replicas`      | Sets the amount of GRR frontend pods to run.                | `1`                         |
+| `grr.mysqlDb.address`        | Sets the GRR DB address to use.                             | `mysql`                     |
+| `grr.mysqlDb.name`           | Sets the GRR DB name to use                                 | `grr`                       |
+| `grr.mysqlDb.port`           | Sets the GRR DB port to use.                                | `3306`                      |
+| `grr.mysqlDb.userName`       | Sets the GRR DB user name to use.                           | `grr-user`                  |
+| `grr.mysqlDb.userPassword`   | Sets the GRR DB user password to use.                       | `grr-password`              |
+| `grr.worker.image`           | Sets the GRR worker container image to use.                 | `ghcr.io/google/grr:latest` |
+
+### Prometheus parameters
+
+| Name                     | Description                                 | Value   |
+| ------------------------ | ------------------------------------------- | ------- |
+| `prometheus.metricsPort` | Sets the port to expose Prometheus metrics. | `19090` |
+
 
 Copyright &copy; 2024 OSDFIR Infrastructure
 
