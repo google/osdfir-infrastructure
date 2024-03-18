@@ -62,7 +62,7 @@ fleetspeak:
     address: "mysql"
     ## @param fleetspeak.mysqlDb.name Sets the Fleetspeak DB name to use.
     ##
-    nName: "fleetspeak"
+    name: "fleetspeak"
     ## @param fleetspeak.mysqlDb.port Sets the Fleetspeak DB port to use.
     ##
     port: 3306
@@ -124,10 +124,10 @@ grr:
     port: 3306
     ## @param grr.mysqlDb.dbUserName Sets the GRR DB user name to use.
     ##
-    dbUserName: "grr-user"
+    userName: "grr-user"
     ## @param grr.mysqlDb.dbUserPassword Sets the GRR DB user password to use.
     ##
-    dbUserPassword: "grr-password"
+    userPassword: "grr-password"
   worker:
     ## @param grr.workder.image Sets the GRR worker container image to use.
     ##

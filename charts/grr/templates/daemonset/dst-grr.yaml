@@ -34,7 +34,7 @@ spec:
       containers:
       - name: grr
         image: {{ .Values.grr.daemon.image }}
-        imagePullPolicy: {{ .Values.grr.daemon.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.grr.daemon.imagePullPolicy }}
         # Making it a privileged container. This way the processes within
         # the container get almost the same privileges as those outside the
         # container (e.g. manipulating the network stack or accessing devices).
