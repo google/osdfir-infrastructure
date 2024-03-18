@@ -28,9 +28,9 @@ spec:
                 - grr
       containers:
       - name: grr-worker
-        image: {{ .Values.grrWorkerImage }}
+        image: {{ .Values.grr.worker.image }}
         ports:
-        - containerPort: {{ .Values.prometheusMetricsPort }}
+        - containerPort: {{ .Values.prometheus.metricsPort }}
           name: metrics
         args: ["-component", "worker", "-config", "/usr/src/grr/grr/core/install_data/etc/server.local.yaml", "--logtostderr"]
         volumeMounts:

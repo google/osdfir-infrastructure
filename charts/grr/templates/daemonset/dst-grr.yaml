@@ -33,8 +33,8 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: grr
-        image: {{ .Values.grrDaemonImage }}
-        imagePullPolicy: {{ .Values.grrDaemonImagePullPolicy }}
+        image: {{ .Values.grr.daemon.image }}
+        imagePullPolicy: {{ .Values.grr.daemon.image.pullPolicy }}
         # Making it a privileged container. This way the processes within
         # the container get almost the same privileges as those outside the
         # container (e.g. manipulating the network stack or accessing devices).

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: fleetspeak-admin
 spec:
-  replicas: {{ .Values.fleetspeakAdminReplicas }}
+  replicas: {{ .Values.fleetspeak.admin.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/name: fleetspeak-admin
@@ -28,11 +28,11 @@ spec:
                 - grr
       containers:
       - name: fleetspeak-admin
-        image: {{ .Values.fleetspeakAdminImage }}
+        image: {{ .Values.fleetspeak.admin.image }}
         ports:
-        - containerPort: {{ .Values.fleetspeakAdminListenPort }}
+        - containerPort: {{ .Values.fleetspeak.admin.listenPort }}
           name: admin
-        - containerPort: {{ .Values.prometheusMetricsPort }}
+        - containerPort: {{ .Values.prometheus.metricsPort }}
           name: metrics
         command: ["/fleetspeak/bin/server"]
         args: ["-alsologtostderr"]

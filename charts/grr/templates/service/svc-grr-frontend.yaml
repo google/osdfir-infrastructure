@@ -9,5 +9,5 @@ spec:
   ports:
     - protocol: TCP
       name: frontend
-      port: {{ .Values.grrFrontendListenPort }}
-      targetPort: {{ .Values.grrFrontendListenPort }}
+      port: {{ .Values.grr.frontend.listenPort }}
+      targetPort: {{ .Values.grr.frontend.listenPort }}

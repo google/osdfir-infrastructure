@@ -10,7 +10,7 @@ data:
       factory: "GRPC"
       config {
         [type.googleapis.com/fleetspeak.grpcservice.Config] {
-          target: "svc-grr-frontend:{{ .Values.grrFrontendListenPort }}"
+          target: "svc-grr-frontend:{{ .Values.grr.frontend.listenPort }}"
           insecure: true
         }
       }

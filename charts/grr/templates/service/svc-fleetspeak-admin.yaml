@@ -9,5 +9,5 @@ spec:
   ports:
     - protocol: TCP
       name: admin
-      port: {{ .Values.fleetspeakAdminListenPort }}
-      targetPort: {{ .Values.fleetspeakAdminListenPort }}
+      port: {{ .Values.fleetspeak.admin.listenPort }}
+      targetPort: {{ .Values.fleetspeak.admin.listenPort }}

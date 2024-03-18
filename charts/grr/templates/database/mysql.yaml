@@ -1,4 +1,4 @@
-{{- if .Values.selfManagedMysql }}
+{{- if .Values.global.selfManagedMysql }}
 apiVersion: v1
 kind: Service
 metadata:

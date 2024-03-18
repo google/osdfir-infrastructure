@@ -6,7 +6,7 @@ metadata:
   labels:
     app: grr-frontend
 spec:
-  replicas: {{ .Values.grrFrontendReplicas }}
+  replicas: {{ .Values.grr.frontend.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/name: grr-frontend
@@ -28,11 +28,11 @@ spec:
                 - grr
       containers:
       - name: grr-frontend
-        image: {{ .Values.grrFrontendImage }}
+        image: {{ .Values.grr.frontend.image }}
         ports:
-        - containerPort: {{ .Values.grrFrontendListenPort }}
+        - containerPort: {{ .Values.grr.frontend.listenPort }}
           name: frontend
-        - containerPort: {{ .Values.prometheusMetricsPort }}
+        - containerPort: {{ .Values.prometheus.metricsPort }}
           name: metrics
         args: ["-component", "frontend", "-config", "/usr/src/grr/grr/core/install_data/etc/server.local.yaml", "--logtostderr"]
         volumeMounts:

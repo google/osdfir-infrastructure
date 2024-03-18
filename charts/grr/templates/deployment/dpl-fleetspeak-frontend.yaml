@@ -6,7 +6,7 @@ metadata:
   labels:
     app: fleetspeak-frontend
 spec:
-  replicas: {{ .Values.fleetspeakFrontendReplicas }}
+  replicas: {{ .Values.fleetspeak.frontend.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/name: fleetspeak-frontend
@@ -46,20 +46,20 @@ spec:
           subPath: server.services.config
       containers:
       - name: fleetspeak-frontend
-        image: {{ .Values.fleetspeakFrontendImage }}
+        image: {{ .Values.fleetspeak.frontend.image }}
         ports:
-        - containerPort: {{ .Values.fleetspeakFrontendListenPort }}
+        - containerPort: {{ .Values.fleetspeak.frontend.listenPort }}
           name: frontend
-        - containerPort: {{ .Values.fleetspeakFrontendHealthCheckPort }}
+        - containerPort: {{ .Values.fleetspeak.frontend.healthCheckPort }}
           name: healthz
-        - containerPort: {{ .Values.fleetspeakFrontendNotificationPort }}
+        - containerPort: {{ .Values.fleetspeak.frontend.notificationPort }}
           name: notification
-        - containerPort: {{ .Values.prometheusMetricsPort }}
+        - containerPort: {{ .Values.prometheus.metricsPort }}
           name: metrics
         readinessProbe:
           httpGet:
             path: /
-            port: {{ .Values.fleetspeakFrontendHealthCheckPort }}
+            port: {{ .Values.fleetspeak.frontend.healthCheckPort }}
           initialDelaySeconds: 5
           periodSeconds: 5
         command: ["/fleetspeak/bin/server"]

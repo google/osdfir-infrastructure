@@ -6,7 +6,7 @@ metadata:
   labels:
     app: grr-admin
 spec:
-  replicas: {{ .Values.grrAdminReplicas }}
+  replicas: {{ .Values.grr.admin.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/name: grr-admin
@@ -28,11 +28,11 @@ spec:
                 - grr
       containers:
       - name: grr-admin
-        image: {{ .Values.grrAdminImage }}
+        image: {{ .Values.grr.admin.image }}
         ports:
-        - containerPort: {{ .Values.grrAdminListenPort }}
+        - containerPort: {{ .Values.grr.admin.listenPort }}
           name: admin
-        - containerPort: {{ .Values.prometheusMetricsPort }}
+        - containerPort: {{ .Values.prometheus.metricsPort }}
           name: metrics
         args: ["-component", "admin_ui", "-config", "/usr/src/grr/grr/core/install_data/etc/server.local.yaml", "--logtostderr"]
         volumeMounts:

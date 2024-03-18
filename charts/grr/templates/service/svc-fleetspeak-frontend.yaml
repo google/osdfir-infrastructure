@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: svc-fleetspeak-frontend
   namespace: grr
-  {{- if .Values.fleetspeakFrontendNeg }}
+  {{- if .Values.fleetspeak.frontend.neg }}
   annotations:
-    cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.fleetspeakFrontendListenPort }}":{"name": "k8s-fleetspeak-frontend-neg"}}}'
+    cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.fleetspeak.frontend.listenPort }}":{"name": "k8s-fleetspeak-frontend-neg"}}}'
   {{- end }}
 spec:
   selector:
@@ -13,8 +13,8 @@ spec:
   ports:
     - protocol: TCP
       name: frontend
-      port: {{ .Values.fleetspeakFrontendListenPort  }}
-      targetPort: {{ .Values.fleetspeakFrontendListenPort }}
+      port: {{ .Values.fleetspeak.frontend.listenPort  }}
+      targetPort: {{ .Values.fleetspeak.frontend.listenPort }}
 ---
 kind: Service
 apiVersion: v1
@@ -25,4 +25,4 @@ spec:
   type: ExternalName
   externalName: svc-fleetspeak-frontend.grr.svc.cluster.local
   ports:
-  - port: {{ .Values.fleetspeakFrontendListenPort  }}
+  - port: {{ .Values.fleetspeak.frontend.listenPort  }}

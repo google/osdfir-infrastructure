@@ -9,5 +9,5 @@ spec:
   ports:
     - protocol: TCP
       name: admin
-      port: {{ .Values.grrAdminListenPort }}
-      targetPort: {{ .Values.grrAdminListenPort }}
+      port: {{ .Values.grr.admin.listenPort }}
+      targetPort: {{ .Values.grr.admin.listenPort }}
