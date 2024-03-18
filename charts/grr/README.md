@@ -7,6 +7,7 @@
 [Chart Source Code](https://github.com/google/osdfir-infrastructure)
 
 Before we get started make sure you clone the repo onto your machine.
+
 ```console
 git clone https://github.com/google/osdfir-infrastructure.git
 cd osdfir-infrastructure
@@ -115,10 +116,12 @@ kubectl get daemonset -n grr-client
 ### 1.3. Connect to the GRR Admin Frontend
 
 You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
+
 ```console
 export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin -n grr --output jsonpath='{.spec.clusterIP}'
 echo http://${GRR_ADMIN_IP}:8000
 ```
+
 The GRR Admin Frontend can now be reached on the following URL (note that you might have to tunnel to your server first):
 [http://${GRR_ADMIN_IP}:8000](http://${GRR_ADMIN_IP}:8000)
 
@@ -127,6 +130,7 @@ The GRR Admin Frontend can now be reached on the following URL (note that you mi
 After installing GRR on minikube and kicking the tires you likely aim for running GRR in a more real life scenario.
 For this you could consider installing GRR on a managed Kubernetes cluster in the cloud like on [Google Cloud's Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).
 We have you covered by documenting two flavours below on how you can quickly get up to speed with a GKE based GRR installation:
+
 - GRR on GKE with layer 4 load balancer (TODO)
 - GRR on GKE with layer 7 load balancer
 
@@ -141,11 +145,13 @@ Before we can install GRR we need to provision a GKE cluster and its related inf
 The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [installation instructions](../../cloud/README.md).
 
 We recommend that you start with cloning this repo again to avoid carrying over any configurations from the minikube based instructions above.
+
 ```console
 git clone https://github.com/google/osdfir-infrastructure.git
 cd osdfir-infrastructure
 export REPO=$(pwd)
 ```
+
 Once you have provisioned your infrastructure you can continue with the instructions below.
 
 ### 2.2. Installing GRR on GKE
@@ -153,6 +159,7 @@ Once you have provisioned your infrastructure you can continue with the instruct
 In case you followed the Google Cloud environment installation instructions you should already have the following environment variables configured.
 Otherwise, either run the [installation instruction step](../../cloud/README.md#22-capture-environment-variables-for-later-use) again or set the environment variables to values that match your setup.
 You can check that they have a value assigned by runnig the commands below.
+
 ```console
 echo "FLEETSPEAK_FRONTEND: $FLEETSPEAK_FRONTEND"
 echo "GKE_CLUSTER_LOCATION: $GKE_CLUSTER_LOCATION"
@@ -294,7 +301,8 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
  && kubectl port-forward -n grr \
     $(kubectl get pod -n grr --selector="app.kubernetes.io/name=grr-admin" --output jsonpath='{.items[0].metadata.name}') 8000:8000
 ```
-You can now point your browser at: http://127.0.0.1:8000 to access the GRR Admin UI.
+
+You can now point your browser at: [http://127.0.0.1:8000](http:127.0.0.1:8000) to access the GRR Admin UI.
 
 In case you would like to test collecting ```containerd``` forensic artifacts then you can upload the ```ContainerdArtifacts.yaml``` definition file.
 This file contains an artifact group with a set of 6 ```containerd``` specific artifacts.
@@ -305,6 +313,7 @@ You will not be able to run these artifacts on a 'standard' GRR client.
 
 We recommend that you clean up the installation after you are done with your testing to avoid any future charges.
 To do so you have two options to clean up the installation.
+
 1. Delete the Google Cloud Project and with it all the resources contained in it.
 2. Build back sequentially what we installed (this can be useful in case you want to make some adjustments and re-install bits an pieces).
 
@@ -319,6 +328,7 @@ Sequentially building back the installation can be useful for cases where you wo
 For such cases just build back as far as needed to make your adjustments and then roll forward the installation again following the original instructions.
 
 Here is the full set of steps to do a sequential build back:
+
 ```console
 # Rempove the NEG from the Backend Service
 gcloud compute backend-services remove-backend l7-xlb-backend-service \
@@ -343,61 +353,7 @@ helm uninstall grr-on-k8s
 
 ## Parameters
 
-### Global parameters
-
-| Name                      | Description                                                    | Value  |
-| ------------------------- | -------------------------------------------------------------- | ------ |
-| `global.selfManagedMysql` | Enables a mySQL DB containter to be deployed into the cluster. | `true` |
-
-### Fleetspeak parameters
-
-| Name                                   | Description                                                                                       | Value                                    |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| `fleetspeak.generateCert`              | Enables the generation of self-signed Fleetspeak x509 certificate.                                | `true`                                   |
-| `fleetspeak.httpsHeaderChecksum`       | Defines on whether to add a HTTPS header checksum                                                 | `false`                                  |
-| `fleetspeak.subjectCommonName`         | Sets the Fleetspeak x509 certificate subject common name.                                         | `fleetspeak-frontend`                    |
-| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:cl-616106372` |
-| `fleetspeak.admin.listenPort`          | Sets the Fleetspeak admin listen port to use.                                                     | `4444`                                   |
-| `fleetspeak.admin.replicas`            | Sets the amount of Fleetspeak admin pods to run.                                                  | `1`                                      |
-| `fleetspeak.frontend.healthCheckPort`  | Sets the Fleetspeak frontend health check port to use.                                            | `8080`                                   |
-| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:cl-616106372` |
-| `fleetspeak.frontend.listenPort`       | Sets the Fleetspeak frontend listen port to use.                                                  | `4443`                                   |
-| `fleetspeak.frontend.neg`              | Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service. | `false`                                  |
-| `fleetspeak.frontend.notificationPort` | Sets the Fleetspeak frontend notificaton port to use.                                             | `12000`                                  |
-| `fleetspeak.frontend.replicas`         | Sets the amount of Fleetspeak frontend pods to run.                                               | `1`                                      |
-| `fleetspeak.mysqlDb.address`           | Sets the Fleetspeak DB address to use.                                                            | `mysql`                                  |
-| `fleetspeak.mysqlDb.name`              | Sets the Fleetspeak DB name to use.                                                               | `fleetspeak`                             |
-| `fleetspeak.mysqlDb.port`              | Sets the Fleetspeak DB port to use.                                                               | `3306`                                   |
-| `fleetspeak.mysqlDb.userName`          | Sets the Fleetspeak DB user name to use.                                                          | `fleetspeak-user`                        |
-| `fleetspeak.mysqlDb.userPassword`      | Sets the Fleetspeak DB password to use.                                                           | `fleetspeak-password`                    |
-
-### GRR parameters
-
-| Name                         | Description                                                 | Value                       |
-| ---------------------------- | ----------------------------------------------------------- | --------------------------- |
-| `grr.generateCert`           | Enables the generation of self-signed GRR x509 certificate. | `true`                      |
-| `grr.subjectCommonName`      | Sets the GRR x509 certificate subject common name.          | `grr-frontend`              |
-| `grr.admin.image`            | Sets the GRR admin container image to use.                  | `ghcr.io/google/grr:latest` |
-| `grr.admin.listenPort`       | Sets the GRR admin listen port to use.                      | `8000`                      |
-| `grr.admin.replicas`         | Sets the amount of GRR admin pods to run.                   | `1`                         |
-| `grr.daemon.image`           | Sets the GRR daemon container image to use.                 | `grr-daemon:v0.1`           |
-| `grr.daemon.imagePullPolicy` | Sets the GRR daemon container image pull policy to use.     | `Never`                     |
-| `grr.frontend.image`         | Sets the GRR frontend container image to use.               | `ghcr.io/google/grr:latest` |
-| `grr.frontend.listenPort`    | Sets the GRR frontend listen port to use.                   | `11111`                     |
-| `grr.frontend.replicas`      | Sets the amount of GRR frontend pods to run.                | `1`                         |
-| `grr.mysqlDb.address`        | Sets the GRR DB address to use.                             | `mysql`                     |
-| `grr.mysqlDb.name`           | Sets the GRR DB name to use                                 | `grr`                       |
-| `grr.mysqlDb.port`           | Sets the GRR DB port to use.                                | `3306`                      |
-| `grr.mysqlDb.userName`       | Sets the GRR DB user name to use.                           | `grr-user`                  |
-| `grr.mysqlDb.userPassword`   | Sets the GRR DB user password to use.                       | `grr-password`              |
-| `grr.worker.image`           | Sets the GRR worker container image to use.                 | `ghcr.io/google/grr:latest` |
-
-### Prometheus parameters
-
-| Name                     | Description                                 | Value   |
-| ------------------------ | ------------------------------------------- | ------- |
-| `prometheus.metricsPort` | Sets the port to expose Prometheus metrics. | `19090` |
-
+## License
 
 Copyright &copy; 2024 OSDFIR Infrastructure
 

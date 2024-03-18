@@ -11,6 +11,7 @@ In the future other OSDFIR deployments might also be provisioned in such a fashi
 
 We recommend that you create a new Google Cloud Project to run this demo.
 Like this you can get the following benefits:
+
 - enjoy a controled setup that provides the best chances for a successful demo, and
 - discard all resources at the end to avoid any further charges.
 
@@ -27,6 +28,7 @@ gcloud config set project $PROJECT_ID
 
 As the first step we want to enable the necessary Google Cloud APIs.
 The Terraform script will also do the same but enabling them early will give us the best chance to find them enabled when we execute the Terraform code.
+
 ```console
 gcloud services enable artifactregistry.googleapis.com \
                        cloudbuild.googleapis.com \
@@ -52,11 +54,13 @@ gcloud compute networks delete default
 
 We assume that you have already cloned this repository to your machine.
 If not then go ahead and issue the `git clone` command below:
+
 ```console
 git clone https://github.com/google/osdfir-infrastructure.git
 cd osdfir-infrastructure
 export REPO=$(pwd)
 ```
+
 We are good to go now!
 
 ### 2.1. Setup the Platform Infrasturcture
