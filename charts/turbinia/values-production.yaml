@@ -317,6 +317,8 @@ persistence:
 ## Turbinia dfDewey parameters
 ##
 dfdewey:
+  ## @section dfDewey PostgreSQL Configuration Parameters
+  ##
   postgresql:
     ## @param dfdewey.postgresql.enabled Enables the Postgresql deployment
     ##
@@ -355,7 +357,7 @@ dfdewey:
           cpu: 250m
           memory: 256Mi
         limits: {}
-  ## @section Opensearch Configuration Parameters
+  ## @section dfDewey Opensearch Configuration Parameters
   ## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
   ## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
   ##
