@@ -15,7 +15,7 @@ fleetspeak:
   ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
   ##
   generateCert: true
-  ## @param fleetspeak.httpsHeaderChecksum Defines on whether to add a HTTPS header checksum 
+  ## @param fleetspeak.httpsHeaderChecksum Defines on whether to add a HTTPS header checksum
   ## ref https://github.com/google/fleetspeak/tree/master/sandboxes/https-header-mode
   ##
   httpsHeaderChecksum: true
@@ -49,7 +49,7 @@ fleetspeak:
     ## ref https://cloud.google.com/kubernetes-engine/docs/how-to/standalone-neg
     ##
     neg: true
-    ## @param fleetspeak.frontend.notificationPort Sets the Fleetspeak frontend notificaton port to use. 
+    ## @param fleetspeak.frontend.notificationPort Sets the Fleetspeak frontend notificaton port to use.
     ##
     notificationPort: 12000
     ## @param fleetspeak.frontend.replicas Sets the amount of Fleetspeak frontend pods to run.
@@ -122,14 +122,14 @@ grr:
     ## @param grr.mysqlDb.port Sets the GRR DB port to use.
     ##
     port: 3306
-    ## @param grr.mysqlDb.dbUserName Sets the GRR DB user name to use.
+    ## @param grr.mysqlDb.userName Sets the GRR DB user name to use.
     ##
     userName: "grr-user"
-    ## @param grr.mysqlDb.dbUserPassword Sets the GRR DB user password to use.
+    ## @param grr.mysqlDb.userPassword Sets the GRR DB user password to use.
     ##
     userPassword: "grr-password"
   worker:
-    ## @param grr.workder.image Sets the GRR worker container image to use.
+    ## @param grr.worker.image Sets the GRR worker container image to use.
     ##
     image: "ghcr.io/google/grr:latest"
 
@@ -139,4 +139,3 @@ prometheus:
   ## @param prometheus.metricsPort Sets the port to expose Prometheus metrics.
   ##
   metricsPort: 19090
-
