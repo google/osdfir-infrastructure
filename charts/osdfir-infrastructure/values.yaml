@@ -25,6 +25,10 @@ global:
     ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
     ##
     servicePort: 8000
+  dfdewey:
+    ## @param global.dfdewey.enabled Enables the dfDewey deployment along with Turbinia
+    ##
+    enabled: false
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##

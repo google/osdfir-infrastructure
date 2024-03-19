@@ -1,6 +1,6 @@
 apiVersion: v2
 name: turbinia
-version: 1.0.2
+version: 1.0.3
 description: A Helm chart for Turbinia Kubernetes deployments.
 keywords:
 - turbinia
@@ -19,6 +19,10 @@ dependencies:
   alias: oauth2proxy
   version: 4.1.3
   repository: https://charts.bitnami.com/bitnami
+- condition: global.dfdewey.enabled
+  name: dfdewey
+  repository: https://google.github.io/osdfir-infrastructure/
+  version: 1.0.0
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com

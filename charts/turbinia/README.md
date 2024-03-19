@@ -128,6 +128,7 @@ kubectl delete pvc -l release=my-release
 | `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `nil`   |
 | `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `false` |
 | `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `nil`   |
+| `global.dfdewey.enabled`        | Enables the dfDewey deployment along with Turbinia                                           | `false` |
 | `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
 | `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `nil`   |
 | `global.existingPVC`            | Existing claim for Turbinia persistent volume (overrides `persistent.name`)                  | `""`    |
@@ -238,6 +239,41 @@ kubectl delete pvc -l release=my-release
 | `ingress.gcp.managedCertificates` | Enabled GCP managed certificates for your domain                                                                                                                                                                     | `false`                                                                                      |
 | `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP                                                                                                                                                                    | `""`                                                                                         |
 | `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address                                                                                   | `""`                                                                                         |
+
+### dfDewey PostgreSQL Configuration Parameters
+
+| Name                                                   | Description                                                                        | Value                |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------- | -------------------- |
+| `dfdewey.postgresql.enabled`                           | Enables the Postgresql deployment                                                  | `true`               |
+| `dfdewey.postgresql.nameOverride`                      | String to partially override common.names.fullname template                        | `dfdewey-postgresql` |
+| `dfdewey.postgresql.auth.username`                     | Name for a custom user to create                                                   | `dfdewey`            |
+| `dfdewey.postgresql.auth.password`                     | Password for the custom user to create. Ignored if auth.existingSecret is provided | `password`           |
+| `dfdewey.postgresql.auth.database`                     | Name for a custom database to create                                               | `dfdewey`            |
+| `dfdewey.postgresql.primary.persistence.size`          | PostgreSQL Persistent Volume size                                                  | `8Gi`                |
+| `dfdewey.postgresql.primary.resources.requests.cpu`    | Requested cpu for the PostgreSQL Primary containers                                | `250m`               |
+| `dfdewey.postgresql.primary.resources.requests.memory` | Requested memory for the PostgreSQL Primary containers                             | `256Mi`              |
+| `dfdewey.postgresql.primary.resources.limits`          | Resource limits for the PostgreSQL Primary containers                              | `{}`                 |
+
+### dfDewey Opensearch Configuration Parameters
+
+| Name                                           | Description                                                                                                 | Value                                                                                               |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `dfdewey.opensearch.enabled`                   | Enables the Opensearch deployment                                                                           | `true`                                                                                              |
+| `dfdewey.opensearch.nameOverride`              | Overrides the clusterName when used in the naming of resources                                              | `dfdewey-opensearch`                                                                                |
+| `dfdewey.opensearch.masterService`             | The service name used to connect to the masters                                                             | `dfdewey-opensearch`                                                                                |
+| `dfdewey.opensearch.singleNode`                | Replicas will be forced to 1                                                                                | `true`                                                                                              |
+| `dfdewey.opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                      | `true`                                                                                              |
+| `dfdewey.opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                   | `-Xms512m -Xmx512m`                                                                                 |
+| `dfdewey.opensearch.config.opensearch.yml`     | Opensearch configuration file. Can be appended for additional configuration options                         | `{"opensearch.yml":"discovery:\n  type: single-node\nplugins:\n  security:\n    disabled: true\n"}` |
+| `dfdewey.opensearch.extraEnvs[0].name`         | Environment variable to set the initial admin password                                                      | `OPENSEARCH_INITIAL_ADMIN_PASSWORD`                                                                 |
+| `dfdewey.opensearch.extraEnvs[0].value`        | The initial admin password                                                                                  | `KyfwJExU2!2MvU6j`                                                                                  |
+| `dfdewey.opensearch.extraEnvs[1].name`         | Environment variable to disable Opensearch Demo config                                                      | `DISABLE_INSTALL_DEMO_CONFIG`                                                                       |
+| `dfdewey.opensearch.extraEnvs[1].value`        | Disables Opensearch Demo config                                                                             | `true`                                                                                              |
+| `dfdewey.opensearch.extraEnvs[2].name`         | Environment variable to disable Opensearch Security plugin given that                                       | `DISABLE_SECURITY_PLUGIN`                                                                           |
+| `dfdewey.opensearch.extraEnvs[2].value`        | Disables Opensearch Security plugin                                                                         | `true`                                                                                              |
+| `dfdewey.opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                                                                                               |
+| `dfdewey.opensearch.resources.requests.cpu`    | Requested cpu for the Opensearch containers                                                                 | `250m`                                                                                              |
+| `dfdewey.opensearch.resources.requests.memory` | Requested memory for the Opensearch containers                                                              | `512Mi`                                                                                             |
 
 ### Third Party Configuration
 
