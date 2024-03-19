@@ -151,6 +151,11 @@ resource "google_compute_backend_service" "l7_xlb_backend_service" {
   timeout_sec             = 10
   custom_request_headers  = ["X-Client-Cert-Hash:{client_cert_sha256_fingerprint}"]
   health_checks           = [google_compute_health_check.l7_xlb_hc.id]
+
+  # Ignore changes to the instance backend
+  lifecycle {
+    ignore_changes = [backend]
+  }
 }
 
 resource "google_compute_health_check" "l7_xlb_hc" {
