@@ -1,6 +1,8 @@
+{{- if .Values.grr.namespaceClient }}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: grr-client
+  name: {{ .Values.grr.namespaceClient }}
   labels:
     pod-security.kubernetes.io/enforce: privileged
+{{- end }}

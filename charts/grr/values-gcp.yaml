@@ -80,6 +80,12 @@ grr:
   ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
   ##
   generateCert: true
+  ## @param grr.namespace Sets the GRR namespace.
+  ##
+  namespace: "grr"
+  ## @param grr.namespaceClient Sets the GRR client namespace.
+  ##
+  namespaceClient: "grr-client"
   ## @param grr.subjectCommonName Sets the GRR x509 certificate subject common name.
   ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
   ##

@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: grr
-  namespace: grr-client
+  {{- if .Values.grr.namespaceClient }}
+  namespace: {{ .Values.grr.namespaceClient }}
+  {{- end }}
   labels:
     app: grr
 spec:
