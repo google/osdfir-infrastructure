@@ -57,7 +57,7 @@ To install the chart, specify any release name of your choice. For example, usin
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 
 # Verify that all the GRR component pods are in 'Running' state (this might take a moment)
-kubectl get pods -n grr
+kubectl get pods
 # The output should look similar to the below:
 # NAME                                      READY   STATUS    RESTARTS   AGE
 # dpl-fleetspeak-admin-576754755b-hj27p     1/1     Running   0          1m1s
@@ -84,7 +84,7 @@ To do so we will
 ```console
 cd charts/grr/containers/grr-daemon/
 export FLEETSPEAK_FRONTEND_ADDRESS="fleetspeak-frontend"
-export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc -n grr svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
+export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
 export FLEETSPEAK_FRONTEND_PORT=4443
 export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect \
                          $FLEETSPEAK_FRONTEND_IP:$FLEETSPEAK_FRONTEND_PORT< /dev/null | \
@@ -107,7 +107,7 @@ docker build -t grr-daemon:v0.1 .
 kubectl label nodes minikube grrclient=installed
 
 # Verify that the GRR client DaemonSet got deployed.
-kubectl get daemonset -n grr-client
+kubectl get daemonset
 # The output should look similar to the below:
 # NAME   DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR         AGE
 # grr    1         1         1       1            1           grrclient=installed   53s
@@ -118,7 +118,7 @@ kubectl get daemonset -n grr-client
 You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
 
 ```console
-export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin -n grr --output jsonpath='{.spec.clusterIP}'
+export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin --output jsonpath='{.spec.clusterIP}'
 echo http://${GRR_ADMIN_IP}:8000
 ```
 
