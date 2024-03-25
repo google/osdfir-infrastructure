@@ -37,7 +37,7 @@ data:
     #!/bin/bash
     set -ex
     echo "** Creating default DB for GRR and fleetspeak"
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" --execute \
+    mariadb -u root -p"$MYSQL_ROOT_PASSWORD" --execute \
     "CREATE USER'grr-user'@'%' IDENTIFIED BY '$GRR_PASSWORD';
      CREATE DATABASE grr;
      GRANT ALL ON grr.* TO 'grr-user'@'%';
@@ -66,7 +66,7 @@ spec:
         app: mysql
     spec:
       containers:
-      - image: mysql:8.2
+      - image: mariadb:11.3.2
         name: mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
