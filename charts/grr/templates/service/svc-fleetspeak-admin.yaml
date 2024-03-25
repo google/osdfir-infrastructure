@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-fleetspeak-admin
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+spec:
+  selector:
+    app.kubernetes.io/name: fleetspeak-admin
+  ports:
+    - protocol: TCP
+      name: admin
+      port: {{ .Values.fleetspeak.admin.listenPort }}
+      targetPort: {{ .Values.fleetspeak.admin.listenPort }}

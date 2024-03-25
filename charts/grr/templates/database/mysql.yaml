@@ -1,0 +1,101 @@
+{{- if .Values.global.selfManagedMysql }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sec-mysql
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+stringData:
+  fleetspeak-password: fleetspeak-password
+  grr-password: grr-password
+  mysql-password: password
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cfm-mysql-init
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+data:
+  init.sh: |
+    #!/bin/bash
+    set -ex
+    echo "** Creating default DB for GRR and fleetspeak"
+    mariadb -u root -p"$MYSQL_ROOT_PASSWORD" --execute \
+    "CREATE USER'grr-user'@'%' IDENTIFIED BY '$GRR_PASSWORD';
+     CREATE DATABASE grr;
+     GRANT ALL ON grr.* TO 'grr-user'@'%';
+     CREATE USER 'fleetspeak-user'@'%' IDENTIFIED BY '$FLEETSPEAK_PASSWORD';
+     CREATE DATABASE fleetspeak;
+     GRANT ALL ON fleetspeak.* TO 'fleetspeak-user'@'%';
+     FLUSH PRIVILEGES;"
+    echo "** Finished creating DBs and users"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mariadb:11.3.2
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sec-mysql
+              key: mysql-password
+        - name: GRR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sec-mysql
+              key: grr-password
+        - name: FLEETSPEAK_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sec-mysql
+              key: fleetspeak-password
+        args: ["--max_allowed_packet=40M", "--log_bin_trust_function_creators=ON"]
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-init
+          mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+      - name: mysql-init
+        configMap:
+          name: cfm-mysql-init
+          items:
+          - key: init.sh
+            path: init.sh
+{{- end }}

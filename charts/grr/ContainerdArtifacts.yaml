@@ -1,0 +1,68 @@
+---
+name: ContainerdArtifacts
+doc: Containerd artifact group.
+sources:
+- type: ARTIFACT_GROUP
+  attributes:
+    names:
+    - ContainerdInfo
+    - ContainerdImages
+    - ContainerdContainers
+    - ContainerdPods
+    - ContainerdContainerStats
+    - ContainerdPodStats
+supported_os: [Linux]
+---
+name: ContainerdInfo
+doc: Display information of the container runtime
+sources:
+- type: COMMAND
+  attributes:
+    args: ["-r", "unix:///hostroot/run/containerd/containerd.sock", "info", "-o", "yaml"]
+    cmd: /hostroot/usr/bin/crictl 
+supported_os: [Linux]
+---
+name: ContainerdImages
+doc: List images
+sources:
+- type: COMMAND
+  attributes:
+    args: ["-r", "unix:///hostroot/run/containerd/containerd.sock", "images", "-o", "yaml"]
+    cmd: /hostroot/usr/bin/crictl 
+supported_os: [Linux]
+---
+name: ContainerdContainers
+doc: List containers
+sources:
+- type: COMMAND
+  attributes:
+    args: ["-r", "unix:///hostroot/run/containerd/containerd.sock", "ps", "-o", "yaml"]
+    cmd: /hostroot/usr/bin/crictl 
+supported_os: [Linux]
+---
+name: ContainerdPods
+doc: List pods
+sources:
+- type: COMMAND
+  attributes:
+    args: ["-r", "unix:///hostroot/run/containerd/containerd.sock", "pods", "-o", "yaml"]
+    cmd: /hostroot/usr/bin/crictl 
+supported_os: [Linux]
+---
+name: ContainerdContainerStats
+doc: List container resource usage statistics
+sources:
+- type: COMMAND
+  attributes:
+    args: ["-r", "unix:///hostroot/run/containerd/containerd.sock", "stats", "-o", "yaml"]
+    cmd: /hostroot/usr/bin/crictl 
+supported_os: [Linux]
+---
+name: ContainerdPodStats
+doc: List pod resource usage statistics
+sources:
+- type: COMMAND
+  attributes:
+    args: ["-r", "unix:///hostroot/run/containerd/containerd.sock", "statsp", "-o", "yaml"]
+    cmd: /hostroot/usr/bin/crictl 
+supported_os: [Linux]
