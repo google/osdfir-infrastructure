@@ -34,6 +34,33 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/dfdewey-1.0.0/dfdewey-1.0.0.tgz
     version: 1.0.0
+  grr:
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
+    created: "2024-03-25T18:30:09.894262729Z"
+    description: A Helm chart for GRR/Fleetspeak Kubernetes deployments.
+    digest: 077e79d849f71329363c67de74b6d3b2146381ab1fde372e715d72d7a03c2267
+    home: https://www.grr-response.com/
+    icon: https://www.grr-response.com/images/favicons/favicon.ico
+    keywords:
+    - grr
+    - dfir
+    - analysis
+    - forensics
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: grr
+    sources:
+    - https://github.com/google/grr
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/grr-1.0.0/grr-1.0.0.tgz
+    version: 1.0.0
   osdfir-infrastructure:
   - annotations:
       category: Security
@@ -981,4 +1008,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-03-19T20:55:48.49094014Z"
+generated: "2024-03-25T18:30:09.894342277Z"
