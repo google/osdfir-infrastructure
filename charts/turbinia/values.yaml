@@ -345,7 +345,7 @@ config:
   ##
   disabledJobs: "['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']"
   ## @param config.vertexAPIKey enables the Turbinia LLM Artifacts Analyzer using VertexAI. Please see https://ai.google.dev/tutorials/setup to generate your own API key.
-  ## 
+  ##
   vertexAPIKey: ""
 ## GCP configuration parameters
 ## IMPORTANT: Enable GCP when running Turbinia in a GKE cluster
