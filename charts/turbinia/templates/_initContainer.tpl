@@ -5,7 +5,7 @@ and Worker pod upon startup.
 */}}
 {{- define "turbinia.initContainer" -}}
 - name: init-turbinia
-  image: busybox
+  image: alpine
   command: ['sh', '-c', '/init/init-turbinia.sh']
   env:
     {{- if and .Values.redis.enabled .Values.redis.auth.enabled }}
