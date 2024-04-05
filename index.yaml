@@ -732,6 +732,46 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-04-05T22:19:51.722422662Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.0.4
+    - alias: oauth2proxy
+      condition: oauth2proxy.enabled
+      name: oauth2-proxy
+      repository: https://charts.bitnami.com/bitnami
+      version: 4.1.3
+    - condition: global.dfdewey.enabled
+      name: dfdewey
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 1.0.0
+    description: A Helm chart for Turbinia Kubernetes deployments.
+    digest: 2617b771abb381e8a32805cbf6fca98153226caa668fc0b240f43e69717f76e0
+    home: https://github.com/google/turbinia
+    icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
+    keywords:
+    - turbinia
+    - dfir
+    - processing
+    - scaling
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: turbinia
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/turbinia-1.0.5/turbinia-1.0.5.tgz
+    version: 1.0.5
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-04-05T18:32:45.749718623Z"
     dependencies:
     - condition: redis.enabled
@@ -1090,4 +1130,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-05T18:47:45.141376475Z"
+generated: "2024-04-05T22:19:51.722484376Z"
