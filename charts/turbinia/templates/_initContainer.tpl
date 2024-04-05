@@ -16,6 +16,13 @@ and Worker pod upon startup.
           name: {{ include "redis.secretName" .Subcharts.redis }}
           key: {{ include "redis.secretPasswordKey" .Subcharts.redis }}
     {{- end }}
+    {{- if and .Values.config.existingVertexSecret .Values.gcp.enabled }}
+    - name: VERTEX_APIKEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.config.existingVertexSecret }}
+          key: "turbinia-vertexapi"
+    {{- end }}
   volumeMounts:
     - mountPath: /mnt/turbiniavolume
       name: turbiniavolume

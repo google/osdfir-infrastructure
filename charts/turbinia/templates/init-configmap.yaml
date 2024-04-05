@@ -84,4 +84,9 @@ data:
     {{- if and .Values.gcp.gcpErrorReporting .Values.gcp.enabled }}
     # Set up GCP Stackdriver Traceback
     sed -i -e "s/^STACKDRIVER_TRACEBACK = .*$/STACKDRIVER_TRACEBACK = True/g" turbinia.conf
+    {{- end }}
+
+    {{- if and .Values.config.existingVertexSecret .Values.gcp.enabled }}
+    # Set up VertexAI API key from secret key reference
+    sed -i -e "s/^GCP_GENERATIVE_LANGUAGE_API_KEY = .*$/GCP_GENERATIVE_LANGUAGE_API_KEY = '$VERTEX_APIKEY'/g" turbinia.conf
     {{- end -}}
