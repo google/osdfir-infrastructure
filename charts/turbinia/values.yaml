@@ -344,7 +344,7 @@ config:
   ## @param config.disabledJobs List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.
   ##
   disabledJobs: "['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']"
-  ## @param config.vertexAPIKey enables the Turbinia LLM Artifacts Analyzer using VertexAI. Please see https://ai.google.dev/tutorials/setup to generate your own API key.
+  ## @param config.vertexAPIKey enables the Turbinia LLM Artifacts Analyzer using VertexAI. Please see <https://ai.google.dev/tutorials/setup> to generate your own API key.
   ##
   vertexAPIKey: ""
 ## GCP configuration parameters
