@@ -90,3 +90,8 @@ data:
     # Set up VertexAI API key
     sed -i -e "s/^GCP_GENERATIVE_LANGUAGE_API_KEY = .*$/GCP_GENERATIVE_LANGUAGE_API_KEY = '{{ .Values.config.vertexAPIKey }}'/g" turbinia.conf
     {{- end -}}
+
+    {{- if and .Values.config.existingVertexSecret .Values.gcp.enabled }}
+    # Set up VertexAI API key from secret key reference
+    sed -i -e "s/^GCP_GENERATIVE_LANGUAGE_API_KEY = .*$/GCP_GENERATIVE_LANGUAGE_API_KEY = '$VERTEX_APIKEY'/g" turbinia.conf
+    {{- end -}}
