@@ -352,7 +352,7 @@ config:
   ## When it's set, the `config.vertexAPIKey` parameter is ignored
   ## e.g. kubectl create secret generic turbinia-vertexapi-secret --from-literal=turbinia-vertexapi=VERTEX_API_KEY
   ##
-  existingVertexSecret: "turbinia-vertexapi-secret"
+  existingVertexSecret: ""
 ## GCP configuration parameters
 ## IMPORTANT: Enable GCP when running Turbinia in a GKE cluster
 ##
