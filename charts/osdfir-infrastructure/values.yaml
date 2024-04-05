@@ -373,7 +373,7 @@ turbinia:
     ## @param turbinia.config.disabledJobs List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.
     ##
     disabledJobs: "['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']"
-    ## @param config.existingVertexSecret Name of existing secret containing Vertex API Key in order to enable the Turbinia LLM Artifacts Analyzer. The secret must contain the key `turbinia-vertexapi`
+    ## @param turbinia.config.existingVertexSecret Name of existing secret containing Vertex API Key in order to enable the Turbinia LLM Artifacts Analyzer. The secret must contain the key `turbinia-vertexapi`
     ## Please see https://ai.google.dev/tutorials/setup to generate your own API key.
     ## e.g. kubectl create secret generic turbinia-vertexapi-secret --from-literal=turbinia-vertexapi=VERTEX_API_KEY
     ##
