@@ -9,6 +9,7 @@ data:
   init-turbinia.sh: |
     #!/bin/sh
     set -e
+    apk add jq
 
     # Fix Filestore permissions
     chmod go+w /mnt/turbiniavolume
@@ -20,12 +21,18 @@ data:
     if [  $(ls /tmp/turbinia/ | wc -l) -gt 0 ]; then
       echo "Using exisiting configuration file provided."
       cp /tmp/turbinia/* /etc/turbinia/
-    else 
+    else
       # Pull default config if one is not already provided
-      echo -n "* Fetching configuration files.." 
-      # Fetch default Turbinia config file
+      {{- $turbiniaWorker := "us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker" -}}
+      {{- if eq .Values.worker.image.repository $turbiniaWorker }}
+      echo -n "* Fetching the release Turbinia configuration file..." 
+      RELEASE_TAG=$(wget -O- https://api.github.com/repos/google/turbinia/releases | jq -r '.[0] | .tag_name')
+      wget "https://raw.githubusercontent.com/google/turbinia/$RELEASE_TAG/turbinia/config/turbinia_config_tmpl.py" -O turbinia.conf
+      {{- else }}
+      echo -n "* Fetching the latest Turbinia configuration file..." 
       wget "https://raw.githubusercontent.com/google/turbinia/master/turbinia/config/turbinia_config_tmpl.py" -O turbinia.conf
       echo "OK"
+      {{- end }}
     fi
 
     # Set up the Redis connection
@@ -55,6 +62,7 @@ data:
     sed -i -e "s/^LOG_DIR = .*$/LOG_DIR = '\/mnt\/{{ .Values.persistence.name }}\/logs'/g" turbinia.conf
     sed -i -e "s/^MOUNT_DIR_PREFIX = .*$/MOUNT_DIR_PREFIX = '\/mnt\/turbinia'/g" turbinia.conf
     sed -i -e "s/^OUTPUT_DIR = .*$/OUTPUT_DIR = '\/mnt\/{{ .Values.persistence.name }}\/output'/g" turbinia.conf
+    sed -i -e "s/^API_EVIDENCE_UPLOAD_DIR = .*$/API_EVIDENCE_UPLOAD_DIR = '\/mnt\/{{ .Values.persistence.name }}\/upload'/g" turbinia.conf
     
     # Disable Turbinia Jobs
     sed -i -e "s/^DISABLED_JOBS = .*$/DISABLED_JOBS = {{ .Values.config.disabledJobs }}/g" turbinia.conf
