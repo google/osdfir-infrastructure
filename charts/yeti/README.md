@@ -181,7 +181,7 @@ kubectl delete pvc -l release=my-release
 | --------------------------------- | --------------------------------------------------------------------------- | ----------- |
 | `arangodb.image.repository`       | Yeti arangodb image repository                                              | `arangodb`  |
 | `arangodb.image.pullPolicy`       | Yeti image pull policy                                                      | `Always`    |
-| `arangodb.image.tag`              | Overrides the image tag whose default is the chart appVersion               | `latest`    |
+| `arangodb.image.tag`              | Overrides the image tag whose default is the chart appVersion               | `3.11.8`    |
 | `arangodb.image.imagePullSecrets` | Specify secrets if pulling from a private repository                        | `[]`        |
 | `arangodb.service.type`           | Yeti service type                                                           | `ClusterIP` |
 | `arangodb.service.port`           | Yeti service port                                                           | `8529`      |
