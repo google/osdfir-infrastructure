@@ -447,7 +447,7 @@ arangodb:
     pullPolicy: Always
     ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: latest
+    tag: 3.11.8
     ## @param arangodb.image.imagePullSecrets Specify secrets if pulling from a private repository
     ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ## e.g.

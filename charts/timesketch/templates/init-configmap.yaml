@@ -52,5 +52,5 @@ data:
     # Yeti integration
     {{- if .Values.global.yeti.enabled }}
     sed -i 's#^YETI_API_KEY =.*#YETI_API_KEY = "'$YETI_API_KEY'"#' timesketch.conf
-    sed -i 's#^YETI_API_ROOT =.*#YETI_API_ROOT =  {{ printf "http://%s-yeti-api:%.0f/api/v2" .Release.Name .Values.global.yeti.servicePort | quote }}#' timesketch.conf
+    sed -i 's#^YETI_API_ROOT =.*#YETI_API_ROOT =  {{ printf "http://%s-yeti:%.0f/api/v2" .Release.Name .Values.global.yeti.servicePort | quote }}#' timesketch.conf
     {{- end }}
