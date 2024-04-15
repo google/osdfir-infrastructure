@@ -539,6 +539,45 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-04-15T18:29:46.171904676Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.11.1
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.0.4
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts/
+      version: 2.14.1
+    description: A Helm chart for Timesketch Kubernetes deployments.
+    digest: a4459cc90900af9486c2c03671f4eb96fe75d965bbe3326115d722cd8564d4f1
+    home: https://timesketch.org/
+    icon: https://raw.githubusercontent.com/google/timesketch/master/timesketch/frontend-ng/dist/timesketch-color.png
+    keywords:
+    - timesketch
+    - dfir
+    - analysis
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: timesketch
+    sources:
+    - https://github.com/google/timesketch
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/timesketch-1.0.2/timesketch-1.0.2.tgz
+    version: 1.0.2
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-02-27T22:33:07.233699242Z"
     dependencies:
     - condition: postgresql.enabled
@@ -1117,6 +1156,37 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-04-15T18:29:46.276457626Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.0.4
+    description: A Helm chart for Yeti Kubernetes deployments.
+    digest: 1f0b474ea4e651db4cb4900c3481ba69c144b61240411685b06159ed42850d3a
+    home: https://yeti-platform.io/
+    keywords:
+    - yeti
+    - dfir
+    - threatintel
+    - threat-hunting
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: yeti
+    sources:
+    - https://github.com/yeti-platform/yeti
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/yeti-1.0.1/yeti-1.0.1.tgz
+    version: 1.0.1
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-01-17T01:03:03.26798319Z"
     dependencies:
     - condition: redis.enabled
@@ -1172,4 +1242,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-05T22:29:15.621238156Z"
+generated: "2024-04-15T18:29:46.276551731Z"
