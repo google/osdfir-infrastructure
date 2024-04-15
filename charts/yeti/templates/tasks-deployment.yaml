@@ -37,11 +37,6 @@ spec:
           command: ["sh", "-c", "/docker-entrypoint.sh tasks"]
           env:
           {{- include "yeti.envs" . | nindent 12 }}
-            - name: YETI_ARANGODB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "yeti.fullname" . }}-secret 
-                  key: yeti-arangodb
           volumeMounts:
             - mountPath: /mnt/yeti
               name: yetivolume
