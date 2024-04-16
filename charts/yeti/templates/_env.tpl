@@ -28,4 +28,30 @@ Worker pod upon startup.
   value: "True"
 - name: YETI_SYSTEM_PLUGINS_PATH
   value: "./plugins"
+- name: YETI_USER_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "yeti.fullname" . }}-secret 
+      key: yeti-user
+- name: YETI_ARANGODB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "yeti.fullname" . }}-secret 
+      key: yeti-arangodb
+- name: YETI_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "yeti.fullname" . }}-secret 
+      key: yeti-api
+{{- if .Values.global.timesketch.enabled }}
+- name: YETI_TIMESKETCH_ENDPOINT
+  value: {{ printf "http://%s-timesketch:%.0f" .Release.Name .Values.global.timesketch.servicePort | quote }}
+- name: YETI_TIMESKETCH_USERNAME
+  value: timesketch
+- name: YETI_TIMESKETCH_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ printf "%s-timesketch-secret" .Release.Name | quote }}
+      key: timesketch-user
+{{- end }}
 {{- end }}
