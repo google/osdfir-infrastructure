@@ -1,0 +1,174 @@
+## HashR Helm Chart
+## Please use this Helm chart for deploying HashR to a Kubernetes environment
+##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  ## Global Persistence Configuration
+  ##
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
+    ##
+    servicePort:
+  turbinia:
+    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
+    ##
+    servicePort:
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
+    ##
+    servicePort:
+  ## @param global.existingPVC Existing claim for Timesketch persistent volume (overrides `persistent.name`)
+  ##
+  existingPVC: ""
+  ## @param global.storageClass StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)
+  ##
+  storageClass: ""
+## @section HashR image configuration
+##
+image:
+  ## @param image.repository HashR image repository
+  ##
+  repository: us-docker.pkg.dev/osdfir-registry/hashr/release/hashr
+  ## @param image.pullPolicy HashR image pull policy
+  ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+  ##
+  pullPolicy: IfNotPresent
+  ## @param image.tag Overrides the image tag whose default is the chart appVersion
+  ##
+  tag: latest
+  ## @param image.imagePullSecrets Specify secrets if pulling from a private repository
+  ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## e.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+## @section HashR Configuration Paramters
+##
+hashr:
+  ## @param hashr.schedule Sets the cronjob schedule for running HashR
+  ##
+  schedule: "*/3 * * * *"
+  ## @section Enable/Disable HashR importers
+  ##
+  importers:
+    ## List of importers: GCP,targz,windows,wsus,deb,rpm,zip,gcr,iso9660
+    ## @param hashr.importers.gcp Enables the GCP importer
+    ##
+    gcp: false
+    ## @param hashr.importers.targz Enables the tar.gz importer
+    ##
+    targz: false
+    ## @param hashr.importers.windows Enables the Windows importer
+    ##
+    windows: false
+    ## @param hashr.importers.wsus Enables the WSUS importer
+    ##
+    wsus: false
+    ## @param hashr.importers.rpm Enables the RPM importer
+    ##
+    rpm: false
+    ## @param hashr.importers.zip Enables the ZIP importer
+    ##
+    zip: false
+    ## @param hashr.importers.gcr Enables the GCR importer
+    ##
+    gcr: false
+    ## @param hashr.importers.iso9660 Enables the iso9660 importer
+    ##
+    iso9660: false
+    ## @param hashr.importers.deb Enables the DEB importer
+    ##
+    deb: true
+## Persistence Storage Parameters
+##
+persistence:
+  ## @param persistence.name Timesketch persistent volume name
+  ##
+  name: hashrvolume
+  ## @param persistence.size Timesketch persistent volume size
+  ##
+  size: 2Gi
+  ## @param persistence.storageClass PVC Storage Class for Timesketch volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ##
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for Timesketch volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ##
+  accessModes:
+    - ReadWriteOnce
+## @section Postgresql Configuration Parameters
+## IMPORTANT: Postgresql is deployed with Auth enabled by default
+## To see a full list of available values, run helm show values charts/postgresql*
+##
+postgresql:
+  ## @param postgresql.enabled Enables the Postgresql deployment
+  ##
+  enabled: true
+  ## @param postgresql.architecture PostgreSQL architecture (`standalone` or `replication`)
+  ##
+  architecture: standalone
+  ## PostgreSQL Authentication parameters
+  ##
+  auth:
+    ## @param postgresql.auth.username Name for a custom PostgreSQL user to create
+    ##
+    username: "postgres"
+    ## @param postgresql.auth.database Name for a custom PostgreSQL database to create (overrides `auth.database`)
+    ##
+    database: "hashr"
+  ## PostgreSQL Primary configuration parameters
+  ##
+  primary:
+    ## PostgreSQL Primary service configuration parameters
+    ##
+    service:
+      ## @param postgresql.primary.service.type PostgreSQL primary service type
+      ##
+      type: ClusterIP
+      ## @param postgresql.primary.service.ports.postgresql PostgreSQL primary service port
+      ##
+      ports:
+        postgresql: 5432
+    ## PostgreSQL Primary persistence configuration
+    ##
+    persistence:
+      ## @param postgresql.primary.persistence.size PostgreSQL Persistent Volume size
+      ##
+      size: 2Gi
+    ## PostgreSQL primary resource requests and limits
+    ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.memory The requested memory for the PostgreSQL primary containers
+    ##
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
