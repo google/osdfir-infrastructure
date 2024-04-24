@@ -154,7 +154,7 @@ Please be cautious before doing it.
 | Name                                    | Description                                                                                             | Value               |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------- |
 | `hashr.importers.aws.enabled`           | Enables the AWS importer                                                                                | `false`             |
-| `hashr.importers.aws.schedule`          | sets the CronJob schedule times                                                                         | `0 3 * * 1`         |
+| `hashr.importers.aws.schedule`          | sets the CronJob schedule times                                                                         | `0 9 * * 1`         |
 | `hashr.importers.gcp.enabled`           | Enables the GCP importer                                                                                | `false`             |
 | `hashr.importers.gcp.schedule`          | sets the CronJob schedule times                                                                         | `0 3 * * 1`         |
 | `hashr.importers.gcp.gcp_projects`      | sets a comma separated list of cloud projects containing disk images                                    | `""`                |
