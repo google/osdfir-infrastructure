@@ -61,6 +61,38 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/grr-1.0.0/grr-1.0.0.tgz
     version: 1.0.0
+  hashr:
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
+    created: "2024-04-24T21:45:38.671718795Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.3.3
+    description: A Helm chart for HashR Kubernetes deployments.
+    digest: 24d7c4a51b625bd17dd38ef94929970cb5e40824aa1c634cb05ea97a7aa67d2e
+    home: https://github.com/google/hashr
+    keywords:
+    - hashr
+    - dfir
+    - analysis
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: hashr
+    sources:
+    - https://github.com/google/hashr
+    - https://github.com/google/osdfir-infrastructure
+    type: application
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/hashr-0.1.0/hashr-0.1.0.tgz
+    version: 0.1.0
   osdfir-infrastructure:
   - annotations:
       category: Security
@@ -1315,4 +1347,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-16T17:14:18.021477007Z"
+generated: "2024-04-24T21:45:38.671998229Z"
