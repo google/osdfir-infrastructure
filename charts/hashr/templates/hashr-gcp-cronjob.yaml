@@ -1,10 +1,10 @@
-{{- if .Values.hashr.importers.deb.enabled -}}
+{{- if .Values.hashr.importers.gcp.enabled -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ .Release.Name }}-hashr-deb
+  name: {{ .Release.Name }}-hashr-gcp
 spec:
-  schedule: {{ .Values.hashr.importers.deb.schedule | quote }}
+  schedule: {{ .Values.hashr.importers.gcp.schedule | quote }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
@@ -13,7 +13,7 @@ spec:
       template:
         spec:
           containers:
-          - name: hashr-deb
+          - name: hashr-gcp
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             imagePullPolicy: {{ .Values.image.pullPolicy }}
             args:
@@ -33,10 +33,18 @@ spec:
               - -postgres_db
               - {{ .Values.postgresql.auth.database | quote }}
               - -importers
-              - deb
-              - -deb_repo_path
-              - {{ (include "hashr.dataPath" .) }}/deb/
+              - GCP
+              - -gcp_projects
+              - {{ .Values.hashr.importers.gcp.gcp_projects | quote }}
+              - -hashr_gcp_project
+              - {{ .Values.hashr.importers.gcp.hashr_gcp_project | quote }}
+              - -hashr_gcs_bucket
+              - {{ .Values.hashr.importers.gcp.hashr_gcs_bucket | quote }}
             env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              # Store your SA key in the hashrvolume/creds/ folder via "kubectl cp"!
+              # chown 999:1000 hashr-sa-private-key.json to prevent permission issues
+              value: {{ (include "hashr.dataPath" .) }}/creds/hashr-sa-private-key.json
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

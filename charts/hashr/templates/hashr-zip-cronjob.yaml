@@ -1,10 +1,10 @@
-{{- if .Values.hashr.importers.deb.enabled -}}
+{{- if .Values.hashr.importers.zip.enabled -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ .Release.Name }}-hashr-deb
+  name: {{ .Release.Name }}-hashr-zip
 spec:
-  schedule: {{ .Values.hashr.importers.deb.schedule | quote }}
+  schedule: {{ .Values.hashr.importers.zip.schedule | quote }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
@@ -13,7 +13,7 @@ spec:
       template:
         spec:
           containers:
-          - name: hashr-deb
+          - name: hashr-zip
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             imagePullPolicy: {{ .Values.image.pullPolicy }}
             args:
@@ -33,9 +33,9 @@ spec:
               - -postgres_db
               - {{ .Values.postgresql.auth.database | quote }}
               - -importers
-              - deb
-              - -deb_repo_path
-              - {{ (include "hashr.dataPath" .) }}/deb/
+              - zip
+              - -zip_repo_path
+              - {{ (include "hashr.dataPath" .) }}/zip/
             env:
             - name: POSTGRES_PASSWORD
               valueFrom:

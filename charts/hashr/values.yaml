@@ -62,28 +62,52 @@ hashr:
   importers:
     ## List of HashR importers and their settings
     ##
+    aws: # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#aws
+      ## @param hashr.importers.aws.enabled Enables the AWS importer
+      ##
+      enabled: false
+      ## @param hashr.importers.aws.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 1" # At 03:00 on Monday
     gcp:
+      # Ensure you have the correct setup before enabling this importer:
+      # https://github.com/google/hashr?tab=readme-ov-file#gcp-google-cloud-platform
+      # IMPORTANT: Store your SA key in the hashrvolume via kubectl cp!
+      # e.g. kubectl cp ~/hashr-sa-private-key.json hashr-data-manager:/mnt/hashrvolume/data/creds/hashr-sa-private-key.json
       ## @param hashr.importers.gcp.enabled Enables the GCP importer
       ##
       enabled: false
       ## @param hashr.importers.gcp.schedule sets the CronJob schedule times
       ##
       schedule: "0 3 * * 1" # At 03:00 on Monday
+      ## @param hashr.importers.gcp.gcpProjects sets a comma separated list of cloud projects containing disk images
+      ##
+      gcp_projects: ""
+      ## @param hashr.importers.gcp.hashrGCPProject sets GCP project that will be used to store copy of disk images for processing and also run Cloud Build
+      ##
+      hashr_gcp_project: ""
+      ## @param hashr.importers.gcp.hashrGCSBucket sets GCS bucket that will be used to store output of Cloud Build (disk images in .tar.gz format)
+      ##
+      hashr_gcs_bucket: ""
     targz:
+      # https://github.com/google/hashr?tab=readme-ov-file#targz
       ## @param hashr.importers.targz.enabled Enables the tar.gz importer
       ##
       enabled: false
       ## @param hashr.importers.targz.schedule sets the CronJob schedule times
       ##
       schedule: "0 3 * * 2" # At 03:00 on Tuesday
-    windows:
+    windows:  # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#windows
       ## @param hashr.importers.windows.enabled Enables the Windows importer
       ##
       enabled: false
       ## @param hashr.importers.windows.schedule sets the CronJob schedule times
       ##
       schedule: "0 3 * * 3" # At 03:00 on Wednesday
-    wsus:
+    wsus:  # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#wsus
       ## @param hashr.importers.wsus.enabled Enables the WSUS importer
       ##
       enabled: false
@@ -91,6 +115,7 @@ hashr:
       ##
       schedule: "0 3 * * 4" # At 03:00 on Thursday
     rpm:
+      # https://github.com/google/hashr?tab=readme-ov-file#rpm
       ## @param hashr.importers.rpm.enabled Enables the RPM importer
       ##
       enabled: false
@@ -98,13 +123,15 @@ hashr:
       ##
       schedule: "0 3 * * 5" # At 03:00 on Friday
     zip:
+      # https://github.com/google/hashr?tab=readme-ov-file#zip-and-other-zip-like-formats
       ## @param hashr.importers.zip.enabled Enables the ZIP importer
       ##
       enabled: false
       ## @param hashr.importers.zip.schedule sets the CronJob schedule times
       ##
       schedule: "0 3 * * 6" # At 03:00 on Saturday
-    gcr:
+    gcr:  # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#gcr-google-container-registry
       ## @param hashr.importers.gcr.enabled Enables the GCR importer
       ##
       enabled: false
@@ -112,6 +139,7 @@ hashr:
       ##
       schedule: "0 3 * * 7" # At 03:00 on Sunday
     iso9660:
+      # https://github.com/google/hashr?tab=readme-ov-file#iso-9660
       ## @param hashr.importers.iso9660.enabled Enables the iso9660 importer
       ##
       enabled: false
@@ -119,6 +147,7 @@ hashr:
       ##
       schedule: "0 15 * * 1" # At 15:00 on Monday
     deb:
+      # https://github.com/google/hashr?tab=readme-ov-file#deb
       ## @param hashr.importers.deb.enabled Enables the DEB importer
       ##
       enabled: false
