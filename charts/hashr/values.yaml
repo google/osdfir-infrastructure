@@ -70,8 +70,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.aws.schedule sets the CronJob schedule times
       ##
-      # At 03:00 on Monday
-      schedule: "0 3 * * 1"
+      # At 09:00 on Monday
+      schedule: "0 9 * * 1"
     gcp:
       # Ensure you have the correct setup before enabling this importer:
       # https://github.com/google/hashr?tab=readme-ov-file#gcp-google-cloud-platform
