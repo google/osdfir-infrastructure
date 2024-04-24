@@ -1,0 +1,54 @@
+{{- if .Values.hashr.importers.rpm.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-hashr-rpm
+spec:
+  schedule: {{ .Values.hashr.importers.rpm.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hashr-rpm
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            args:
+              - --logtostderr=1
+              - -storage
+              - postgres
+              - -exporters
+              - postgres
+              - -postgres_host
+              - {{ include "common.names.fullname" (dict "Chart" (dict "Name" "postgresql") "Release" .Release "Values" .Values.postgresql) }}
+              - -postgres_port
+              - {{ .Values.postgresql.primary.service.ports.postgresql | quote }}
+              - -postgres_user
+              - {{ .Values.postgresql.auth.username | quote }}
+              - -postgres_password
+              - "$(POSTGRES_PASSWORD)"
+              - -postgres_db
+              - {{ .Values.postgresql.auth.database | quote }}
+              - -importers
+              - rpm
+              - -rpm_repo_path
+              - {{ (include "hashr.dataPath" .) }}/rpm/
+            env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgresql.v1.secretName" .Subcharts.postgresql }}
+                  key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
+            volumeMounts:
+            - name: hashrvolume
+              mountPath: {{ (include "hashr.dataPath" .) | quote }}
+          restartPolicy: Never
+          volumes:
+          - name: hashrvolume
+            persistentVolumeClaim:
+              claimName: {{ include "hashr.pvc.name"  . }}
+              readOnly: false
+{{- end }}

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-hashr-data-manager
+spec:
+  containers:
+  - name: hashr-data-manager
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    command: ["sh", "-c", "while true; do sleep 1800; done;"]
+    volumeMounts:
+    - name: hashrvolume
+      mountPath: {{ (include "hashr.dataPath" .) | quote }}
+  restartPolicy: Always
+  volumes:
+  - name: hashrvolume
+    persistentVolumeClaim:
+      claimName: {{ include "hashr.pvc.name"  . }}
+      readOnly: false

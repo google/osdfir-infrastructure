@@ -1,0 +1,250 @@
+## HashR Helm Chart
+## Please use this Helm chart for deploying HashR to a Kubernetes environment
+##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  ## Global Persistence Configuration
+  ##
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
+    ##
+    servicePort:
+  turbinia:
+    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
+    ##
+    servicePort:
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
+    ##
+    servicePort:
+  ## @param global.existingPVC Existing claim for HashR persistent volume (overrides `persistent.name`)
+  ##
+  existingPVC: ""
+  ## @param global.storageClass StorageClass for the HashR persistent volume (overrides `persistent.storageClass`)
+  ##
+  storageClass: ""
+## @section HashR image configuration
+##
+image:
+  ## @param image.repository HashR image repository
+  ##
+  repository: us-docker.pkg.dev/osdfir-registry/hashr/release/hashr
+  ## @param image.pullPolicy HashR image pull policy
+  ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+  ##
+  pullPolicy: IfNotPresent
+  ## @param image.tag Overrides the image tag whose default is the chart appVersion
+  ##
+  tag: latest
+  ## @param image.imagePullSecrets Specify secrets if pulling from a private repository
+  ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## e.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+## @section HashR Configuration Paramters
+##
+hashr:
+  ## @section Enable/Disable HashR importers
+  ##
+  importers:
+    ## List of HashR importers and their settings
+    ##
+    aws:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#aws
+      ## @param hashr.importers.aws.enabled Enables the AWS importer
+      ##
+      enabled: false
+      ## @param hashr.importers.aws.schedule sets the CronJob schedule times
+      ##
+      # At 09:00 on Monday
+      schedule: "0 9 * * 1"
+    gcp:
+      # Ensure you have the correct setup before enabling this importer:
+      # https://github.com/google/hashr?tab=readme-ov-file#gcp-google-cloud-platform
+      # IMPORTANT: Store your SA key in the hashrvolume via kubectl cp!
+      # e.g. kubectl cp ~/hashr-sa-private-key.json hashr-data-manager:/mnt/hashrvolume/data/creds/hashr-sa-private-key.json
+      ## @param hashr.importers.gcp.enabled Enables the GCP importer
+      ##
+      enabled: false
+      ## @param hashr.importers.gcp.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Monday
+      schedule: "0 3 * * 1"
+      ## @param hashr.importers.gcp.gcp_projects sets a comma separated list of cloud projects containing disk images
+      ##
+      gcp_projects: ""
+      ## @param hashr.importers.gcp.hashr_gcp_project sets GCP project that will be used to store copy of disk images for processing and also run Cloud Build
+      ##
+      hashr_gcp_project: ""
+      ## @param hashr.importers.gcp.hashr_gcs_bucket sets GCS bucket that will be used to store output of Cloud Build (disk images in .tar.gz format)
+      ##
+      hashr_gcs_bucket: ""
+    targz:
+      # https://github.com/google/hashr?tab=readme-ov-file#targz
+      ## @param hashr.importers.targz.enabled Enables the tar.gz importer
+      ##
+      enabled: false
+      ## @param hashr.importers.targz.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Tuesday
+      schedule: "0 3 * * 2"
+    windows:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#windows
+      ## @param hashr.importers.windows.enabled Enables the Windows importer
+      ##
+      enabled: false
+      ## @param hashr.importers.windows.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Wednesday
+      schedule: "0 3 * * 3"
+    wsus:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#wsus
+      ## @param hashr.importers.wsus.enabled Enables the WSUS importer
+      ##
+      enabled: false
+      ## @param hashr.importers.wsus.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Thursday
+      schedule: "0 3 * * 4"
+    rpm:
+      # https://github.com/google/hashr?tab=readme-ov-file#rpm
+      ## @param hashr.importers.rpm.enabled Enables the RPM importer
+      ##
+      enabled: false
+      ## @param hashr.importers.rpm.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Friday
+      schedule: "0 3 * * 5"
+    zip:
+      # https://github.com/google/hashr?tab=readme-ov-file#zip-and-other-zip-like-formats
+      ## @param hashr.importers.zip.enabled Enables the ZIP importer
+      ##
+      enabled: false
+      ## @param hashr.importers.zip.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Saturday
+      schedule: "0 3 * * 6"
+    gcr:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#gcr-google-container-registry
+      ## @param hashr.importers.gcr.enabled Enables the GCR importer
+      ##
+      enabled: false
+      ## @param hashr.importers.gcr.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Sunday
+      schedule: "0 3 * * 7"
+    iso9660:
+      # https://github.com/google/hashr?tab=readme-ov-file#iso-9660
+      ## @param hashr.importers.iso9660.enabled Enables the iso9660 importer
+      ##
+      enabled: false
+      ## @param hashr.importers.iso9660.schedule sets the CronJob schedule times
+      ##
+      # At 15:00 on Monday
+      schedule: "0 15 * * 1"
+    deb:
+      # https://github.com/google/hashr?tab=readme-ov-file#deb
+      ## @param hashr.importers.deb.enabled Enables the DEB importer
+      ##
+      enabled: false
+      ## @param hashr.importers.deb.schedule sets the CronJob schedule times
+      ##
+      # At 15:00 on Tuesday
+      schedule: "0 15 * * 2"
+## Persistence Storage Parameters
+##
+persistence:
+  ## @param persistence.name HashR persistent volume name
+  ##
+  name: hashrvolume
+  ## @param persistence.size HashR persistent volume size
+  ##
+  size: 50Gi
+  ## @param persistence.storageClass PVC Storage Class for HashR volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ##
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for HashR volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ##
+  accessModes:
+    - ReadWriteOnce
+## @section Postgresql Configuration Parameters
+## IMPORTANT: Postgresql is deployed with Auth enabled by default
+## To see a full list of available values, run helm show values charts/postgresql*
+##
+postgresql:
+  ## @param postgresql.enabled Enables the Postgresql deployment
+  ##
+  enabled: true
+  ## @param postgresql.architecture PostgreSQL architecture (`standalone` or `replication`)
+  ##
+  architecture: standalone
+  ## PostgreSQL Authentication parameters
+  ##
+  auth:
+    ## @param postgresql.auth.username Name for a custom PostgreSQL user to create
+    ##
+    username: "postgres"
+    ## @param postgresql.auth.database Name for a custom PostgreSQL database to create (overrides `auth.database`)
+    ##
+    database: "hashr"
+  ## PostgreSQL Primary configuration parameters
+  ##
+  primary:
+    ## PostgreSQL Primary service configuration parameters
+    ##
+    service:
+      ## @param postgresql.primary.service.type PostgreSQL primary service type
+      ##
+      type: ClusterIP
+      ## @param postgresql.primary.service.ports.postgresql PostgreSQL primary service port
+      ##
+      ports:
+        postgresql: 5432
+    ## PostgreSQL Primary persistence configuration
+    ##
+    persistence:
+      ## @param postgresql.primary.persistence.size PostgreSQL Persistent Volume size
+      ##
+      size: 10Gi
+    ## PostgreSQL primary resource requests and limits
+    ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+    ## @param postgresql.primary.resources.requests.memory The requested memory for the PostgreSQL primary containers
+    ##
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi

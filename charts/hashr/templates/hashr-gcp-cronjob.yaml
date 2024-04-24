@@ -1,0 +1,62 @@
+{{- if .Values.hashr.importers.gcp.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-hashr-gcp
+spec:
+  schedule: {{ .Values.hashr.importers.gcp.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hashr-gcp
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            args:
+              - --logtostderr=1
+              - -storage
+              - postgres
+              - -exporters
+              - postgres
+              - -postgres_host
+              - {{ include "common.names.fullname" (dict "Chart" (dict "Name" "postgresql") "Release" .Release "Values" .Values.postgresql) }}
+              - -postgres_port
+              - {{ .Values.postgresql.primary.service.ports.postgresql | quote }}
+              - -postgres_user
+              - {{ .Values.postgresql.auth.username | quote }}
+              - -postgres_password
+              - "$(POSTGRES_PASSWORD)"
+              - -postgres_db
+              - {{ .Values.postgresql.auth.database | quote }}
+              - -importers
+              - GCP
+              - -gcp_projects
+              - {{ .Values.hashr.importers.gcp.gcp_projects | quote }}
+              - -hashr_gcp_project
+              - {{ .Values.hashr.importers.gcp.hashr_gcp_project | quote }}
+              - -hashr_gcs_bucket
+              - {{ .Values.hashr.importers.gcp.hashr_gcs_bucket | quote }}
+            env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              # Store your SA key in the hashrvolume/creds/ folder via "kubectl cp"!
+              # chown 999:1000 hashr-sa-private-key.json to prevent permission issues
+              value: {{ (include "hashr.dataPath" .) }}/creds/hashr-sa-private-key.json
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgresql.v1.secretName" .Subcharts.postgresql }}
+                  key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
+            volumeMounts:
+            - name: hashrvolume
+              mountPath: {{ (include "hashr.dataPath" .) | quote }}
+          restartPolicy: Never
+          volumes:
+          - name: hashrvolume
+            persistentVolumeClaim:
+              claimName: {{ include "hashr.pvc.name"  . }}
+              readOnly: false
+{{- end }}
