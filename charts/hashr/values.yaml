@@ -28,10 +28,10 @@ global:
     ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
     ##
     servicePort:
-  ## @param global.existingPVC Existing claim for Timesketch persistent volume (overrides `persistent.name`)
+  ## @param global.existingPVC Existing claim for HashR persistent volume (overrides `persistent.name`)
   ##
   existingPVC: ""
-  ## @param global.storageClass StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)
+  ## @param global.storageClass StorageClass for the HashR persistent volume (overrides `persistent.storageClass`)
   ##
   storageClass: ""
 ## @section HashR image configuration
@@ -57,50 +57,84 @@ image:
 ## @section HashR Configuration Paramters
 ##
 hashr:
-  ## @param hashr.schedule Sets the cronjob schedule for running HashR
-  ##
-  schedule: "*/3 * * * *"
   ## @section Enable/Disable HashR importers
   ##
   importers:
-    ## List of importers: GCP,targz,windows,wsus,deb,rpm,zip,gcr,iso9660
-    ## @param hashr.importers.gcp Enables the GCP importer
+    ## List of HashR importers and their settings
     ##
-    gcp: false
-    ## @param hashr.importers.targz Enables the tar.gz importer
-    ##
-    targz: false
-    ## @param hashr.importers.windows Enables the Windows importer
-    ##
-    windows: false
-    ## @param hashr.importers.wsus Enables the WSUS importer
-    ##
-    wsus: false
-    ## @param hashr.importers.rpm Enables the RPM importer
-    ##
-    rpm: false
-    ## @param hashr.importers.zip Enables the ZIP importer
-    ##
-    zip: false
-    ## @param hashr.importers.gcr Enables the GCR importer
-    ##
-    gcr: false
-    ## @param hashr.importers.iso9660 Enables the iso9660 importer
-    ##
-    iso9660: false
-    ## @param hashr.importers.deb Enables the DEB importer
-    ##
-    deb: true
+    gcp:
+      ## @param hashr.importers.gcp.enabled Enables the GCP importer
+      ##
+      enabled: false
+      ## @param hashr.importers.gcp.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 1" # At 03:00 on Monday
+    targz:
+      ## @param hashr.importers.targz.enabled Enables the tar.gz importer
+      ##
+      enabled: false
+      ## @param hashr.importers.targz.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 2" # At 03:00 on Tuesday
+    windows:
+      ## @param hashr.importers.windows.enabled Enables the Windows importer
+      ##
+      enabled: false
+      ## @param hashr.importers.windows.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 3" # At 03:00 on Wednesday
+    wsus:
+      ## @param hashr.importers.wsus.enabled Enables the WSUS importer
+      ##
+      enabled: false
+      ## @param hashr.importers.wsus.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 4" # At 03:00 on Thursday
+    rpm:
+      ## @param hashr.importers.rpm.enabled Enables the RPM importer
+      ##
+      enabled: false
+      ## @param hashr.importers.rpm.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 5" # At 03:00 on Friday
+    zip:
+      ## @param hashr.importers.zip.enabled Enables the ZIP importer
+      ##
+      enabled: false
+      ## @param hashr.importers.zip.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 6" # At 03:00 on Saturday
+    gcr:
+      ## @param hashr.importers.gcr.enabled Enables the GCR importer
+      ##
+      enabled: false
+      ## @param hashr.importers.gcr.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 3 * * 7" # At 03:00 on Sunday
+    iso9660:
+      ## @param hashr.importers.iso9660.enabled Enables the iso9660 importer
+      ##
+      enabled: false
+      ## @param hashr.importers.iso9660.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 15 * * 1" # At 15:00 on Monday
+    deb:
+      ## @param hashr.importers.deb.enabled Enables the DEB importer
+      ##
+      enabled: false
+      ## @param hashr.importers.deb.schedule sets the CronJob schedule times
+      ##
+      schedule: "0 15 * * 2" # At 15:00 on Tuesday
 ## Persistence Storage Parameters
 ##
 persistence:
-  ## @param persistence.name Timesketch persistent volume name
+  ## @param persistence.name HashR persistent volume name
   ##
   name: hashrvolume
-  ## @param persistence.size Timesketch persistent volume size
+  ## @param persistence.size HashR persistent volume size
   ##
-  size: 2Gi
-  ## @param persistence.storageClass PVC Storage Class for Timesketch volume
+  size: 50Gi
+  ## @param persistence.storageClass PVC Storage Class for HashR volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
@@ -108,7 +142,7 @@ persistence:
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
   storageClass: ""
-  ## @param persistence.accessModes PVC Access Mode for Timesketch volume
+  ## @param persistence.accessModes PVC Access Mode for HashR volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
@@ -152,7 +186,7 @@ postgresql:
     persistence:
       ## @param postgresql.primary.persistence.size PostgreSQL Persistent Volume size
       ##
-      size: 2Gi
+      size: 10Gi
     ## PostgreSQL primary resource requests and limits
     ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
     ## @param postgresql.primary.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
