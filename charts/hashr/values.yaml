@@ -84,13 +84,13 @@ hashr:
       ##
       # At 03:00 on Monday
       schedule: "0 3 * * 1"
-      ## @param hashr.importers.gcp.gcpProjects sets a comma separated list of cloud projects containing disk images
+      ## @param hashr.importers.gcp.gcp_projects sets a comma separated list of cloud projects containing disk images
       ##
       gcp_projects: ""
-      ## @param hashr.importers.gcp.hashrGCPProject sets GCP project that will be used to store copy of disk images for processing and also run Cloud Build
+      ## @param hashr.importers.gcp.hashr_gcp_project sets GCP project that will be used to store copy of disk images for processing and also run Cloud Build
       ##
       hashr_gcp_project: ""
-      ## @param hashr.importers.gcp.hashrGCSBucket sets GCS bucket that will be used to store output of Cloud Build (disk images in .tar.gz format)
+      ## @param hashr.importers.gcp.hashr_gcs_bucket sets GCS bucket that will be used to store output of Cloud Build (disk images in .tar.gz format)
       ##
       hashr_gcs_bucket: ""
     targz:
