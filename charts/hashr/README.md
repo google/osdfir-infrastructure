@@ -113,6 +113,73 @@ Please be cautious before doing it.
 
 ## Parameters
 
+### Global parameters
+
+| Name                            | Description                                                                                  | Value   |
+| ------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `false` |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `nil`   |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `false` |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `nil`   |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `nil`   |
+| `global.existingPVC`            | Existing claim for HashR persistent volume (overrides `persistent.name`)                     | `""`    |
+| `global.storageClass`           | StorageClass for the HashR persistent volume (overrides `persistent.storageClass`)           | `""`    |
+
+### HashR image configuration
+
+| Name                     | Description                                                   | Value                                                   |
+| ------------------------ | ------------------------------------------------------------- | ------------------------------------------------------- |
+| `image.repository`       | HashR image repository                                        | `us-docker.pkg.dev/osdfir-registry/hashr/release/hashr` |
+| `image.pullPolicy`       | HashR image pull policy                                       | `IfNotPresent`                                          |
+| `image.tag`              | Overrides the image tag whose default is the chart appVersion | `latest`                                                |
+| `image.imagePullSecrets` | Specify secrets if pulling from a private repository          | `[]`                                                    |
+
+### HashR Configuration Paramters
+
+
+### Enable/Disable HashR importers
+
+| Name                               | Description                        | Value               |
+| ---------------------------------- | ---------------------------------- | ------------------- |
+| `hashr.importers.gcp.enabled`      | Enables the GCP importer           | `false`             |
+| `hashr.importers.gcp.schedule`     | sets the CronJob schedule times    | `0 3 * * 1`         |
+| `hashr.importers.targz.enabled`    | Enables the tar.gz importer        | `false`             |
+| `hashr.importers.targz.schedule`   | sets the CronJob schedule times    | `0 3 * * 2`         |
+| `hashr.importers.windows.enabled`  | Enables the Windows importer       | `false`             |
+| `hashr.importers.windows.schedule` | sets the CronJob schedule times    | `0 3 * * 3`         |
+| `hashr.importers.wsus.enabled`     | Enables the WSUS importer          | `false`             |
+| `hashr.importers.wsus.schedule`    | sets the CronJob schedule times    | `0 3 * * 4`         |
+| `hashr.importers.rpm.enabled`      | Enables the RPM importer           | `false`             |
+| `hashr.importers.rpm.schedule`     | sets the CronJob schedule times    | `0 3 * * 5`         |
+| `hashr.importers.zip.enabled`      | Enables the ZIP importer           | `false`             |
+| `hashr.importers.zip.schedule`     | sets the CronJob schedule times    | `0 3 * * 6`         |
+| `hashr.importers.gcr.enabled`      | Enables the GCR importer           | `false`             |
+| `hashr.importers.gcr.schedule`     | sets the CronJob schedule times    | `0 3 * * 7`         |
+| `hashr.importers.iso9660.enabled`  | Enables the iso9660 importer       | `false`             |
+| `hashr.importers.iso9660.schedule` | sets the CronJob schedule times    | `0 15 * * 1`        |
+| `hashr.importers.deb.enabled`      | Enables the DEB importer           | `false`             |
+| `hashr.importers.deb.schedule`     | sets the CronJob schedule times    | `0 15 * * 2`        |
+| `persistence.name`                 | HashR persistent volume name       | `hashrvolume`       |
+| `persistence.size`                 | HashR persistent volume size       | `50Gi`              |
+| `persistence.storageClass`         | PVC Storage Class for HashR volume | `""`                |
+| `persistence.accessModes`          | PVC Access Mode for HashR volume   | `["ReadWriteOnce"]` |
+
+### Postgresql Configuration Parameters
+
+| Name                                           | Description                                                                 | Value        |
+| ---------------------------------------------- | --------------------------------------------------------------------------- | ------------ |
+| `postgresql.enabled`                           | Enables the Postgresql deployment                                           | `true`       |
+| `postgresql.architecture`                      | PostgreSQL architecture (`standalone` or `replication`)                     | `standalone` |
+| `postgresql.auth.username`                     | Name for a custom PostgreSQL user to create                                 | `postgres`   |
+| `postgresql.auth.database`                     | Name for a custom PostgreSQL database to create (overrides `auth.database`) | `hashr`      |
+| `postgresql.primary.service.type`              | PostgreSQL primary service type                                             | `ClusterIP`  |
+| `postgresql.primary.service.ports.postgresql`  | PostgreSQL primary service port                                             | `5432`       |
+| `postgresql.primary.persistence.size`          | PostgreSQL Persistent Volume size                                           | `10Gi`       |
+| `postgresql.primary.resources.limits`          | The resources limits for the PostgreSQL primary containers                  | `{}`         |
+| `postgresql.primary.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers                     | `250m`       |
+| `postgresql.primary.resources.requests.memory` | The requested memory for the PostgreSQL primary containers                  | `256Mi`      |
+
 
 
 ## Persistence
