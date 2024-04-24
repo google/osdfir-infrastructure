@@ -70,7 +70,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.aws.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 1" # At 03:00 on Monday
+      # At 03:00 on Monday
+      schedule: "0 3 * * 1"
     gcp:
       # Ensure you have the correct setup before enabling this importer:
       # https://github.com/google/hashr?tab=readme-ov-file#gcp-google-cloud-platform
@@ -81,7 +82,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.gcp.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 1" # At 03:00 on Monday
+      # At 03:00 on Monday
+      schedule: "0 3 * * 1"
       ## @param hashr.importers.gcp.gcpProjects sets a comma separated list of cloud projects containing disk images
       ##
       gcp_projects: ""
@@ -98,7 +100,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.targz.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 2" # At 03:00 on Tuesday
+      # At 03:00 on Tuesday
+      schedule: "0 3 * * 2"
     windows:
       # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#windows
@@ -107,7 +110,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.windows.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 3" # At 03:00 on Wednesday
+      # At 03:00 on Wednesday
+      schedule: "0 3 * * 3"
     wsus:
       # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#wsus
@@ -116,7 +120,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.wsus.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 4" # At 03:00 on Thursday
+      # At 03:00 on Thursday
+      schedule: "0 3 * * 4"
     rpm:
       # https://github.com/google/hashr?tab=readme-ov-file#rpm
       ## @param hashr.importers.rpm.enabled Enables the RPM importer
@@ -124,7 +129,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.rpm.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 5" # At 03:00 on Friday
+      # At 03:00 on Friday
+      schedule: "0 3 * * 5"
     zip:
       # https://github.com/google/hashr?tab=readme-ov-file#zip-and-other-zip-like-formats
       ## @param hashr.importers.zip.enabled Enables the ZIP importer
@@ -132,7 +138,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.zip.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 6" # At 03:00 on Saturday
+      # At 03:00 on Saturday
+      schedule: "0 3 * * 6"
     gcr:
       # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#gcr-google-container-registry
@@ -141,7 +148,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.gcr.schedule sets the CronJob schedule times
       ##
-      schedule: "0 3 * * 7" # At 03:00 on Sunday
+      # At 03:00 on Sunday
+      schedule: "0 3 * * 7"
     iso9660:
       # https://github.com/google/hashr?tab=readme-ov-file#iso-9660
       ## @param hashr.importers.iso9660.enabled Enables the iso9660 importer
@@ -149,7 +157,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.iso9660.schedule sets the CronJob schedule times
       ##
-      schedule: "0 15 * * 1" # At 15:00 on Monday
+      # At 15:00 on Monday
+      schedule: "0 15 * * 1"
     deb:
       # https://github.com/google/hashr?tab=readme-ov-file#deb
       ## @param hashr.importers.deb.enabled Enables the DEB importer
@@ -157,7 +166,8 @@ hashr:
       enabled: false
       ## @param hashr.importers.deb.schedule sets the CronJob schedule times
       ##
-      schedule: "0 15 * * 2" # At 15:00 on Tuesday
+      # At 15:00 on Tuesday
+      schedule: "0 15 * * 2"
 ## Persistence Storage Parameters
 ##
 persistence:
