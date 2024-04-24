@@ -84,7 +84,7 @@ helm install my-release ../hashr -f values.yaml
 ## Add data for HashR to process
 
 The HashR CronJob has access to the Persistent Volume (PVC) at `/mnt/hashrvolume`.
-See the [Persistence](#Persistence) section for more details.
+See the [Persistence](#persistence) section for more details.
 
 Each importer that needs local files to procress (e.g. deb, zip, iso9660, etc)
 will look in a subfolder of `/mnt/hashrvolume/data/<importer>` for files to
@@ -94,7 +94,8 @@ To add data for processing use the `kubectl cp` command and the
 `hashr-data-manager` pod.
 
 Example:
-```
+
+```console
 kubectl cp <local PATH>/deb my-release-hashr-data-manager:/mnt/hashrvolume/data/
 ```
 

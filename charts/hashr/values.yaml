@@ -62,7 +62,8 @@ hashr:
   importers:
     ## List of HashR importers and their settings
     ##
-    aws: # TODO: Add cronjob file!
+    aws:
+      # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#aws
       ## @param hashr.importers.aws.enabled Enables the AWS importer
       ##
@@ -98,7 +99,8 @@ hashr:
       ## @param hashr.importers.targz.schedule sets the CronJob schedule times
       ##
       schedule: "0 3 * * 2" # At 03:00 on Tuesday
-    windows:  # TODO: Add cronjob file!
+    windows:
+      # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#windows
       ## @param hashr.importers.windows.enabled Enables the Windows importer
       ##
@@ -106,7 +108,8 @@ hashr:
       ## @param hashr.importers.windows.schedule sets the CronJob schedule times
       ##
       schedule: "0 3 * * 3" # At 03:00 on Wednesday
-    wsus:  # TODO: Add cronjob file!
+    wsus:
+      # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#wsus
       ## @param hashr.importers.wsus.enabled Enables the WSUS importer
       ##
@@ -130,7 +133,8 @@ hashr:
       ## @param hashr.importers.zip.schedule sets the CronJob schedule times
       ##
       schedule: "0 3 * * 6" # At 03:00 on Saturday
-    gcr:  # TODO: Add cronjob file!
+    gcr:
+      # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#gcr-google-container-registry
       ## @param hashr.importers.gcr.enabled Enables the GCR importer
       ##
