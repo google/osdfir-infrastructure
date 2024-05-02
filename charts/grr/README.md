@@ -170,6 +170,7 @@ echo "LOADBALANCER_CERT: $LOADBALANCER_CERT"
 echo "MYSQL_DB_ADDRESS: $MYSQL_DB_ADDRESS"
 echo "PROJECT_ID: $PROJECT_ID"
 echo "REGION: $REGION"
+echo "ZONE: $ZONE"
 ```
 
 #### 2.2.1. Build the GRR daemon container image
@@ -259,7 +260,7 @@ gcloud compute backend-services list
 gcloud compute backend-services add-backend l7-xlb-backend-service \
   --global \
   --network-endpoint-group=k8s-fleetspeak-frontend-neg \
-  --network-endpoint-group-zone=europe-west1-b \
+  --network-endpoint-group-zone=$ZONE \
   --balancing-mode RATE \
   --max-rate-per-endpoint 5
 ```
@@ -343,7 +344,7 @@ Here is the full set of steps to do a sequential build back:
 gcloud compute backend-services remove-backend l7-xlb-backend-service \
   --global \
   --network-endpoint-group=k8s-fleetspeak-frontend-neg \
-  --network-endpoint-group-zone=europe-west1-b
+  --network-endpoint-group-zone=$ZONE
 
 # Remove the GRR client (daemonset)
 # Make sure you substitue the node name with your value
