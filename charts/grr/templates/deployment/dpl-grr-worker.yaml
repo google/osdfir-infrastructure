@@ -31,6 +31,10 @@ spec:
       containers:
       - name: grr-worker
         image: {{ .Values.grr.worker.image }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
         ports:
         - containerPort: {{ .Values.prometheus.metricsPort }}
           name: metrics
@@ -51,4 +55,4 @@ spec:
             path: server.local.yaml
       - name: cert-volume
         secret:
-          secretName: sec-grr-frontend-cert
+          secretName: sec-grr-executable-signing-cert

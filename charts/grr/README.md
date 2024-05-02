@@ -175,6 +175,13 @@ echo "REGION: $REGION"
 #### 2.2.1. Build the GRR daemon container image
 
 ```console
+cd $REPO
+# Generate key pair files, which is linked in the GRR client and
+# server configs (client.yaml, server.local.yaml).
+openssl genrsa -out "certs/executable-signing.key"
+openssl rsa -in "certs/executable-signing.key" -pubout -out "certs/executable-signing.crt"
+
+# Build the client container image
 cd $REPO/charts/grr/containers/grr-daemon
 export FLEETSPEAK_FRONTEND_PORT=443
 sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto

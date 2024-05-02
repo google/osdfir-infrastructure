@@ -49,6 +49,10 @@ spec:
       containers:
       - name: fleetspeak-frontend
         image: {{ .Values.fleetspeak.frontend.image }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
         ports:
         - containerPort: {{ .Values.fleetspeak.frontend.listenPort }}
           name: frontend

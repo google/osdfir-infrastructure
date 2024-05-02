@@ -31,6 +31,10 @@ spec:
       containers:
       - name: grr-admin
         image: {{ .Values.grr.admin.image }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
         ports:
         - containerPort: {{ .Values.grr.admin.listenPort }}
           name: admin
@@ -53,4 +57,4 @@ spec:
             path: server.local.yaml
       - name: cert-volume
         secret:
-          secretName: sec-grr-frontend-cert
+          secretName: sec-grr-executable-signing-cert

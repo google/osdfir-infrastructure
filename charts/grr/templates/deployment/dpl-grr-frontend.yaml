@@ -31,6 +31,10 @@ spec:
       containers:
       - name: grr-frontend
         image: {{ .Values.grr.frontend.image }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
         ports:
         - containerPort: {{ .Values.grr.frontend.listenPort }}
           name: frontend
@@ -53,4 +57,4 @@ spec:
             path: server.local.yaml
       - name: cert-volume
         secret:
-          secretName: sec-grr-frontend-cert
+          secretName: sec-grr-executable-signing-cert
