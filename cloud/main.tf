@@ -273,7 +273,7 @@ resource "google_container_node_pool" "grr-node-pool" {
     }
 
     # preemptible  = true
-    machine_type = "n1-standard-1"
+    machine_type = "n2-standard-4"
     tags         = ["grr-pool-node", "allow-health-check"]
     metadata = {
       disable-legacy-endpoints = "true"

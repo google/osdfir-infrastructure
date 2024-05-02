@@ -175,11 +175,13 @@ echo "REGION: $REGION"
 #### 2.2.1. Build the GRR daemon container image
 
 ```console
-cd $REPO
+cd $REPO/charts/grr
 # Generate key pair files, which is linked in the GRR client and
 # server configs (client.yaml, server.local.yaml).
 openssl genrsa -out "certs/executable-signing.key"
 openssl rsa -in "certs/executable-signing.key" -pubout -out "certs/executable-signing.crt"
+ln ../../certs/executable-signing.crt config/
+ln ../../certs/executable-signing.key .
 
 # Build the client container image
 cd $REPO/charts/grr/containers/grr-daemon

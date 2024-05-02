@@ -14,7 +14,7 @@
 FROM ghcr.io/google/grr:latest AS grr
 COPY config /config
 COPY grr-client-config.yaml /config/grr.client.yaml
-COPY ../../certs/executable-signing.crt /config/
+COPY executable-signing.key /config/
 
 RUN mkdir /client_installers && \
     grr_config_updater repack_clients \
@@ -28,7 +28,6 @@ WORKDIR /
 
 COPY config /config
 COPY --from=grr /config/grr.client.yaml /config/grr.client.yaml
-COPY ../../certs/executable-signing.crt /config/
 
 COPY --from=grr /client_installers/grr_*_amd64.deb .
 RUN dpkg -i grr_*_amd64.deb && rm grr_*_amd64.deb
