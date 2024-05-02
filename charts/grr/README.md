@@ -181,11 +181,11 @@ cd $REPO/charts/grr
 # server configs (client.yaml, server.local.yaml).
 openssl genrsa -out "certs/executable-signing.key"
 openssl rsa -in "certs/executable-signing.key" -pubout -out "certs/executable-signing.crt"
-ln ../../certs/executable-signing.crt config/
-ln ../../certs/executable-signing.key .
 
 # Build the client container image
 cd $REPO/charts/grr/containers/grr-daemon
+ln ../../certs/executable-signing.crt config/
+ln ../../certs/executable-signing.key .
 export FLEETSPEAK_FRONTEND_PORT=443
 sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
 sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
@@ -340,15 +340,15 @@ For such cases just build back as far as needed to make your adjustments and the
 Here is the full set of steps to do a sequential build back:
 
 ```console
+# Remove the GRR client (daemonset)
+# Make sure you substitute the node name with your value
+kubectl label nodes --overwrite gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g grrclient=
+
 # Rempove the NEG from the Backend Service
 gcloud compute backend-services remove-backend l7-xlb-backend-service \
   --global \
   --network-endpoint-group=k8s-fleetspeak-frontend-neg \
   --network-endpoint-group-zone=$ZONE
-
-# Remove the GRR client (daemonset)
-# Make sure you substitue the node name with your value
-kubectl label nodes --overwrite gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g grrclient=
 ```
 
 ### 3.3. Uninstalling the Chart
