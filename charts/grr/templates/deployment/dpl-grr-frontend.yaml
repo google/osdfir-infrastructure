@@ -31,10 +31,12 @@ spec:
       containers:
       - name: grr-frontend
         image: {{ .Values.grr.frontend.image }}
+        {{- if .Values.global.useResourceRequests }}
         resources:
           requests:
             memory: "2Gi"
             cpu: "1000m"
+        {{- end }}
         ports:
         - containerPort: {{ .Values.grr.frontend.listenPort }}
           name: frontend

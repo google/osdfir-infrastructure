@@ -31,10 +31,12 @@ spec:
       containers:
       - name: fleetspeak-admin
         image: {{ .Values.fleetspeak.admin.image }}
+        {{- if .Values.global.useResourceRequests }}
         resources:
           requests:
             memory: "2Gi"
             cpu: "1000m"
+        {{- end }}
         ports:
         - containerPort: {{ .Values.fleetspeak.admin.listenPort }}
           name: admin

@@ -36,10 +36,12 @@ spec:
       containers:
       - name: grr
         image: {{ .Values.grr.daemon.image }}
+        {{- if .Values.global.useResourceRequests }}
         resources:
           requests:
             memory: "150Mi"
             cpu: "150m"
+        {{- end }}
         imagePullPolicy: {{ .Values.grr.daemon.imagePullPolicy }}
         # Making it a privileged container. This way the processes within
         # the container get almost the same privileges as those outside the

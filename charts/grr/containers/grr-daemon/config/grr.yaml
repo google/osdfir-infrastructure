@@ -1,5 +1,5 @@
 PrivateKeys.executable_signing_private_key: "%(/config/executable-signing.key|file)"
-Client.executable_signing_public_key: "%(/config/executable-signing.crt|file)"
+Client.executable_signing_public_key: "%(/config/executable-signing.pub|file)"
 # Configuration for repacking client templates:
 Client.fleetspeak_enabled: true
 ClientBuilder.fleetspeak_bundled: true

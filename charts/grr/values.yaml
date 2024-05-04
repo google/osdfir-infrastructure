@@ -7,6 +7,9 @@ global:
   ## @param global.selfManagedMysql Enables a mySQL DB containter to be deployed into the cluster.
   ##
   selfManagedMysql: true
+  ## @param global.useResourceRequests Allocates resources to the pods.
+  ##
+  useResourceRequests: false
 
 ## @section Fleetspeak parameters
 ##
@@ -76,14 +79,10 @@ fleetspeak:
 ## @section GRR parameters
 ##
 grr:
-  ## @param grr.generateCert Enables the generation of self-signed GRR x509 certificate.
+  ## @param grr.generateExecutableSigningCert Enables the generation of self-signed executable signging certificate.
   ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
   ##
-  generateCert: true
-  ## @param grr.subjectCommonName Sets the GRR x509 certificate subject common name.
-  ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
-  ##
-  subjectCommonName: "grr-frontend"
+  generateExecutableSigningCert: true
 
   admin:
     ## @param grr.admin.image Sets the GRR admin container image to use.

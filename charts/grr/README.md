@@ -94,14 +94,28 @@ sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.tex
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
 ```
 
-#### 1.2.2. Build the GRR client Docker container
+#### 1.2.2. Fetch the executable signing keys
+
+```console
+# Fetch the certificate
+kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.crt}' | \
+  base64 --decode > executable-signing.crt
+# Extract the public key
+openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
+
+# Fetch the private key
+kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.key}’ | \
+  base64 --decode > config/executable-signing.key
+```
+
+#### 1.2.3. Build the GRR client Docker container
 
 ```console
 eval $(minikube docker-env)
 docker build -t grr-daemon:v0.1 .
 ```
 
-#### 1.2.3. Deploy the GRR client DaemonSet
+#### 1.2.4. Deploy the GRR client DaemonSet
 
 ```console
 kubectl label nodes minikube grrclient=installed
@@ -173,36 +187,13 @@ echo "REGION: $REGION"
 echo "ZONE: $ZONE"
 ```
 
-#### 2.2.1. Build the GRR daemon container image
-
-```console
-cd $REPO/charts/grr
-# Generate key pair files, which is linked in the GRR client and
-# server configs (client.yaml, server.local.yaml).
-openssl genrsa -out "certs/executable-signing.key"
-openssl rsa -in "certs/executable-signing.key" -pubout -out "certs/executable-signing.crt"
-
-# Build the client container image
-cd $REPO/charts/grr/containers/grr-daemon
-ln ../../certs/executable-signing.crt config/
-ln ../../certs/executable-signing.key .
-export FLEETSPEAK_FRONTEND_PORT=443
-sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
-sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
-sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
-echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
-gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
-
-cd $REPO
-```
-
-#### 2.2.2. Fetch the GKE cluster credentials
+#### 2.2.1. Fetch the GKE cluster credentials
 
 ```console
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID
 ```
 
-#### 2.2.3. Set the default values for the GRR chart
+#### 2.2.2. Set the default values for the GRR chart
 
 > **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self-manage the MySQL database you can enable it by setting ```selfManagedMysql: true``` in the ```values-gcp.yaml``` configuration file. Make sure you adjust the ```MYSQL_DB_ADDRESS=mysql``` in the commands below accordingly.
 
@@ -212,13 +203,13 @@ sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.4. Install the Chart
+#### 2.2.3. Install the Chart
 
 ```console
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.5. Wait for all GRR pods to be in 'Running' status
+#### 2.2.4. Wait for all GRR pods to be in 'Running' status
 
 ```console
 # Check that all the pods are in the 'Running' status.
@@ -268,12 +259,44 @@ gcloud compute backend-services add-backend l7-xlb-backend-service \
 ### 2.4. Testing
 
 Let's go and test the setup.
-To do so we need three things:
+To do so we need four things:
 
-- Create a GRR client, and
+- Fetch the executable signing keys, and
+- Build the GRR client container image, and
+- Deploy the GRR client, and
 - Access to the GRR Admin UI
 
-#### 2.4.1. Deploy the GRR client
+#### 2.4.1. Fetch the executable signing keys
+
+```console
+cd $REPO/charts/grr/containers/grr-daemon
+
+# Fetch the certificate
+kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.crt}' | \
+  base64 --decode > executable-signing.crt
+# Extract the public key
+openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
+
+# Fetch the private key
+kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.key}’ | \
+  base64 --decode > config/executable-signing.key
+```
+
+#### 2.4.2. Build the GRR daemon container image
+
+```console
+# Build the client container image
+export FLEETSPEAK_FRONTEND_PORT=443
+sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
+sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
+sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
+echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
+gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
+
+cd $REPO
+```
+
+#### 2.4.3. Deploy the GRR client
 
 This will spin up a pod with the GRR client as a daemonset on the selected node.
 We can interact with in the next step.

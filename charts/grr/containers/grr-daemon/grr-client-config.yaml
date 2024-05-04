@@ -8,4 +8,4 @@ Logging.filename: /grr-client.log
 
 Config.writeback: /config/grr-client.local.yaml
 
-Client.executable_signing_public_key: "%(/config/executable-signing.crt|file)"
+Client.executable_signing_public_key: "%(/config/executable-signing.pub|file)"
