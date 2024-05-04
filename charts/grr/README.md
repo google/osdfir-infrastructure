@@ -105,7 +105,7 @@ openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signi
 
 # Fetch the private key
 kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.key}’ | \
-  base64 --decode > config/executable-signing.key
+  base64 --decode > executable-signing.key
 ```
 
 #### 1.2.3. Build the GRR client Docker container
@@ -279,7 +279,7 @@ openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signi
 
 # Fetch the private key
 kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.key}’ | \
-  base64 --decode > config/executable-signing.key
+  base64 --decode > executable-signing.key
 ```
 
 #### 2.4.2. Build the GRR daemon container image
