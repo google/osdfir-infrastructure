@@ -133,7 +133,7 @@ kubectl get daemonset
 You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
 
 ```console
-export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin --output jsonpath='{.spec.clusterIP}'
+export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin --output jsonpath='{.spec.clusterIP}')
 echo http://${GRR_ADMIN_IP}:8000
 ```
 
