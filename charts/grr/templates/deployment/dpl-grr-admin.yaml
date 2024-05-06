@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: grr-admin
-        prometheus: enabled
+        prometheus: grr-admin-ui
     spec:
       affinity:
         nodeAffinity:

@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: grr-worker
-        prometheus: enabled
+        prometheus: grr-worker
     spec:
       affinity:
         nodeAffinity:

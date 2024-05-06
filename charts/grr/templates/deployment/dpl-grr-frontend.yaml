@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: grr-frontend
-        prometheus: enabled
+        prometheus: grr-frontend
     spec:
       affinity:
         nodeAffinity:
