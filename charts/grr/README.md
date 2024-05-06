@@ -279,7 +279,7 @@ kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --templat
 openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
 
 # Fetch the private key
-kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.key}’ | \
+kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.key}' | \
   base64 --decode > executable-signing.key
 ```
 
@@ -328,7 +328,7 @@ kubectl get pods -n grr-client
 # grr-7cc7l 1/1   Running 0        13s
 ```
 
-#### 2.4.2. Create a tunnel to access the GRR Admin UI
+#### 2.4.4. Create a tunnel to access the GRR Admin UI
 
 ```console
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
