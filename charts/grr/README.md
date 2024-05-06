@@ -76,6 +76,7 @@ For test and demo purposes we will deploy a GRR client as a [Kubernetes DaemonSe
 To do so we will
 
 - first retrieve the values for some configuration parameters,
+- fetch the executable signing cert and key, and
 - then build a Docker container with the GRR client and its dependencies, and
 - finally deploy the container as a DaemonSet.
 
@@ -104,7 +105,7 @@ kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.da
 openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
 
 # Fetch the private key
-kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.key}’ | \
+kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.key}' | \
   base64 --decode > executable-signing.key
 ```
 
