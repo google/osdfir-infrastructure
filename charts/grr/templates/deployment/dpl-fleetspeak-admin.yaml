@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: fleetspeak-admin
-        prometheus: fleetspeak
+        prometheus: fleetspeak-admin
     spec:
       affinity:
         nodeAffinity:
