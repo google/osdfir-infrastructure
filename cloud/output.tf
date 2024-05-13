@@ -34,6 +34,11 @@ output "region" {
   value       = var.region
 }
 
+output "zone" {
+  description = "The Zone"
+  value       = var.zone
+}
+
 output "artifact_registry_id" {
   description = "The Artifact Registry ID"
   value       = google_artifact_registry_repository.artifact_registry.repository_id

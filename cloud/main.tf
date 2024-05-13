@@ -148,7 +148,7 @@ resource "google_compute_backend_service" "l7_xlb_backend_service" {
   protocol                = "HTTPS"
   port_name               = "fleetspeak-port"
   load_balancing_scheme   = "EXTERNAL"
-  timeout_sec             = 10
+  timeout_sec             = 800 # avoid timeouts interupting long running connection
   custom_request_headers  = ["X-Client-Cert-Hash:{client_cert_sha256_fingerprint}"]
   health_checks           = [google_compute_health_check.l7_xlb_hc.id]
 
@@ -229,7 +229,7 @@ resource "google_artifact_registry_repository" "artifact_registry" {
 ##########################################################################
 data "google_container_engine_versions" "gke_version" {
   location = var.region
-  version_prefix = "1.27."
+  version_prefix = "1.28."
 }
 
 resource "google_container_cluster" "osdfir_cluster" {
@@ -273,7 +273,7 @@ resource "google_container_node_pool" "grr-node-pool" {
     }
 
     # preemptible  = true
-    machine_type = "n1-standard-1"
+    machine_type = "n2-standard-4"
     tags         = ["grr-pool-node", "allow-health-check"]
     metadata = {
       disable-legacy-endpoints = "true"

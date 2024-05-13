@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: grr-admin
-        prometheus: enabled
+        prometheus: grr-admin
     spec:
       affinity:
         nodeAffinity:
@@ -31,6 +31,12 @@ spec:
       containers:
       - name: grr-admin
         image: {{ .Values.grr.admin.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+        {{- end }}
         ports:
         - containerPort: {{ .Values.grr.admin.listenPort }}
           name: admin
@@ -53,4 +59,4 @@ spec:
             path: server.local.yaml
       - name: cert-volume
         secret:
-          secretName: sec-grr-frontend-cert
+          secretName: sec-grr-executable-signing-cert

@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: grr-frontend
-        prometheus: enabled
+        prometheus: grr-frontend
     spec:
       affinity:
         nodeAffinity:
@@ -31,6 +31,12 @@ spec:
       containers:
       - name: grr-frontend
         image: {{ .Values.grr.frontend.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+        {{- end }}
         ports:
         - containerPort: {{ .Values.grr.frontend.listenPort }}
           name: frontend
@@ -53,4 +59,4 @@ spec:
             path: server.local.yaml
       - name: cert-volume
         secret:
-          secretName: sec-grr-frontend-cert
+          secretName: sec-grr-executable-signing-cert

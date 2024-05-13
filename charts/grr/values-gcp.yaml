@@ -7,6 +7,9 @@ global:
   ## @param global.selfManagedMysql Enables a mySQL DB containter to be deployed into the cluster.
   ##
   selfManagedMysql: false
+  ## @param global.useResourceRequests Allocates resources to the pods.
+  ##
+  useResourceRequests: true
 
 ## @section Fleetspeak parameters
 ##
@@ -27,7 +30,7 @@ fleetspeak:
   admin:
     ## @param fleetspeak.admin.image Sets the Fleetspeak admin container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:cl-616106372"
+    image: "ghcr.io/google/fleetspeak:latest"
     ## @param fleetspeak.admin.listenPort Sets the Fleetspeak admin listen port to use.
     ##
     listenPort: 4444
@@ -41,7 +44,7 @@ fleetspeak:
     healthCheckPort: 8080
     ## @param fleetspeak.frontend.image Sets the Fleetspeak fronend container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:cl-616106372"
+    image: "ghcr.io/google/fleetspeak:latest"
     ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
     ##
     listenPort: 4443
@@ -76,20 +79,16 @@ fleetspeak:
 ## @section GRR parameters
 ##
 grr:
-  ## @param grr.generateCert Enables the generation of self-signed GRR x509 certificate.
+  ## @param grr.generateExecutableSigningCert Enables the generation of self-signed executable signging certificate.
   ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
   ##
-  generateCert: true
+  generateExecutableSigningCert: true
   ## @param grr.namespace Sets the GRR namespace.
   ##
   namespace: "grr"
   ## @param grr.namespaceClient Sets the GRR client namespace.
   ##
   namespaceClient: "grr-client"
-  ## @param grr.subjectCommonName Sets the GRR x509 certificate subject common name.
-  ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
-  ##
-  subjectCommonName: "grr-frontend"
 
   admin:
     ## @param grr.admin.image Sets the GRR admin container image to use.

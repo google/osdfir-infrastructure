@@ -24,7 +24,7 @@ variable "region" {
 }
 
 variable "zone" {
-  description = "region"
+  description = "zone"
   default     = "europe-west1-b"
 }
 

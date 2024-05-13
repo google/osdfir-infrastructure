@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: fleetspeak-frontend
-        prometheus: enabled
+        prometheus: fleetspeak-frontend
     spec:
       affinity:
         nodeAffinity:
@@ -49,6 +49,12 @@ spec:
       containers:
       - name: fleetspeak-frontend
         image: {{ .Values.fleetspeak.frontend.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+        {{- end }}
         ports:
         - containerPort: {{ .Values.fleetspeak.frontend.listenPort }}
           name: frontend

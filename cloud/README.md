@@ -82,6 +82,7 @@ GKE_CLUSTER_LOCATION=$(terraform output -json | jq -r .gke_cluster_location.valu
 GKE_CLUSTER_NAME=$(terraform output -json | jq -r .gke_cluster_name.value)
 MYSQL_DB_ADDRESS=$(terraform output -json | jq -r .mysqldb_ip_address.value)
 REGION=$(terraform output -json | jq -r .region.value)
+ZONE=$(terraform output -json | jq -r .zone.value)
 LOADBALANCER_CERT=$(terraform output -json | jq .fleetspeak_cert_loadbalancer.value | sed 's/\\n/\\\\n/g')
 
 GRR_DAEMON_IMAGE=${REGION}-docker.pkg.dev/${PROJECT}/${ARTIFACT_REGISTRY}/grr-daemon
