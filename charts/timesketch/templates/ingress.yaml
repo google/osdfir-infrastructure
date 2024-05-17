@@ -37,3 +37,43 @@ spec:
       port:
         number: 80 # Should match the port used by the Service
 {{- end }}
+{{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:  {{ include "timesketch.fullname" . }}-ingress-ipv6
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "timesketch.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
+    {{- if .Values.ingress.gcp.managedCertificates }}
+    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
+    {{- end }}
+    {{- if (eq .Values.ingress.className "gce") }}
+    {{- if .Values.ingress.gcp.staticIPV6Name }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPV6Name }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
+    {{- else }}
+    {{- fail "A valied .Values.ingress.gcp.staticIPV6Name entry is required when using the GCE Ingress" }}
+    {{- end }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "timesketch.fullname" . }}-nginx
+                port:
+                  number: 80
+  defaultBackend:
+    service:
+      name: {{ include "timesketch.fullname" . }}-nginx # Name of the Service targeted by the Ingress
+      port:
+        number: 80 # Should match the port used by the Service
+{{- end }}
