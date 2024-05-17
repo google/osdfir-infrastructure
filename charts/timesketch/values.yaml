@@ -178,7 +178,7 @@ nginx:
     ##
     repository: nginx
     ## @param nginx.image.tag Nginx image tag
-    ## 
+    ##
     tag: 1.25.5-alpine-slim
     ## @param nginx.image.pullPolicy Nginx image pull policy
     ##
