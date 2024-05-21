@@ -21,9 +21,10 @@ COPY executable-signing.crt .
 COPY executable-signing.key /config/
 RUN openssl x509 -pubkey -noout -in executable-signing.crt > /config/executable-signing.pub
 
-RUN sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" /config/config.textproto.tmpl > /config/config.textproto && \
+RUN export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect $FLEETSPEAK_FRONTEND:$FLEETSPEAK_FRONTEND_PORT< /dev/null | openssl x509 -outform pem | sed ':a;N;$!ba;s/\n/\\\\n/g')
+    sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" /config/config.textproto.tmpl > /config/config.textproto && \
     sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" /config/config.textproto && \
-    sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$TRUSTED_CERTIFICATES'g" /config/config.textproto && \
+    sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$FLEETSPEAK_CERT'g" /config/config.textproto && \
     echo 'client_certificate_header: "client-certificate"' >> /config/config.textproto
 
 RUN mkdir /client_installers && \
