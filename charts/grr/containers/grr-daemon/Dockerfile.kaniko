@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 FROM ghcr.io/google/grr:latest AS grr
+WORKDIR /
+
 COPY config /config
 COPY grr-client-config.yaml /config/grr.client.yaml
 
@@ -19,12 +21,15 @@ COPY executable-signing.crt .
 COPY executable-signing.key /config/
 RUN openssl x509 -pubkey -noout -in executable-signing.crt > /config/executable-signing.pub
 
+RUN sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" /config/config.textproto.tmpl > /config/config.textproto && \
+    sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" /config/config.textproto && \
+    sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$TRUSTED_CERTIFICATES'g" /config/config.textproto && \
+    echo 'client_certificate_header: "client-certificate"' >> /config/config.textproto
+
 RUN mkdir /client_installers && \
     grr_config_updater repack_clients \
       --secondary_configs /config/grr.yaml \
       --noupload
-
-WORKDIR /
 
 FROM ubuntu:22.04
 WORKDIR /
