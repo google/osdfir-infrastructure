@@ -639,6 +639,45 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-05-22T17:39:52.07877527Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 15.3.2
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.3.2
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts/
+      version: 2.20.0
+    description: A Helm chart for Timesketch Kubernetes deployments.
+    digest: fa885cdfd77e110a05986f72f54375da584df19161e0662f1683580dc6de2b93
+    home: https://timesketch.org/
+    icon: https://raw.githubusercontent.com/google/timesketch/master/timesketch/frontend-ng/dist/timesketch-color.png
+    keywords:
+    - timesketch
+    - dfir
+    - analysis
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: timesketch
+    sources:
+    - https://github.com/google/timesketch
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/timesketch-1.0.3/timesketch-1.0.3.tgz
+    version: 1.0.3
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-04-15T18:29:46.171904676Z"
     dependencies:
     - condition: postgresql.enabled
@@ -1373,4 +1412,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-05-13T18:14:09.349073295Z"
+generated: "2024-05-22T17:39:52.07885561Z"
