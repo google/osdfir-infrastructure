@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "timesketch.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
     {{- end }}
@@ -28,14 +28,14 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "timesketch.fullname" . }}
+                name: {{ include "timesketch.fullname" . }}-nginx
                 port:
-                  number: {{ include "timesketch.service.port" . }}
+                  number: 80
   defaultBackend:
     service:
-      name: {{ include "timesketch.fullname" . }} # Name of the Service targeted by the Ingress
+      name: {{ include "timesketch.fullname" . }}-nginx # Name of the Service targeted by the Ingress
       port:
-        number: {{ include "timesketch.service.port" . }} # Should match the port used by the Service
+        number: 80 # Should match the port used by the Service
 {{- end }}
 {{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
 ---
@@ -47,13 +47,17 @@ metadata:
   labels:
     {{- include "timesketch.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
     {{- end }}
     {{- if (eq .Values.ingress.className "gce") }}
+    {{- if .Values.ingress.gcp.staticIPV6Name }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPV6Name }}
     networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
+    {{- else }}
+    {{- fail "A valied .Values.ingress.gcp.staticIPV6Name entry is required when using the GCE Ingress" }}
+    {{- end }}
     {{- end }}
 spec:
   rules:
@@ -64,12 +68,12 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "timesketch.fullname" . }}
+                name: {{ include "timesketch.fullname" . }}-nginx
                 port:
-                  number: {{ include "timesketch.service.port" . }}
+                  number: 80
   defaultBackend:
     service:
-      name: {{ include "timesketch.fullname" . }} # Name of the Service targeted by the Ingress
+      name: {{ include "timesketch.fullname" . }}-nginx # Name of the Service targeted by the Ingress
       port:
-        number: {{ include "timesketch.service.port" . }} # Should match the port used by the Service
+        number: 80 # Should match the port used by the Service
 {{- end }}

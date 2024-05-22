@@ -150,6 +150,22 @@ kubectl delete pvc -l release=my-release
 | `worker.tolerations`               | Tolerations for Timesketch worker pods assignment                         | `[]`    |
 | `worker.affinity`                  | Affinity for Timesketch worker pods assignment                            | `{}`    |
 
+### Timesketch Nginx Configuration
+
+| Name                              | Description                                                              | Value                |
+| --------------------------------- | ------------------------------------------------------------------------ | -------------------- |
+| `nginx.image.repository`          | Nginx image repository                                                   | `nginx`              |
+| `nginx.image.tag`                 | Nginx image tag                                                          | `1.25.5-alpine-slim` |
+| `nginx.image.pullPolicy`          | Nginx image pull policy                                                  | `Always`             |
+| `nginx.podSecurityContext`        | Holds pod-level security attributes and common nginx container settings  | `{}`                 |
+| `nginx.securityContext`           | Holds security configuration that will be applied to the nginx container | `{}`                 |
+| `nginx.resources.limits`          | The resources limits for the nginx container                             | `{}`                 |
+| `nginx.resources.requests.cpu`    | The requested cpu for the nginx container                                | `250m`               |
+| `nginx.resources.requests.memory` | The requested memory for the nginx container                             | `256Mi`              |
+| `nginx.nodeSelector`              | Node labels for Timesketch nginx pods assignment                         | `{}`                 |
+| `nginx.tolerations`               | Tolerations for Timesketch nginx pods assignment                         | `[]`                 |
+| `nginx.affinity`                  | Affinity for Timesketch nginx pods assignment                            | `{}`                 |
+
 ### Common Parameters
 
 | Name                              | Description                                                                                                                        | Value               |
