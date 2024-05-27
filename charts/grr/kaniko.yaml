@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko
+  namespace: grr
+spec:
+  serviceAccountName: grr
+  initContainers:
+    - name: init-kaniko-env
+      image: bitnami/git
+      command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/daschwanden/osdfir-infrastructure.git; cd osdfir-infrastructure; git checkout grr-kaniko; cp /cert/executable-signing.crt charts/grr/containers/grr-daemon/; cp /cert/executable-signing.key charts/grr/containers/grr-daemon/"]
+      volumeMounts:
+      - name: signing-cert
+        mountPath: /cert
+      - name: kaniko-volume
+        mountPath: /kaniko-build
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - "--dockerfile=Dockerfile.kaniko"
+        - "--context=dir:///kaniko-build/osdfir-infrastructure"
+        - "--context-sub-path=charts/grr/containers/grr-daemon/"
+        - "--destination=europe-west1-docker.pkg.dev/grr-demo-423211/artifact-registry/grr-daemon:v0.1"
+        - "--build-arg=FLEETSPEAK_FRONTEND=34-144-203-233.nip.io"
+        - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"
+      volumeMounts:
+      - name: kaniko-volume
+        mountPath: /kaniko-build
+  restartPolicy: Never
+  volumes:
+    - name: kaniko-volume
+      emptyDir:
+        sizeLimit: 25Mi
+    - name: signing-cert
+      secret:
+        secretName: sec-grr-executable-signing-cert
