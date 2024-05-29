@@ -703,12 +703,18 @@ oauth2proxy:
     annotations: {}
     #  cloud.google.com/neg: '{"ingress": true}'
     #  cloud.google.com/backend-config: '{"ports": { "{{ .Values.containerPort }}": "{{ .Release.Name }}-backend-config"}}'
+  ## @param oauth2proxy.extraEnvVarsSecret Name of existing Secret containing extra env vars for OAuth2 Proxy
+  ##
+  extraEnvVarsSecret: ""
   ## Configuration section
   ##
   configuration:
     ## @param oauth2proxy.configuration.turbiniaSvcPort Turbinia service port referenced from `.Values.service.port` to be used in Oauth setup
     ##
     turbiniaSvcPort: *turbiniaSvcPort
+    ## @param oauth2proxy.configuration.existingSecret Secret with the client ID, secret and cookie secret
+    ##
+    existingSecret: ""
     ## @param oauth2proxy.configuration.clientID OAuth client ID for Turbinia Web UI.
     ##
     clientID: ""
@@ -718,7 +724,7 @@ oauth2proxy:
     ## @param oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI.
     ##
     nativeClientID: ""
-    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  openssl rand -base64 32)
+    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  openssl rand -base64 24)
     ##
     cookieSecret: ""
     ## Custom configuration file: oauth2_proxy.cfg
@@ -756,6 +762,8 @@ oauth2proxy:
       ## If you override the config with restricted_access it will configure a user list within this chart what takes care of the configmap
       ##
       content: ""
+      ## @param oauth2proxy.configuration.authenticatedEmailsFile.existingSecret Secret with the authenticated emails file
+      ##
       existingSecret: ""
     ## @param oauth2proxy.configuration.oidcIssuerUrl OpenID Connect issuer URL
     ##
