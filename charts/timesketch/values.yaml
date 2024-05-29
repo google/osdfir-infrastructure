@@ -79,10 +79,10 @@ config:
     ## Allowed emails files for Timesketch OIDC
     ##
     authenticatedEmailsFile:
-      ## @param config.oidc.authenticatedEmailsFile Enables email authentication
+      ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
       ##
       enabled: true
-      ## config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
+      ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
       ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
       existingSecret: ""
       ## @param config.oidc.authenticatedEmailsFile.content Allowed emails list (one email per line)
