@@ -74,20 +74,45 @@ helm install my-release ../turbinia \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-To upgrade an existing release with production values, externally expose Turbinia through a load balancer with GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
+### Enabling OIDC Authentication
+
+Use the following steps if you would like to enable Google Cloud OIDC. Cloud
+OIDC works by verifying a user’s identity and determining if that user should
+be allowed to access the server.
+
+Follow the steps provided in the [Google Support page](https://support.google.com/cloud/answer/6158849) for creating an Oauth web client. Create an additional Oauth client for
+Desktop/Native if you will be using the CLI client.
+
+Create a cookie secret:
+
+```console
+openssl rand -base64 32 | head -c 32 | base64
+```
+
+Once complete, create a K8s secret with your newly created Oauth credentials and
+cookie secret:
+
+```console
+kubectl create secret generic oauth-secrets \
+    --from-literal=client-id=<CLIENT_ID> \
+    --from-literal=client-secret=<CLIENT_SECRET> \
+    --from-literal=cookie-secret=<COOKIE_SECRET> \
+    --from-literal=client-id-native=<CLIENT_ID_NATIVE>
+```
+
+Then to upgrade an existing release with production values, externally expose
+Turbinia through a load balancer with GCP managed certificates, and deploy the
+Oauth2 Proxy for authentication, run:
 
 ```console
 helm upgrade my-release \
     -f values.yaml -f values-production.yaml \
-    --set ingress.enabled=true
-    --set ingress.host=<DOMAIN>
-    --set ingress.gcp.managedCertificates=true
-    --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME>
-    --set oauth2proxy.enabled=true
-    --set oauth2proxy.configuration.clientID=<WEB_OAUTH_CLIENT_ID> \
-    --set oauth2proxy.configuration.clientSecret=<WEB_OAUTH_CLIENT_SECRET> \
-    --set oauth2proxy.configuration.nativeClientID=<NATIVE_OAUTH_CLIENT_ID> \
-    --set oauth2proxy.configuration.cookieSecret=<COOKIE_SECRET> \
+    --set ingress.enabled=true \
+    --set ingress.host=<DOMAIN> \
+    --set ingress.gcp.managedCertificates=true \
+    --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME> \
+    --set oauth2proxy.enabled=true \
+    --set oauth2proxy.configuration.existingSecret=<OAUTH_SECRET_NAME> \
     --set oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\}
 ```
 

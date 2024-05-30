@@ -63,7 +63,28 @@ Install the chart with the base values in `values.yaml` and the production value
 helm install my-release ../timesketch -f values.yaml -f values-production.yaml
 ```
 
-To upgrade an existing release with production values, externally expose Timesketch through a loadbalancer, and add SSL through GCP managed certificates, run:
+### Enabling OIDC Authentication
+
+Use the following steps if you would like to enable Google Cloud OIDC. Cloud
+OIDC works by verifying a user’s identity and determining if that user should
+be allowed to access the server.
+
+Follow the steps provided in the [Google Support page](https://support.google.com/cloud/answer/6158849) for creating an Oauth web client. Create an additional Oauth client for
+Desktop/Native if you will be using the CLI client.
+
+Once complete, create a K8s secret with your newly created Oauth credentials:
+
+```console
+kubectl create secret generic oauth-secrets \
+    --from-literal=client-id=<CLIENT_ID> \
+    --from-literal=client-secret=<CLIENT_SECRET> \
+    --from-literal=client-id-native=<CLIENT_ID_NATIVE>
+```
+
+Then to upgrade an existing release with production values, externally expose
+Timesketch through a loadbalancer, add SSL through GCP managed certificates, and
+enable OIDC for authentication, run:
+
 
 ```console
 helm upgrade my-release ../timesketch \
@@ -71,7 +92,10 @@ helm upgrade my-release ../timesketch \
     --set ingress.enabled=true \
     --set ingress.host=<DOMAIN_NAME> \
     --set ingress.gcp.staticIPName=<STATIC_IP_NAME> \
-    --set ingress.gcp.managedCertificates=true
+    --set ingress.gcp.managedCertificates=true \
+    --set config.oidc.enabled=true \
+    --set config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+    --set config.oidc.authenticatedEmailsFile.content={email1@domain.com, email2@domain.com\}
 ```
 
 ## Uninstalling the Chart
