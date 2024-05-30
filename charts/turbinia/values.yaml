@@ -703,7 +703,11 @@ oauth2proxy:
     annotations: {}
     #  cloud.google.com/neg: '{"ingress": true}'
     #  cloud.google.com/backend-config: '{"ports": { "{{ .Values.containerPort }}": "{{ .Release.Name }}-backend-config"}}'
-  ## @param oauth2proxy.extraEnvVars Used to pass OIDC desktop client to deployment
+  ## Used to pass OIDC desktop client to deployment
+  ## @param oauth2proxy.extraEnvVars[0].name Name of the environment variable to pass to Oauth2 Proxy
+  ## @param oauth2proxy.extraEnvVars[0].valueFrom.secretKeyRef.name Name of the secret containing native client id
+  ## @param oauth2proxy.extraEnvVars[0].valueFrom.secretKeyRef.key Name of the secret key containing native client id
+  ## @param oauth2proxy.extraEnvVars[0].valueFrom.secretKeyRef.optional Set to optional if native client id is not provided
   ##
   extraEnvVars:
     - name: OAUTH2_PROXY_OIDC_EXTRA_AUDIENCES
