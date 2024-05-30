@@ -734,7 +734,7 @@ oauth2proxy:
     ## @param oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI.
     ##
     nativeClientID: ""
-    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  "openssl rand -base64 32 | head -c 32 | base64")
+    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret
     ##
     cookieSecret: ""
     ## Custom configuration file: oauth2_proxy.cfg
