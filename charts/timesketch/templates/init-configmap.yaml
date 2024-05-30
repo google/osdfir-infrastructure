@@ -57,6 +57,7 @@ data:
     sed -i 's#^GOOGLE_OIDC_ALGORITHM =.*#GOOGLE_OIDC_ALGORITHM = "RS256"#' timesketch.conf
     sed -i 's#^GOOGLE_OIDC_CLIENT_ID =.*#GOOGLE_OIDC_CLIENT_ID = "'$OIDC_CLIENT_ID'"#' timesketch.conf
     sed -i 's#^GOOGLE_OIDC_CLIENT_SECRET =.*#GOOGLE_OIDC_CLIENT_SECRET = "'$OIDC_CLIENT_SECRET'"#' timesketch.conf
+    sed -i 's#^GOOGLE_OIDC_API_CLIENT_ID =.*#GOOGLE_OIDC_API_CLIENT_ID = "'$OIDC_CLIENT_ID_NATIVE'"#' timesketch.conf
     {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
     export EMAILS=$(awk '{printf "\"%s\", ", $0}' /init/authenticated-emails/authenticated-emails-list | sed 's/, $//; s/^/[/; s/$/]/')
     sed -i 's#^GOOGLE_OIDC_ALLOWED_USERS =.*#GOOGLE_OIDC_ALLOWED_USERS = '"$EMAILS"'#' timesketch.conf

@@ -47,6 +47,12 @@ Worker pod upon startup.
         secretKeyRef:
           name: {{ .Values.config.oidc.existingSecret | quote }}
           key: "client-secret"
+    - name: OIDC_CLIENT_ID_NATIVE
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.config.oidc.existingSecret | quote }}
+          key: "client-id-native"
+          optional: true
     {{- end }}
   volumeMounts:
     - mountPath: /init

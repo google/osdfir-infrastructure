@@ -703,9 +703,15 @@ oauth2proxy:
     annotations: {}
     #  cloud.google.com/neg: '{"ingress": true}'
     #  cloud.google.com/backend-config: '{"ports": { "{{ .Values.containerPort }}": "{{ .Release.Name }}-backend-config"}}'
-  ## @param oauth2proxy.extraEnvVarsSecret Name of existing Secret containing extra env vars for OAuth2 Proxy
+  ## @param oauth2proxy.extraEnvVars Used to pass OIDC desktop client to deployment
   ##
-  extraEnvVarsSecret: ""
+  extraEnvVars:
+    - name: OAUTH2_PROXY_OIDC_EXTRA_AUDIENCES
+      valueFrom:
+        secretKeyRef:
+          name: '{{ template "oauth2-proxy.secretName" . }}'
+          key: client-id-native
+          optional: true
   ## Configuration section
   ##
   configuration:
@@ -724,7 +730,7 @@ oauth2proxy:
     ## @param oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI.
     ##
     nativeClientID: ""
-    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  openssl rand -base64 24)
+    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret (e.g.  openssl rand -base64 32 | head -c 32 | base64)
     ##
     cookieSecret: ""
     ## Custom configuration file: oauth2_proxy.cfg
@@ -746,7 +752,6 @@ oauth2proxy:
       auth_logging = true
       show_debug_on_error=true
       upstreams=["http://{{ .Release.Name }}-turbinia:{{ .Values.configuration.turbiniaSvcPort }}"]
-      oidc_extra_audiences= {{ default "[]" (printf "['%s']" .Values.configuration.nativeClientID) }}
     ## Authorize individual email addresses
     ## @param oauth2proxy.configuration.authenticatedEmailsFile.enabled Enable authenticated emails file
     ## @param oauth2proxy.configuration.authenticatedEmailsFile.content Restricted access list (one email per line). At least one email address is required for the Oauth2 Proxy to properly work
