@@ -120,10 +120,15 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch Configuration Parameters
 
-| Name                | Description                                                                                                                           | Value       |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `config.override`   | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
-| `config.createUser` | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
+| Name                                                 | Description                                                                                                                           | Value       |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
+| `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
+| `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
+| `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
+| `config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`      |
+| `config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`        |
+| `config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`        |
 
 ### Timesketch Frontend Configuration
 
