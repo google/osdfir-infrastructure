@@ -14,7 +14,11 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm install my-release osdfir-charts/turbinia
 ```
 
-> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+> **Note**: By default, Turbinia is not externally accessible and can be
+reached via `kubectl port-forward` within the cluster.
+
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
 
 ## Introduction
 
@@ -74,47 +78,69 @@ helm install my-release ../turbinia \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-### Enabling OIDC Authentication
+### Enabling GKE Ingress and OIDC Authentication
 
-Use the following steps if you would like to enable Google Cloud OIDC. Cloud
-OIDC works by verifying a user’s identity and determining if that user should
-be allowed to access the server.
+Follow these steps to externally expose Turbinia and enable Google Cloud OIDC
+using the Oauth2 Proxy to control user access to Turbinia.
 
-Follow the steps provided in the [Google Support page](https://support.google.com/cloud/answer/6158849) for creating an Oauth web client. Create an additional Oauth client for
-Desktop/Native if you will be using the CLI client.
+1. Create a global static IP address:
 
-Create a cookie secret:
+    ```console
+    gcloud compute addresses create turbinia-webapps --global
+    ```
 
-```console
-openssl rand -base64 32 | head -c 32 | base64
-```
+2. Register a new domain or use an existing one, ensuring a DNS entry
+points to the IP created earlier.
 
-Once complete, create a K8s secret with your newly created Oauth credentials and
-cookie secret:
+3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
+OAuth client.
 
-```console
-kubectl create secret generic oauth-secrets \
-    --from-literal=client-id=<CLIENT_ID> \
-    --from-literal=client-secret=<CLIENT_SECRET> \
-    --from-literal=cookie-secret=<COOKIE_SECRET> \
-    --from-literal=client-id-native=<CLIENT_ID_NATIVE>
-```
+   * Fill in Authorized JavaScript origins with your domain as `https://<DOMAIN_NAME>.com`
+   * Fill in Authorized redirect URIs with `https://<DOMAIN_NAME>.com/oauth2/callback/`
 
-Then to upgrade an existing release with production values, externally expose
+4. Generate a cookie secret:
+
+    ```console
+    openssl rand -base64 32 | head -c 32 | base64
+    ```
+
+5. Store your new OAuth credentials in a K8s secret:
+
+    ```console
+    kubectl create secret generic oauth-secrets \
+        --from-literal=client-id=<CLIENT_ID> \
+        --from-literal=client-secret=<CLIENT_SECRET> \
+        --from-literal=cookie-secret=<COOKIE_SECRET> \
+        --from-literal=client-id-native=<CLIENT_ID_NATIVE>
+    ```
+
+6. Make a list of allowed emails in a text file, one per line:
+
+    ```console
+    touch authenticated-emails.txt
+    ```
+
+7. Apply the authenticated email list as a K8s secret:
+
+    ```console
+    kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
+    ```
+
+8. Then to upgrade an existing release with production values, externally expose
 Turbinia through a load balancer with GCP managed certificates, and deploy the
 Oauth2 Proxy for authentication, run:
 
-```console
-helm upgrade my-release \
-    -f values.yaml -f values-production.yaml \
-    --set ingress.enabled=true \
-    --set ingress.host=<DOMAIN> \
-    --set ingress.gcp.managedCertificates=true \
-    --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME> \
-    --set oauth2proxy.enabled=true \
-    --set oauth2proxy.configuration.existingSecret=<OAUTH_SECRET_NAME> \
-    --set oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\}
-```
+    ```console
+    helm upgrade my-release \
+        -f values.yaml -f values-production.yaml \
+        --set ingress.enabled=true \
+        --set ingress.host=<DOMAIN> \
+        --set ingress.gcp.managedCertificates=true \
+        --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME> \
+        --set oauth2proxy.enabled=true \
+        --set oauth2proxy.configuration.existingSecret=<OAUTH_SECRET_NAME> \
+        --set oauth2proxy.configuration.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    ```
 
 > **Warning**: Turbinia relies on the Oauth2 Proxy for authentication. If you
 plan to expose Turbinia with a public facing IP, it is highly recommended that
