@@ -12,7 +12,7 @@ home: "https://yeti-platform.io/"
 dependencies:
 - condition: redis.enabled
   name: redis
-  version: 18.0.4
+  version: 19.3.2
   repository: https://charts.bitnami.com/bitnami
 maintainers:
   - name: Open Source DFIR

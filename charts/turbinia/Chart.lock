@@ -1,12 +1,12 @@
 dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 18.0.4
+  version: 19.3.2
 - name: oauth2-proxy
   repository: https://charts.bitnami.com/bitnami
-  version: 5.1.1
+  version: 5.3.0
 - name: dfdewey
   repository: https://google.github.io/osdfir-infrastructure/
   version: 1.0.0
-digest: sha256:b395e9317f377c53d83f97aeef6e01286e23f4cc9d94eda5a8ddd143d2f4b6bd
-generated: "2024-05-22T14:27:20.537913-07:00"
+digest: sha256:6c0c5f81d133cf28a6504d01571d17b1fed42b7908bfa3ef0b4d1a913b62fc03
+generated: "2024-05-31T07:52:50.839248-07:00"
