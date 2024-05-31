@@ -12,6 +12,6 @@ spec:
     healthyThreshold: 2
     unhealthyThreshold: 2
     type: HTTP
-    requestPath: /login/
-    port: 5000
+    requestPath: /healthz/
+    port: 80
 {{- end }}
