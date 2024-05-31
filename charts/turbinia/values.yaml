@@ -697,12 +697,6 @@ oauth2proxy:
     ## @param oauth2proxy.service.port OAuth2 Proxy service HTTP port
     ##
     port: 8080
-    ## @param oauth2proxy.service.annotations Additional custom annotations for OAuth2 Proxy service
-    ## For GCP deployments, remove `{}` and uncomment annotations below.
-    ##
-    annotations: {}
-    #  cloud.google.com/neg: '{"ingress": true}'
-    #  cloud.google.com/backend-config: '{"ports": { "{{ .Values.containerPort }}": "{{ .Release.Name }}-backend-config"}}'
   ## Used to pass OIDC desktop client to deployment
   ## @param oauth2proxy.extraEnvVars[0].name Name of the environment variable to pass to Oauth2 Proxy
   ## @param oauth2proxy.extraEnvVars[0].valueFrom.secretKeyRef.name Name of the secret containing native client id
@@ -725,18 +719,6 @@ oauth2proxy:
     ## @param oauth2proxy.configuration.existingSecret Secret with the client ID, client secret, client native id (optional) and cookie secret
     ##
     existingSecret: ""
-    ## @param oauth2proxy.configuration.clientID OAuth client ID for Turbinia Web UI.
-    ##
-    clientID: ""
-    ## @param oauth2proxy.configuration.clientSecret OAuth client secret for Turbinia Web UI.
-    ##
-    clientSecret: ""
-    ## @param oauth2proxy.configuration.nativeClientID Native Oauth client ID for Turbinia CLI.
-    ##
-    nativeClientID: ""
-    ## @param oauth2proxy.configuration.cookieSecret OAuth cookie secret
-    ##
-    cookieSecret: ""
     ## Custom configuration file: oauth2_proxy.cfg
     ## content: |
     ##   pass_basic_auth = false
@@ -777,9 +759,6 @@ oauth2proxy:
     ## @param oauth2proxy.configuration.oidcIssuerUrl OpenID Connect issuer URL
     ##
     oidcIssuerUrl: "https://accounts.google.com"
-    ## @param oauth2proxy.configuration.redirectUrl OAuth Redirect URL
-    ##
-    redirectUrl: ""
   ## Oauth2 Proxy Redis Subchart
   ##
   redis:
