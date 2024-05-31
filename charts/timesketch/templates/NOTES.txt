@@ -1,4 +1,4 @@
-Thank you for installing {{ .Chart.Name }}.
+Thank you for installing {{ .Chart.Name }}:{{ .Chart.Version }}
 
 Your release is named {{ .Release.Name }}.
 
@@ -6,6 +6,7 @@ To learn more about the release, try:
 
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
+  $ kubectl get pods
 
 To connect to the Timesketch URL, run:
 

@@ -6,6 +6,7 @@ To learn more about the release, try:
 
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
+  $ kubectl get pods
 
 To connect to the Turbinia URL, run:
   {{- if and (.Values.ingress.enabled) (.Values.ingress.host) }}
@@ -29,5 +30,6 @@ Run the following commands on your workstation to orchestrate collection and pro
   $ dftimewolf -h
   {{- if .Values.oauth2proxy.enabled }}
   $ If using Turbinia with the Oauth2 Proxy, use the command below to generate the necessary config
-    $ kubectl get secret --namespace {{ .Release.Namespace }} {{ include "turbinia.fullname" . }}-secret -o jsonpath="{.data.turbinia-secret}" | base64 -d > ~/.dftimewolf_turbinia_secrets.json
+    $ kubectl get secret --namespace {{ .Release.Namespace }} {{ include "turbinia.fullname" . }}-secret -o jsonpath="{.data.dftimewolf-secret}" | base64 -d > ~/.dftimewolf_turbinia_secrets.json
+    $ vim ~/.dftimewolf_turbinia_secrets.json and replace anchors (<>) with appropriate Oauth values
   {{- end }}
