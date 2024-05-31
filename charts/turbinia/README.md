@@ -108,10 +108,10 @@ OAuth client.
 
     ```console
     kubectl create secret generic oauth-secrets \
-        --from-literal=client-id=<CLIENT_ID> \
-        --from-literal=client-secret=<CLIENT_SECRET> \
+        --from-literal=client-id=<WEB_CLIENT_ID> \
+        --from-literal=client-secret=<WEB_CLIENT_SECRET> \
         --from-literal=cookie-secret=<COOKIE_SECRET> \
-        --from-literal=client-id-native=<CLIENT_ID_NATIVE>
+        --from-literal=client-id-native=<NATIVE_CLIENT_ID>
     ```
 
 6. Make a list of allowed emails in a text file, one per line:
