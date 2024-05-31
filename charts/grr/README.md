@@ -179,6 +179,7 @@ You can check that they have a value assigned by runnig the commands below.
 echo "FLEETSPEAK_FRONTEND: $FLEETSPEAK_FRONTEND"
 echo "GKE_CLUSTER_LOCATION: $GKE_CLUSTER_LOCATION"
 echo "GKE_CLUSTER_NAME: $GKE_CLUSTER_NAME"
+echo "GRR_BLOBSTORE_BUCKET: $GRR_BLOBSTORE_BUCKET"
 echo "GRR_DAEMON_IMAGE: $GRR_DAEMON_IMAGE"
 echo "GRR_OPERATOR_IMAGE: $GRR_OPERATOR_IMAGE"
 echo "LOADBALANCER_CERT: $LOADBALANCER_CERT"
@@ -200,8 +201,10 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 
 ```console
 sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
+sed -i "s'GRR_BLOBSTORE_BUCKET'$GRR_BLOBSTORE_BUCKET'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
+sed -i "s'PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
 ```
 
 #### 2.2.3. Install the Chart

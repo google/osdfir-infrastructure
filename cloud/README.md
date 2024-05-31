@@ -38,7 +38,8 @@ gcloud services enable artifactregistry.googleapis.com \
                        networksecurity.googleapis.com \
                        servicenetworking.googleapis.com \
                        serviceusage.googleapis.com \
-                       sqladmin.googleapis.com
+                       sqladmin.googleapis.com \
+                       storage.googleapis.com
 ```
 
 ### 1.3. Remove the default VPC network
@@ -80,6 +81,7 @@ PROJECT=$(terraform output -json | jq -r .project_id.value)
 FLEETSPEAK_FRONTEND=$(terraform output -json | jq -r .fleetspeak_frontend.value)
 GKE_CLUSTER_LOCATION=$(terraform output -json | jq -r .gke_cluster_location.value)
 GKE_CLUSTER_NAME=$(terraform output -json | jq -r .gke_cluster_name.value)
+GRR_BLOBSTORE_BUCKET=$(terraform output -json | jq -r .grr_blobstore_bucket.value)
 MYSQL_DB_ADDRESS=$(terraform output -json | jq -r .mysqldb_ip_address.value)
 REGION=$(terraform output -json | jq -r .region.value)
 ZONE=$(terraform output -json | jq -r .zone.value)

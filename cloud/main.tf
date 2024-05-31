@@ -20,6 +20,9 @@ locals {
   domains    = concat([local.hostname], local.subdomains)
 }
 
+data "google_project" "project" {
+}
+
 ##########################################################################
 # Enable the required Cloud APIs
 ##########################################################################
@@ -84,6 +87,36 @@ resource "google_project_service" "sqladmin" {
   service = "sqladmin.googleapis.com"
 
   disable_dependent_services = false
+}
+
+resource "google_project_service" "storage" {
+  project = var.project_id
+  service = "storage.googleapis.com"
+
+  disable_dependent_services = false
+}
+
+##########################################################################
+# Set up the GCS GRR Blobstore
+##########################################################################
+resource "google_storage_bucket" "grr_blobstore" {
+  name                        = "blobstore-${var.project_id}"
+  project                     = var.project_id
+  location                    = var.region
+  force_destroy               = true
+  uniform_bucket_level_access = true
+  public_access_prevention    = "enforced"
+}
+
+resource "google_storage_bucket_iam_binding" "grr_blobstore_admin" {
+  bucket  = google_storage_bucket.grr_blobstore.name
+  role    = "roles/storage.admin"
+  members = [
+    "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/default",
+  ]
+  depends_on = [
+    google_container_cluster.osdfir_cluster
+  ]
 }
 
 ##########################################################################
@@ -248,6 +281,10 @@ resource "google_container_cluster" "osdfir_cluster" {
   ip_allocation_policy {
     cluster_secondary_range_name  = "pod-range"
     services_secondary_range_name = google_compute_subnetwork.subnet.secondary_ip_range.0.range_name
+  }
+
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
   }
 }
 

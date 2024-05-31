@@ -58,3 +58,8 @@ output "fleetspeak_cert_loadbalancer" {
   description = "The cert"
   value       = data.google_compute_ssl_certificate.fleetspeak_cert_loadbalancer.certificate
 }
+
+output "grr_blobstore_bucket" {
+  description = "The GRR Blobstore GCS bucket"
+  value       = google_storage_bucket.grr_blobstore.name
+}

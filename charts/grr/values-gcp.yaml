@@ -4,6 +4,9 @@
 ## @section Global parameters
 ##
 global:
+  ## @param global.projectId Sets the Google Cloud Project ID..
+  ##
+  projectId: PROJECT_ID
   ## @param global.selfManagedMysql Enables a mySQL DB containter to be deployed into the cluster.
   ##
   selfManagedMysql: false
@@ -93,13 +96,17 @@ grr:
   admin:
     ## @param grr.admin.image Sets the GRR admin container image to use.
     ##
-    image: "ghcr.io/google/grr:latest"
+    image: "ghcr.io/google/grr:v3.4.7.4-release"
     ## @param grr.admin.listenPort Sets the GRR admin listen port to use.
     ##
     listenPort: 8000
     ## @param grr.admin.replicas Sets the amount of GRR admin pods to run.
     ##
     replicas: 1
+  blobstore:
+    ## @param grr.blobstore.bucket Sets the GRR GCS blobstore bucket to use.
+    ##
+    bucket: GRR_BLOBSTORE_BUCKET
   daemon:
     ## @param grr.daemon.image Sets the GRR daemon container image to use.
     ##
@@ -110,7 +117,7 @@ grr:
   frontend:
     ## @param grr.frontend.image Sets the GRR frontend container image to use.
     ##
-    image: "ghcr.io/google/grr:latest"
+    image: "ghcr.io/google/grr:v3.4.7.4-release"
     ## @param grr.frontend.listenPort Sets the GRR frontend listen port to use.
     ##
     listenPort: 11111
@@ -136,7 +143,7 @@ grr:
   worker:
     ## @param grr.worker.image Sets the GRR worker container image to use.
     ##
-    image: "ghcr.io/google/grr:latest"
+    image: "ghcr.io/google/grr:v3.4.7.4-release"
 
 ## @section Prometheus parameters
 ##
