@@ -14,7 +14,11 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm install my-release osdfir-charts/yeti
 ```
 
-> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+> **Note**: By default, Yeti is not externally accessible and can be
+reached via `kubectl port-forward` within the cluster.
+
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
 
 ## Introduction
 

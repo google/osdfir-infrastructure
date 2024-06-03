@@ -48,7 +48,22 @@ data:
     sed -i 's#^SCENARIOS_PATH =.*#SCENARIOS_PATH = "/etc/timesketch/scenarios.yaml"#' timesketch.conf
     sed -i 's#^FACETS_PATH =.*#FACETS_PATH = "/etc/timesketch/facets.yaml"#' timesketch.conf
     sed -i 's#^QUESTIONS_PATH =.*#QUESTIONS_PATH = "/etc/timesketch/questions.yaml"#' timesketch.conf
-    
+
+    # OIDC integration
+    {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
+    sed -i 's#^GOOGLE_OIDC_ENABLED =.*#GOOGLE_OIDC_ENABLED = True#' timesketch.conf
+    sed -i 's#^GOOGLE_OIDC_AUTH_URL =.*#GOOGLE_OIDC_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"#' timesketch.conf
+    sed -i 's#^GOOGLE_OIDC_DISCOVERY_URL =.*#GOOGLE_OIDC_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"#' timesketch.conf
+    sed -i 's#^GOOGLE_OIDC_ALGORITHM =.*#GOOGLE_OIDC_ALGORITHM = "RS256"#' timesketch.conf
+    sed -i 's#^GOOGLE_OIDC_CLIENT_ID =.*#GOOGLE_OIDC_CLIENT_ID = "'$OIDC_CLIENT_ID'"#' timesketch.conf
+    sed -i 's#^GOOGLE_OIDC_CLIENT_SECRET =.*#GOOGLE_OIDC_CLIENT_SECRET = "'$OIDC_CLIENT_SECRET'"#' timesketch.conf
+    sed -i 's#^GOOGLE_OIDC_API_CLIENT_ID =.*#GOOGLE_OIDC_API_CLIENT_ID = "'$OIDC_CLIENT_ID_NATIVE'"#' timesketch.conf
+    {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
+    export EMAILS=$(awk '{printf "\"%s\", ", $0}' /init/authenticated-emails/authenticated-emails-list | sed 's/, $//; s/^/[/; s/$/]/')
+    sed -i 's#^GOOGLE_OIDC_ALLOWED_USERS =.*#GOOGLE_OIDC_ALLOWED_USERS = '"$EMAILS"'#' timesketch.conf
+    {{- end }}
+    {{- end }}
+
     # Yeti integration
     {{- if .Values.global.yeti.enabled }}
     sed -i 's#^YETI_API_KEY =.*#YETI_API_KEY = "'$YETI_API_KEY'"#' timesketch.conf
