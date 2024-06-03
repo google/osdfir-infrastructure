@@ -639,6 +639,45 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-06-03T18:11:12.353571295Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 15.3.2
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.3.2
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts/
+      version: 2.20.0
+    description: A Helm chart for Timesketch Kubernetes deployments.
+    digest: 24d186400e4e0b882625b78a2c1f32a297c948603d294f8e448b076215d5c726
+    home: https://timesketch.org/
+    icon: https://raw.githubusercontent.com/google/timesketch/master/timesketch/frontend-ng/dist/timesketch-color.png
+    keywords:
+    - timesketch
+    - dfir
+    - analysis
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: timesketch
+    sources:
+    - https://github.com/google/timesketch
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/timesketch-1.0.4/timesketch-1.0.4.tgz
+    version: 1.0.4
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-05-22T17:39:52.07877527Z"
     dependencies:
     - condition: postgresql.enabled
@@ -947,6 +986,46 @@ entries:
     - https://github.com/google/osdfir-infrastructure/releases/download/timesketch-0.3.2/timesketch-0.3.2.tgz
     version: 0.3.2
   turbinia:
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
+    created: "2024-06-03T18:11:12.504565734Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.3.2
+    - alias: oauth2proxy
+      condition: oauth2proxy.enabled
+      name: oauth2-proxy
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.3.0
+    - condition: global.dfdewey.enabled
+      name: dfdewey
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 1.0.0
+    description: A Helm chart for Turbinia Kubernetes deployments.
+    digest: 0b2ca12b15b8f7e698f491119a0c25aeb977e80d0e42d45f13a67c0a08d96b2f
+    home: https://github.com/google/turbinia
+    icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
+    keywords:
+    - turbinia
+    - dfir
+    - processing
+    - scaling
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: turbinia
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/turbinia-1.0.6/turbinia-1.0.6.tgz
+    version: 1.0.6
   - annotations:
       category: Security
       licenses: Apache-2.0
@@ -1295,6 +1374,37 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-06-03T18:11:12.62371222Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.3.2
+    description: A Helm chart for Yeti Kubernetes deployments.
+    digest: 712ff36f3c59c0047aa6ad8caddd60abd151a233ba4a48a6d3da79c10d97ff18
+    home: https://yeti-platform.io/
+    keywords:
+    - yeti
+    - dfir
+    - threatintel
+    - threat-hunting
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: yeti
+    sources:
+    - https://github.com/yeti-platform/yeti
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/yeti-1.0.3/yeti-1.0.3.tgz
+    version: 1.0.3
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-04-16T15:53:19.870433024Z"
     dependencies:
     - condition: redis.enabled
@@ -1412,4 +1522,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-05-22T17:39:52.07885561Z"
+generated: "2024-06-03T18:11:12.623809715Z"
