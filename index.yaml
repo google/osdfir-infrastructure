@@ -124,6 +124,48 @@ entries:
       category: Security
       licenses: Apache-2.0
     apiVersion: v2
+    created: "2024-06-07T21:38:00.913914261Z"
+    dependencies:
+    - condition: global.timesketch.enabled
+      name: timesketch
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 1.0.5
+    - condition: global.turbinia.enabled
+      name: turbinia
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 1.0.7
+    - condition: global.yeti.enabled
+      name: yeti
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 1.0.4
+    description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
+    digest: 83d2d732652bfd89b0a28a86d5d823a087ac2350521c7c90c0129960c5273261
+    home: https://github.com/google/osdfir-infrastructure
+    keywords:
+    - timesketch
+    - turbinia
+    - yeti
+    - dfir
+    - analysis
+    - processing
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: osdfir-infrastructure
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    - https://github.com/google/turbinia
+    - https://github.com/google/timesketch
+    - https://github.com/yeti-platform/yeti
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-1.0.7/osdfir-infrastructure-1.0.7.tgz
+    version: 1.0.7
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
     created: "2024-04-16T17:14:18.02138208Z"
     dependencies:
     - condition: global.timesketch.enabled
@@ -1632,4 +1674,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-06-07T18:15:14.721943486Z"
+generated: "2024-06-07T21:38:00.914081823Z"
