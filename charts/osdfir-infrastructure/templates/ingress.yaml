@@ -1,0 +1,165 @@
+{{- if .Values.global.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "osdfir.fullname" . }}-ingress
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "osdfir.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingressClassName: {{ .Values.global.ingress.className }}
+    {{- if .Values.global.ingress.gcp.managedCertificates }}
+    networking.gke.io/managed-certificates: {{ include "osdfir.fullname" . }}-managed-ssl
+    {{- end }}
+    {{- if .Values.global.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/issuer: {{ include "osdfir.fullname" . }}-letsencrypt-production
+    {{- end }}
+    {{- if (eq .Values.global.ingress.className "gce") }}
+    {{- if .Values.global.ingress.gcp.staticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.global.ingress.gcp.staticIPName }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "osdfir.fullname" . }}-frontend-config
+    {{- else }}
+    {{- fail "A valid .Values.global.ingress.gcp.staticIPName entry is required when using the GCE Ingress" }}
+    {{- end }}
+    {{- end }}
+spec:
+  {{- if or .Values.global.ingress.selfSigned .Values.global.ingress.certManager }}
+  tls:
+    - hosts:
+         {{- if and .Values.global.timesketch.enabled .Values.timesketch.ingress.host }}
+        - {{ .Values.timesketch.ingress.host | quote }}
+        {{- end }}
+        {{- if and .Values.global.turbinia.enabled .Values.turbinia.ingress.host }}
+        - {{ .Values.turbinia.ingress.host | quote }}
+        {{- end }}
+        {{- if and .Values.global.yeti.enabled .Values.yeti.ingress.host }}
+        - {{ .Values.yeti.ingress.host | quote }}
+        {{- end }}
+      secretName: {{ include "osdfir.fullname" . }}-tls
+  {{- end }}
+  rules:
+    {{- if and .Values.global.timesketch.enabled .Values.timesketch.ingress.host }}
+    - host: {{ .Values.timesketch.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "timesketch.fullname" . }}-nginx
+                port:
+                  number: 80
+    {{- end }}
+    {{- if and .Values.global.turbinia.enabled .Values.turbinia.ingress.host }}
+    - host: {{ .Values.turbinia.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                {{- if .Values.turbinia.oauth2proxy.enabled }}
+                name: {{ .Release.Name }}-oauth2proxy
+                port:
+                  number: {{ .Values.turbinia.oauth2proxy.service.port }}
+                {{- else }}
+                name: {{ include "turbinia.fullname" . }}
+                port:
+                  number: {{ include "turbinia.service.port" . }}
+                {{- end }}
+    {{- end }}
+    {{- if and .Values.global.yeti.enabled .Values.yeti.ingress.host }}
+    - host: {{.Values.yeti.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "yeti.fullname" . }}
+                port:
+                  number: {{ include "yeti.service.port" . }}
+    {{- end }}
+{{- end }}
+{{- if and .Values.global.ingress.enabled .Values.global.ingress.gcp.staticIPV6Name }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "osdfir.fullname" . }}-ingress-ipv6
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "osdfir.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingressClassName: {{ .Values.global.ingress.className }}
+    {{- if .Values.global.ingress.gcp.managedCertificates }}
+    networking.gke.io/managed-certificates: {{ include "osdfir.fullname" . }}-managed-ssl
+    {{- end }}
+    {{- if .Values.global.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/issuer: {{ include "osdfir.fullname" . }}-letsencrypt-production
+    {{- end }}
+    {{- if (eq .Values.global.ingress.className "gce") }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.global.ingress.gcp.staticIPName }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "osdfir.fullname" . }}-frontend-config
+    {{- end }}
+spec:
+  {{- if or .Values.global.ingress.selfSigned .Values.global.ingress.certManager }}
+  tls:
+    - hosts:
+         {{- if and .Values.global.timesketch.enabled .Values.timesketch.ingress.host }}
+        - {{ .Values.timesketch.ingress.host | quote }}
+        {{- end }}
+        {{- if and .Values.global.turbinia.enabled .Values.turbinia.ingress.host }}
+        - {{ .Values.turbinia.ingress.host | quote }}
+        {{- end }}
+        {{- if and .Values.global.yeti.enabled .Values.yeti.ingress.host }}
+        - {{ .Values.yeti.ingress.host | quote }}
+        {{- end }}
+      secretName: {{ include "osdfir.fullname" . }}-tls
+  {{- end }}
+  rules:
+    {{- if and .Values.global.timesketch.enabled .Values.timesketch.ingress.host }}
+    - host: {{ .Values.timesketch.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "timesketch.fullname" . }}-nginx
+                port:
+                  number: 80
+    {{- end }}
+    {{- if and .Values.global.turbinia.enabled .Values.turbinia.ingress.host }}
+    - host: {{ .Values.turbinia.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                {{- if .Values.turbinia.oauth2proxy.enabled }}
+                name: {{ .Release.Name }}-oauth2proxy
+                port:
+                  number: {{ .Values.turbinia.oauth2proxy.service.port }}
+                {{- else }}
+                name: {{ include "turbinia.fullname" . }}
+                port:
+                  number: {{ include "turbinia.service.port" . }}
+                {{- end }}
+    {{- end }}
+    {{- if and .Values.global.yeti.enabled .Values.yeti.ingress.host }}
+    - host: {{.Values.yeti.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "yeti.fullname" . }}
+                port:
+                  number: {{ include "yeti.service.port" . }}
+    {{- end }}
+{{- end }}
