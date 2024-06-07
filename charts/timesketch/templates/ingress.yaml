@@ -11,6 +11,10 @@ metadata:
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
     {{- end }}
+    {{- if .Values.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/issuer: {{ include "timesketch.fullname" . }}-letsencrypt-production
+    {{- end }}
     {{- if (eq .Values.ingress.className "gce") }}
     {{- if .Values.ingress.gcp.staticIPName }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPName }}
@@ -20,6 +24,12 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if or .Values.ingress.selfSigned .Values.ingress.certManager }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ include "timesketch.fullname" . }}-tls
+  {{- end }}
   rules:
     - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
       http:
@@ -51,6 +61,10 @@ metadata:
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
     {{- end }}
+    {{- if .Values.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/issuer: {{ include "timesketch.fullname" . }}-letsencrypt-production
+    {{- end }}
     {{- if (eq .Values.ingress.className "gce") }}
     {{- if .Values.ingress.gcp.staticIPV6Name }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPV6Name }}
@@ -60,6 +74,12 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if or .Values.ingress.selfSigned .Values.ingress.certManager }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ include "timesketch.fullname" . }}-tls
+  {{- end }}
   rules:
     - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
       http:
