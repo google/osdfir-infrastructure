@@ -15,15 +15,15 @@ dependencies:
 - condition: global.timesketch.enabled
   name: timesketch
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 1.0.2
+  version: 1.0.5
 - condition: global.turbinia.enabled
   name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 1.0.5
+  version: 1.0.7
 - condition: global.yeti.enabled
   name: yeti
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 1.0.2
+  version: 1.0.4
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com
