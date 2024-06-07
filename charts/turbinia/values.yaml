@@ -445,7 +445,7 @@ persistence:
 ## Turbinia ingress parameters
 ##
 ingress:
-  ## @param ingress.enabled Enable the Turbinia loadbalancer for external access
+  ## @param ingress.enabled Enable the Turbinia loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
   ##
   enabled: false
   ## @param ingress.host The domain name Turbinia will be hosted under

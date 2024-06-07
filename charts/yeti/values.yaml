@@ -31,7 +31,7 @@ global:
   ## Global ingress parameters used to configure Turbinia, Timesketch, Yeti under a single loadbalancer
   ##
   ingress:
-    ## @param global.ingress.enabled Enable the global loadbalancer for external access
+    ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
   ## @param global.existingPVC Existing claim for Yeti persistent volume (overrides `persistent.name`)
