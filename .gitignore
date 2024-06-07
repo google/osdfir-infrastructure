@@ -10,6 +10,3 @@
 # Exclude config files
 charts/timesketch/configs
 turbinia.conf
-
-# Exclude sub charts
-charts/osdfir-infrastructure/charts/

@@ -24,8 +24,7 @@ These tools can be used independently as well by following the documentation on 
 ## Installing the Charts
 
 To get started, ensure you have [Helm](https://helm.sh) installed and are authenticated to your Kubernetes cluster.
-> **IMPORTANT**: For cloud deployments, Turbinia currently only supports attaching disks from GCP environments. Manual disk attachment or utilizing other evidence types is necessary
-for other cloud providers.
+> **IMPORTANT**: Helm charts are currently undergoing compatibility testing for AWS and Azure
 
 Once complete, add the repo containing the Helm charts as follows:
 
