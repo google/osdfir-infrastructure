@@ -147,17 +147,17 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                            | Description                                                                                  | Value   |
-| ------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
-| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `false` |
-| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `nil`   |
-| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `false` |
-| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `nil`   |
-| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
-| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `nil`   |
-| `global.ingress.enabled`        | Enable the global loadbalancer for external access                                           | `false` |
-| `global.existingPVC`            | Existing claim for Timesketch persistent volume (overrides `persistent.name`)                | `""`    |
-| `global.storageClass`           | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)      | `""`    |
+| Name                            | Description                                                                                                 | Value   |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                  | `false` |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                               | `nil`   |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)                | `false` |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                               | `nil`   |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                        | `false` |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                                   | `nil`   |
+| `global.ingress.enabled`        | Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart) | `false` |
+| `global.existingPVC`            | Existing claim for Timesketch persistent volume (overrides `persistent.name`)                               | `""`    |
+| `global.storageClass`           | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)                     | `""`    |
 
 ### Timesketch image configuration
 
