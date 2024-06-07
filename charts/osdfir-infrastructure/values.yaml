@@ -136,34 +136,6 @@ timesketch:
       requests:
         cpu: 250m
         memory: 256Mi
-  ## @section Timesketch Third Party
-  ## This section contains all the main configuration for third party dependencies
-  ## Timesketch requires to run
-  ##
-  ## @section Opensearch Configuration
-  ## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
-  ## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
-  ## To see a full list of available values, run helm show values charts/opensearch*
-  ##
-  opensearch:
-    ## @param timesketch.opensearch.enabled Enables the Opensearch deployment
-    ##
-    enabled: true
-    ## @param timesketch.opensearch.replicas Number of Opensearch instances to deploy
-    ##
-    replicas: 1
-    persistence:
-      ## @param timesketch.opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
-      ##
-      size: 2Gi
-    ## @param timesketch.opensearch.resources.requests Requested resources for the Opensearch containers
-    ##
-    resources:
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
   config:
     ## @param timesketch.config.override Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart
     ## to retrieve the config files from. Please ensure the appropriate configs are in the directory else Timesketch
@@ -209,6 +181,34 @@ timesketch:
     ## registered under ingress.gcp.staticIPName
     ##
     host: ""
+  ## @section Timesketch Third Party
+  ## This section contains all the main configuration for third party dependencies
+  ## Timesketch requires to run
+  ##
+  ## @section Opensearch Configuration
+  ## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
+  ## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
+  ## To see a full list of available values, run helm show values charts/opensearch*
+  ##
+  opensearch:
+    ## @param timesketch.opensearch.enabled Enables the Opensearch deployment
+    ##
+    enabled: true
+    ## @param timesketch.opensearch.replicas Number of Opensearch instances to deploy
+    ##
+    replicas: 1
+    persistence:
+      ## @param timesketch.opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
+      ##
+      size: 2Gi
+    ## @param timesketch.opensearch.resources.requests Requested resources for the Opensearch containers
+    ##
+    resources:
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
   ## @section Redis configuration
   ## IMPORTANT: Redis is deployed with Auth enabled by default
   ## To see a full list of available values, run helm show values charts/redis*
