@@ -31,7 +31,8 @@ This chart bootstraps a OSDFIR Infrastructure deployment on a [Kubernetes](https
 * Helm 3.2.0+
 * PV provisioner support in the underlying infrastructure
 
-> **Note**: Currently Turbinia only supports processing of GCP Persistent Disks and Local Evidence. See [GKE Installations](#gke-installations) for deploying to GKE.
+> **Note**: For cloud deployments, Turbinia currently only supports attaching disks from GCP environments. Manual disk attachment or utilizing other evidence types is necessary
+for other cloud providers.
 
 ## Installing the Chart
 
@@ -60,7 +61,9 @@ Pull the chart locally then cd into `/osdfir-infrastructure` and review the `val
 helm pull osdfir-charts/osdfir-infrastructure --untar
 ```
 
-### GKE Installations
+### Enabling GCP Disk processing for Turbinia
+
+Follow this section for enabling GCP disk processing for Turbinia.
 
 Create a Turbinia GCP account using the helper script in `osdfir-infrastructure/charts/turbinia/tools/create-gcp-sa.sh` prior to installing the chart.
 
@@ -76,35 +79,70 @@ helm install my-release ../osdfir-infrastructure \
     --set turbinia.gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-To upgrade an existing release and externally expose Timesketch through a loadbalancer with SSL through GCP managed certificates, run:
+### Enabling GKE Ingress and OIDC Authentication
 
-```console
-helm upgrade my-release ../osdfir-infrastructure \
-    --set timesketch.ingress.enabled=true \
-    --set timesketch.ingress.host=<DOMAIN_NAME> \
-    --set timesketch.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
-    --set timesketch.ingress.gcp.managedCertificates=true
-```
+This section guides you in exposing Turbinia, Timesketch, and Yeti externally.
+Additionally, you will enable OpenID Connect for Turbinia and Timesketch user
+access. Yeti, currently unsupported by OpenID Connect, will be deployed with
+local authentication.
 
-To upgrade an existing and externally expose Turbinia through a load balancer with SSL through GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
+1. Create a global static IP address:
 
-```console
-helm upgrade my-release ../osdfir-infrastructure \
-    -f values.yaml -f values-production.yaml \
-    --set turbinia.ingress.enabled=true \
-    --set turbinia.ingress.host=<DOMAIN> \
-    --set turbinia.ingress.gcp.managedCertificates=true \
-    --set turbinia.ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME> \
-    --set turbinia.oauth2proxy.enabled=true \
-    --set turbinia.oauth2proxy.configuration.clientID=<WEB_OAUTH_CLIENT_ID> \
-    --set turbinia.oauth2proxy.configuration.clientSecret=<WEB_OAUTH_CLIENT_SECRET> \
-    --set turbinia.oauth2proxy.configuration.nativeClientID=<NATIVE_OAUTH_CLIENT_ID> \
-    --set turbinia.oauth2proxy.configuration.cookieSecret=<COOKIE_SECRET> \
-    --set turbinia.oauth2proxy.configuration.redirectUrl=https://<DOMAIN>/oauth2/callback \
-    --set turbinia.oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\} \
-    --set turbinia.oauth2proxy.service.annotations."cloud\.google\.com/neg=\{\"ingress\": true\}" \
-    --set turbinia.oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-oauth2-backend-config\"\}\}"
-```
+    ```console
+    gcloud compute addresses create timesketch-webapps --global
+    ```
+
+2. Register a new domain or use an existing one, ensuring a DNS entry
+points to the IP created earlier.
+
+3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
+OAuth client.
+   * Fill in Authorized JavaScript origins with your domain as `https://<turbinia.DOMAIN_NAME>.com` and `https://<timesketch.DOMAIN_NAME>.com`
+   * Fill in Authorized redirect URIs with `https://<timesketch.DOMAIN_NAME>.com/google_openid_connect/` and `https://<turbinia.DOMAIN_NAME>.com/oauth2/callback`
+
+4. Store your new OAuth credentials in a K8s secret:
+
+    ```console
+    kubectl create secret generic oauth-secrets \
+        --from-literal=client-id=<WEB_CLIENT_ID> \
+        --from-literal=client-secret=<WEB_CLIENT_SECRET> \
+        --from-literal=cookie-secret=<COOKIE_SECRET> \
+        --from-literal=client-id-native=<NATIVE_CLIENT_ID>
+    ```
+
+5. Make a list of allowed emails in a text file, one per line:
+
+    ```console
+    touch authenticated-emails.txt
+    ```
+
+6. Apply the authenticated email list as a K8s secret:
+
+    ```console
+    kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
+    ```
+
+7. Then to upgrade an existing release with production values, externally expose
+   Timesketch, Turbinia, and Yeti through a loadbalancer, add SSL through
+   GCP managed certificates, and enable Turbinia and Timesketch
+   OIDC for authentication, run:
+
+    ```console
+    helm upgrade my-release ../osdfir-infrastructure \
+        -f values-production.yaml \
+        --set global.ingress.enabled=true \
+        --set global.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
+        --set global.ingress.gcp.managedCertificates=true \
+        --set timesketch.ingress.host=<timesketch.DOMAIN_NAME.com> \
+        --set turbinia.ingress.host=<turbinia.<DOMAIN_NAME.com> \
+        --set yeti.ingress.host=<yeti.<DOMAIN_NAME.com> \
+        --set timesketch.config.oidc.enabled=true \
+        --set timesketch.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+        --set timesketch.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+        --set turbinia.oauth2proxy.enabled=true \
+        --set turbinia.oauth2proxy.configuration.existingSecret=<OAUTH_SECRET_NAME> \
+        --set turbinia.oauth2proxy.configuration.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    ```
 
 ## Uninstalling the Chart
 
