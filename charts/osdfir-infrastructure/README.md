@@ -161,35 +161,35 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch Configuration
 
-| Name                                          | Description                                                   | Value                                                     |
-| --------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------- |
-| `timesketch.image.repository`                 | Timesketch image repository                                   | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
-| `timesketch.image.tag`                        | Overrides the image tag whose default is the chart appVersion | `latest`                                                  |
-| `timesketch.frontend.resources.limits`        | The resources limits for the frontend container               | `{}`                                                      |
-| `timesketch.frontend.resources.requests`      | The requested resources for the frontend container            | `{}`                                                      |
-| `timesketch.worker.resources.limits`          | The resources limits for the worker container                 | `{}`                                                      |
-| `timesketch.worker.resources.requests.cpu`    | The requested cpu for the worker container                    | `250m`                                                    |
-| `timesketch.worker.resources.requests.memory` | The requested memory for the worker container                 | `256Mi`                                                   |
+| Name                                                            | Description                                                                                                                           | Value                                                     |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `timesketch.image.repository`                                   | Timesketch image repository                                                                                                           | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
+| `timesketch.image.tag`                                          | Overrides the image tag whose default is the chart appVersion                                                                         | `latest`                                                  |
+| `timesketch.frontend.resources.limits`                          | The resources limits for the frontend container                                                                                       | `{}`                                                      |
+| `timesketch.frontend.resources.requests`                        | The requested resources for the frontend container                                                                                    | `{}`                                                      |
+| `timesketch.worker.resources.limits`                            | The resources limits for the worker container                                                                                         | `{}`                                                      |
+| `timesketch.worker.resources.requests.cpu`                      | The requested cpu for the worker container                                                                                            | `250m`                                                    |
+| `timesketch.worker.resources.requests.memory`                   | The requested memory for the worker container                                                                                         | `256Mi`                                                   |
+| `timesketch.config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*`                                               |
+| `timesketch.config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`                                                    |
+| `timesketch.config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`                                                   |
+| `timesketch.config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`                                                      |
+| `timesketch.config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`                                                    |
+| `timesketch.config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`                                                      |
+| `timesketch.config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`                                                      |
+| `timesketch.ingress.host`                                       | Domain name Timesketch will be hosted under                                                                                           | `""`                                                      |
 
 ### Timesketch Third Party
 
 
 ### Opensearch Configuration
 
-| Name                                                            | Description                                                                                                                           | Value       |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `timesketch.opensearch.enabled`                                 | Enables the Opensearch deployment                                                                                                     | `true`      |
-| `timesketch.opensearch.replicas`                                | Number of Opensearch instances to deploy                                                                                              | `1`         |
-| `timesketch.opensearch.persistence.size`                        | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running                           | `2Gi`       |
-| `timesketch.opensearch.resources.requests`                      | Requested resources for the Opensearch containers                                                                                     | `{}`        |
-| `timesketch.config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
-| `timesketch.config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
-| `timesketch.config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
-| `timesketch.config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
-| `timesketch.config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`      |
-| `timesketch.config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`        |
-| `timesketch.config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`        |
-| `timesketch.ingress.host`                                       | Domain name Timesketch will be hosted under                                                                                           | `""`        |
+| Name                                       | Description                                                                                                 | Value  |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------ |
+| `timesketch.opensearch.enabled`            | Enables the Opensearch deployment                                                                           | `true` |
+| `timesketch.opensearch.replicas`           | Number of Opensearch instances to deploy                                                                    | `1`    |
+| `timesketch.opensearch.persistence.size`   | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`  |
+| `timesketch.opensearch.resources.requests` | Requested resources for the Opensearch containers                                                           | `{}`   |
 
 ### Redis configuration
 
