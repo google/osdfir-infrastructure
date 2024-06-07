@@ -10,13 +10,14 @@ To learn more about the release, try:
 
 To connect to the Turbinia URL, run:
   {{- if and (.Values.ingress.enabled) (.Values.ingress.host) }}
-  $ echo "Visit https://{{ .Values.ingress.host }} to access Turbinia"
-  {{- else if .Values.oauth2proxy.enabled }}
+  $ echo "Visit https://{{ .Values.ingress.host }} to access Turbinia externally"
+  {{- end }}
+  {{- if .Values.oauth2proxy.enabled }}
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-oauth2proxy {{ .Values.oauth2proxy.service.port }}:{{ .Values.oauth2proxy.service.port }}
-  $ echo "Visit http://127.0.0.1:{{ .Values.oauth2proxy.service.port }} to access Turbinia"
+  $ echo "Visit http://127.0.0.1:{{ .Values.oauth2proxy.service.port }} to access Turbinia through port-forwarding"
   {{- else }}
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-turbinia {{ include "turbinia.service.port" . }}:{{ include "turbinia.service.port" . }}
-  $ echo "Visit http://127.0.0.1:{{ include "turbinia.service.port" . }} to access Turbinia"
+  $ echo "Visit http://127.0.0.1:{{ include "turbinia.service.port" . }} to access Turbinia through port-forwarding"
   {{- end }}
 
 To install the Turbinia client, run:
