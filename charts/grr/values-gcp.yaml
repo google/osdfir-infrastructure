@@ -33,7 +33,7 @@ fleetspeak:
   admin:
     ## @param fleetspeak.admin.image Sets the Fleetspeak admin container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:latest"
+    image: "ghcr.io/google/fleetspeak:v0.1.15"
     ## @param fleetspeak.admin.listenPort Sets the Fleetspeak admin listen port to use.
     ##
     listenPort: 4444
@@ -47,7 +47,7 @@ fleetspeak:
     healthCheckPort: 8080
     ## @param fleetspeak.frontend.image Sets the Fleetspeak fronend container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:latest"
+    image: "ghcr.io/google/fleetspeak:v0.1.15"
     ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
     ##
     listenPort: 4443
@@ -106,7 +106,7 @@ grr:
   blobstore:
     ## @param grr.blobstore.bucket Sets the GRR GCS blobstore bucket to use.
     ##
-    bucket: GRR_BLOBSTORE_BUCKET
+    bucket: "GRR_BLOBSTORE_BUCKET"
   daemon:
     ## @param grr.daemon.image Sets the GRR daemon container image to use.
     ##
@@ -144,6 +144,16 @@ grr:
     ## @param grr.worker.image Sets the GRR worker container image to use.
     ##
     image: "ghcr.io/google/grr:v3.4.7.4-release"
+  pubsub:
+    ## @param grr.pubsub.projectId Sets the Project ID where for the PubSub Topic.
+    ##
+    project: "PUBSUB_PROJECT_ID"
+    ## @param grr.pubsub.subscription Sets the PubSub Subscriber to be used for processing the messages.
+    ##
+    subscription: "PUBSUB_SUBSCRIPTION"
+    ## @param grr.pubsub.topic Sets the PubSub Topic to be used for processing the messages.
+    ##
+    topic: "PUBSUB_TOPIC"
 
 ## @section Prometheus parameters
 ##

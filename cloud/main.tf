@@ -68,6 +68,13 @@ resource "google_project_service" "networksecurity" {
   disable_dependent_services = false
 }
 
+resource "google_project_service" "pubsub" {
+  project = var.project_id
+  service = "pubsub.googleapis.com"
+
+  disable_dependent_services = false
+}
+
 resource "google_project_service" "servicenetworking" {
   project = var.project_id
   service = "servicenetworking.googleapis.com"
@@ -108,12 +115,10 @@ resource "google_storage_bucket" "grr_blobstore" {
   public_access_prevention    = "enforced"
 }
 
-resource "google_storage_bucket_iam_binding" "grr_blobstore_admin" {
-  bucket  = google_storage_bucket.grr_blobstore.name
-  role    = "roles/storage.admin"
-  members = [
-    "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/default",
-  ]
+resource "google_storage_bucket_iam_member" "grr_blobstore_admin" {
+  bucket = google_storage_bucket.grr_blobstore.name
+  role   = "roles/storage.admin"
+  member = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/default"
   depends_on = [
     google_container_cluster.osdfir_cluster
   ]
@@ -316,6 +321,42 @@ resource "google_container_node_pool" "grr-node-pool" {
       disable-legacy-endpoints = "true"
     }
   }
+}
+
+##########################################################################
+# Set up the PubSub Topic and Subscriber for GRR Fleetspeak Service 
+##########################################################################
+resource "google_pubsub_topic" "grr_fleetspeak_service_topic" {
+  name = "grr-fleetspeak-service-topic"
+
+  message_storage_policy {
+    allowed_persistence_regions = [
+      var.region,
+    ]
+  }
+}
+
+resource "google_pubsub_subscription" "grr_fleetspeak_service_subscription" {
+  name  = "grr-fleetspeak-service-subscription"
+  topic = google_pubsub_topic.grr_fleetspeak_service_topic.id
+}
+
+resource "google_pubsub_topic_iam_member" "grr_fleetspeak_topic" {
+  topic  = google_pubsub_topic.grr_fleetspeak_service_topic.name
+  role   = "roles/pubsub.publisher"
+  member = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/default"
+  depends_on = [
+    google_container_cluster.osdfir_cluster
+  ]
+}
+
+resource "google_pubsub_subscription_iam_member" "grr_fleetspeak_subscriber" {
+  subscription = google_pubsub_subscription.grr_fleetspeak_service_subscription.name
+  role         = "roles/pubsub.subscriber"
+  member      = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/default"
+  depends_on = [
+    google_container_cluster.osdfir_cluster
+  ]
 }
 
 ##########################################################################

@@ -36,6 +36,7 @@ gcloud services enable artifactregistry.googleapis.com \
                        container.googleapis.com \
                        monitoring.googleapis.com \
                        networksecurity.googleapis.com \
+                       pubsub.googleapis.com \
                        servicenetworking.googleapis.com \
                        serviceusage.googleapis.com \
                        sqladmin.googleapis.com \
@@ -77,15 +78,17 @@ terraform apply -var "project_id=$PROJECT_ID"
 
 ```console
 ARTIFACT_REGISTRY=$(terraform output -json | jq -r .artifact_registry_id.value)
-PROJECT=$(terraform output -json | jq -r .project_id.value)
 FLEETSPEAK_FRONTEND=$(terraform output -json | jq -r .fleetspeak_frontend.value)
 GKE_CLUSTER_LOCATION=$(terraform output -json | jq -r .gke_cluster_location.value)
 GKE_CLUSTER_NAME=$(terraform output -json | jq -r .gke_cluster_name.value)
 GRR_BLOBSTORE_BUCKET=$(terraform output -json | jq -r .grr_blobstore_bucket.value)
+LOADBALANCER_CERT=$(terraform output -json | jq .fleetspeak_cert_loadbalancer.value | sed 's/\\n/\\\\n/g')
 MYSQL_DB_ADDRESS=$(terraform output -json | jq -r .mysqldb_ip_address.value)
+PUBSUB_TOPIC=$(terraform output -json | jq -r .grr_fleetspeak_service_topic.value)
+PUBSUB_SUBSCRIPTION=$(terraform output -json | jq -r .grr_fleetspeak_service_subscription.value)
+PROJECT=$(terraform output -json | jq -r .project_id.value)
 REGION=$(terraform output -json | jq -r .region.value)
 ZONE=$(terraform output -json | jq -r .zone.value)
-LOADBALANCER_CERT=$(terraform output -json | jq .fleetspeak_cert_loadbalancer.value | sed 's/\\n/\\\\n/g')
 
 GRR_DAEMON_IMAGE=${REGION}-docker.pkg.dev/${PROJECT}/${ARTIFACT_REGISTRY}/grr-daemon
 GRR_OPERATOR_IMAGE=${REGION}-docker.pkg.dev/${PROJECT}/${ARTIFACT_REGISTRY}/grr-operator
