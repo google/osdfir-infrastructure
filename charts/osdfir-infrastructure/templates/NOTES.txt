@@ -1,15 +1,17 @@
-Thank you for installing {{ .Chart.Name }}.
+Thank you for installing {{ .Chart.Name }}:{{ .Chart.Version }}.
 
 Your release is named {{ .Release.Name }}.
 
 To learn more about the release, try:
-
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
+  $ kubectl get pods
 
 {{ if .Values.global.timesketch.enabled -}}
 To connect to the Timesketch UI, run:
-
+  {{- if and (.Values.global.ingress.enabled) (.Values.timesketch.ingress.host) }}
+  $ echo "Visit https://{{ .Values.timesketch.ingress.host }} to access Timesketch externally"
+  {{- end }}
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "timesketch.fullname" .Subcharts.timesketch }} {{ include "timesketch.service.port" . }}:{{ include "timesketch.service.port" . }}
   $ echo "Visit http://127.0.0.1:{{ include "timesketch.service.port" . }} to access Timesketch"
 
@@ -21,14 +23,25 @@ Login to Timesketch with the User `timesketch`. To get your password run:
 
 {{ if .Values.global.turbinia.enabled -}}
 To connect to the Turbinia UI, run:
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "turbinia.fullname" .Subcharts.turbinia }} {{ include "turbinia.service.port" . }}:{{ include "turbinia.service.port" . }}
-  $ echo "Visit http://127.0.0.1:{{ include "turbinia.service.port" . }} to access the Turbinia Web UI"
+  {{- if and (.Values.global.ingress.enabled) (.Values.turbinia.ingress.host) }}
+  $ echo "Visit https://{{ .Values.turbinia.ingress.host }} to access Turbinia externally"
+  {{- end }}
+  {{- if .Values.turbinia.oauth2proxy.enabled }}
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-oauth2proxy {{ .Values.turbinia.oauth2proxy.service.port }}:{{ .Values.turbinia.oauth2proxy.service.port }}
+  $ echo "Visit http://127.0.0.1:{{ .Values.turbinia.oauth2proxy.service.port }} to access Turbinia through port-forwarding"
+  {{- else }}
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-turbinia {{ include "turbinia.service.port" . }}:{{ include "turbinia.service.port" . }}
+  $ echo "Visit http://127.0.0.1:{{ include "turbinia.service.port" . }} to access Turbinia through port-forwarding"
+  {{- end }}
 {{- end }}
 
 {{ if .Values.global.yeti.enabled -}}
 To connect to the Yeti URL, run:
+  {{- if and (.Values.global.ingress.enabled) (.Values.yeti.ingress.host) }}
+  $ echo "Visit https://{{ .Values.yeti.ingress.host }} to access Yeti externally"
+  {{- end }}
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "yeti.fullname" . }} {{ include "yeti.service.port" . }}:{{ include "yeti.service.port" . }}
-  $ echo "Visit http://127.0.0.1:{{ include "yeti.service.port" . }} to access Yeti"
+  $ echo "Visit http://127.0.0.1:{{ include "yeti.service.port" . }} to access Yeti through port-forwarding"
 
 Login to Yeti with the User `yeti`. To get your password run:
   $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ include "yeti.fullname" . }}-secret -o jsonpath="{.data.yeti-user}" | base64 -d
@@ -40,7 +53,7 @@ Run the following commands on your workstation to orchestrate collection and pro
   $ poetry install && poetry shell
   $ dftimewolf -h
   $ If using Timesketch, use the credentials provided in this chart when prompted
-  {{ if .Values.turbinia.oauth2proxy.enabled -}}
+  {{ if and .Values.global.turbinia.enabled .Values.turbinia.oauth2proxy.enabled -}}
   $ If using Turbinia with the Oauth2 Proxy, use the command below to generate the necessary config
     $ kubectl get secret --namespace {{ .Release.Namespace }} {{ include "turbinia.fullname" . }}-secret -o jsonpath="{.data.turbinia-secret}" | base64 -d > ~/.dftimewolf_turbinia_secrets.json
   {{- end }}

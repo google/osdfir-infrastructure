@@ -36,6 +36,24 @@ Worker pod upon startup.
           name: {{ printf "%s-yeti-secret" .Release.Name }}
           key: "yeti-api"
     {{- end }}
+    {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }} 
+    - name: OIDC_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.config.oidc.existingSecret | quote }}
+          key: "client-id"
+    - name: OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.config.oidc.existingSecret | quote }}
+          key: "client-secret"
+    - name: OIDC_CLIENT_ID_NATIVE
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.config.oidc.existingSecret | quote }}
+          key: "client-id-native"
+          optional: true
+    {{- end }}
   volumeMounts:
     - mountPath: /init
       name: init-timesketch
@@ -43,4 +61,9 @@ Worker pod upon startup.
       name: timesketch-configs
     - mountPath: /tmp/timesketch
       name: uploaded-configs
+  {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
+    - name: authenticated-emails
+      mountPath: /init/authenticated-emails
+      readOnly: true
+  {{- end }}
 {{- end }}

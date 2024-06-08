@@ -14,7 +14,11 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm install my-release osdfir-charts/timesketch
 ```
 
-> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+> **Note**: By default, Timesketch is not externally accessible and can be
+reached via `kubectl port-forward` within the cluster.
+
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
 
 ## Introduction
 
@@ -63,16 +67,61 @@ Install the chart with the base values in `values.yaml` and the production value
 helm install my-release ../timesketch -f values.yaml -f values-production.yaml
 ```
 
-To upgrade an existing release with production values, externally expose Timesketch through a loadbalancer, and add SSL through GCP managed certificates, run:
+### Enabling GKE Ingress and OIDC Authentication
 
-```console
-helm upgrade my-release ../timesketch \
-    -f values-production.yaml \
-    --set ingress.enabled=true \
-    --set ingress.host=<DOMAIN_NAME> \
-    --set ingress.gcp.staticIPName=<STATIC_IP_NAME> \
-    --set ingress.gcp.managedCertificates=true
-```
+Follow these steps to externally expose Timesketch and enable Google Cloud OIDC
+to control user access to Timesketch.
+
+1. Create a global static IP address:
+
+    ```console
+    gcloud compute addresses create timesketch-webapps --global
+    ```
+
+2. Register a new domain or use an existing one, ensuring a DNS entry
+points to the IP created earlier.
+
+3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
+OAuth client.
+   - Fill in Authorized JavaScript origins with your domain as `https://<DOMAIN_NAME>.com`
+   - Fill in Authorized redirect URIs with `https://<DOMAIN_NAME>.com/google_openid_connect/`
+
+4. Store your new OAuth credentials in a K8s secret:
+
+    ```console
+    kubectl create secret generic oauth-secrets \
+        --from-literal=client-id=<WEB_CLIENT_ID> \
+        --from-literal=client-secret=<WEB_CLIENT_SECRET> \
+        --from-literal=client-id-native=<NATIVE_CLIENT_ID>
+    ```
+
+5. Make a list of allowed emails in a text file, one per line:
+
+    ```console
+    touch authenticated-emails.txt
+    ```
+
+6. Apply the authenticated email list as a K8s secret:
+
+    ```console
+    kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
+    ```
+
+7. Then to upgrade an existing release with production values, externally expose
+   Timesketch through a loadbalancer, add SSL through GCP managed certificates, and
+   enable OIDC for authentication, run:
+
+    ```console
+    helm upgrade my-release ../timesketch \
+        -f values-production.yaml \
+        --set ingress.enabled=true \
+        --set ingress.host=<DOMAIN_NAME> \
+        --set ingress.gcp.staticIPName=<STATIC_IP_NAME> \
+        --set ingress.gcp.managedCertificates=true \
+        --set config.oidc.enabled=true \
+        --set config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+        --set config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    ```
 
 ## Uninstalling the Chart
 
@@ -98,16 +147,17 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                            | Description                                                                                  | Value   |
-| ------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
-| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)   | `false` |
-| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                | `nil`   |
-| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart) | `false` |
-| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                | `nil`   |
-| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
-| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `nil`   |
-| `global.existingPVC`            | Existing claim for Timesketch persistent volume (overrides `persistent.name`)                | `""`    |
-| `global.storageClass`           | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)      | `""`    |
+| Name                            | Description                                                                                                 | Value   |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                  | `false` |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                               | `nil`   |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)                | `false` |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                               | `nil`   |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                        | `false` |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                                   | `nil`   |
+| `global.ingress.enabled`        | Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart) | `false` |
+| `global.existingPVC`            | Existing claim for Timesketch persistent volume (overrides `persistent.name`)                               | `""`    |
+| `global.storageClass`           | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)                     | `""`    |
 
 ### Timesketch image configuration
 
@@ -120,10 +170,15 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch Configuration Parameters
 
-| Name                | Description                                                                                                                           | Value       |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `config.override`   | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
-| `config.createUser` | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
+| Name                                                 | Description                                                                                                                           | Value       |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
+| `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
+| `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
+| `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
+| `config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`      |
+| `config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`        |
+| `config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`        |
 
 ### Timesketch Frontend Configuration
 
@@ -184,6 +239,8 @@ kubectl delete pvc -l release=my-release
 | `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                             | `false`             |
 | `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                        | `""`                |
 | `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `gce`               |
+| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                       | `false`             |
+| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                     | `false`             |
 | `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                   | `false`             |
 | `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP. Required when using "gce" in ingress.className                                  | `""`                |
 | `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address | `""`                |
