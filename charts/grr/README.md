@@ -207,8 +207,8 @@ sed -i "s'GRR_BLOBSTORE_BUCKET'$GRR_BLOBSTORE_BUCKET'g" charts/grr/values-gcp.ya
 sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
 sed -i "s'PUBSUB_PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
-sed -i "s'PUBSUB_SUBSCRIPTION'$GRR_FLEETSPEAK_SUBSCRIPTION'g" charts/grr/values-gcp.yaml
-sed -i "s'PUBSUB_TOPIC'$GRR_FLEETSPEAK_TOPIC'g" charts/grr/values-gcp.yaml
+sed -i "s'PUBSUB_SUBSCRIPTION'$PUBSUB_SUBSCRIPTION'g" charts/grr/values-gcp.yaml
+sed -i "s'PUBSUB_TOPIC'$PUBSUB_TOPIC'g" charts/grr/values-gcp.yaml
 sed -i "s'PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
 ```
 

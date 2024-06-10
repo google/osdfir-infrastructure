@@ -299,7 +299,7 @@ resource "google_container_node_pool" "grr-node-pool" {
   location   = var.zone
   cluster    = google_container_cluster.osdfir_cluster.name
   
-  version = data.google_container_engine_versions.gke_version.release_channel_latest_version["STABLE"]
+  version = data.google_container_engine_versions.gke_version.release_channel_default_version["REGULAR"]
   node_count = var.grr_pool_num_nodes
 
   node_config {
