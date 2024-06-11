@@ -9,7 +9,7 @@ data:
   services.textproto: |
     services {
       name: "GRR"
-      {{- if .Values.grr.pubsub.topic }}
+      {{- if (and .Values.grr.pubsub .Values.grr.pubsub.topic) }}
       factory: "CPS"
       config {
         [type.googleapis.com/fleetspeak.cpsservice.Config] {
