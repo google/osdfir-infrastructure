@@ -145,7 +145,7 @@ grr:
     ##
     image: "ghcr.io/google/grr:v3.4.7.4-release"
   pubsub:
-    ## @param grr.pubsub.projectId Sets the Project ID where for the PubSub Topic.
+    ## @param grr.pubsub.project Sets the Project ID where for the PubSub Topic.
     ##
     project: "PUBSUB_PROJECT_ID"
     ## @param grr.pubsub.subscription Sets the PubSub Subscriber to be used for processing the messages.
