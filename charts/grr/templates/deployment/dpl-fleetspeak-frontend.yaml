@@ -18,6 +18,7 @@ spec:
         app.kubernetes.io/name: fleetspeak-frontend
         prometheus: fleetspeak-frontend
     spec:
+      serviceAccountName: grr-sa
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
