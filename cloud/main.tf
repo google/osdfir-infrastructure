@@ -291,6 +291,19 @@ resource "google_container_cluster" "osdfir_cluster" {
   workload_identity_config {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
+
+  datapath_provider = "ADVANCED_DATAPATH"
+
+  monitoring_config {
+    managed_prometheus {
+      enabled = true
+    }
+
+    advanced_datapath_observability_config {
+      enable_metrics = true
+      enable_relay   = true
+    }
+  } 
 }
 
 # Node Pool for GRR / Fleetspeak server nodes
