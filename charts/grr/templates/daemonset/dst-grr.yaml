@@ -19,7 +19,7 @@ spec:
       # Only deploying GRR to nodes with the label 'grrclient=installed'.
       nodeSelector:
         grrclient: installed
-      serviceAccountName: grr-sa
+      serviceAccountName: grr-client-sa
       # Uses the host network rather than the container network. This way
       # the hostname that shows up in GRR will contain the cluster name too.
       hostNetwork: true

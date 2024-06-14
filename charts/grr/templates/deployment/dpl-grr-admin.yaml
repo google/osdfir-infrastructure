@@ -18,6 +18,7 @@ spec:
         app.kubernetes.io/name: grr-admin
         prometheus: grr-admin
     spec:
+      serviceAccountName: grr-sa
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

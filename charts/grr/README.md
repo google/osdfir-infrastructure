@@ -179,11 +179,14 @@ You can check that they have a value assigned by runnig the commands below.
 echo "FLEETSPEAK_FRONTEND: $FLEETSPEAK_FRONTEND"
 echo "GKE_CLUSTER_LOCATION: $GKE_CLUSTER_LOCATION"
 echo "GKE_CLUSTER_NAME: $GKE_CLUSTER_NAME"
+echo "GRR_BLOBSTORE_BUCKET: $GRR_BLOBSTORE_BUCKET"
 echo "GRR_DAEMON_IMAGE: $GRR_DAEMON_IMAGE"
 echo "GRR_OPERATOR_IMAGE: $GRR_OPERATOR_IMAGE"
 echo "LOADBALANCER_CERT: $LOADBALANCER_CERT"
 echo "MYSQL_DB_ADDRESS: $MYSQL_DB_ADDRESS"
 echo "PROJECT_ID: $PROJECT_ID"
+echo "PUBSUB_SUBSCRIPTION: $PUBSUB_SUBSCRIPTION"
+echo "PUBSUB_TOPIC: $PUBSUB_TOPIC"
 echo "REGION: $REGION"
 echo "ZONE: $ZONE"
 ```
@@ -200,8 +203,13 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 
 ```console
 sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
+sed -i "s'GRR_BLOBSTORE_BUCKET'$GRR_BLOBSTORE_BUCKET'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
+sed -i "s'PUBSUB_PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
+sed -i "s'PUBSUB_SUBSCRIPTION'$PUBSUB_SUBSCRIPTION'g" charts/grr/values-gcp.yaml
+sed -i "s'PUBSUB_TOPIC'$PUBSUB_TOPIC'g" charts/grr/values-gcp.yaml
+sed -i "s'PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
 ```
 
 #### 2.2.3. Install the Chart
@@ -396,45 +404,45 @@ helm uninstall grr-on-k8s
 
 ### Fleetspeak parameters
 
-| Name                                   | Description                                                                                       | Value                              |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| `fleetspeak.generateCert`              | Enables the generation of self-signed Fleetspeak x509 certificate.                                | `true`                             |
-| `fleetspeak.httpsHeaderChecksum`       | Defines on whether to add a HTTPS header checksum                                                 | `false`                            |
-| `fleetspeak.subjectCommonName`         | Sets the Fleetspeak x509 certificate subject common name.                                         | `fleetspeak-frontend`              |
-| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:latest` |
-| `fleetspeak.admin.listenPort`          | Sets the Fleetspeak admin listen port to use.                                                     | `4444`                             |
-| `fleetspeak.admin.replicas`            | Sets the amount of Fleetspeak admin pods to run.                                                  | `1`                                |
-| `fleetspeak.frontend.healthCheckPort`  | Sets the Fleetspeak frontend health check port to use.                                            | `8080`                             |
-| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:latest` |
-| `fleetspeak.frontend.listenPort`       | Sets the Fleetspeak frontend listen port to use.                                                  | `4443`                             |
-| `fleetspeak.frontend.neg`              | Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service. | `false`                            |
-| `fleetspeak.frontend.notificationPort` | Sets the Fleetspeak frontend notificaton port to use.                                             | `12000`                            |
-| `fleetspeak.frontend.replicas`         | Sets the amount of Fleetspeak frontend pods to run.                                               | `1`                                |
-| `fleetspeak.mysqlDb.address`           | Sets the Fleetspeak DB address to use.                                                            | `mysql`                            |
-| `fleetspeak.mysqlDb.name`              | Sets the Fleetspeak DB name to use.                                                               | `fleetspeak`                       |
-| `fleetspeak.mysqlDb.port`              | Sets the Fleetspeak DB port to use.                                                               | `3306`                             |
-| `fleetspeak.mysqlDb.userName`          | Sets the Fleetspeak DB user name to use.                                                          | `fleetspeak-user`                  |
-| `fleetspeak.mysqlDb.userPassword`      | Sets the Fleetspeak DB password to use.                                                           | `fleetspeak-password`              |
+| Name                                   | Description                                                                                       | Value                               |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `fleetspeak.generateCert`              | Enables the generation of self-signed Fleetspeak x509 certificate.                                | `true`                              |
+| `fleetspeak.httpsHeaderChecksum`       | Defines on whether to add a HTTPS header checksum                                                 | `false`                             |
+| `fleetspeak.subjectCommonName`         | Sets the Fleetspeak x509 certificate subject common name.                                         | `fleetspeak-frontend`               |
+| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:v0.1.15` |
+| `fleetspeak.admin.listenPort`          | Sets the Fleetspeak admin listen port to use.                                                     | `4444`                              |
+| `fleetspeak.admin.replicas`            | Sets the amount of Fleetspeak admin pods to run.                                                  | `1`                                 |
+| `fleetspeak.frontend.healthCheckPort`  | Sets the Fleetspeak frontend health check port to use.                                            | `8080`                              |
+| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:v0.1.15` |
+| `fleetspeak.frontend.listenPort`       | Sets the Fleetspeak frontend listen port to use.                                                  | `4443`                              |
+| `fleetspeak.frontend.neg`              | Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service. | `false`                             |
+| `fleetspeak.frontend.notificationPort` | Sets the Fleetspeak frontend notificaton port to use.                                             | `12000`                             |
+| `fleetspeak.frontend.replicas`         | Sets the amount of Fleetspeak frontend pods to run.                                               | `1`                                 |
+| `fleetspeak.mysqlDb.address`           | Sets the Fleetspeak DB address to use.                                                            | `mysql`                             |
+| `fleetspeak.mysqlDb.name`              | Sets the Fleetspeak DB name to use.                                                               | `fleetspeak`                        |
+| `fleetspeak.mysqlDb.port`              | Sets the Fleetspeak DB port to use.                                                               | `3306`                              |
+| `fleetspeak.mysqlDb.userName`          | Sets the Fleetspeak DB user name to use.                                                          | `fleetspeak-user`                   |
+| `fleetspeak.mysqlDb.userPassword`      | Sets the Fleetspeak DB password to use.                                                           | `fleetspeak-password`               |
 
 ### GRR parameters
 
-| Name                                | Description                                                            | Value                       |
-| ----------------------------------- | ---------------------------------------------------------------------- | --------------------------- |
-| `grr.generateExecutableSigningCert` | Enables the generation of self-signed executable signging certificate. | `true`                      |
-| `grr.admin.image`                   | Sets the GRR admin container image to use.                             | `ghcr.io/google/grr:latest` |
-| `grr.admin.listenPort`              | Sets the GRR admin listen port to use.                                 | `8000`                      |
-| `grr.admin.replicas`                | Sets the amount of GRR admin pods to run.                              | `1`                         |
-| `grr.daemon.image`                  | Sets the GRR daemon container image to use.                            | `grr-daemon:v0.1`           |
-| `grr.daemon.imagePullPolicy`        | Sets the GRR daemon container image pull policy to use.                | `Never`                     |
-| `grr.frontend.image`                | Sets the GRR frontend container image to use.                          | `ghcr.io/google/grr:latest` |
-| `grr.frontend.listenPort`           | Sets the GRR frontend listen port to use.                              | `11111`                     |
-| `grr.frontend.replicas`             | Sets the amount of GRR frontend pods to run.                           | `1`                         |
-| `grr.mysqlDb.address`               | Sets the GRR DB address to use.                                        | `mysql`                     |
-| `grr.mysqlDb.name`                  | Sets the GRR DB name to use                                            | `grr`                       |
-| `grr.mysqlDb.port`                  | Sets the GRR DB port to use.                                           | `3306`                      |
-| `grr.mysqlDb.userName`              | Sets the GRR DB user name to use.                                      | `grr-user`                  |
-| `grr.mysqlDb.userPassword`          | Sets the GRR DB user password to use.                                  | `grr-password`              |
-| `grr.worker.image`                  | Sets the GRR worker container image to use.                            | `ghcr.io/google/grr:latest` |
+| Name                                | Description                                                            | Value                                 |
+| ----------------------------------- | ---------------------------------------------------------------------- | ------------------------------------- |
+| `grr.generateExecutableSigningCert` | Enables the generation of self-signed executable signging certificate. | `true`                                |
+| `grr.admin.image`                   | Sets the GRR admin container image to use.                             | `ghcr.io/google/grr:v3.4.7.4-release` |
+| `grr.admin.listenPort`              | Sets the GRR admin listen port to use.                                 | `8000`                                |
+| `grr.admin.replicas`                | Sets the amount of GRR admin pods to run.                              | `1`                                   |
+| `grr.daemon.image`                  | Sets the GRR daemon container image to use.                            | `grr-daemon:v0.1`                     |
+| `grr.daemon.imagePullPolicy`        | Sets the GRR daemon container image pull policy to use.                | `Never`                               |
+| `grr.frontend.image`                | Sets the GRR frontend container image to use.                          | `ghcr.io/google/grr:v3.4.7.4-release` |
+| `grr.frontend.listenPort`           | Sets the GRR frontend listen port to use.                              | `11111`                               |
+| `grr.frontend.replicas`             | Sets the amount of GRR frontend pods to run.                           | `1`                                   |
+| `grr.mysqlDb.address`               | Sets the GRR DB address to use.                                        | `mysql`                               |
+| `grr.mysqlDb.name`                  | Sets the GRR DB name to use                                            | `grr`                                 |
+| `grr.mysqlDb.port`                  | Sets the GRR DB port to use.                                           | `3306`                                |
+| `grr.mysqlDb.userName`              | Sets the GRR DB user name to use.                                      | `grr-user`                            |
+| `grr.mysqlDb.userPassword`          | Sets the GRR DB user password to use.                                  | `grr-password`                        |
+| `grr.worker.image`                  | Sets the GRR worker container image to use.                            | `ghcr.io/google/grr:v3.4.7.4-release` |
 
 ### Prometheus parameters
 

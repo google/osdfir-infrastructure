@@ -18,6 +18,7 @@ spec:
         app.kubernetes.io/name: grr-frontend
         prometheus: grr-frontend
     spec:
+      serviceAccountName: grr-sa
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
