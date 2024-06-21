@@ -62,4 +62,9 @@ using individual tools, and accessing helpful guides.
 * [Yeti Helm Chart](charts/yeti/README.md)
 * [GRR Helm Chart](charts/grr/README.md)
 
-This is not an officially supported Google product.
+---
+
+##### Obligatory Fine Print
+
+This is not an official Google product (experimental or otherwise), it is just
+code that happens to be owned by Google.
