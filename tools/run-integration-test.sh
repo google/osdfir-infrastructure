@@ -58,15 +58,15 @@ END_EXPECT
 fi
 
 # Back up existing Turbinia config else script will attempt to connect to wrong Turbinia instance
-if  [ -f ~/.turbinia_api_config.json ]
+if  [ -f ~/.dftimewolf_turbinia_secrets.json ]
 then
-  echo "Backing up existing Turbinia config to ~/.turbinia_api_config.json.$DATE"
-  mv ~/.turbinia_api_config.json ~/.turbinia_api_config.json.$DATE
+  echo "Backing up existing Turbinia config to ~/.dftimewolf_turbinia_secrets.json.$DATE"
+  mv ~/.dftimewolf_turbinia_secrets.json ~/.dftimewolf_turbinia_secrets.json.$DATE
 fi
 
 # Replace Turbinia config with test config
-echo "Writing turbinia config to $HOME/.turbinia_api_config.json..."
-cat > $HOME/.turbinia_api_config.json <<EOL
+echo "Writing turbinia config to $HOME/.dftimewolf_turbinia_secrets.json..."
+cat > $HOME/.dftimewolf_turbinia_secrets.json <<EOL
 {
 	"default": {
 		"description": "Turbinia client test config",
