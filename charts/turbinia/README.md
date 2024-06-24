@@ -377,6 +377,18 @@ kubectl delete pvc -l release=my-release
 ### Third Party Configuration
 
 
+### kubePrometheus configuration parameters
+
+| Name                                                                               | Description                                                                                                                                 | Value   |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `kubePrometheus.deployKubePrometheus`                                              | Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.               | `false` |
+| `kubePrometheus.kubeScheduler.enabled`                                             | Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).  | `false` |
+| `kubePrometheus.kubeControllerManager.enabled`                                     | Component scraping kube controller. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS). | `false` |
+| `kubePrometheus.coreDns.enabled`                                                   | Component scraping core dns. Disabled by default in favor of kube dns.                                                                      | `false` |
+| `kubePrometheus.kubeProxy.enabled`                                                 | Component scraping kube proxy. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).      | `false` |
+| `kubePrometheus.kubeDns.enabled`                                                   | Component scraping kube dns.                                                                                                                | `true`  |
+| `kubePrometheus.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues` | Disable so that custom servicemonitors can be created and monitored                                                                         | `false` |
+
 ### Redis configuration parameters
 
 | Name                                | Description                                                                                  | Value        |
