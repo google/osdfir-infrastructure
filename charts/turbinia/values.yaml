@@ -618,7 +618,7 @@ kubePrometheus:
   ##
   kubeProxy:
     enabled: false
-  ## @param kubePrometheus.kubeProxy.enabled Component scraping kube dns.
+  ## @param kubePrometheus.kubeDns.enabled Component scraping kube dns.
   ##
   kubeDns:
     enabled: true
