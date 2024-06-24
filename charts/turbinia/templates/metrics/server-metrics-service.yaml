@@ -4,13 +4,14 @@ kind: Service
 metadata:
   name: {{ include "turbinia.fullname" . }}-server-metrics
   labels:
+    monitoring: enabled
     {{- include "turbinia.labels" . | nindent 4 }}
 spec:
   ports:
     - port: {{ .Values.metrics.port }}
       targetPort: {{ .Values.metrics.port }}
       protocol: TCP
-      name: http
+      name: http-metrics
   selector:
     app.kubernetes.io/component: server
     {{- include "turbinia.selectorLabels" . | nindent 4 }}

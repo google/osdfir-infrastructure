@@ -146,6 +146,53 @@ Oauth2 Proxy for authentication, run:
 plan to expose Turbinia with a public facing IP, it is highly recommended that
 the Oauth2 Proxy is deployed alongside with the command provided above.
 
+### Deploying Monitoring
+
+Application and system monitoring is available through the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack).
+Kube Prometheus is a collection of Grafana dashboards and Prometheus rules combined
+with documentation to provide easy to operate end-to-end K8s cluster monitoring.
+
+To setup monitoring, first add the repository containing the kube-prometheus-stack
+Helm chart:
+
+```console
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+If using GKE, EKS, or similar K8s managed services some options will need to be
+disabled due to the control plane nodes not being visible to Prometheus. To
+address this create a values file containing the following updates:
+
+```console
+cat >> values-monitoring.yaml << EOF
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+coreDns:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeDns:
+  enabled: true
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+EOF
+```
+
+Then to install the kube prometheus chart in a namespace called `monitoring`:
+
+```console
+helm install kube-prometheus prometheus-community/kube-prometheus-stack -f values-monitoring.yaml --namespace monitoring
+```
+
+That's it! To verify Turbinia metrics are being collected, connect to either
+Prometheus or Grafana and search for `turbinia_*` in metrics explorer. If no
+metrics appear, you may need to run a helm upgrade on your existing Turbinia
+deployment so that the latest CRDs can be applied.
+
 ## Uninstalling the Chart
 
 To uninstall/delete a Helm deployment with a release name of `my-release`:
