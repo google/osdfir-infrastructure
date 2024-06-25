@@ -91,7 +91,7 @@ spec:
         {{- if $userconfigs }}
         - name: user-configs
           configMap:
-            name: {{ include "turbinia.fullname" . }}-configmap
+            name: {{ include "turbinia.configmap" . }}
         {{- end }}
       {{- with .Values.controller.nodeSelector }}
       nodeSelector:

@@ -347,6 +347,11 @@ config:
   ## your config file
   ##
   override: turbinia.conf
+  ## @param config.existingConfigMap Use an existing ConfigMap as the default Turbinia config.
+  ## Please ensure that the ConfigMap has been created prior to deployment
+  ## (e.g. kubectl create configmap turbinia-config --from-file=turbinia.conf)
+  ##
+  existingConfigMap: ""
   ## @param config.disabledJobs List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.
   ##
   disabledJobs: "['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']"
