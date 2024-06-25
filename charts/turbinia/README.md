@@ -191,7 +191,7 @@ helm install kube-prometheus prometheus-community/kube-prometheus-stack -f value
 That's it! To verify Turbinia metrics are being collected, connect to either
 Prometheus or Grafana and search for `turbinia_*` in metrics explorer. If no
 metrics appear, you may need to run a helm upgrade on your existing Turbinia
-deployment so that the latest CRDs can be applied.
+deployment so that the CustomResourceDefinitions (CRDs) can be applied.
 
 ## Uninstalling the Chart
 
