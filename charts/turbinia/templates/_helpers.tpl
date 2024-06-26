@@ -163,3 +163,14 @@ Turbinia service port
 {{ .Values.service.port }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Turbinia config map
+*/}}
+{{- define "turbinia.configmap" -}}
+{{- if .Values.config.existingConfigMap -}}
+{{ .Values.config.existingConfigMap }}
+{{- else -}}
+{{ include "turbinia.fullname" . }}-configmap
+{{- end -}}
+{{- end -}}

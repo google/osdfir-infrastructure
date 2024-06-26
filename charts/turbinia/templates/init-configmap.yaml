@@ -20,7 +20,7 @@ data:
 
     if [  $(ls /tmp/turbinia/ | wc -l) -gt 0 ]; then
       echo "Using exisiting configuration file provided."
-      cp /tmp/turbinia/* /etc/turbinia/
+      cp /tmp/turbinia/* /etc/turbinia/turbinia.conf
     else
       # Pull default config if one is not already provided
       {{- $turbiniaWorker := "us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker" -}}

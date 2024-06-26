@@ -77,7 +77,7 @@ spec:
           emptyDir: {}
         - name: user-configs
           configMap:
-            name: {{ include "turbinia.fullname" . }}-configmap
+            name: {{ include "turbinia.configmap" . }}
             optional: true
       {{- with .Values.api.nodeSelector }}
       nodeSelector:
