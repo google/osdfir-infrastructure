@@ -28,6 +28,7 @@ jobs:
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo add opensearch https://opensearch-project.github.io/helm-charts/
           helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+          helm repo add kube-prometheus https://prometheus-community.github.io/helm-charts
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
