@@ -10,10 +10,15 @@ Timesketch is an open-source tool for collaborative forensic timeline analysis.
 ## TL;DR
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm install my-release osdfir-charts/timesketch
 ```
 
-> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+> **Note**: By default, Timesketch is not externally accessible and can be
+reached via `kubectl port-forward` within the cluster.
+
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
 
 ## Introduction
 
@@ -28,10 +33,17 @@ deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](htt
 
 ## Installing the Chart
 
+The first step is to add the repo and then update to pick up any new changes.
+
+```console
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm repo update
+```
+
 To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install my-release osdfir-charts/timesketch
 ```
 
 The command deploys Timesketch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
@@ -46,7 +58,7 @@ chart locally and adding a `configs/` directory at the root of the Helm chart wi
 Pull the chart locally then cd into `/timesketch` and review the `values-production.yaml` file for a list of values that will be used for production.
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
+helm pull osdfir-charts/timesketch --untar
 ```
 
 Install the chart with the base values in `values.yaml` and the production values in `values-production.yaml`, then using a release name such as `my-release`, run:
@@ -55,16 +67,61 @@ Install the chart with the base values in `values.yaml` and the production value
 helm install my-release ../timesketch -f values.yaml -f values-production.yaml
 ```
 
-To upgrade an existing release with production values, externally expose Timesketch through a loadbalancer, and add SSL through GCP managed certificates, run:
+### Enabling GKE Ingress and OIDC Authentication
 
-```console
-helm upgrade my-release
-    -f values-production.yaml \
-    --set ingress.enabled=true \
-    --set ingress.host=<DOMAIN_NAME> \
-    --set ingress.gcp.staticIPName=<STATIC_IP_NAME> \
-    --set ingress.gcp.managedCertificates=true
-```
+Follow these steps to externally expose Timesketch and enable Google Cloud OIDC
+to control user access to Timesketch.
+
+1. Create a global static IP address:
+
+    ```console
+    gcloud compute addresses create timesketch-webapps --global
+    ```
+
+2. Register a new domain or use an existing one, ensuring a DNS entry
+points to the IP created earlier.
+
+3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
+OAuth client.
+   - Fill in Authorized JavaScript origins with your domain as `https://<DOMAIN_NAME>.com`
+   - Fill in Authorized redirect URIs with `https://<DOMAIN_NAME>.com/google_openid_connect/`
+
+4. Store your new OAuth credentials in a K8s secret:
+
+    ```console
+    kubectl create secret generic oauth-secrets \
+        --from-literal=client-id=<WEB_CLIENT_ID> \
+        --from-literal=client-secret=<WEB_CLIENT_SECRET> \
+        --from-literal=client-id-native=<NATIVE_CLIENT_ID>
+    ```
+
+5. Make a list of allowed emails in a text file, one per line:
+
+    ```console
+    touch authenticated-emails.txt
+    ```
+
+6. Apply the authenticated email list as a K8s secret:
+
+    ```console
+    kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
+    ```
+
+7. Then to upgrade an existing release with production values, externally expose
+   Timesketch through a loadbalancer, add SSL through GCP managed certificates, and
+   enable OIDC for authentication, run:
+
+    ```console
+    helm upgrade my-release ../timesketch \
+        -f values-production.yaml \
+        --set ingress.enabled=true \
+        --set ingress.host=<DOMAIN_NAME> \
+        --set ingress.gcp.staticIPName=<STATIC_IP_NAME> \
+        --set ingress.gcp.managedCertificates=true \
+        --set config.oidc.enabled=true \
+        --set config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+        --set config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    ```
 
 ## Uninstalling the Chart
 
@@ -90,10 +147,17 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                  | Description                                                                             | Value |
-| --------------------- | --------------------------------------------------------------------------------------- | ----- |
-| `global.existingPVC`  | Existing claim for Timesketch persistent volume (overrides `persistent.name`)           | `""`  |
-| `global.storageClass` | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`) | `""`  |
+| Name                            | Description                                                                                                 | Value   |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `global.timesketch.enabled`     | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                  | `false` |
+| `global.timesketch.servicePort` | Timesketch service port (overrides `timesketch.service.port`)                                               | `nil`   |
+| `global.turbinia.enabled`       | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)                | `false` |
+| `global.turbinia.servicePort`   | Turbinia API service port (overrides `turbinia.service.port`)                                               | `nil`   |
+| `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                        | `false` |
+| `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                                   | `nil`   |
+| `global.ingress.enabled`        | Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart) | `false` |
+| `global.existingPVC`            | Existing claim for Timesketch persistent volume (overrides `persistent.name`)                               | `""`    |
+| `global.storageClass`           | StorageClass for the Timesketch persistent volume (overrides `persistent.storageClass`)                     | `""`    |
 
 ### Timesketch image configuration
 
@@ -106,10 +170,15 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch Configuration Parameters
 
-| Name                | Description                                                                                                                           | Value       |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `config.override`   | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
-| `config.createUser` | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
+| Name                                                 | Description                                                                                                                           | Value       |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
+| `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
+| `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
+| `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
+| `config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`      |
+| `config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`        |
+| `config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`        |
 
 ### Timesketch Frontend Configuration
 
@@ -136,19 +205,33 @@ kubectl delete pvc -l release=my-release
 | `worker.tolerations`               | Tolerations for Timesketch worker pods assignment                         | `[]`    |
 | `worker.affinity`                  | Affinity for Timesketch worker pods assignment                            | `{}`    |
 
+### Timesketch Nginx Configuration
+
+| Name                              | Description                                                              | Value                |
+| --------------------------------- | ------------------------------------------------------------------------ | -------------------- |
+| `nginx.image.repository`          | Nginx image repository                                                   | `nginx`              |
+| `nginx.image.tag`                 | Nginx image tag                                                          | `1.25.5-alpine-slim` |
+| `nginx.image.pullPolicy`          | Nginx image pull policy                                                  | `Always`             |
+| `nginx.podSecurityContext`        | Holds pod-level security attributes and common nginx container settings  | `{}`                 |
+| `nginx.securityContext`           | Holds security configuration that will be applied to the nginx container | `{}`                 |
+| `nginx.resources.limits`          | The resources limits for the nginx container                             | `{}`                 |
+| `nginx.resources.requests.cpu`    | The requested cpu for the nginx container                                | `250m`               |
+| `nginx.resources.requests.memory` | The requested memory for the nginx container                             | `256Mi`              |
+| `nginx.nodeSelector`              | Node labels for Timesketch nginx pods assignment                         | `{}`                 |
+| `nginx.tolerations`               | Tolerations for Timesketch nginx pods assignment                         | `[]`                 |
+| `nginx.affinity`                  | Affinity for Timesketch nginx pods assignment                            | `{}`                 |
+
 ### Common Parameters
 
 | Name                              | Description                                                                                                                        | Value               |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `nameOverride`                    | String to partially override names.fullname                                                                                        | `""`                |
-| `fullnameOverride`                | String to fully override names.fullname                                                                                            | `""`                |
 | `serviceAccount.create`           | Specifies whether a service account should be created                                                                              | `true`              |
 | `serviceAccount.annotations`      | Annotations to add to the service account                                                                                          | `{}`                |
 | `serviceAccount.name`             | The name of the service account to use                                                                                             | `timesketch`        |
 | `service.type`                    | Timesketch service type                                                                                                            | `ClusterIP`         |
 | `service.port`                    | Timesketch service port                                                                                                            | `5000`              |
 | `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
-| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `9200`              |
+| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `8080`              |
 | `persistence.name`                | Timesketch persistent volume name                                                                                                  | `timesketchvolume`  |
 | `persistence.size`                | Timesketch persistent volume size                                                                                                  | `2Gi`               |
 | `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                            | `""`                |
@@ -156,6 +239,8 @@ kubectl delete pvc -l release=my-release
 | `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                             | `false`             |
 | `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                        | `""`                |
 | `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `gce`               |
+| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                       | `false`             |
+| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                     | `false`             |
 | `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                   | `false`             |
 | `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP. Required when using "gce" in ingress.className                                  | `""`                |
 | `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address | `""`                |
@@ -165,40 +250,42 @@ kubectl delete pvc -l release=my-release
 
 ### Opensearch Configuration Parameters
 
-| Name                               | Description                                                                                                 | Value                                                                                    |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `opensearch.enabled`               | Enables the Opensearch deployment                                                                           | `true`                                                                                   |
-| `opensearch.config.opensearch.yml` | Opensearch configuration file. Can be appended for additional configuration options                         | `{"opensearch.yml":"plugins:\n  security:\n    allow_unsafe_democertificates: false\n"}` |
-| `opensearch.extraEnvs[0].name`     | Environment variable to disable Opensearch Demo config                                                      | `DISABLE_INSTALL_DEMO_CONFIG`                                                            |
-| `opensearch.extraEnvs[0].value`    | Disables Opensearch Demo config                                                                             | `true`                                                                                   |
-| `opensearch.extraEnvs[1].name`     | Environment variable to disable Opensearch Security plugin given that                                       | `DISABLE_SECURITY_PLUGIN`                                                                |
-| `opensearch.extraEnvs[1].value`    | Disables Opensearch Security plugin                                                                         | `true`                                                                                   |
-| `opensearch.replicas`              | Number of Opensearch instances to deploy                                                                    | `1`                                                                                      |
-| `opensearch.sysctlInit.enabled`    | Sets optimal sysctl's through privileged initContainer                                                      | `true`                                                                                   |
-| `opensearch.opensearchJavaOpts`    | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M`                                                                      |
-| `opensearch.httpPort`              | Opensearch service port                                                                                     | `9200`                                                                                   |
-| `opensearch.persistence.size`      | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                                                                                    |
-| `opensearch.resources.requests`    | Requested resources for the Opensearch containers                                                           | `{}`                                                                                     |
-| `opensearch.nodeSelector`          | Node labels for Opensearch pods assignment                                                                  | `{}`                                                                                     |
+| Name                                   | Description                                                                                                 | Value                                                                                    |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `opensearch.enabled`                   | Enables the Opensearch deployment                                                                           | `true`                                                                                   |
+| `opensearch.config.opensearch.yml`     | Opensearch configuration file. Can be appended for additional configuration options                         | `{"opensearch.yml":"plugins:\n  security:\n    allow_unsafe_democertificates: false\n"}` |
+| `opensearch.extraEnvs[0].name`         | Environment variable to disable Opensearch Demo config                                                      | `DISABLE_INSTALL_DEMO_CONFIG`                                                            |
+| `opensearch.extraEnvs[0].value`        | Disables Opensearch Demo config                                                                             | `true`                                                                                   |
+| `opensearch.extraEnvs[1].name`         | Environment variable to disable Opensearch Security plugin given that                                       | `DISABLE_SECURITY_PLUGIN`                                                                |
+| `opensearch.extraEnvs[1].value`        | Disables Opensearch Security plugin                                                                         | `true`                                                                                   |
+| `opensearch.replicas`                  | Number of Opensearch instances to deploy                                                                    | `1`                                                                                      |
+| `opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                      | `true`                                                                                   |
+| `opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M`                                                                      |
+| `opensearch.httpPort`                  | Opensearch service port                                                                                     | `9200`                                                                                   |
+| `opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                                                                                    |
+| `opensearch.resources.requests.cpu`    | The requested cpu for the Opensearch container                                                              | `250m`                                                                                   |
+| `opensearch.resources.requests.memory` | The requested memory for the Opensearch container                                                           | `512Mi`                                                                                  |
+| `opensearch.nodeSelector`              | Node labels for Opensearch pods assignment                                                                  | `{}`                                                                                     |
 
 ### Redis Configuration Parameters
 
-| Name                                | Description                                                                                  | Value       |
-| ----------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
-| `redis.enabled`                     | Enables the Redis deployment                                                                 | `true`      |
-| `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`     |
-| `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
-| `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP` |
-| `redis.master.service.ports.redis`  | Redis master service port                                                                    | `6379`      |
-| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `2Gi`       |
-| `redis.master.resources.limits`     | The resources limits for the Redis master containers                                         | `{}`        |
-| `redis.master.resources.requests`   | The requested resources for the Redis master containers                                      | `{}`        |
-| `redis.replica.replicaCount`        | Number of Redis replicas to deploy                                                           | `0`         |
-| `redis.replica.service.type`        | Redis replicas service type                                                                  | `ClusterIP` |
-| `redis.replica.service.ports.redis` | Redis replicas service port                                                                  | `6379`      |
-| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `2Gi`       |
-| `redis.replica.resources.limits`    | The resources limits for the Redis replica containers                                        | `{}`        |
-| `redis.replica.resources.requests`  | The requested resources for the Redis replica containers                                     | `{}`        |
+| Name                                | Description                                                                                  | Value        |
+| ----------------------------------- | -------------------------------------------------------------------------------------------- | ------------ |
+| `redis.enabled`                     | Enables the Redis deployment                                                                 | `true`       |
+| `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`      |
+| `redis.architecture`                | Specifies the Redis architecture. Allowed values: `standalone` or `replication`              | `standalone` |
+| `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`          |
+| `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP`  |
+| `redis.master.service.ports.redis`  | Redis master service port                                                                    | `6379`       |
+| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `2Gi`        |
+| `redis.master.resources.limits`     | The resources limits for the Redis master containers                                         | `{}`         |
+| `redis.master.resources.requests`   | The requested resources for the Redis master containers                                      | `{}`         |
+| `redis.replica.replicaCount`        | Number of Redis replicas to deploy                                                           | `0`          |
+| `redis.replica.service.type`        | Redis replicas service type                                                                  | `ClusterIP`  |
+| `redis.replica.service.ports.redis` | Redis replicas service port                                                                  | `6379`       |
+| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `2Gi`        |
+| `redis.replica.resources.limits`    | The resources limits for the Redis replica containers                                        | `{}`         |
+| `redis.replica.resources.requests`  | The requested resources for the Redis replica containers                                     | `{}`         |
 
 ### Postgresql Configuration Parameters
 
@@ -212,7 +299,8 @@ kubectl delete pvc -l release=my-release
 | `postgresql.primary.service.ports.postgresql`      | PostgreSQL primary service port                                             | `5432`       |
 | `postgresql.primary.persistence.size`              | PostgreSQL Persistent Volume size                                           | `2Gi`        |
 | `postgresql.primary.resources.limits`              | The resources limits for the PostgreSQL primary containers                  | `{}`         |
-| `postgresql.primary.resources.requests`            | The requested resources for the PostgreSQL primary containers               | `{}`         |
+| `postgresql.primary.resources.requests.cpu`        | The requested cpu for the PostgreSQL primary containers                     | `250m`       |
+| `postgresql.primary.resources.requests.memory`     | The requested memory for the PostgreSQL primary containers                  | `256Mi`      |
 | `postgresql.readReplicas.replicaCount`             | Number of PostgreSQL read only replicas                                     | `0`          |
 | `postgresql.readReplicas.service.type`             | PostgreSQL read replicas service type                                       | `ClusterIP`  |
 | `postgresql.readReplicas.service.ports.postgresql` | PostgreSQL read replicas service port                                       | `5432`       |
@@ -224,9 +312,7 @@ Specify each parameter using the --set key=value[,key=value] argument to helm
 install. For example,
 
 ```console
-helm install my-release \
-    --set opensearch.replicas=3
-    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch
+helm install my-release osdfir-charts/timesketch --set opensearch.replicas=3
 ```
 
 The above command installs Timesketch with 3 Opensearch Replicas.
@@ -235,7 +321,7 @@ Alternatively, the `values.yaml` and `values-production.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/timesketch --untar
+helm pull osdfir-charts/timesketch --untar
 ```
 
 Then make changes to the downloaded `values.yaml` and once done, install the
@@ -261,8 +347,8 @@ volume size or upgrading to a new release, you can run [helm upgrade](https://he
 For example, to set a new release and upgrade storage capacity, run:
 
 ```console
-helm upgrade my-release \
-    --set image.tag=latest
+helm upgrade my-release ../timesketch \
+    --set image.tag=latest \
     --set persistence.size=10T
 ```
 
@@ -281,7 +367,7 @@ for more details.
 
 ## License
 
-Copyright &copy; 2023 Timesketch
+Copyright &copy; 2023 OSDFIR Infrastructure
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

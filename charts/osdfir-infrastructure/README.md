@@ -7,14 +7,16 @@ Digital Forensics tools to Kubernetes clusters using Helm.
 Currently, OSDFIR Infrastructure supports the deployment and integration of the
 following tools:
 
+* [dfTimewolf](https://github.com/log2timeline/dftimewolf)
 * [Timesketch](https://github.com/google/timesketch)
 * [Turbinia](https://github.com/google/turbinia)
-* [dfTimewolf](https://github.com/log2timeline/dftimewolf)
+* [Yeti](https://github.com/yeti-platform/yeti)
 
 ## TL;DR
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
@@ -29,14 +31,22 @@ This chart bootstraps a OSDFIR Infrastructure deployment on a [Kubernetes](https
 * Helm 3.2.0+
 * PV provisioner support in the underlying infrastructure
 
-> **Note**: Currently Turbinia only supports processing of GCP Persistent Disks and Local Evidence. See [GKE Installations](#gke-installations) for deploying to GKE.
+> **Note**: For cloud deployments, Turbinia currently only supports attaching disks from GCP environments. Manual disk attachment or utilizing other evidence types is necessary
+for other cloud providers.
 
 ## Installing the Chart
+
+The first step is to add the repo and then update to pick up any new changes.
+
+```console
+helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
+helm repo update
+```
 
 To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
 
 ```console
-helm install my-release oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
 The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
@@ -48,10 +58,12 @@ for a recommended production installation.
 Pull the chart locally then cd into `/osdfir-infrastructure` and review the `values-production.yaml` file for a list of values that will be used for production.
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
+helm pull osdfir-charts/osdfir-infrastructure --untar
 ```
 
-### GKE Installations
+### Enabling GCP Disk processing for Turbinia
+
+Follow this section for enabling GCP disk processing for Turbinia.
 
 Create a Turbinia GCP account using the helper script in `osdfir-infrastructure/charts/turbinia/tools/create-gcp-sa.sh` prior to installing the chart.
 
@@ -67,35 +79,70 @@ helm install my-release ../osdfir-infrastructure \
     --set turbinia.gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-To upgrade an existing release and externally expose Timesketch through a loadbalancer with SSL through GCP managed certificates, run:
+### Enabling GKE Ingress and OIDC Authentication
 
-```console
-helm upgrade my-release
-    --set timesketch.ingress.enabled=true \
-    --set timesketch.ingress.host=<DOMAIN_NAME> \
-    --set timesketch.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
-    --set timesketch.ingress.gcp.managedCertificates=true
-```
+This section guides you in exposing Turbinia, Timesketch, and Yeti externally.
+Additionally, you will enable OpenID Connect for Turbinia and Timesketch user
+access. Yeti, currently unsupported by OpenID Connect, will be deployed with
+local authentication.
 
-To upgrade an existing and externally expose Turbinia through a load balancer with SSL through GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
+1. Create a global static IP address:
 
-```console
-helm upgrade my-release \
-    -f values.yaml -f values-production.yaml \
-    --set turbinia.ingress.enabled=true \
-    --set turbinia.ingress.host=<DOMAIN> \
-    --set turbinia.ingress.gcp.managedCertificates=true \
-    --set turbinia.ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME> \
-    --set turbinia.oauth2proxy.enabled=true \
-    --set turbinia.oauth2proxy.configuration.clientID=<WEB_OAUTH_CLIENT_ID> \
-    --set turbinia.oauth2proxy.configuration.clientSecret=<WEB_OAUTH_CLIENT_SECRET> \
-    --set turbinia.oauth2proxy.configuration.nativeClientID=<NATIVE_OAUTH_CLIENT_ID> \
-    --set turbinia.oauth2proxy.configuration.cookieSecret=<COOKIE_SECRET> \
-    --set turbinia.oauth2proxy.configuration.redirectUrl=https://<DOMAIN>/oauth2/callback \
-    --set turbinia.oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\} \
-    --set turbinia.oauth2proxy.service.annotations."cloud\.google\.com/neg=\{\"ingress\": true\}" \
-    --set turbinia.oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-oauth2-backend-config\"\}\}"
-```
+    ```console
+    gcloud compute addresses create timesketch-webapps --global
+    ```
+
+2. Register a new domain or use an existing one, ensuring a DNS entry
+points to the IP created earlier.
+
+3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
+OAuth client.
+   * Fill in Authorized JavaScript origins with your domain as `https://<turbinia.DOMAIN_NAME>.com` and `https://<timesketch.DOMAIN_NAME>.com`
+   * Fill in Authorized redirect URIs with `https://<timesketch.DOMAIN_NAME>.com/google_openid_connect/` and `https://<turbinia.DOMAIN_NAME>.com/oauth2/callback`
+
+4. Store your new OAuth credentials in a K8s secret:
+
+    ```console
+    kubectl create secret generic oauth-secrets \
+        --from-literal=client-id=<WEB_CLIENT_ID> \
+        --from-literal=client-secret=<WEB_CLIENT_SECRET> \
+        --from-literal=cookie-secret=<COOKIE_SECRET> \
+        --from-literal=client-id-native=<NATIVE_CLIENT_ID>
+    ```
+
+5. Make a list of allowed emails in a text file, one per line:
+
+    ```console
+    touch authenticated-emails.txt
+    ```
+
+6. Apply the authenticated email list as a K8s secret:
+
+    ```console
+    kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
+    ```
+
+7. Then to upgrade an existing release with production values, externally expose
+   Timesketch, Turbinia, and Yeti through a loadbalancer, add SSL through
+   GCP managed certificates, and enable Turbinia and Timesketch
+   OIDC for authentication, run:
+
+    ```console
+    helm upgrade my-release ../osdfir-infrastructure \
+        -f values-production.yaml \
+        --set global.ingress.enabled=true \
+        --set global.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
+        --set global.ingress.gcp.managedCertificates=true \
+        --set timesketch.ingress.host=<timesketch.DOMAIN_NAME.com> \
+        --set turbinia.ingress.host=<turbinia.<DOMAIN_NAME.com> \
+        --set yeti.ingress.host=<yeti.<DOMAIN_NAME.com> \
+        --set timesketch.config.oidc.enabled=true \
+        --set timesketch.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+        --set timesketch.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+        --set turbinia.oauth2proxy.enabled=true \
+        --set turbinia.oauth2proxy.configuration.existingSecret=<OAUTH_SECRET_NAME> \
+        --set turbinia.oauth2proxy.configuration.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    ```
 
 ## Uninstalling the Chart
 
@@ -121,10 +168,24 @@ kubectl delete pvc -l release=my-release
 
 ### Global parameters
 
-| Name                  | Description                                                                                                                                          | Value          |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| `global.existingPVC`  | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
-| `global.storageClass` | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
+| Name                                     | Description                                                                                                                                          | Value          |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `global.timesketch.enabled`              | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                           | `true`         |
+| `global.timesketch.servicePort`          | Timesketch service port (overrides `timesketch.service.port`)                                                                                        | `5000`         |
+| `global.turbinia.enabled`                | Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)                                                         | `true`         |
+| `global.turbinia.servicePort`            | Turbinia API service port (overrides `turbinia.service.port`)                                                                                        | `8000`         |
+| `global.dfdewey.enabled`                 | Enables the dfDewey deployment along with Turbinia                                                                                                   | `false`        |
+| `global.yeti.enabled`                    | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                                                                 | `true`         |
+| `global.yeti.servicePort`                | Yeti API service port (overrides `yeti.api.service.port`)                                                                                            | `9000`         |
+| `global.ingress.enabled`                 | Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)                                          | `false`        |
+| `global.ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                                           | `gce`          |
+| `global.ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                                         | `false`        |
+| `global.ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                                       | `false`        |
+| `global.ingress.gcp.managedCertificates` | Enabled GCP managed certificates for your domain                                                                                                     | `false`        |
+| `global.ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP                                                                                                    | `""`           |
+| `global.ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address                   | `""`           |
+| `global.existingPVC`                     | Existing claim for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.name` and `turbinia.persistent.name`)               | `osdfirvolume` |
+| `global.storageClass`                    | StorageClass for the OSDFIR Infrastructure persistent volume (overrides `timesketch.persistent.storageClass` and `turbinia.persistent.storageClass`) | `""`           |
 
 ### OSDFIR Infrastructure persistence storage parameters
 
@@ -138,18 +199,23 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch Configuration
 
-| Name                                          | Description                                                                                                                           | Value                                                     |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `timesketch.enabled`                          | Enables the Timesketch deployment                                                                                                     | `true`                                                    |
-| `timesketch.image.repository`                 | Timesketch image repository                                                                                                           | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
-| `timesketch.image.tag`                        | Overrides the image tag whose default is the chart appVersion                                                                         | `latest`                                                  |
-| `timesketch.config.override`                  | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*`                                               |
-| `timesketch.config.createUser`                | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`                                                    |
-| `timesketch.frontend.resources.limits`        | The resources limits for the frontend container                                                                                       | `{}`                                                      |
-| `timesketch.frontend.resources.requests`      | The requested resources for the frontend container                                                                                    | `{}`                                                      |
-| `timesketch.worker.resources.limits`          | The resources limits for the worker container                                                                                         | `{}`                                                      |
-| `timesketch.worker.resources.requests.cpu`    | The requested cpu for the worker container                                                                                            | `250m`                                                    |
-| `timesketch.worker.resources.requests.memory` | The requested memory for the worker container                                                                                         | `256Mi`                                                   |
+| Name                                                            | Description                                                                                                                           | Value                                                     |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `timesketch.image.repository`                                   | Timesketch image repository                                                                                                           | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
+| `timesketch.image.tag`                                          | Overrides the image tag whose default is the chart appVersion                                                                         | `latest`                                                  |
+| `timesketch.frontend.resources.limits`                          | The resources limits for the frontend container                                                                                       | `{}`                                                      |
+| `timesketch.frontend.resources.requests`                        | The requested resources for the frontend container                                                                                    | `{}`                                                      |
+| `timesketch.worker.resources.limits`                            | The resources limits for the worker container                                                                                         | `{}`                                                      |
+| `timesketch.worker.resources.requests.cpu`                      | The requested cpu for the worker container                                                                                            | `250m`                                                    |
+| `timesketch.worker.resources.requests.memory`                   | The requested memory for the worker container                                                                                         | `256Mi`                                                   |
+| `timesketch.config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*`                                               |
+| `timesketch.config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`                                                    |
+| `timesketch.config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`                                                   |
+| `timesketch.config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`                                                      |
+| `timesketch.config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`                                                    |
+| `timesketch.config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`                                                      |
+| `timesketch.config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`                                                      |
+| `timesketch.ingress.host`                                       | Domain name Timesketch will be hosted under                                                                                           | `""`                                                      |
 
 ### Timesketch Third Party
 
@@ -195,7 +261,6 @@ kubectl delete pvc -l release=my-release
 
 | Name                                                         | Description                                                                                                                                                                                                          | Value                                                                                        |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `turbinia.enabled`                                           | Enables the Turbinia deployment                                                                                                                                                                                      | `true`                                                                                       |
 | `turbinia.server.image.repository`                           | Turbinia image repository                                                                                                                                                                                            | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server`                         |
 | `turbinia.server.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                                                                                        | `latest`                                                                                     |
 | `turbinia.server.resources.limits`                           | Resource limits for the server container                                                                                                                                                                             | `{}`                                                                                         |
@@ -216,6 +281,7 @@ kubectl delete pvc -l release=my-release
 | `turbinia.controller.enabled`                                | If enabled, deploys the Turbinia controller                                                                                                                                                                          | `false`                                                                                      |
 | `turbinia.config.override`                                   | Overrides the default Turbinia config to instead use a user specified config. Please ensure                                                                                                                          | `turbinia.conf`                                                                              |
 | `turbinia.config.disabledJobs`                               | List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.                                                                                                                                    | `['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']` |
+| `turbinia.config.existingVertexSecret`                       | Name of existing secret containing Vertex API Key in order to enable the Turbinia LLM Artifacts Analyzer. The secret must contain the key `turbinia-vertexapi`                                                       | `""`                                                                                         |
 | `turbinia.gcp.enabled`                                       | Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks. | `false`                                                                                      |
 | `turbinia.gcp.projectID`                                     | GCP Project ID where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`                                                                                                                  | `""`                                                                                         |
 | `turbinia.gcp.projectRegion`                                 | Region where your cluster is deployed. Required when `.Values.gcp.enabled` is set to `true`                                                                                                                          | `""`                                                                                         |
@@ -226,12 +292,7 @@ kubectl delete pvc -l release=my-release
 | `turbinia.serviceAccount.annotations`                        | Annotations to add to the service account                                                                                                                                                                            | `{}`                                                                                         |
 | `turbinia.serviceAccount.name`                               | The name of the Kubernetes service account to use                                                                                                                                                                    | `turbinia`                                                                                   |
 | `turbinia.serviceAccount.gcpName`                            | The name of the GCP service account to annotate. Applied only if `.Values.turbinia.gcp.enabled` is set to `true`                                                                                                     | `turbinia`                                                                                   |
-| `turbinia.ingress.enabled`                                   | Enable the Turbinia loadbalancer for external access                                                                                                                                                                 | `false`                                                                                      |
 | `turbinia.ingress.host`                                      | The domain name Turbinia will be hosted under                                                                                                                                                                        | `""`                                                                                         |
-| `turbinia.ingress.className`                                 | IngressClass that will be be used to implement the Ingress                                                                                                                                                           | `gce`                                                                                        |
-| `turbinia.ingress.gcp.managedCertificates`                   | Enabled GCP managed certificates for your domain                                                                                                                                                                     | `false`                                                                                      |
-| `turbinia.ingress.gcp.staticIPName`                          | Name of the static IP address you reserved in GCP                                                                                                                                                                    | `""`                                                                                         |
-| `turbinia.ingress.gcp.staticIPV6Name`                        | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address                                                                                   | `""`                                                                                         |
 
 ### Turbinia Third Party
 
@@ -259,26 +320,58 @@ kubectl delete pvc -l release=my-release
 | `turbinia.oauth2proxy.containerPort`                                        | Oauth2 Proxy container port                                                                                                                                           | `4180`                        |
 | `turbinia.oauth2proxy.service.type`                                         | OAuth2 Proxy service type                                                                                                                                             | `ClusterIP`                   |
 | `turbinia.oauth2proxy.service.port`                                         | OAuth2 Proxy service HTTP port                                                                                                                                        | `8080`                        |
-| `turbinia.oauth2proxy.service.annotations`                                  | Additional custom annotations for OAuth2 Proxy service                                                                                                                | `{}`                          |
 | `turbinia.oauth2proxy.configuration.turbiniaSvcPort`                        | Turbinia service port referenced from `.Values.service.port` to be used in Oauth setup                                                                                | `8000`                        |
-| `turbinia.oauth2proxy.configuration.clientID`                               | OAuth client ID for Turbinia Web UI.                                                                                                                                  | `""`                          |
-| `turbinia.oauth2proxy.configuration.clientSecret`                           | OAuth client secret for Turbinia Web UI.                                                                                                                              | `""`                          |
-| `turbinia.oauth2proxy.configuration.nativeClientID`                         | Native Oauth client ID for Turbinia CLI.                                                                                                                              | `""`                          |
-| `turbinia.oauth2proxy.configuration.cookieSecret`                           | OAuth cookie secret (e.g. openssl rand -base64 32 )                                                                                                                   | `""`                          |
+| `turbinia.oauth2proxy.configuration.existingSecret`                         | Secret with the client ID, client secret, client native id (optional) and cookie secret                                                                               | `""`                          |
 | `turbinia.oauth2proxy.configuration.content`                                | Oauth2 proxy configuration. Please see the [official docs](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview) for a list of configurable values | `""`                          |
 | `turbinia.oauth2proxy.configuration.authenticatedEmailsFile.enabled`        | Enable authenticated emails file                                                                                                                                      | `true`                        |
 | `turbinia.oauth2proxy.configuration.authenticatedEmailsFile.content`        | Restricted access list (one email per line). At least one email address is required for the Oauth2 Proxy to properly work                                             | `""`                          |
 | `turbinia.oauth2proxy.configuration.authenticatedEmailsFile.existingSecret` | Secret with the authenticated emails file                                                                                                                             | `""`                          |
 | `turbinia.oauth2proxy.configuration.oidcIssuerUrl`                          | OpenID Connect issuer URL                                                                                                                                             | `https://accounts.google.com` |
-| `turbinia.oauth2proxy.configuration.redirectUrl`                            | OAuth Redirect URL                                                                                                                                                    | `""`                          |
-| `turbinia.oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                       |
+
+### Yeti Configuration
+
+| Name                               | Description                                                   | Value                        |
+| ---------------------------------- | ------------------------------------------------------------- | ---------------------------- |
+| `yeti.frontend.image.repository`   | Yeti frontend image repository                                | `yetiplatform/yeti-frontend` |
+| `yeti.frontend.image.pullPolicy`   | Yeti image pull policy                                        | `Always`                     |
+| `yeti.frontend.image.tag`          | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.frontend.resources.limits`   | Resource limits for the frontend container                    | `{}`                         |
+| `yeti.frontend.resources.requests` | Requested resources for the frontend container                | `{}`                         |
+| `yeti.api.image.repository`        | Yeti API image repository                                     | `yetiplatform/yeti`          |
+| `yeti.api.image.pullPolicy`        | Yeti image pull policy                                        | `Always`                     |
+| `yeti.api.image.tag`               | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.api.service.type`            | Yeti service type                                             | `ClusterIP`                  |
+| `yeti.api.service.port`            | Yeti service port                                             | `8000`                       |
+| `yeti.api.resources.limits`        | Resource limits for the API container                         | `{}`                         |
+| `yeti.api.resources.requests`      | Requested resources for the API container                     | `{}`                         |
+| `yeti.tasks.image.repository`      | Yeti tasks image repository                                   | `yetiplatform/yeti`          |
+| `yeti.tasks.image.pullPolicy`      | Yeti image pull policy                                        | `Always`                     |
+| `yeti.tasks.image.tag`             | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `yeti.tasks.resources.limits`      | Resource limits for the tasks container                       | `{}`                         |
+| `yeti.tasks.resources.requests`    | Requested resources for the tasks container                   | `{}`                         |
+| `yeti.ingress.host`                | Domain name Yeti will be hosted under                         | `""`                         |
+
+### Yeti Third Party
+
+| Name                                    | Description                                                                                  | Value       |
+| --------------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
+| `yeti.redis.enabled`                    | Enables the Redis deployment                                                                 | `true`      |
+| `yeti.redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
+| `yeti.redis.master.service.type`        | Redis master service type                                                                    | `ClusterIP` |
+| `yeti.redis.master.service.ports.redis` | Redis master service port                                                                    | `6379`      |
+| `yeti.redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`       |
+| `yeti.redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`        |
+| `yeti.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`        |
+| `yeti.arangodb.image.repository`        | Yeti arangodb image repository                                                               | `arangodb`  |
+| `yeti.arangodb.image.pullPolicy`        | Yeti image pull policy                                                                       | `Always`    |
+| `yeti.arangodb.image.tag`               | Overrides the image tag whose default is the chart appVersion                                | `latest`    |
+| `yeti.arangodb.resources.limits`        | Resource limits for the arangodb container                                                   | `{}`        |
+| `yeti.arangodb.resources.requests`      | Requested resources for the arangodb container                                               | `{}`        |
 
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console
-helm install my-release \
-    --set turbinia.enabled=false
-    oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure
+helm install my-release osdfir-charts/osdfir-infrastructure --set turbinia.enabled=false
 ```
 
 The above command installs OSDFIR Infrastructure without Turbinia deployed.
@@ -287,7 +380,7 @@ Alternatively, the `values.yaml` and `values-production.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console
-helm pull oci://us-docker.pkg.dev/osdfir-registry/osdfir-charts/osdfir-infrastructure --untar
+helm pull osdfir-charts/osdfir-infrastructure --untar
 ```
 
 Then make changes to the downloaded `values.yaml` and once done, install the
@@ -313,7 +406,7 @@ persistent volume size or upgrading to a new release, you can run
 new release and upgrade storage capacity, run:
 
 ```console
-helm upgrade my-release \
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
     --set turbinia.server.image.tag=latest \
     --set timesketch.image.tag=latest \
     --set persistence.size=10T
