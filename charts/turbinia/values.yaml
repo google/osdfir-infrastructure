@@ -601,33 +601,34 @@ dfdewey:
         memory: 512Mi
 ## @section Third Party Configuration
 ##
-## @section kubePrometheus configuration parameters
+## @section Monitoring configuration parameters
+## IMPORTANT: Turbinia utilizes the kube-prometheus-stack for monitoring. This includes Prometheus, Grafana, and Alertmanager.
 ##
-kubePrometheus:
-  ## @param kubePrometheus.deployKubePrometheus Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.
+monitoring:
+  ## @param monitoring.deployKubePrometheus Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.
   ##
-  deployKubePrometheus: false
-  ## @param kubePrometheus.kubeScheduler.enabled Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
+  deployKubePrometheus: true
+  ## @param monitoring.kubeScheduler.enabled Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
   ##
   kubeScheduler:
     enabled: false
-  ## @param kubePrometheus.kubeControllerManager.enabled Component scraping kube controller. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
+  ## @param monitoring.kubeControllerManager.enabled Component scraping kube controller. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
   ##
   kubeControllerManager:
     enabled: false
-  ## @param kubePrometheus.coreDns.enabled Component scraping core dns. Disabled by default in favor of kube dns.
+  ## @param monitoring.coreDns.enabled Component scraping core dns. Disabled by default in favor of kube dns.
   ##
   coreDns:
     enabled: false
-  ## @param kubePrometheus.kubeProxy.enabled Component scraping kube proxy. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
+  ## @param monitoring.kubeProxy.enabled Component scraping kube proxy. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
   ##
   kubeProxy:
     enabled: false
-  ## @param kubePrometheus.kubeDns.enabled Component scraping kube dns.
+  ## @param monitoring.kubeDns.enabled Component scraping kube dns.
   ##
   kubeDns:
     enabled: true
-  ## @param kubePrometheus.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues Disable so that custom servicemonitors can be created and monitored
+  ## @param monitoring.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues Disable so that custom servicemonitors can be created and monitored
   ##
   prometheus:
     prometheusSpec:
