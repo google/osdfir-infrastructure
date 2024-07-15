@@ -382,7 +382,7 @@ kubectl delete pvc -l release=my-release
 
 | Name                                                                           | Description                                                                                                                                 | Value   |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `monitoring.deployKubePrometheus`                                              | Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.               | `true`  |
+| `monitoring.deployKubePrometheus`                                              | Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.               | `false` |
 | `monitoring.kubeScheduler.enabled`                                             | Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).  | `false` |
 | `monitoring.kubeControllerManager.enabled`                                     | Component scraping kube controller. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS). | `false` |
 | `monitoring.coreDns.enabled`                                                   | Component scraping core dns. Disabled by default in favor of kube dns.                                                                      | `false` |

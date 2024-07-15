@@ -607,7 +607,7 @@ dfdewey:
 monitoring:
   ## @param monitoring.deployKubePrometheus Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.
   ##
-  deployKubePrometheus: true
+  deployKubePrometheus: false
   ## @param monitoring.kubeScheduler.enabled Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
   ##
   kubeScheduler:
