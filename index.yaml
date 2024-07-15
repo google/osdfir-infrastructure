@@ -1140,6 +1140,51 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-07-15T20:55:58.378016228Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.3.2
+    - alias: oauth2proxy
+      condition: oauth2proxy.enabled
+      name: oauth2-proxy
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.3.0
+    - condition: global.dfdewey.enabled
+      name: dfdewey
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 1.0.0
+    - alias: monitoring
+      condition: monitoring.deployKubePrometheus
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 60.3.0
+    description: A Helm chart for Turbinia Kubernetes deployments.
+    digest: 5a80d0aa6964bc60b1e47ac24f4454ee570b2d5be2fe93206953d706e6072693
+    home: https://github.com/google/turbinia
+    icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
+    keywords:
+    - turbinia
+    - dfir
+    - processing
+    - scaling
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: turbinia
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/turbinia-1.1.1/turbinia-1.1.1.tgz
+    version: 1.1.1
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-07-15T20:34:46.331013861Z"
     dependencies:
     - condition: redis.enabled
@@ -1877,4 +1922,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-15T20:42:33.302946356Z"
+generated: "2024-07-15T20:55:58.37820452Z"
