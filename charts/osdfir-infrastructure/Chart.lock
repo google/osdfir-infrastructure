@@ -4,9 +4,9 @@ dependencies:
   version: 1.0.5
 - name: turbinia
   repository: https://google.github.io/osdfir-infrastructure/
-  version: 1.0.7
+  version: 1.1.0
 - name: yeti
   repository: https://google.github.io/osdfir-infrastructure/
   version: 1.0.4
-digest: sha256:3991df50db2a8445bb777f050284264ee24bedcd26bcbc306618186f1a706431
-generated: "2024-06-07T11:18:09.773727-07:00"
+digest: sha256:b96510c14c1f4ee3c3bb9731c667d1b7af19300531fcffef776e86785d62c7e0
+generated: "2024-07-15T13:35:28.663938-07:00"
