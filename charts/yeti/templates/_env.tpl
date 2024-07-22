@@ -23,9 +23,27 @@ Worker pod upon startup.
 - name: YETI_AUTH_ALGORITHM
   value: HS256
 - name: YETI_AUTH_ACCESS_TOKEN_EXPIRE_MINUTES
-  value: "30"
+  value: "10000"
 - name: YETI_AUTH_ENABLED
   value: "True"
+{{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
+- name: YETI_AUTH_MODULE
+  value: "oidc"
+- name: YETI_AUTH_OIDC_DISCOVERY_URL
+  value: "https://accounts.google.com/.well-known/openid-configuration"
+- name: YETI_AUTH_OIDC_CLIENT_ID
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.config.oidc.existingSecret | quote }}
+      key: "client-id"
+- name: YETI_AUTH_OIDC_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.config.oidc.existingSecret | quote }}
+      key: "client-secret"
+- name: YETI_SYSTEM_WEBROOT
+  value: "https://yeti-34-128-140-179.nip.io"
+{{- end }}
 - name: YETI_SYSTEM_PLUGINS_PATH
   value: "./plugins"
 - name: YETI_USER_PASSWORD

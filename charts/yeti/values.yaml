@@ -280,6 +280,36 @@ service:
   ## @param service.port Yeti service port
   ##
   port: 9000
+## @section Yeti Configuration Parameters
+## ref: https://github.com/yeti-platform/yeti/blob/main/yeti.conf.sample
+##
+config:
+  ## Yeti OIDC configuration
+  ##
+  oidc:
+    ## @param config.oidc.enabled Enables Yeti OIDC authentication (currently only supports Google OIDC)
+    ##
+    enabled: false
+    ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
+    ##
+    existingSecret: ""
+    ## Allowed emails files for Yeti OIDC
+    ##
+    authenticatedEmailsFile:
+      ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
+      ##
+      enabled: true
+      ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
+      ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
+      existingSecret: ""
+      ## @param config.oidc.authenticatedEmailsFile.content Allowed emails list (one email per line)
+      ##
+      content: ""
+      ## One email per line
+      ## e.g:
+      ## content: |-
+      ##   name1@domain
+      ##   name2@domain
 ## Metrics Parameters
 ## IMPORTANT: Yeti utilizes Prometheus to scrape metrics through annotations
 ## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
