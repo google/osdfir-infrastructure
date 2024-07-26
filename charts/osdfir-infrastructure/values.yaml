@@ -212,7 +212,7 @@ timesketch:
   ## @section Redis configuration
   ## IMPORTANT: Redis is deployed with Auth enabled by default
   ## To see a full list of available values, run helm show values charts/redis*
-  ##
+  ## Redis is not opensource, better to go ahead with Valkey
   redis:
     ## @param timesketch.redis.enabled Enables the Redis deployment
     ##
