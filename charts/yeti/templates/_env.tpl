@@ -41,8 +41,10 @@ Worker pod upon startup.
     secretKeyRef:
       name: {{ .Values.config.oidc.existingSecret | quote }}
       key: "client-secret"
+{{- if .Values.ingress.host }}
 - name: YETI_SYSTEM_WEBROOT
-  value: "https://yeti-34-128-140-179.nip.io"
+  value: {{ printf "https://%s" .Values.ingress.host | quote }}
+{{- end }}
 {{- end }}
 - name: YETI_SYSTEM_PLUGINS_PATH
   value: "./plugins"
