@@ -38,7 +38,17 @@ variable "nodepool" {
   default     = "grr"
 }
 
+variable "nodepool_machine_type" {
+  description = "GRR nodepool machine type"
+  default     = "n2-standard-4"
+}
+
 variable "address_name" {
   description = "name for the fleetspeak public IP address"
   default     = "fleetspeak-frontend"
+}
+
+variable "db_tier" {
+  description = "tier for the the MySQL DB"
+  default     = "db-f1-micro"
 }

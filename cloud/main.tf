@@ -20,6 +20,9 @@ locals {
   domains    = concat([local.hostname], local.subdomains)
 }
 
+data "google_project" "project" {
+}
+
 ##########################################################################
 # Enable the required Cloud APIs
 ##########################################################################
@@ -65,6 +68,13 @@ resource "google_project_service" "networksecurity" {
   disable_dependent_services = false
 }
 
+resource "google_project_service" "pubsub" {
+  project = var.project_id
+  service = "pubsub.googleapis.com"
+
+  disable_dependent_services = false
+}
+
 resource "google_project_service" "servicenetworking" {
   project = var.project_id
   service = "servicenetworking.googleapis.com"
@@ -84,6 +94,34 @@ resource "google_project_service" "sqladmin" {
   service = "sqladmin.googleapis.com"
 
   disable_dependent_services = false
+}
+
+resource "google_project_service" "storage" {
+  project = var.project_id
+  service = "storage.googleapis.com"
+
+  disable_dependent_services = false
+}
+
+##########################################################################
+# Set up the GCS GRR Blobstore
+##########################################################################
+resource "google_storage_bucket" "grr_blobstore" {
+  name                        = "blobstore-${var.project_id}"
+  project                     = var.project_id
+  location                    = var.region
+  force_destroy               = true
+  uniform_bucket_level_access = true
+  public_access_prevention    = "enforced"
+}
+
+resource "google_storage_bucket_iam_member" "grr_blobstore_admin" {
+  bucket = google_storage_bucket.grr_blobstore.name
+  role   = "roles/storage.admin"
+  member = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/grr-sa"
+  depends_on = [
+    google_container_cluster.osdfir_cluster
+  ]
 }
 
 ##########################################################################
@@ -249,6 +287,23 @@ resource "google_container_cluster" "osdfir_cluster" {
     cluster_secondary_range_name  = "pod-range"
     services_secondary_range_name = google_compute_subnetwork.subnet.secondary_ip_range.0.range_name
   }
+
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
+  }
+
+  datapath_provider = "ADVANCED_DATAPATH"
+
+  monitoring_config {
+    managed_prometheus {
+      enabled = true
+    }
+
+    advanced_datapath_observability_config {
+      enable_metrics = true
+      enable_relay   = true
+    }
+  } 
 }
 
 # Node Pool for GRR / Fleetspeak server nodes
@@ -257,7 +312,7 @@ resource "google_container_node_pool" "grr-node-pool" {
   location   = var.zone
   cluster    = google_container_cluster.osdfir_cluster.name
   
-  version = data.google_container_engine_versions.gke_version.release_channel_latest_version["STABLE"]
+  version = data.google_container_engine_versions.gke_version.release_channel_default_version["REGULAR"]
   node_count = var.grr_pool_num_nodes
 
   node_config {
@@ -273,12 +328,48 @@ resource "google_container_node_pool" "grr-node-pool" {
     }
 
     # preemptible  = true
-    machine_type = "n2-standard-4"
+    machine_type = var.nodepool_machine_type
     tags         = ["grr-pool-node", "allow-health-check"]
     metadata = {
       disable-legacy-endpoints = "true"
     }
   }
+}
+
+##########################################################################
+# Set up the PubSub Topic and Subscriber for GRR Fleetspeak Service 
+##########################################################################
+resource "google_pubsub_topic" "grr_fleetspeak_service_topic" {
+  name = "grr-fleetspeak-service-topic"
+
+  message_storage_policy {
+    allowed_persistence_regions = [
+      var.region,
+    ]
+  }
+}
+
+resource "google_pubsub_subscription" "grr_fleetspeak_service_subscription" {
+  name  = "grr-fleetspeak-service-subscription"
+  topic = google_pubsub_topic.grr_fleetspeak_service_topic.id
+}
+
+resource "google_pubsub_topic_iam_member" "grr_fleetspeak_topic" {
+  topic  = google_pubsub_topic.grr_fleetspeak_service_topic.name
+  role   = "roles/pubsub.publisher"
+  member = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/grr-sa"
+  depends_on = [
+    google_container_cluster.osdfir_cluster
+  ]
+}
+
+resource "google_pubsub_subscription_iam_member" "grr_fleetspeak_subscriber" {
+  subscription = google_pubsub_subscription.grr_fleetspeak_service_subscription.name
+  role         = "roles/pubsub.subscriber"
+  member      = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/grr-sa"
+  depends_on = [
+    google_container_cluster.osdfir_cluster
+  ]
 }
 
 ##########################################################################
@@ -316,7 +407,7 @@ resource "google_sql_database_instance" "instance" {
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
   settings {
-    tier = "db-f1-micro"
+    tier = var.db_tier
     ip_configuration {
       ipv4_enabled                                  = false
       private_network                               = google_compute_network.vpc.id

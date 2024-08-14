@@ -9,6 +9,15 @@ data:
   services.textproto: |
     services {
       name: "GRR"
+      {{- if (and .Values.grr.pubsub .Values.grr.pubsub.topic) }}
+      factory: "CPS"
+      config {
+        [type.googleapis.com/fleetspeak.cpsservice.Config] {
+          project: "{{ .Values.grr.pubsub.project }}"
+          topic: "{{ .Values.grr.pubsub.topic }}"
+        }
+      }
+      {{- else}}
       factory: "GRPC"
       config {
         [type.googleapis.com/fleetspeak.grpcservice.Config] {
@@ -16,6 +25,7 @@ data:
           insecure: true
         }
       }
+      {{- end }}
     }
     broadcast_poll_time {
       seconds: 1

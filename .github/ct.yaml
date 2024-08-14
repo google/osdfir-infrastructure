@@ -4,6 +4,7 @@ chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
   - opensearch=https://opensearch-project.github.io/helm-charts
   - osdfir-charts=https://google.github.io/osdfir-infrastructure/
+  - kube-prometheus=https://prometheus-community.github.io/helm-charts
 chart-dirs:
   - charts
 check-version-increment: true

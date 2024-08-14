@@ -14,7 +14,11 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm install my-release osdfir-charts/turbinia
 ```
 
-> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+> **Note**: By default, Turbinia is not externally accessible and can be
+reached via `kubectl port-forward` within the cluster.
+
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
 
 ## Introduction
 
@@ -74,29 +78,120 @@ helm install my-release ../turbinia \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-To upgrade an existing release with production values, externally expose Turbinia through a load balancer with GCP managed certificates, and deploy the Oauth2 Proxy for authentication, run:
+### Enabling GKE Ingress and OIDC Authentication
 
-```console
-helm upgrade my-release \
-    -f values.yaml -f values-production.yaml \
-    --set ingress.enabled=true
-    --set ingress.host=<DOMAIN>
-    --set ingress.gcp.managedCertificates=true
-    --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME>
-    --set oauth2proxy.enabled=true
-    --set oauth2proxy.configuration.clientID=<WEB_OAUTH_CLIENT_ID> \
-    --set oauth2proxy.configuration.clientSecret=<WEB_OAUTH_CLIENT_SECRET> \
-    --set oauth2proxy.configuration.nativeClientID=<NATIVE_OAUTH_CLIENT_ID> \
-    --set oauth2proxy.configuration.cookieSecret=<COOKIE_SECRET> \
-    --set oauth2proxy.configuration.redirectUrl=https://<DOMAIN>/oauth2/callback
-    --set oauth2proxy.configuration.authenticatedEmailsFile.content=\{email1@domain.com, email2@domain.com\}
-    --set oauth2proxy.service.annotations."cloud\.google\.com/neg=\{\"ingress\": true\}" \
-    --set oauth2proxy.service.annotations."cloud\.google\.com/backend-config=\{\"ports\": \{\"4180\": \"\{\{ .Release.Name \}\}-backend-config\"\}\}"
-```
+Follow these steps to externally expose Turbinia and enable Google Cloud OIDC
+using the Oauth2 Proxy to control user access to Turbinia.
+
+1. Create a global static IP address:
+
+    ```console
+    gcloud compute addresses create turbinia-webapps --global
+    ```
+
+2. Register a new domain or use an existing one, ensuring a DNS entry
+points to the IP created earlier.
+
+3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
+OAuth client.
+
+   * Fill in Authorized JavaScript origins with your domain as `https://<DOMAIN_NAME>.com`
+   * Fill in Authorized redirect URIs with `https://<DOMAIN_NAME>.com/oauth2/callback/`
+
+4. Generate a cookie secret:
+
+    ```console
+    openssl rand -base64 32 | head -c 32 | base64
+    ```
+
+5. Store your new OAuth credentials in a K8s secret:
+
+    ```console
+    kubectl create secret generic oauth-secrets \
+        --from-literal=client-id=<WEB_CLIENT_ID> \
+        --from-literal=client-secret=<WEB_CLIENT_SECRET> \
+        --from-literal=cookie-secret=<COOKIE_SECRET> \
+        --from-literal=client-id-native=<NATIVE_CLIENT_ID>
+    ```
+
+6. Make a list of allowed emails in a text file, one per line:
+
+    ```console
+    touch authenticated-emails.txt
+    ```
+
+7. Apply the authenticated email list as a K8s secret:
+
+    ```console
+    kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
+    ```
+
+8. Then to upgrade an existing release with production values, externally expose
+Turbinia through a load balancer with GCP managed certificates, and deploy the
+Oauth2 Proxy for authentication, run:
+
+    ```console
+    helm upgrade my-release \
+        -f values.yaml -f values-production.yaml \
+        --set ingress.enabled=true \
+        --set ingress.host=<DOMAIN> \
+        --set ingress.gcp.managedCertificates=true \
+        --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME> \
+        --set oauth2proxy.enabled=true \
+        --set oauth2proxy.configuration.existingSecret=<OAUTH_SECRET_NAME> \
+        --set oauth2proxy.configuration.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    ```
 
 > **Warning**: Turbinia relies on the Oauth2 Proxy for authentication. If you
 plan to expose Turbinia with a public facing IP, it is highly recommended that
 the Oauth2 Proxy is deployed alongside with the command provided above.
+
+### Deploying Monitoring
+
+Application and system monitoring is available through the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack).
+Kube Prometheus is a collection of Grafana dashboards and Prometheus rules combined
+with documentation to provide easy to operate end-to-end K8s cluster monitoring.
+
+To setup monitoring, first add the repository containing the kube-prometheus-stack
+Helm chart:
+
+```console
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+If using GKE, EKS, or similar K8s managed services some options will need to be
+disabled due to the control plane nodes not being visible to Prometheus. To
+address this create a values file containing the following updates:
+
+```console
+cat >> values-monitoring.yaml << EOF
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+coreDns:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeDns:
+  enabled: true
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+EOF
+```
+
+Then to install the kube prometheus chart in a namespace called `monitoring`:
+
+```console
+helm install kube-prometheus prometheus-community/kube-prometheus-stack -f values-monitoring.yaml --namespace monitoring
+```
+
+That's it! To verify Turbinia metrics are being collected, connect to either
+Prometheus or Grafana and search for `turbinia_*` in metrics explorer. If no
+metrics appear, you may need to run a helm upgrade on your existing Turbinia
+deployment so that the CustomResourceDefinitions (CRDs) can be applied.
 
 ## Uninstalling the Chart
 
@@ -131,6 +226,7 @@ kubectl delete pvc -l release=my-release
 | `global.dfdewey.enabled`        | Enables the dfDewey deployment along with Turbinia                                           | `false` |
 | `global.yeti.enabled`           | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)         | `false` |
 | `global.yeti.servicePort`       | Yeti API service port (overrides `yeti.api.service.port`)                                    | `nil`   |
+| `global.ingress.enabled`        | Enable the global loadbalancer for external access                                           | `false` |
 | `global.existingPVC`            | Existing claim for Turbinia persistent volume (overrides `persistent.name`)                  | `""`    |
 | `global.storageClass`           | StorageClass for the Turbinia persistent volume (overrides `persistent.storageClass`)        | `""`    |
 
@@ -213,6 +309,7 @@ kubectl delete pvc -l release=my-release
 | Name                              | Description                                                                                                                                                                                                          | Value                                                                                        |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `config.override`                 | Overrides the default Turbinia config to instead use a user specified config. Please ensure                                                                                                                          | `turbinia.conf`                                                                              |
+| `config.existingConfigMap`        | Use an existing ConfigMap as the default Turbinia config.                                                                                                                                                            | `""`                                                                                         |
 | `config.disabledJobs`             | List of Turbinia Jobs to disable. Overrides DISABLED_JOBS in the Turbinia config.                                                                                                                                    | `['BinaryExtractorJob', 'BulkExtractorJob', 'HindsightJob', 'PhotorecJob', 'VolatilityJob']` |
 | `config.existingVertexSecret`     | Name of existing secret containing Vertex API Key in order to enable the Turbinia LLM Artifacts Analyzer. The secret must contain the key `turbinia-vertexapi`                                                       | `""`                                                                                         |
 | `gcp.enabled`                     | Enables Turbinia to run within a GCP project. When enabling, please ensure you have run the supplemental script `create-gcp-sa.sh` to create a Turbinia GCP service account required for attaching persistent disks. | `false`                                                                                      |
@@ -234,8 +331,10 @@ kubectl delete pvc -l release=my-release
 | `persistence.size`                | Turbinia persistent volume size                                                                                                                                                                                      | `2Gi`                                                                                        |
 | `persistence.storageClass`        | PVC Storage Class for Turbinia volume                                                                                                                                                                                | `""`                                                                                         |
 | `persistence.accessModes`         | PVC Access Mode for Turbinia volume                                                                                                                                                                                  | `["ReadWriteOnce"]`                                                                          |
-| `ingress.enabled`                 | Enable the Turbinia loadbalancer for external access                                                                                                                                                                 | `false`                                                                                      |
+| `ingress.enabled`                 | Enable the Turbinia loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)                                                                                                        | `false`                                                                                      |
 | `ingress.host`                    | The domain name Turbinia will be hosted under                                                                                                                                                                        | `""`                                                                                         |
+| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                                                                                                         | `false`                                                                                      |
+| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                                                                                                       | `false`                                                                                      |
 | `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                                                                                                           | `gce`                                                                                        |
 | `ingress.gcp.managedCertificates` | Enabled GCP managed certificates for your domain                                                                                                                                                                     | `false`                                                                                      |
 | `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP                                                                                                                                                                    | `""`                                                                                         |
@@ -279,6 +378,18 @@ kubectl delete pvc -l release=my-release
 ### Third Party Configuration
 
 
+### Monitoring configuration parameters
+
+| Name                                                                           | Description                                                                                                                                 | Value   |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `monitoring.deployKubePrometheus`                                              | Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.               | `false` |
+| `monitoring.kubeScheduler.enabled`                                             | Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).  | `false` |
+| `monitoring.kubeControllerManager.enabled`                                     | Component scraping kube controller. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS). | `false` |
+| `monitoring.coreDns.enabled`                                                   | Component scraping core dns. Disabled by default in favor of kube dns.                                                                      | `false` |
+| `monitoring.kubeProxy.enabled`                                                 | Component scraping kube proxy. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).      | `false` |
+| `monitoring.kubeDns.enabled`                                                   | Component scraping kube dns.                                                                                                                | `true`  |
+| `monitoring.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues` | Disable so that custom servicemonitors can be created and monitored                                                                         | `false` |
+
 ### Redis configuration parameters
 
 | Name                                | Description                                                                                  | Value        |
@@ -302,25 +413,25 @@ kubectl delete pvc -l release=my-release
 
 ### Oauth2 Proxy configuration parameters
 
-| Name                                                               | Description                                                                                                                                                           | Value                         |
-| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| `oauth2proxy.enabled`                                              | Enables the Oauth2 Proxy deployment                                                                                                                                   | `false`                       |
-| `oauth2proxy.containerPort`                                        | Oauth2 Proxy container port                                                                                                                                           | `4180`                        |
-| `oauth2proxy.service.type`                                         | OAuth2 Proxy service type                                                                                                                                             | `ClusterIP`                   |
-| `oauth2proxy.service.port`                                         | OAuth2 Proxy service HTTP port                                                                                                                                        | `8080`                        |
-| `oauth2proxy.service.annotations`                                  | Additional custom annotations for OAuth2 Proxy service                                                                                                                | `{}`                          |
-| `oauth2proxy.configuration.turbiniaSvcPort`                        | Turbinia service port referenced from `.Values.service.port` to be used in Oauth setup                                                                                | `8000`                        |
-| `oauth2proxy.configuration.clientID`                               | OAuth client ID for Turbinia Web UI.                                                                                                                                  | `""`                          |
-| `oauth2proxy.configuration.clientSecret`                           | OAuth client secret for Turbinia Web UI.                                                                                                                              | `""`                          |
-| `oauth2proxy.configuration.nativeClientID`                         | Native Oauth client ID for Turbinia CLI.                                                                                                                              | `""`                          |
-| `oauth2proxy.configuration.cookieSecret`                           | OAuth cookie secret (e.g.  openssl rand -base64 32)                                                                                                                   | `""`                          |
-| `oauth2proxy.configuration.content`                                | Oauth2 proxy configuration. Please see the [official docs](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview) for a list of configurable values | `""`                          |
-| `oauth2proxy.configuration.authenticatedEmailsFile.enabled`        | Enable authenticated emails file                                                                                                                                      | `true`                        |
-| `oauth2proxy.configuration.authenticatedEmailsFile.content`        | Restricted access list (one email per line). At least one email address is required for the Oauth2 Proxy to properly work                                             | `""`                          |
-| `oauth2proxy.configuration.authenticatedEmailsFile.existingSecret` | Secret with the authenticated emails file                                                                                                                             | `""`                          |
-| `oauth2proxy.configuration.oidcIssuerUrl`                          | OpenID Connect issuer URL                                                                                                                                             | `https://accounts.google.com` |
-| `oauth2proxy.configuration.redirectUrl`                            | OAuth Redirect URL                                                                                                                                                    | `""`                          |
-| `oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                       |
+| Name                                                               | Description                                                                                                                                                           | Value                                        |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `oauth2proxy.enabled`                                              | Enables the Oauth2 Proxy deployment                                                                                                                                   | `false`                                      |
+| `oauth2proxy.containerPort`                                        | Oauth2 Proxy container port                                                                                                                                           | `4180`                                       |
+| `oauth2proxy.service.type`                                         | OAuth2 Proxy service type                                                                                                                                             | `ClusterIP`                                  |
+| `oauth2proxy.service.port`                                         | OAuth2 Proxy service HTTP port                                                                                                                                        | `8080`                                       |
+| `oauth2proxy.extraEnvVars[0].name`                                 | Name of the environment variable to pass to Oauth2 Proxy                                                                                                              | `OAUTH2_PROXY_OIDC_EXTRA_AUDIENCES`          |
+| `oauth2proxy.extraEnvVars[0].valueFrom.secretKeyRef.name`          | Name of the secret containing native client id                                                                                                                        | `{{ template "oauth2-proxy.secretName" . }}` |
+| `oauth2proxy.extraEnvVars[0].valueFrom.secretKeyRef.key`           | Name of the secret key containing native client id                                                                                                                    | `client-id-native`                           |
+| `oauth2proxy.extraEnvVars[0].valueFrom.secretKeyRef.optional`      | Set to optional if native client id is not provided                                                                                                                   | `true`                                       |
+| `oauth2proxy.configuration.turbiniaSvcPort`                        | Turbinia service port referenced from `.Values.service.port` to be used in Oauth setup                                                                                | `8000`                                       |
+| `oauth2proxy.configuration.existingSecret`                         | Secret with the client ID, client secret, client native id (optional) and cookie secret                                                                               | `""`                                         |
+| `oauth2proxy.configuration.content`                                | Oauth2 proxy configuration. Please see the [official docs](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview) for a list of configurable values | `""`                                         |
+| `oauth2proxy.configuration.authenticatedEmailsFile.enabled`        | Enable authenticated emails file                                                                                                                                      | `true`                                       |
+| `oauth2proxy.configuration.authenticatedEmailsFile.content`        | Restricted access list (one email per line). At least one email address is required for the Oauth2 Proxy to properly work                                             | `""`                                         |
+| `oauth2proxy.configuration.authenticatedEmailsFile.existingSecret` | Secret with the authenticated emails file                                                                                                                             | `""`                                         |
+| `oauth2proxy.configuration.authenticatedEmailsFile.existingSecret` | Secret with the authenticated emails file                                                                                                                             | `""`                                         |
+| `oauth2proxy.configuration.oidcIssuerUrl`                          | OpenID Connect issuer URL                                                                                                                                             | `https://accounts.google.com`                |
+| `oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                                      |
 
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 

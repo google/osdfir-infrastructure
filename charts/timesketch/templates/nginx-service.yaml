@@ -1,0 +1,23 @@
+{{- if or (.Values.ingress.enabled) (.Values.global.ingress.enabled) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "timesketch.fullname" . }}-nginx
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "timesketch.labels" . | nindent 4 }}
+  {{- if or (eq .Values.ingress.className "gce") (eq .Values.global.ingress.className "gce") }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"ports": {"80":"{{ include "timesketch.fullname" . }}-backend-config"}}'
+  {{- end }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app.kubernetes.io/component: nginx
+    {{- include "timesketch.selectorLabels" . | nindent 4 }}
+{{- end }}

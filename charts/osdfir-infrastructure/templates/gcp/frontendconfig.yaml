@@ -1,0 +1,10 @@
+{{- if and (.Values.global.ingress.enabled) (eq .Values.global.ingress.className "gce") }}
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ include "osdfir.fullname" . }}-frontend-config
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  redirectToHttps:
+    enabled: true
+{{- end }}

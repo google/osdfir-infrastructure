@@ -24,7 +24,8 @@ These tools can be used independently as well by following the documentation on 
 ## Installing the Charts
 
 To get started, ensure you have [Helm](https://helm.sh) installed and are authenticated to your Kubernetes cluster.
-> **IMPORTANT**: Helm charts are currently undergoing compatibility testing for AWS and Azure
+> **IMPORTANT**: For cloud deployments, Turbinia currently only supports attaching disks from GCP environments. Manual disk attachment or utilizing other evidence types is necessary
+for other cloud providers.
 
 Once complete, add the repo containing the Helm charts as follows:
 
@@ -61,4 +62,9 @@ using individual tools, and accessing helpful guides.
 * [Yeti Helm Chart](charts/yeti/README.md)
 * [GRR Helm Chart](charts/grr/README.md)
 
-This is not an officially supported Google product.
+---
+
+##### Obligatory Fine Print
+
+This is not an official Google product (experimental or otherwise), it is just
+code that happens to be owned by Google.

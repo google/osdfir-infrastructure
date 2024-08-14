@@ -164,3 +164,11 @@ Timesketch service port
 {{ .Values.service.port }}
 {{- end -}}
 {{- end -}}
+
+{{- define "timesketch.oidc.authenticatedemails" -}}
+{{- if .Values.config.oidc.authenticatedEmailsFile.existingSecret -}}
+{{- .Values.config.oidc.authenticatedEmailsFile.existingSecret -}}
+{{- else -}}
+{{- printf "%s-access-list" (include "timesketch.fullname" .) -}}
+{{- end -}}
+{{- end -}}

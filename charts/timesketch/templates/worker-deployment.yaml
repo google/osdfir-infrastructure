@@ -76,6 +76,14 @@ spec:
           configMap:
             name: {{ include "timesketch.fullname" . }}-configmap
             optional: true
+        {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
+        - name: authenticated-emails
+          secret:
+            items:
+            - key: authenticated-emails-list
+              path: authenticated-emails-list
+            secretName: {{ include "timesketch.oidc.authenticatedemails" . }}
+        {{- end }}
       {{- with .Values.worker.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
