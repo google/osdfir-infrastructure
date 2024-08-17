@@ -4,7 +4,7 @@ metadata:
   name: kaniko
   namespace: grr
 spec:
-  serviceAccountName: grr
+  serviceAccountName: grr-sa
   initContainers:
     - name: init-kaniko-env
       image: bitnami/git
@@ -21,8 +21,8 @@ spec:
         - "--dockerfile=Dockerfile.kaniko"
         - "--context=dir:///kaniko-build/osdfir-infrastructure"
         - "--context-sub-path=charts/grr/containers/grr-daemon/"
-        - "--destination=europe-west1-docker.pkg.dev/grr-demo-423211/artifact-registry/grr-daemon:v0.1"
-        - "--build-arg=FLEETSPEAK_FRONTEND=34-144-203-233.nip.io"
+        - "--destination=europe-west1-docker.pkg.dev/grr-demo-431103/artifact-registry/grr-daemon"
+        - "--build-arg=FLEETSPEAK_FRONTEND=34-117-12-204.nip.io"
         - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"
       volumeMounts:
       - name: kaniko-volume

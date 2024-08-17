@@ -42,6 +42,7 @@ FROM ubuntu:22.04
 WORKDIR /
 
 COPY config /config
+COPY --from=grr /config/config.textproto /config/config.textproto
 COPY --from=grr /config/grr.client.yaml /config/grr.client.yaml
 
 COPY --from=grr /client_installers/grr_*_amd64.deb .
