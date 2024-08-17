@@ -23,7 +23,7 @@ COPY grr-client-config.yaml /config/grr.client.yaml
 
 COPY executable-signing.crt .
 COPY executable-signing.key /config/
-RUN openssl x509 -pubkey -noout -in executable-signing.crt > /grr/certs/executable-signing.pub
+RUN openssl x509 -pubkey -noout -in executable-signing.crt > /config/executable-signing.pub
 
 RUN echo "FLEETSPEAK_FRONTEND: $FLEETSPEAK_FRONTEND, FLEETSPEAK_FRONTEND_PORT: $FLEETSPEAK_FRONTEND_PORT";
 
