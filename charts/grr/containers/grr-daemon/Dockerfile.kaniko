@@ -35,7 +35,7 @@ RUN export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect $F
 
 RUN mkdir /client_installers && \
     grr_config_updater repack_clients \
-      --secondary_configs /config/grr.server.yaml \
+      --secondary_configs /config/grr.server.yaml
 
 FROM ubuntu:22.04
 WORKDIR /
