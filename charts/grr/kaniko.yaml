@@ -39,8 +39,8 @@ spec:
       secret:
         secretName: sec-grr-executable-signing-cert
     - name: grr-server-config
-        secret:
-          secretName: sec-grr-server-local
-          items:
-          - key: server.local.yaml
-            path: server.local.yaml
+      secret:
+        secretName: sec-grr-server-local
+        items:
+        - key: server.local.yaml
+          path: server.local.yaml
