@@ -270,37 +270,32 @@ gcloud compute backend-services add-backend l7-xlb-backend-service \
 Let's go and test the setup.
 To do so we need four things:
 
-- Fetch the executable signing keys, and
+- Generate the GRR client executable signing keys, and
 - Build the GRR client container image, and
 - Deploy the GRR client, and
 - Access to the GRR Admin UI
 
-#### 2.4.1. Fetch the executable signing keys
+#### 2.4.1. Generate the GRR client executable signing keys
 
 ```console
-cd $REPO/charts/grr/containers/grr-daemon
+# Generate the GRR client executable signing private key
+openssl genrsa -out  charts/grr/certs/exe-sign-private-key.pem
 
-# Fetch the certificate
-kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.crt}' | \
-  base64 --decode > executable-signing.crt
-# Extract the public key
-openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
-
-# Fetch the private key
-kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.key}' | \
-  base64 --decode > executable-signing.key
+# Generate the GRR client executable signing public key
+openssl rsa -in  charts/grr/certs/exe-sign-private-key.pem -pubout -out charts/grr/certs/exe-sign-public-key.pem
 ```
 
 #### 2.4.2. Build the GRR daemon container image
 
 ```console
-# Build the client container image
-export FLEETSPEAK_FRONTEND_PORT=443
-sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
-sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
-sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
-echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
-gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
+cd charts/grr/
+
+# Preparte the GRR client builder Kubernetes Job
+sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" job-build-grr-client.yaml
+sed -i "s'FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" job-build-grr-client.yaml 
+
+# Build the GRR client container image
+kubectl apply -f job-build-grr-client.yaml
 
 cd $REPO
 ```
