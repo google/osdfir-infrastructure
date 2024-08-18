@@ -6,6 +6,7 @@ Logging.engines: file,stderr
 Logging.path: /
 Logging.filename: /grr-client.log
 
+Config.directory: /config
 Config.writeback: /config/grr-client.local.yaml
 
-Client.executable_signing_public_key: "%(/config/executable-signing.pub|file)"
+Client.executable_signing_public_key: "%(/grr/exe/sign/keys/exe-sign-public-key.pem|file)"

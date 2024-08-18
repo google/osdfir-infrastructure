@@ -272,15 +272,6 @@ resource "google_artifact_registry_repository_iam_member" "grr_artifact_writer" 
   ]
 }
 
-resource "google_pubsub_subscription_iam_member" "grr_fleetspeak_subscriber" {
-  subscription = google_pubsub_subscription.grr_fleetspeak_service_subscription.name
-  role         = "roles/pubsub.subscriber"
-  member      = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/grr/sa/grr-sa"
-  depends_on = [
-    google_container_cluster.osdfir_cluster
-  ]
-}
-
 ##########################################################################
 # Set up the GKE cluster
 ##########################################################################
