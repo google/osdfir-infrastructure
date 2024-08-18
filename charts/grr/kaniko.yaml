@@ -28,6 +28,8 @@ spec:
         - "--build-arg=FLEETSPEAK_FRONTEND=34-117-12-204.nip.io"
         - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"
       volumeMounts:
+      - name: grr-exe-sign-keys
+        mountPath: /grr/exe/sign/keys
       - name: kaniko-volume
         mountPath: /kaniko-build
   restartPolicy: Never
@@ -35,9 +37,9 @@ spec:
     - name: kaniko-volume
       emptyDir:
         sizeLimit: 25Mi
-    - name: signing-cert
+    - name: grr-exe-sign-keys
       secret:
-        secretName: sec-grr-executable-signing-cert
+        secretName: sec-grr-executable-signing-keys
     - name: grr-server-config
       secret:
         secretName: sec-grr-server-local

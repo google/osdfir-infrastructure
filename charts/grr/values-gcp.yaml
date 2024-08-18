@@ -82,10 +82,6 @@ fleetspeak:
 ## @section GRR parameters
 ##
 grr:
-  ## @param grr.generateExecutableSigningCert Enables the generation of self-signed executable signging certificate.
-  ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
-  ##
-  generateExecutableSigningCert: true
   ## @param grr.namespace Sets the GRR namespace.
   ##
   namespace: "grr"
