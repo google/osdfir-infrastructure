@@ -212,13 +212,23 @@ sed -i "s'PUBSUB_TOPIC'$PUBSUB_TOPIC'g" charts/grr/values-gcp.yaml
 sed -i "s'PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.3. Install the Chart
+#### 2.2.3. Generate the GRR client executable signing keys
+
+```console
+# Generate the GRR client executable signing private key
+openssl genrsa -out  charts/grr/certs/exe-sign-private-key.pem
+
+# Generate the GRR client executable signing public key
+openssl rsa -in  charts/grr/certs/exe-sign-private-key.pem -pubout -out charts/grr/certs/exe-sign-public-key.pem
+```
+
+#### 2.2.4. Install the Chart
 
 ```console
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.4. Wait for all GRR pods to be in 'Running' status
+#### 2.2.5. Wait for all GRR pods to be in 'Running' status
 
 ```console
 # Check that all the pods are in the 'Running' status.
@@ -268,24 +278,13 @@ gcloud compute backend-services add-backend l7-xlb-backend-service \
 ### 2.4. Testing
 
 Let's go and test the setup.
-To do so we need four things:
+To do so we need three things:
 
-- Generate the GRR client executable signing keys, and
 - Build the GRR client container image, and
 - Deploy the GRR client, and
 - Access to the GRR Admin UI
 
-#### 2.4.1. Generate the GRR client executable signing keys
-
-```console
-# Generate the GRR client executable signing private key
-openssl genrsa -out  charts/grr/certs/exe-sign-private-key.pem
-
-# Generate the GRR client executable signing public key
-openssl rsa -in  charts/grr/certs/exe-sign-private-key.pem -pubout -out charts/grr/certs/exe-sign-public-key.pem
-```
-
-#### 2.4.2. Build the GRR daemon container image
+#### 2.4.1. Build the GRR daemon container image
 
 ```console
 cd charts/grr/
@@ -300,7 +299,7 @@ kubectl apply -f job-build-grr-client.yaml
 cd $REPO
 ```
 
-#### 2.4.3. Deploy the GRR client
+#### 2.4.2. Deploy the GRR client
 
 This will spin up a pod with the GRR client as a daemonset on the selected node.
 We can interact with in the next step.
@@ -331,7 +330,7 @@ kubectl get pods -n grr-client
 # grr-7cc7l 1/1   Running 0        13s
 ```
 
-#### 2.4.4. Create a tunnel to access the GRR Admin UI
+#### 2.4.3. Create a tunnel to access the GRR Admin UI
 
 ```console
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
