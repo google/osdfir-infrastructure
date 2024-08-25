@@ -423,12 +423,12 @@ helm uninstall grr-on-k8s
 | Name                                | Description                                                            | Value                                 |
 | ----------------------------------- | ---------------------------------------------------------------------- | ------------------------------------- |
 | `grr.generateExecutableSigningCert` | Enables the generation of self-signed executable signging certificate. | `true`                                |
-| `grr.admin.image`                   | Sets the GRR admin container image to use.                             | `ghcr.io/google/grr:v3.4.7.4-release` |
+| `grr.admin.image`                   | Sets the GRR admin container image to use.                             | `ghcr.io/google/grr:v3.4.7.5-release` |
 | `grr.admin.listenPort`              | Sets the GRR admin listen port to use.                                 | `8000`                                |
 | `grr.admin.replicas`                | Sets the amount of GRR admin pods to run.                              | `1`                                   |
 | `grr.daemon.image`                  | Sets the GRR daemon container image to use.                            | `grr-client:v0.1`                     |
 | `grr.daemon.imagePullPolicy`        | Sets the GRR daemon container image pull policy to use.                | `Never`                               |
-| `grr.frontend.image`                | Sets the GRR frontend container image to use.                          | `ghcr.io/google/grr:v3.4.7.4-release` |
+| `grr.frontend.image`                | Sets the GRR frontend container image to use.                          | `ghcr.io/google/grr:v3.4.7.5-release` |
 | `grr.frontend.listenPort`           | Sets the GRR frontend listen port to use.                              | `11111`                               |
 | `grr.frontend.replicas`             | Sets the amount of GRR frontend pods to run.                           | `1`                                   |
 | `grr.mysqlDb.address`               | Sets the GRR DB address to use.                                        | `mysql`                               |
@@ -436,7 +436,7 @@ helm uninstall grr-on-k8s
 | `grr.mysqlDb.port`                  | Sets the GRR DB port to use.                                           | `3306`                                |
 | `grr.mysqlDb.userName`              | Sets the GRR DB user name to use.                                      | `grr-user`                            |
 | `grr.mysqlDb.userPassword`          | Sets the GRR DB user password to use.                                  | `grr-password`                        |
-| `grr.worker.image`                  | Sets the GRR worker container image to use.                            | `ghcr.io/google/grr:v3.4.7.4-release` |
+| `grr.worker.image`                  | Sets the GRR worker container image to use.                            | `ghcr.io/google/grr:v3.4.7.5-release` |
 
 ### Prometheus parameters
 
