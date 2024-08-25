@@ -104,10 +104,10 @@ grr:
     ##
     bucket: "GRR_BLOBSTORE_BUCKET"
   daemon:
-    ## @param grr.daemon.image Sets the GRR daemon container image to use.
+    ## @param grr.daemon.image Sets the GRR client container image to use.
     ##
     image: "GRR_DAEMON_IMAGE"
-    ## @param grr.daemon.imagePullPolicy Sets the GRR daemon container image pull policy to use.
+    ## @param grr.daemon.imagePullPolicy Sets the GRR client container image pull policy to use.
     ##
     imagePullPolicy: "Always"
   frontend:

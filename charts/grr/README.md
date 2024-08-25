@@ -83,7 +83,7 @@ To do so we will
 #### 1.2.1. Retrieve the configuration parameter values
 
 ```console
-cd charts/grr/containers/grr-daemon/
+cd charts/grr/containers/grr-client/
 export FLEETSPEAK_FRONTEND_ADDRESS="fleetspeak-frontend"
 export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
 export FLEETSPEAK_FRONTEND_PORT=4443
@@ -113,7 +113,7 @@ kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.da
 
 ```console
 eval $(minikube docker-env)
-docker build -t grr-daemon:v0.1 .
+docker build -t grr-client:v0.1 .
 ```
 
 #### 1.2.4. Deploy the GRR client DaemonSet
@@ -284,7 +284,7 @@ To do so we need three things:
 - Deploy the GRR client, and
 - Access to the GRR Admin UI
 
-#### 2.4.1. Build the GRR daemon container image
+#### 2.4.1. Build the GRR client container image
 
 ```console
 cd charts/grr/
@@ -426,7 +426,7 @@ helm uninstall grr-on-k8s
 | `grr.admin.image`                   | Sets the GRR admin container image to use.                             | `ghcr.io/google/grr:v3.4.7.4-release` |
 | `grr.admin.listenPort`              | Sets the GRR admin listen port to use.                                 | `8000`                                |
 | `grr.admin.replicas`                | Sets the amount of GRR admin pods to run.                              | `1`                                   |
-| `grr.daemon.image`                  | Sets the GRR daemon container image to use.                            | `grr-daemon:v0.1`                     |
+| `grr.daemon.image`                  | Sets the GRR daemon container image to use.                            | `grr-client:v0.1`                     |
 | `grr.daemon.imagePullPolicy`        | Sets the GRR daemon container image pull policy to use.                | `Never`                               |
 | `grr.frontend.image`                | Sets the GRR frontend container image to use.                          | `ghcr.io/google/grr:v3.4.7.4-release` |
 | `grr.frontend.listenPort`           | Sets the GRR frontend listen port to use.                              | `11111`                               |

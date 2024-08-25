@@ -26,9 +26,9 @@ WORKDIR /
 FROM ubuntu:22.04
 WORKDIR /
 
-COPY config /config
-COPY --from=grr /config/grr.client.yaml /config/grr.client.yaml
+COPY --from=grr /config/config.textproto /etc/fleetspeak-client/client.config
+COPY --from=grr /config/grr.client.yaml /etc/fleetspeak-client/grr.client.yaml
 
 COPY --from=grr /client_installers/grr_*_amd64.deb .
 RUN dpkg -i grr_*_amd64.deb && rm grr_*_amd64.deb
-ENTRYPOINT ["fleetspeak-client", "-config" , "/config/config.textproto", "-alsologtostderr"]
+ENTRYPOINT ["fleetspeak-client", "-config" , "/etc/fleetspeak-client/client.config", "-alsologtostderr"]

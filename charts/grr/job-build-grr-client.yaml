@@ -10,7 +10,7 @@ spec:
       initContainers:
         - name: init-kaniko-env
           image: bitnami/git
-          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/daschwanden/osdfir-infrastructure.git; cd osdfir-infrastructure; git checkout grr-kaniko; cp /grr/grr.server.yaml charts/grr/containers/grr-daemon/config/"]
+          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/daschwanden/osdfir-infrastructure.git; cd osdfir-infrastructure; git checkout grr-kaniko; cp /grr/grr.server.yaml charts/grr/containers/grr-client/config/"]
           volumeMounts:
           - name: kaniko-volume
             mountPath: /kaniko-build
@@ -23,7 +23,7 @@ spec:
           args:
             - "--dockerfile=Dockerfile.kaniko"
             - "--context=dir:///kaniko-build/osdfir-infrastructure"
-            - "--context-sub-path=charts/grr/containers/grr-daemon/"
+            - "--context-sub-path=charts/grr/containers/grr-client/"
             - "--destination=GRR_DAEMON_IMAGE"
             - "--build-arg=FLEETSPEAK_FRONTEND=FRONTEND_ADDRESS"
             - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"

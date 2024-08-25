@@ -90,10 +90,10 @@ grr:
     ##
     replicas: 1
   daemon:
-    ## @param grr.daemon.image Sets the GRR daemon container image to use.
+    ## @param grr.daemon.image Sets the GRR client container image to use.
     ##
-    image: "grr-daemon:v0.1"
-    ## @param grr.daemon.imagePullPolicy Sets the GRR daemon container image pull policy to use.
+    image: "grr-client:v0.1"
+    ## @param grr.daemon.imagePullPolicy Sets the GRR client container image pull policy to use.
     ##
     imagePullPolicy: "Never"
   frontend:
