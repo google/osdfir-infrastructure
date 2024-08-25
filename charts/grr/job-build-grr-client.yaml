@@ -24,7 +24,7 @@ spec:
             - "--dockerfile=Dockerfile.kaniko"
             - "--context=dir:///kaniko-build/osdfir-infrastructure"
             - "--context-sub-path=charts/grr/containers/grr-client/"
-            - "--destination=GRR_DAEMON_IMAGE"
+            - "--destination=GRR_CLIENT_IMAGE"
             - "--build-arg=FLEETSPEAK_FRONTEND=FRONTEND_ADDRESS"
             - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"
           volumeMounts:
