@@ -26,6 +26,7 @@ WORKDIR /
 FROM ubuntu:22.04
 WORKDIR /
 
+COPY --from=grr /config/communicator.txt /etc/fleetspeak-client/communicator.txt
 COPY --from=grr /config/config.textproto /etc/fleetspeak-client/client.config
 COPY --from=grr /config/grr.client.yaml /etc/fleetspeak-client/grr.client.yaml
 
