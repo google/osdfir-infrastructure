@@ -21,6 +21,7 @@ export REPO=$(pwd)
 ```console
 minikube start
 minikube tunnel &
+./charts/grr/createSigningKeys.sh
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 ```
 
@@ -47,6 +48,7 @@ The tunnel command exposes the IP address to any program running on the host ope
 ```console
 minikube start
 minikube tunnel &
+./charts/grr/createSigningKeys.sh
 ```
 
 ### 1.1. Installing the Chart
@@ -98,15 +100,11 @@ sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.te
 #### 1.2.2. Fetch the executable signing keys
 
 ```console
-# Fetch the certificate
-kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.crt}' | \
-  base64 --decode > executable-signing.crt
-# Extract the public key
-openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
+# Fetch the public key
+cp ../../certs/exe-sign-public-key.pem config/
 
 # Fetch the private key
-kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.key}' | \
-  base64 --decode > executable-signing.key
+cp ../../certs/exe-sign-private-key.pem config/
 ```
 
 #### 1.2.3. Build the GRR client Docker container
@@ -215,11 +213,8 @@ sed -i "s'PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
 #### 2.2.3. Generate the GRR client executable signing keys
 
 ```console
-# Generate the GRR client executable signing private key
-openssl genrsa -out  charts/grr/certs/exe-sign-private-key.pem
-
-# Generate the GRR client executable signing public key
-openssl rsa -in  charts/grr/certs/exe-sign-private-key.pem -pubout -out charts/grr/certs/exe-sign-public-key.pem
+# Generate the GRR client executable signing private/public key pair
+./charts/grr/createSigningKeys.sh
 ```
 
 #### 2.2.4. Install the Chart
