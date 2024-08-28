@@ -370,7 +370,7 @@ Follow these steps to upgrade the database on your Kubernetes deployment:
    - Upgrade your Timesketch deployment to the desired release version:
 
      ```bash
-     helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION>
+     helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION> --set image.pullPolicy=Always
      ```
 
 2. **Connect to Timesketch Pod:**
