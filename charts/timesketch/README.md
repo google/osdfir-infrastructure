@@ -380,7 +380,7 @@ Follow these steps to upgrade the database on your Kubernetes deployment:
      kubectl exec -it ts-release-timesketch-<RANDOM> -- /bin/bash
      ```
 
-     -  Find your pod name using `kubectl get pods`.
+     - Find your pod name using `kubectl get pods`.
 
 3. **Perform Database Upgrade:**
    - Follow the detailed steps in the [Timesketch documentation to upgrade your database](https://timesketch.org/guides/admin/upgrade/#upgrade-the-database-schema).
