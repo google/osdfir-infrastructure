@@ -368,20 +368,26 @@ Follow these steps to upgrade the database on your Kubernetes deployment:
 
 1. **Upgrade Timesketch (if not already done):**
    - Upgrade your Timesketch deployment to the desired release version:
+
      ```bash
      helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION>
      ```
+
 2. **Connect to Timesketch Pod:**
    - Once the upgraded pods are ready, shell into the Timesketch pod:
+
      ```bash
      kubectl exec -it ts-release-timesketch-<RANDOM> -- /bin/bash
      ```
+
      -  Find your pod name using `kubectl get pods`.
 3. **Perform Database Upgrade:**
    - Follow the detailed steps in the [Timesketch documentation to upgrade your database](https://timesketch.org/guides/admin/upgrade/#upgrade-the-database-schema).
+
 4. **Restart Timesketch (Recommended):**
    - After a successful database upgrade, it is recommended to restart your
    Timesketch deployment for the changes to take full effect:
+
       ```bash
       helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION>
       ```
