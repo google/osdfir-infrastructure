@@ -390,7 +390,7 @@ Follow these steps to upgrade the database on your Kubernetes deployment:
    Timesketch deployment for the changes to take full effect:
 
       ```bash
-      helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION>
+      kubectl rollout restart deployment my-release-timesketch-web
       ```
 
 ## Troubleshooting
