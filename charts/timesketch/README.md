@@ -357,6 +357,35 @@ image tag to `latest` and increasing persistent volume size of an existing volum
 to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
 of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
 
+### Upgrade Timesketch Database Schema
+
+From time to time, a Timesketch release requires a manual database upgrade if
+the schema has changed.
+The [Timesketch release page](https://github.com/google/timesketch/releases)
+will indicate if a database upgrade is required.
+
+Follow these steps to upgrade the database on your Kubernetes deployment:
+
+1. **Upgrade Timesketch (if not already done):**
+   - Upgrade your Timesketch deployment to the desired release version:
+     ```bash
+     helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION>
+     ```
+2. **Connect to Timesketch Pod:**
+   - Once the upgraded pods are ready, shell into the Timesketch pod:
+     ```bash
+     kubectl exec -it ts-release-timesketch-<RANDOM> -- /bin/bash
+     ```
+     -  Find your pod name using `kubectl get pods`.
+3. **Perform Database Upgrade:**
+   - Follow the detailed steps in the [Timesketch documentation to upgrade your database](https://timesketch.org/guides/admin/upgrade/#upgrade-the-database-schema).
+4. **Restart Timesketch (Recommended):**
+   - After a successful database upgrade, it is recommended to restart your
+   Timesketch deployment for the changes to take full effect:
+      ```bash
+      helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION>
+      ```
+
 ## Troubleshooting
 
 There is a known issue causing PostgreSQL authentication to fail. This occurs
