@@ -77,8 +77,7 @@ The command deploys GRR on the Kubernetes cluster in the default configuration. 
 For test and demo purposes we will deploy a GRR client as a [Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/).
 To do so we will
 
-- first retrieve the values for some configuration parameters,
-- fetch the executable signing cert and key, and
+- retrieve the values for some configuration parameters,
 - then build a Docker container with the GRR client and its dependencies, and
 - finally deploy the container as a DaemonSet.
 
@@ -97,24 +96,14 @@ sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.tex
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
 ```
 
-#### 1.2.2. Fetch the executable signing keys
-
-```console
-# Fetch the public key
-cp ../../certs/exe-sign-public-key.pem config/
-
-# Fetch the private key
-cp ../../certs/exe-sign-private-key.pem config/
-```
-
-#### 1.2.3. Build the GRR client Docker container
+#### 1.2.2. Build the GRR client Docker container
 
 ```console
 eval $(minikube docker-env)
 docker build -t grr-client:v0.1 .
 ```
 
-#### 1.2.4. Deploy the GRR client DaemonSet
+#### 1.2.3. Deploy the GRR client DaemonSet
 
 ```console
 kubectl label nodes minikube grrclient=installed

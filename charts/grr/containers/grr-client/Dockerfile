@@ -20,15 +20,12 @@ RUN mkdir /client_installers && \
       --secondary_configs /config/grr.yaml \
       --noupload
 
-WORKDIR /
-
 FROM ubuntu:22.04
 WORKDIR /
 
 COPY --from=grr /config/communicator.txt /etc/fleetspeak-client/communicator.txt
 COPY --from=grr /config/config.textproto /etc/fleetspeak-client/client.config
 COPY --from=grr /config/grr.client.yaml /etc/fleetspeak-client/grr.client.yaml
-COPY --from=grr /config/exe-sign-public-key.pem /etc/fleetspeak-client/exe-sign-private-key.pem
 
 COPY --from=grr /client_installers/grr_*_amd64.deb .
 RUN dpkg -i grr_*_amd64.deb && rm grr_*_amd64.deb

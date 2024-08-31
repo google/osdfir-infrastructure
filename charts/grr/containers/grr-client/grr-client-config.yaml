@@ -9,4 +9,4 @@ Logging.filename: '%(Logging.path)/%(Client.name).log'
 Config.directory: /etc/fleetspeak-client
 Config.writeback: /etc/fleetspeak-client/grr-client.local.yaml
 
-Client.executable_signing_public_key: "%(/config/exe-sign-public-key.pem|file)"
+Client.executable_signing_public_key: "EXE_SIGN_PUBLIC_KEY"
