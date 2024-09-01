@@ -10,7 +10,7 @@ spec:
       initContainers:
         - name: init-kaniko-env
           image: bitnami/git
-          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/daschwanden/osdfir-infrastructure.git; cd osdfir-infrastructure; git checkout grr-kaniko; cp /grr/grr.server.yaml charts/grr/containers/grr-client/config/"]
+          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/google/osdfir-infrastructure.git; cd osdfir-infrastructure; cp /grr/grr.server.yaml charts/grr/containers/grr-client/config/"]
           volumeMounts:
           - name: kaniko-volume
             mountPath: /kaniko-build
