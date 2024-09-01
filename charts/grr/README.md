@@ -393,11 +393,11 @@ helm uninstall grr-on-k8s
 | `fleetspeak.generateCert`              | Enables the generation of self-signed Fleetspeak x509 certificate.                                | `true`                              |
 | `fleetspeak.httpsHeaderChecksum`       | Defines on whether to add a HTTPS header checksum                                                 | `false`                             |
 | `fleetspeak.subjectCommonName`         | Sets the Fleetspeak x509 certificate subject common name.                                         | `fleetspeak-frontend`               |
-| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:v0.1.15` |
+| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:v0.1.17` |
 | `fleetspeak.admin.listenPort`          | Sets the Fleetspeak admin listen port to use.                                                     | `4444`                              |
 | `fleetspeak.admin.replicas`            | Sets the amount of Fleetspeak admin pods to run.                                                  | `1`                                 |
 | `fleetspeak.frontend.healthCheckPort`  | Sets the Fleetspeak frontend health check port to use.                                            | `8080`                              |
-| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:v0.1.15` |
+| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:v0.1.17` |
 | `fleetspeak.frontend.listenPort`       | Sets the Fleetspeak frontend listen port to use.                                                  | `4443`                              |
 | `fleetspeak.frontend.neg`              | Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service. | `false`                             |
 | `fleetspeak.frontend.notificationPort` | Sets the Fleetspeak frontend notificaton port to use.                                             | `12000`                             |
@@ -410,23 +410,22 @@ helm uninstall grr-on-k8s
 
 ### GRR parameters
 
-| Name                                | Description                                                            | Value                                 |
-| ----------------------------------- | ---------------------------------------------------------------------- | ------------------------------------- |
-| `grr.generateExecutableSigningCert` | Enables the generation of self-signed executable signging certificate. | `true`                                |
-| `grr.admin.image`                   | Sets the GRR admin container image to use.                             | `ghcr.io/google/grr:v3.4.7.5-release` |
-| `grr.admin.listenPort`              | Sets the GRR admin listen port to use.                                 | `8000`                                |
-| `grr.admin.replicas`                | Sets the amount of GRR admin pods to run.                              | `1`                                   |
-| `grr.daemon.image`                  | Sets the GRR daemon container image to use.                            | `grr-client:v0.1`                     |
-| `grr.daemon.imagePullPolicy`        | Sets the GRR daemon container image pull policy to use.                | `Never`                               |
-| `grr.frontend.image`                | Sets the GRR frontend container image to use.                          | `ghcr.io/google/grr:v3.4.7.5-release` |
-| `grr.frontend.listenPort`           | Sets the GRR frontend listen port to use.                              | `11111`                               |
-| `grr.frontend.replicas`             | Sets the amount of GRR frontend pods to run.                           | `1`                                   |
-| `grr.mysqlDb.address`               | Sets the GRR DB address to use.                                        | `mysql`                               |
-| `grr.mysqlDb.name`                  | Sets the GRR DB name to use                                            | `grr`                                 |
-| `grr.mysqlDb.port`                  | Sets the GRR DB port to use.                                           | `3306`                                |
-| `grr.mysqlDb.userName`              | Sets the GRR DB user name to use.                                      | `grr-user`                            |
-| `grr.mysqlDb.userPassword`          | Sets the GRR DB user password to use.                                  | `grr-password`                        |
-| `grr.worker.image`                  | Sets the GRR worker container image to use.                            | `ghcr.io/google/grr:v3.4.7.5-release` |
+| Name                         | Description                                             | Value                                 |
+| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| `grr.admin.image`            | Sets the GRR admin container image to use.              | `ghcr.io/google/grr:v3.4.7.5-release` |
+| `grr.admin.listenPort`       | Sets the GRR admin listen port to use.                  | `8000`                                |
+| `grr.admin.replicas`         | Sets the amount of GRR admin pods to run.               | `1`                                   |
+| `grr.daemon.image`           | Sets the GRR client container image to use.             | `grr-client:v0.1`                     |
+| `grr.daemon.imagePullPolicy` | Sets the GRR client container image pull policy to use. | `Never`                               |
+| `grr.frontend.image`         | Sets the GRR frontend container image to use.           | `ghcr.io/google/grr:v3.4.7.5-release` |
+| `grr.frontend.listenPort`    | Sets the GRR frontend listen port to use.               | `11111`                               |
+| `grr.frontend.replicas`      | Sets the amount of GRR frontend pods to run.            | `1`                                   |
+| `grr.mysqlDb.address`        | Sets the GRR DB address to use.                         | `mysql`                               |
+| `grr.mysqlDb.name`           | Sets the GRR DB name to use                             | `grr`                                 |
+| `grr.mysqlDb.port`           | Sets the GRR DB port to use.                            | `3306`                                |
+| `grr.mysqlDb.userName`       | Sets the GRR DB user name to use.                       | `grr-user`                            |
+| `grr.mysqlDb.userPassword`   | Sets the GRR DB user password to use.                   | `grr-password`                        |
+| `grr.worker.image`           | Sets the GRR worker container image to use.             | `ghcr.io/google/grr:v3.4.7.5-release` |
 
 ### Prometheus parameters
 
