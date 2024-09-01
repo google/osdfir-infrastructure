@@ -280,8 +280,14 @@ sed -i "s'FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" job-build-grr-client.yaml
 # Build the GRR client container image
 kubectl apply -f job-build-grr-client.yaml
 
+# Wait for the build job to complete
+# You can follow the build process progress with the following command:
+kubectl logs -f job-grr-client-builder-xxxxx -n grr
+
 cd $REPO
 ```
+
+Once the Kubernetes Job has completed building the ```grr-client``` container image you can deploy it following the instructions in the next section.
 
 #### 2.4.2. Deploy the GRR client
 
