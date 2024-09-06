@@ -273,7 +273,7 @@ To do so we need three things:
 ```console
 cd charts/grr/
 
-# Preparte the GRR client builder Kubernetes Job
+# Prepare the GRR client builder Kubernetes Job
 sed -i "s'GRR_CLIENT_IMAGE'$GRR_CLIENT_IMAGE'g" job-build-grr-client.yaml
 sed -i "s'FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" job-build-grr-client.yaml 
 
