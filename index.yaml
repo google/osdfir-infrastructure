@@ -40,6 +40,32 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-09-06T18:29:03.957964612Z"
+    description: A Helm chart for GRR/Fleetspeak Kubernetes deployments.
+    digest: ebc937728e4e512cf8d26498a026077f6fa11c96a22473703275b34bf9ac9f90
+    home: https://www.grr-response.com/
+    icon: https://www.grr-response.com/images/favicons/favicon.ico
+    keywords:
+    - grr
+    - dfir
+    - analysis
+    - forensics
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: grr
+    sources:
+    - https://github.com/google/grr
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/grr-1.0.3/grr-1.0.3.tgz
+    version: 1.0.3
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-06-14T23:09:22.976808024Z"
     description: A Helm chart for GRR/Fleetspeak Kubernetes deployments.
     digest: 565581b82de70a9064b7629b548d64e9e8b1a6e64e46ec745dbf38a6ad1814ab
@@ -2003,4 +2029,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-30T16:01:00.399446792Z"
+generated: "2024-09-06T18:29:03.958096177Z"
