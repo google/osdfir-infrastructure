@@ -21,6 +21,7 @@ export REPO=$(pwd)
 ```console
 minikube start
 minikube tunnel &
+./charts/grr/createSigningKeys.sh
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
 ```
 
@@ -47,6 +48,7 @@ The tunnel command exposes the IP address to any program running on the host ope
 ```console
 minikube start
 minikube tunnel &
+./charts/grr/createSigningKeys.sh
 ```
 
 ### 1.1. Installing the Chart
@@ -75,15 +77,14 @@ The command deploys GRR on the Kubernetes cluster in the default configuration. 
 For test and demo purposes we will deploy a GRR client as a [Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/).
 To do so we will
 
-- first retrieve the values for some configuration parameters,
-- fetch the executable signing cert and key, and
+- retrieve the values for some configuration parameters,
 - then build a Docker container with the GRR client and its dependencies, and
 - finally deploy the container as a DaemonSet.
 
 #### 1.2.1. Retrieve the configuration parameter values
 
 ```console
-cd charts/grr/containers/grr-daemon/
+cd charts/grr/containers/grr-client/
 export FLEETSPEAK_FRONTEND_ADDRESS="fleetspeak-frontend"
 export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
 export FLEETSPEAK_FRONTEND_PORT=4443
@@ -95,28 +96,14 @@ sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.tex
 sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
 ```
 
-#### 1.2.2. Fetch the executable signing keys
-
-```console
-# Fetch the certificate
-kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.crt}' | \
-  base64 --decode > executable-signing.crt
-# Extract the public key
-openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
-
-# Fetch the private key
-kubectl get secrets sec-grr-executable-signing-cert -o jsonpath --template '{.data.executable-signing\.key}' | \
-  base64 --decode > executable-signing.key
-```
-
-#### 1.2.3. Build the GRR client Docker container
+#### 1.2.2. Build the GRR client Docker container
 
 ```console
 eval $(minikube docker-env)
-docker build -t grr-daemon:v0.1 .
+docker build -t grr-client:v0.1 .
 ```
 
-#### 1.2.4. Deploy the GRR client DaemonSet
+#### 1.2.3. Deploy the GRR client DaemonSet
 
 ```console
 kubectl label nodes minikube grrclient=installed
@@ -180,7 +167,7 @@ echo "FLEETSPEAK_FRONTEND: $FLEETSPEAK_FRONTEND"
 echo "GKE_CLUSTER_LOCATION: $GKE_CLUSTER_LOCATION"
 echo "GKE_CLUSTER_NAME: $GKE_CLUSTER_NAME"
 echo "GRR_BLOBSTORE_BUCKET: $GRR_BLOBSTORE_BUCKET"
-echo "GRR_DAEMON_IMAGE: $GRR_DAEMON_IMAGE"
+echo "GRR_CLIENT_IMAGE: $GRR_CLIENT_IMAGE"
 echo "GRR_OPERATOR_IMAGE: $GRR_OPERATOR_IMAGE"
 echo "LOADBALANCER_CERT: $LOADBALANCER_CERT"
 echo "MYSQL_DB_ADDRESS: $MYSQL_DB_ADDRESS"
@@ -204,7 +191,7 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 ```console
 sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_BLOBSTORE_BUCKET'$GRR_BLOBSTORE_BUCKET'g" charts/grr/values-gcp.yaml
-sed -i "s'GRR_DAEMON_IMAGE'$GRR_DAEMON_IMAGE'g" charts/grr/values-gcp.yaml
+sed -i "s'GRR_CLIENT_IMAGE'$GRR_CLIENT_IMAGE'g" charts/grr/values-gcp.yaml
 sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
 sed -i "s'PUBSUB_PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
 sed -i "s'PUBSUB_SUBSCRIPTION'$PUBSUB_SUBSCRIPTION'g" charts/grr/values-gcp.yaml
@@ -212,13 +199,20 @@ sed -i "s'PUBSUB_TOPIC'$PUBSUB_TOPIC'g" charts/grr/values-gcp.yaml
 sed -i "s'PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.3. Install the Chart
+#### 2.2.3. Generate the GRR client executable signing keys
+
+```console
+# Generate the GRR client executable signing private/public key pair
+./charts/grr/createSigningKeys.sh
+```
+
+#### 2.2.4. Install the Chart
 
 ```console
 helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-gcp.yaml
 ```
 
-#### 2.2.4. Wait for all GRR pods to be in 'Running' status
+#### 2.2.5. Wait for all GRR pods to be in 'Running' status
 
 ```console
 # Check that all the pods are in the 'Running' status.
@@ -268,44 +262,34 @@ gcloud compute backend-services add-backend l7-xlb-backend-service \
 ### 2.4. Testing
 
 Let's go and test the setup.
-To do so we need four things:
+To do so we need three things:
 
-- Fetch the executable signing keys, and
 - Build the GRR client container image, and
 - Deploy the GRR client, and
 - Access to the GRR Admin UI
 
-#### 2.4.1. Fetch the executable signing keys
+#### 2.4.1. Build the GRR client container image
 
 ```console
-cd $REPO/charts/grr/containers/grr-daemon
+cd charts/grr/
 
-# Fetch the certificate
-kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.crt}' | \
-  base64 --decode > executable-signing.crt
-# Extract the public key
-openssl x509 -pubkey -noout -in executable-signing.crt > config/executable-signing.pub
+# Prepare the GRR client builder Kubernetes Job
+sed -i "s'GRR_CLIENT_IMAGE'$GRR_CLIENT_IMAGE'g" job-build-grr-client.yaml
+sed -i "s'FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" job-build-grr-client.yaml 
 
-# Fetch the private key
-kubectl get secrets sec-grr-executable-signing-cert -n grr -o jsonpath --template '{.data.executable-signing\.key}' | \
-  base64 --decode > executable-signing.key
-```
+# Build the GRR client container image
+kubectl apply -f job-build-grr-client.yaml
 
-#### 2.4.2. Build the GRR daemon container image
-
-```console
-# Build the client container image
-export FLEETSPEAK_FRONTEND_PORT=443
-sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" config/config.textproto.tmpl > config/config.textproto
-sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
-sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'$LOADBALANCER_CERT'g" config/config.textproto
-echo 'client_certificate_header: "client-certificate"' >> config/config.textproto
-gcloud builds submit --region=$REGION --tag $GRR_DAEMON_IMAGE
+# Wait for the build job to complete
+# You can follow the build process progress with the following command:
+kubectl logs -f job-grr-client-builder-xxxxx -n grr
 
 cd $REPO
 ```
 
-#### 2.4.3. Deploy the GRR client
+Once the Kubernetes Job has completed building the ```grr-client``` container image you can deploy it following the instructions in the next section.
+
+#### 2.4.2. Deploy the GRR client
 
 This will spin up a pod with the GRR client as a daemonset on the selected node.
 We can interact with in the next step.
@@ -336,7 +320,7 @@ kubectl get pods -n grr-client
 # grr-7cc7l 1/1   Running 0        13s
 ```
 
-#### 2.4.4. Create a tunnel to access the GRR Admin UI
+#### 2.4.3. Create a tunnel to access the GRR Admin UI
 
 ```console
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
@@ -409,11 +393,11 @@ helm uninstall grr-on-k8s
 | `fleetspeak.generateCert`              | Enables the generation of self-signed Fleetspeak x509 certificate.                                | `true`                              |
 | `fleetspeak.httpsHeaderChecksum`       | Defines on whether to add a HTTPS header checksum                                                 | `false`                             |
 | `fleetspeak.subjectCommonName`         | Sets the Fleetspeak x509 certificate subject common name.                                         | `fleetspeak-frontend`               |
-| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:v0.1.15` |
+| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:v0.1.17` |
 | `fleetspeak.admin.listenPort`          | Sets the Fleetspeak admin listen port to use.                                                     | `4444`                              |
 | `fleetspeak.admin.replicas`            | Sets the amount of Fleetspeak admin pods to run.                                                  | `1`                                 |
 | `fleetspeak.frontend.healthCheckPort`  | Sets the Fleetspeak frontend health check port to use.                                            | `8080`                              |
-| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:v0.1.15` |
+| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:v0.1.17` |
 | `fleetspeak.frontend.listenPort`       | Sets the Fleetspeak frontend listen port to use.                                                  | `4443`                              |
 | `fleetspeak.frontend.neg`              | Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service. | `false`                             |
 | `fleetspeak.frontend.notificationPort` | Sets the Fleetspeak frontend notificaton port to use.                                             | `12000`                             |
@@ -426,23 +410,22 @@ helm uninstall grr-on-k8s
 
 ### GRR parameters
 
-| Name                                | Description                                                            | Value                                 |
-| ----------------------------------- | ---------------------------------------------------------------------- | ------------------------------------- |
-| `grr.generateExecutableSigningCert` | Enables the generation of self-signed executable signging certificate. | `true`                                |
-| `grr.admin.image`                   | Sets the GRR admin container image to use.                             | `ghcr.io/google/grr:v3.4.7.4-release` |
-| `grr.admin.listenPort`              | Sets the GRR admin listen port to use.                                 | `8000`                                |
-| `grr.admin.replicas`                | Sets the amount of GRR admin pods to run.                              | `1`                                   |
-| `grr.daemon.image`                  | Sets the GRR daemon container image to use.                            | `grr-daemon:v0.1`                     |
-| `grr.daemon.imagePullPolicy`        | Sets the GRR daemon container image pull policy to use.                | `Never`                               |
-| `grr.frontend.image`                | Sets the GRR frontend container image to use.                          | `ghcr.io/google/grr:v3.4.7.4-release` |
-| `grr.frontend.listenPort`           | Sets the GRR frontend listen port to use.                              | `11111`                               |
-| `grr.frontend.replicas`             | Sets the amount of GRR frontend pods to run.                           | `1`                                   |
-| `grr.mysqlDb.address`               | Sets the GRR DB address to use.                                        | `mysql`                               |
-| `grr.mysqlDb.name`                  | Sets the GRR DB name to use                                            | `grr`                                 |
-| `grr.mysqlDb.port`                  | Sets the GRR DB port to use.                                           | `3306`                                |
-| `grr.mysqlDb.userName`              | Sets the GRR DB user name to use.                                      | `grr-user`                            |
-| `grr.mysqlDb.userPassword`          | Sets the GRR DB user password to use.                                  | `grr-password`                        |
-| `grr.worker.image`                  | Sets the GRR worker container image to use.                            | `ghcr.io/google/grr:v3.4.7.4-release` |
+| Name                         | Description                                             | Value                                 |
+| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| `grr.admin.image`            | Sets the GRR admin container image to use.              | `ghcr.io/google/grr:v3.4.7.5-release` |
+| `grr.admin.listenPort`       | Sets the GRR admin listen port to use.                  | `8000`                                |
+| `grr.admin.replicas`         | Sets the amount of GRR admin pods to run.               | `1`                                   |
+| `grr.daemon.image`           | Sets the GRR client container image to use.             | `grr-client:v0.1`                     |
+| `grr.daemon.imagePullPolicy` | Sets the GRR client container image pull policy to use. | `Never`                               |
+| `grr.frontend.image`         | Sets the GRR frontend container image to use.           | `ghcr.io/google/grr:v3.4.7.5-release` |
+| `grr.frontend.listenPort`    | Sets the GRR frontend listen port to use.               | `11111`                               |
+| `grr.frontend.replicas`      | Sets the amount of GRR frontend pods to run.            | `1`                                   |
+| `grr.mysqlDb.address`        | Sets the GRR DB address to use.                         | `mysql`                               |
+| `grr.mysqlDb.name`           | Sets the GRR DB name to use                             | `grr`                                 |
+| `grr.mysqlDb.port`           | Sets the GRR DB port to use.                            | `3306`                                |
+| `grr.mysqlDb.userName`       | Sets the GRR DB user name to use.                       | `grr-user`                            |
+| `grr.mysqlDb.userPassword`   | Sets the GRR DB user password to use.                   | `grr-password`                        |
+| `grr.worker.image`           | Sets the GRR worker container image to use.             | `ghcr.io/google/grr:v3.4.7.5-release` |
 
 ### Prometheus parameters
 

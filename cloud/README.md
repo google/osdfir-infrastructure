@@ -90,8 +90,7 @@ PUBSUB_SUBSCRIPTION=$(terraform output -json | jq -r .grr_fleetspeak_service_sub
 REGION=$(terraform output -json | jq -r .region.value)
 ZONE=$(terraform output -json | jq -r .zone.value)
 
-GRR_DAEMON_IMAGE=${REGION}-docker.pkg.dev/${PROJECT}/${ARTIFACT_REGISTRY}/grr-daemon
-GRR_OPERATOR_IMAGE=${REGION}-docker.pkg.dev/${PROJECT}/${ARTIFACT_REGISTRY}/grr-operator
+GRR_CLIENT_IMAGE=${REGION}-docker.pkg.dev/${PROJECT}/${ARTIFACT_REGISTRY}/grr-client
 ```
 
 The following step is often required to store the loadbalancer certificate in the environment variable used in the next steps.

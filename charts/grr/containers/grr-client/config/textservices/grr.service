@@ -4,6 +4,6 @@ config {
   [type.googleapis.com/fleetspeak.daemonservice.Config] {
     argv: "/usr/sbin/grrd"
     argv: "--config"
-    argv: "/config/grr.client.yaml"
+    argv: "/etc/fleetspeak-client/grr.client.yaml"
   }
 }
