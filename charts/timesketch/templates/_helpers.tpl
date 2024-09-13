@@ -172,3 +172,11 @@ Timesketch service port
 {{- printf "%s-access-list" (include "timesketch.fullname" .) -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "timesketch.configmap" -}}
+{{- if .Values.config.existingConfigMap -}}
+{{- .Values.config.existingConfigMap -}}
+{{- else -}}
+{{- include "timesketch.fullname" . }}-configmap
+{{- end -}}
+{{- end -}}

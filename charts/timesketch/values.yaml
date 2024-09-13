@@ -70,6 +70,11 @@ config:
   ## script packaged along with this Helm chart.
   ##
   override: configs/*
+  ## @param config.existingConfigMap Use an existing ConfigMap as the default Timesketch config.
+  ## Please ensure that the ConfigMap has been created prior to deployment
+  ## (e.g. kubectl create configmap timesketch-configs --from-file=timesketch-configs/)
+  ##
+  existingConfigMap: ""
   ## @param config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
   ##
   createUser: true
