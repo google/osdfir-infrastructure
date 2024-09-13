@@ -362,7 +362,7 @@ of the volume that backs the underlying PersistentVolume. See [here](https://kub
 
 This section outlines how to deploy and manage Timesketch configuration files within OSDFIR infrastructure. There are three primary methods:
 
-1. Using Default Configurations
+1. **Using Default Configurations**
 
     If you don't provide your own Timesketch config files during deployment,
     the Timesketch deployment will automatically retrieve the latest default configs
@@ -370,7 +370,7 @@ This section outlines how to deploy and manage Timesketch configuration files wi
 
     > **NOTE:**  When using the default method, you cannot update the Timesketch config files directly.
 
-2. Embedding Timesketch configs in the Helm Chart
+2. **Embedding Timesketch configs in the Helm Chart**
 
     To customize Timesketch with your own config files and include them directly in the Helm chart deployment, follow these steps:
 
@@ -412,7 +412,7 @@ This section outlines how to deploy and manage Timesketch configuration files wi
         This will automatically apply the updated config changes and restart the Timesketch deployment so the changes can be picked up.
 
 
-3. Managing Timesketch configs externally
+3. **Managing Timesketch configs externally**
 
     For more advanced configuration management, you can manage Timesketch config
     files independently of the Helm chart:
