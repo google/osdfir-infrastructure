@@ -173,6 +173,7 @@ kubectl delete pvc -l release=my-release
 | Name                                                 | Description                                                                                                                           | Value       |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | `config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
+| `config.existingConfigMap`                           | Use an existing ConfigMap as the default Timesketch config.                                                                           | `""`        |
 | `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
 | `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
 | `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
