@@ -1247,6 +1247,51 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2024-09-16T15:34:12.167050806Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.3.2
+    - alias: oauth2proxy
+      condition: oauth2proxy.enabled
+      name: oauth2-proxy
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.3.0
+    - condition: global.dfdewey.enabled
+      name: dfdewey
+      repository: https://google.github.io/osdfir-infrastructure/
+      version: 1.0.0
+    - alias: monitoring
+      condition: monitoring.deployKubePrometheus
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 60.3.0
+    description: A Helm chart for Turbinia Kubernetes deployments.
+    digest: ad72162c5e41cb8cbe6c1df2b3d2169cc7c820dcae4dd14988b5dcf285a000c1
+    home: https://github.com/google/turbinia
+    icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
+    keywords:
+    - turbinia
+    - dfir
+    - processing
+    - scaling
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: turbinia
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/turbinia-1.1.2/turbinia-1.1.2.tgz
+    version: 1.1.2
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-07-15T20:55:58.378016228Z"
     dependencies:
     - condition: redis.enabled
@@ -2029,4 +2074,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-06T18:29:03.958096177Z"
+generated: "2024-09-16T15:34:12.167235351Z"
