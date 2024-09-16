@@ -74,7 +74,7 @@ spec:
           emptyDir: {}
         - name: uploaded-configs
           configMap:
-            name: {{ include "timesketch.fullname" . }}-configmap
+            name: {{ include "timesketch.configmap" . }}
             optional: true
         {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
         - name: authenticated-emails

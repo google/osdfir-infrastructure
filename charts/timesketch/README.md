@@ -173,6 +173,7 @@ kubectl delete pvc -l release=my-release
 | Name                                                 | Description                                                                                                                           | Value       |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | `config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
+| `config.existingConfigMap`                           | Use an existing ConfigMap as the default Timesketch config.                                                                           | `""`        |
 | `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
 | `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
 | `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
@@ -356,6 +357,101 @@ The above command upgrades an existing release named `my-release` updating the
 image tag to `latest` and increasing persistent volume size of an existing volume
 to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
 of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
+
+### Managing and updating Timesketch configs
+
+This section outlines how to deploy and manage Timesketch configuration files within OSDFIR infrastructure. There are three primary methods:
+
+1. **Using Default Configurations**
+
+    If you don't provide your own Timesketch config files during deployment,
+    the Timesketch deployment will automatically retrieve the latest default configs
+    from the Timesketch Github repository. This method requires no further action from you.
+
+    > **NOTE:**  When using the default method, you cannot update the Timesketch config files directly.
+
+2. **Embedding Timesketch configs in the Helm Chart**
+
+    To customize Timesketch with your own config files and include them directly in the Helm chart deployment, follow these steps:
+
+    1. Download and Extract the Helm chart:
+
+        ```console
+        helm pull osdfir-charts/timesketch --untar
+        cd timesketch/
+        ```
+
+    2. Download the default Timesketch configs:
+
+        ```console
+        ./tools/download-timesketch-configs.sh
+        ```
+
+        This script downloads the default Timesketch configuration files to the `config/` directory within the extracted Helm chart directory.
+
+    3. Modify config files then deploy the Helm chart:
+
+        ```console
+        helm install my-release ../timesketch 
+        ```
+
+        > **NOTE**: The Helm chart checks the path specified in `config.override` for existing config files. By default this path is set to `configs/` within the Helm chart directory.
+
+    To update configs changes using this method:
+
+    1. Modify Configuration Files
+
+        Make the necessary changes to your configuration files in the `config/` directory.
+
+    2. Upgrade the Helm Release:
+
+        ```console
+        helm upgrade my-release ../timesketch
+        ```
+
+        This will automatically apply the updated config changes and restart the Timesketch deployment so the changes can be picked up.
+
+
+3. **Managing Timesketch configs externally**
+
+    For more advanced configuration management, you can manage Timesketch config
+    files independently of the Helm chart:
+
+    1. Prepare your Config Files:
+
+        Organize all the Timesketch configuration files in a directory with your
+        desired customizations.
+
+    2. Create a ConfigMap:
+
+        ```console
+        kubectl create configmap timesketch-configs --from-file=./my-configs/
+        ```
+
+        Replace `./my-configs/` with the actual path to your configuration files.
+
+    3. Install or Upgrade the Helm Chart:
+
+        ```console
+        helm install my-release osdfir-charts/timesketch --set config.existingConfigMap="timesketch-configs"
+        ```
+
+        This command instructs the Helm chart to use the `timesketch-configs` ConfigMap for
+        Timesketch's config files.
+
+    To update the config changes using this method:
+
+    1. Update the ConfigMap:
+
+        ```console
+        kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
+        ```
+
+    2. Restart the Timesketch deployment to apply the new configs
+
+        ```console
+        kubectl rollout restart deployment -l app.kubernetes.io/name=timesketch
+        ```
 
 ### Upgrade Timesketch Database Schema
 
