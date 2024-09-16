@@ -23,16 +23,9 @@ data:
       cp /tmp/turbinia/* /etc/turbinia/turbinia.conf
     else
       # Pull default config if one is not already provided
-      {{- $turbiniaWorker := "us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker" -}}
-      {{- if eq .Values.worker.image.repository $turbiniaWorker }}
-      echo -n "* Fetching the release Turbinia configuration file..." 
-      RELEASE_TAG=$(wget -O- https://api.github.com/repos/google/turbinia/releases | jq -r '.[0] | .tag_name')
-      wget "https://raw.githubusercontent.com/google/turbinia/$RELEASE_TAG/turbinia/config/turbinia_config_tmpl.py" -O turbinia.conf
-      {{- else }}
       echo -n "* Fetching the latest Turbinia configuration file..." 
       wget "https://raw.githubusercontent.com/google/turbinia/master/turbinia/config/turbinia_config_tmpl.py" -O turbinia.conf
       echo "OK"
-      {{- end }}
     fi
 
     # Set up the Redis connection
