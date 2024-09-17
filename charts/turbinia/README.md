@@ -30,8 +30,6 @@ This chart bootstraps a [Turbinia](https://github.com/google/turbinia) deploymen
 * Helm 3.2.0+
 * PV provisioner support in the underlying infrastructure
 
-> **Note**: See [GKE Installations](#gke-installations) for deploying to GKE.
-
 ## Installing the Chart
 
 The first step is to add the repo and then update to pick up any new changes.
@@ -41,44 +39,50 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm repo update
 ```
 
-To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
+To install the chart, specify any release name of your choice.
+For example, using `my-release` as the release name, run:
 
 ```console
 helm install my-release osdfir-charts/turbinia
 ```
 
-The command deploys Turbinia on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
-during installation or see [Installating for Production](#installing-for-production)
-for a recommended production installation.
+The command deploys Turbinia on the Kubernetes cluster in the default configuration.
+The [Parameters](#parameters) section lists the parameters that can be configured
+during installation.
 
-> **Tip**:  You can override the default Turbinia configuration by placing the
-`turbinia.conf` config at the root of the Helm chart. When choosing this option,
-pull and install the Helm chart locally.
+> **Tip**:  See the [Managing and updating the Turbinia config](#managing-and-updating-the-turbinia-config) section for more details on managing the Turbinia config.
 
-## Installing for Production
+## Installing Turbinia for Google Kubernetes Engine (GKE)
 
-Pull the chart locally then cd into `/turbinia` and review the `values-production.yaml` file for a list of values that will be used for production.
+In order to process Google Cloud Platform (GCP) disks with Turbinia, some additional
+setup steps are required.
 
-```console
-helm pull osdfir-charts/turbinia --untar
-```
+The first is to create a Turbinia GCP account using the helper script in
+`tools/create-gcp-sa.sh` prior to installing the chart.
 
-### GKE Installations
-
-Create a Turbinia GCP account using the helper script in `tools/create-gcp-sa.sh` prior to installing the chart.
-
-Install the chart with the base values in `values.yaml`, the production values in `values-production.yaml`, and set appropriate values to enable GCP for Turbinia. Using a release name such as `my-release`, run:
+Once done, install the chart with the appropriate values to enable GCP disk
+processing for Turbinia. Using a release name such as `my-release`, run:
 
 ```console
-helm install my-release ../turbinia \
-    -f values.yaml -f values-production.yaml \
+helm install my-release osdfir-charts/turbinia \
     --set gcp.enabled=true \
     --set gcp.projectID=<GCP_PROJECT_ID> \
     --set gcp.projectRegion=<GKE_CLUSTER_REGION> \
     --set gcp.projectZone=<GKE_ClUSTER_ZONE>
 ```
 
-### Enabling GKE Ingress and OIDC Authentication
+Turbinia offers worker autoscaling based on CPU utilization. This feature can
+significantly increase the speed of task processing by automatically adjusting
+the number of active worker pods. To enable autoscaling on your existing
+deployment, run the following command:
+
+```console
+helm upgrade my-release osdfir-charts/turbinia \
+--reuse-values \
+--set autoscaling.enabled.true
+```
+
+### Enabling External Access and OIDC Authentication
 
 Follow these steps to externally expose Turbinia and enable Google Cloud OIDC
 using the Oauth2 Proxy to control user access to Turbinia.
@@ -92,8 +96,9 @@ using the Oauth2 Proxy to control user access to Turbinia.
 2. Register a new domain or use an existing one, ensuring a DNS entry
 points to the IP created earlier.
 
-3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
-OAuth client.
+3. Create OAuth web client credentials following the
+[Google Support guide](https://support.google.com/cloud/answer/6158849). If using
+the CLI client, also create a Desktop/Native OAuth client.
 
    * Fill in Authorized JavaScript origins with your domain as `https://<DOMAIN_NAME>.com`
    * Fill in Authorized redirect URIs with `https://<DOMAIN_NAME>.com/oauth2/callback/`
@@ -126,13 +131,12 @@ OAuth client.
     kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
     ```
 
-8. Then to upgrade an existing release with production values, externally expose
-Turbinia through a load balancer with GCP managed certificates, and deploy the
+8. Then to upgrade an existing, externally expose Turbinia through a load balancer with GCP managed certificates, and deploy the
 Oauth2 Proxy for authentication, run:
 
     ```console
-    helm upgrade my-release \
-        -f values.yaml -f values-production.yaml \
+    helm upgrade my-release osdfir-charts/turbinia \
+        --reuse-values \
         --set ingress.enabled=true \
         --set ingress.host=<DOMAIN> \
         --set ingress.gcp.managedCertificates=true \
@@ -146,11 +150,21 @@ Oauth2 Proxy for authentication, run:
 plan to expose Turbinia with a public facing IP, it is highly recommended that
 the Oauth2 Proxy is deployed alongside with the command provided above.
 
-### Deploying Monitoring
+## Installing Turbinia for Other Cloud Platforms
 
-Application and system monitoring is available through the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack).
-Kube Prometheus is a collection of Grafana dashboards and Prometheus rules combined
-with documentation to provide easy to operate end-to-end K8s cluster monitoring.
+Turbinia currently offers native support only for Google Cloud Disks. This means
+you can seamlessly process evidence from Google Cloud Disks. For other cloud
+providers, you'll need to manually mount the disk to your Turbinia instance or
+copy the evidence into Turbinia for processing.  We are actively working to expand
+native disk processing support for other cloud environments in the future.
+Installing the Turbinia Helm Chart remains the same regardless of your cloud provider.
+
+## Deploying Monitoring
+
+Application and system monitoring is available through Prometheus. The recommended
+installation is the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack). Kube Prometheus is a collection of Grafana dashboards
+and Prometheus rules combined with documentation to provide easy to operate
+end-to-end K8s cluster monitoring.
 
 To setup monitoring, first add the repository containing the kube-prometheus-stack
 Helm chart:
@@ -160,9 +174,10 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 ```
 
-If using GKE, EKS, or similar K8s managed services some options will need to be
-disabled due to the control plane nodes not being visible to Prometheus. To
-address this create a values file containing the following updates:
+When using managed Kubernetes services like GKE or EKS, you'll need to adjust
+some settings because Prometheus can't see the control plane nodes. To ensure
+that `kube-prometheus` can correctly monitor your Turbinia deployment and to
+disable the monitoring of unnecessary components, use the following values:
 
 ```console
 cat >> values-monitoring.yaml << EOF
@@ -190,8 +205,8 @@ helm install kube-prometheus prometheus-community/kube-prometheus-stack -f value
 
 That's it! To verify Turbinia metrics are being collected, connect to either
 Prometheus or Grafana and search for `turbinia_*` in metrics explorer. If no
-metrics appear, you may need to run a helm upgrade on your existing Turbinia
-deployment so that the CustomResourceDefinitions (CRDs) can be applied.
+metrics appear, you may need to run a `helm upgrade` on your existing Turbinia
+deployment so that the ServiceMonitor CustomResourceDefinition (CRD) can be applied.
 
 ## Uninstalling the Chart
 
@@ -441,7 +456,7 @@ helm install my-release osdfir-charts/turbinia --set controller.enabled=true
 
 The above command installs Turbinia with the Turbinia Controller deployed.
 
-Alternatively, the `values.yaml` and `values-production.yaml` file can be
+Alternatively, the `values.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console

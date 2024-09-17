@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: turbinia-metrics-servicemonitor
+  name: {{ printf "%s-%s" .Release.Name "turbinia-metrics-servicemonitor" }}
 spec:
   selector:
     matchLabels:

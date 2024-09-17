@@ -17,8 +17,8 @@ spec:
   template:
     metadata:
       annotations:
-        # Have Deployment restart after each upgrade
-        roll: {{ randAlphaNum 5 | quote }}
+        # Restart pod if config was changed within the Helm chart
+        checksum/config: {{ .Files.Get .Values.config.override | sha256sum }}
         {{- if .Values.metrics.enabled }}
         prometheus.io/port: {{ .Values.metrics.port | quote }}
         prometheus.io/scrape: "true"
@@ -34,7 +34,7 @@ spec:
       {{- include "turbinia.initContainer" . | nindent 8 }} 
       # The grace period needs to be set to the largest task timeout as
       # set in the turbinia configuration file.
-      terminationGracePeriodSeconds: 86400
+      terminationGracePeriodSeconds: 87000
       containers:
         - name: worker
           securityContext:
