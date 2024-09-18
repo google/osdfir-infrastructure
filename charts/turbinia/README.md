@@ -475,7 +475,7 @@ helm install my-release ../turbinia
 This section outlines how to deploy and manage the Turbinia configuration file
 within OSDFIR infrastructure. There are three primary methods:
 
-1. **Using Default Configurations**
+#### Using Default Configurations
 
 If you don't provide your own Turbinia config file during deployment,
 the Turbinia deployment will automatically retrieve the latest default configs
@@ -483,7 +483,7 @@ from the Turbinia Github repository. This method requires no further action from
 
 > **Note:**  When using the default method, you cannot update the Turbinia config file directly.
 
-2. **Embedding Turbinia config in the Helm Chart**
+#### Embedding Turbinia config in the Helm Chart
 
 To customize Turbinia with your own config file and include it directly in
 the Helm chart deployment, follow these steps:
@@ -507,7 +507,7 @@ the Helm chart deployment, follow these steps:
     helm install my-release ../turbinia 
     ```
 
-    > **NOTE**: The Helm chart uses the `config.override` value in the `values.yaml` file to determine the location of your config file. By default, `config.override` is set to the root directory of the Helm chart.
+    > **Note**: The Helm chart uses the `config.override` value in the `values.yaml` file to determine the location of your config file. By default, `config.override` is set to the root directory of the Helm chart.
 
 To update config changes using this method:
 
@@ -523,7 +523,7 @@ To update config changes using this method:
 
     This will automatically apply the updated config changes and restart the Turbinia deployment so the changes can be picked up.
 
-3. **Managing Turbinia configs externally**
+#### Managing Turbinia configs externally
 
 For more advanced configuration management, you can manage the Turbinia config
 file independently of the Helm chart:
