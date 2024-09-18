@@ -449,33 +449,6 @@ kubectl delete pvc -l release=my-release
 | `oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                                      |
 
 
-
-
-## Persistence
-
-The Turbinia deployment stores data at the `/mnt/turbiniavolume` path of the container and stores configuration files at the `/etc/turbinia` path of the container.
-
-Persistent Volume Claims are used to keep the data across deployments. This is
-known to work in GCP and Minikube. See the Parameters section to configure the
-PVC or to disable persistence.
-
-## Upgrading
-
-If you need to upgrade an existing release to update a value, such as
-persistent volume size or upgrading to a new release, you can run
-[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/).
-For example, to set a new release and upgrade storage capacity, run:
-
-```console
-helm upgrade my-release ../turbinia \
-    --set image.tag=latest \
-    --set persistence.size=10T
-```
-
-The above command upgrades an existing release named `my-release` updating the
-image tag to `latest` and increasing persistent volume size of an existing volume to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
-of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
-
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console
@@ -591,6 +564,31 @@ within OSDFIR infrastructure. There are three primary methods:
         ```console
         kubectl rollout restart deployment -l app.kubernetes.io/name=turbinia
         ```
+
+## Persistence
+
+The Turbinia deployment stores data at the `/mnt/turbiniavolume` path of the container and stores configuration files at the `/etc/turbinia` path of the container.
+
+Persistent Volume Claims are used to keep the data across deployments. This is
+known to work in GCP and Minikube. See the Parameters section to configure the
+PVC or to disable persistence.
+
+## Upgrading
+
+If you need to upgrade an existing release to update a value, such as
+persistent volume size or upgrading to a new release, you can run
+[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/).
+For example, to set a new release and upgrade storage capacity, run:
+
+```console
+helm upgrade my-release ../turbinia \
+    --set image.tag=latest \
+    --set persistence.size=10T
+```
+
+The above command upgrades an existing release named `my-release` updating the
+image tag to `latest` and increasing persistent volume size of an existing volume to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
+of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
 
 ## License
 
