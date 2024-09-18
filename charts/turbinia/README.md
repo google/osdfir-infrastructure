@@ -253,7 +253,7 @@ kubectl delete pvc -l release=my-release
 | Name                            | Description                                                               | Value                                                                |
 | ------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `server.image.repository`       | Turbinia image repository                                                 | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server` |
-| `server.image.pullPolicy`       | Turbinia image pull policy                                                | `IfNotPresent`                                                       |
+| `server.image.pullPolicy`       | Turbinia image pull policy                                                | `Always`                                                             |
 | `server.image.tag`              | Overrides the image tag whose default is the chart appVersion             | `latest`                                                             |
 | `server.image.imagePullSecrets` | Specify secrets if pulling from a private repository                      | `[]`                                                                 |
 | `server.podSecurityContext`     | Holds pod-level security attributes and common server container settings  | `{}`                                                                 |
@@ -269,7 +269,7 @@ kubectl delete pvc -l release=my-release
 | Name                                                | Description                                                                                                                                   | Value                                                                |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `worker.image.repository`                           | Turbinia image repository                                                                                                                     | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker` |
-| `worker.image.pullPolicy`                           | Turbinia image pull policy                                                                                                                    | `IfNotPresent`                                                       |
+| `worker.image.pullPolicy`                           | Turbinia image pull policy                                                                                                                    | `Always`                                                             |
 | `worker.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                 | `latest`                                                             |
 | `worker.image.imagePullSecrets`                     | Specify secrets if pulling from a private repository                                                                                          | `[]`                                                                 |
 | `worker.replicaCount`                               | Number of worker pods to run at once                                                                                                          | `1`                                                                  |
@@ -291,7 +291,7 @@ kubectl delete pvc -l release=my-release
 | Name                         | Description                                                                         | Value                                                                    |
 | ---------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `api.image.repository`       | Turbinia image repository for API / Web server                                      | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-api-server` |
-| `api.image.pullPolicy`       | Turbinia image pull policy                                                          | `IfNotPresent`                                                           |
+| `api.image.pullPolicy`       | Turbinia image pull policy                                                          | `Always`                                                                 |
 | `api.image.tag`              | Overrides the image tag whose default is the chart appVersion                       | `latest`                                                                 |
 | `api.image.imagePullSecrets` | Specify secrets if pulling from a private repository                                | `[]`                                                                     |
 | `api.podSecurityContext`     | Holds pod-level security attributes that will be applied to the API / Web container | `{}`                                                                     |
@@ -308,7 +308,7 @@ kubectl delete pvc -l release=my-release
 | ----------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `controller.enabled`                | If enabled, deploys the Turbinia controller                                  | `false`                                                                  |
 | `controller.image.repository`       | Turbinia image repository for the Turbinia controller                        | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-controller` |
-| `controller.image.pullPolicy`       | Turbinia image pull policy                                                   | `IfNotPresent`                                                           |
+| `controller.image.pullPolicy`       | Turbinia image pull policy                                                   | `Always`                                                                 |
 | `controller.image.tag`              | Overrides the image tag whose default is the chart appVersion                | `latest`                                                                 |
 | `controller.image.imagePullSecrets` | Specify secrets if pulling from a private repository                         | `[]`                                                                     |
 | `controller.podSecurityContext`     | Holds pod-level security attributes and common API / Web container settings  | `{}`                                                                     |
@@ -448,115 +448,6 @@ kubectl delete pvc -l release=my-release
 | `oauth2proxy.configuration.oidcIssuerUrl`                          | OpenID Connect issuer URL                                                                                                                                             | `https://accounts.google.com`                |
 | `oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                                      |
 
-Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
-
-```console
-helm install my-release osdfir-charts/turbinia --set controller.enabled=true 
-```
-
-The above command installs Turbinia with the Turbinia Controller deployed.
-
-Alternatively, the `values.yaml` file can be
-directly updated if the Helm chart was pulled locally. For example,
-
-```console
-helm pull osdfir-charts/turbinia --untar
-```
-
-Then make changes to the downloaded `values.yaml` and once done, install the
-chart with the updated values.
-
-```console
-helm install my-release ../turbinia
-```
-
-### Managing and updating the Turbinia config
-
-This section outlines how to deploy and manage the Turbinia configuration file
-within OSDFIR infrastructure. There are three primary methods:
-
-1. **Using Default Configurations**
-
-    If you don't provide your own Turbinia config file during deployment,
-    the Turbinia deployment will automatically retrieve the latest default configs
-    from the Turbinia Github repository. This method requires no further action from you.
-
-    > **NOTE:**  When using the default method, you cannot update the Turbinia config file directly.
-
-2. **Embedding Turbinia config in the Helm Chart**
-
-    To customize Turbinia with your own config file and include it directly in
-    the Helm chart deployment, follow these steps:
-
-    1. Download and extract the Helm chart:
-
-        ```console
-        helm pull osdfir-charts/turbinia --untar
-        cd turbinia/
-        ```
-
-    2. Download the default Turbinia config:
-
-        ```console
-        wget https://raw.githubusercontent.com/google/turbinia/master/turbinia/config/turbinia_config_tmpl.py > turbinia.conf
-        ```
-
-    3. Modify the config file then deploy the Helm chart:
-
-        ```console
-        helm install my-release ../turbinia 
-        ```
-
-        > **NOTE**: The Helm chart uses the `config.override` value in the `values.yaml` file to determine the location of your config file. By default, `config.override` is set to the root directory of the Helm chart.
-
-    To update config changes using this method:
-
-    1. Modify your Config File
-
-        Make the necessary changes to your Turbinia config file.
-
-    2. Upgrade the Helm Release:
-
-        ```console
-        helm upgrade my-release ../turbinia
-        ```
-
-        This will automatically apply the updated config changes and restart the Turbinia deployment so the changes can be picked up.
-
-
-3. **Managing Turbinia configs externally**
-
-    For more advanced configuration management, you can manage the Turbinia config
-    file independently of the Helm chart:
-
-    1. Prepare your Config File:
-
-        Organize the Turbinia config file with your desired customizations.
-
-    2. Create a ConfigMap:
-
-        ```console
-        kubectl create configmap turbinia-configs --from-file=turbinia.conf
-        ```
-
-        Replace `turbinia.conf` with the actual name of your config file.
-
-    3. Install or Upgrade the Helm Chart:
-
-        ```console
-        helm install my-release osdfir-charts/turbinia --set config.existingConfigMap="turbinia-configs"
-        ```
-
-        This command instructs the Helm chart to use the `turbinia-configs` ConfigMap for
-        Turbinia's config file.
-
-    To update the config changes using this method:
-
-    1. Update the ConfigMap:
-
-        ```console
-        kubectl create configmap turbinia-configs --from-file=turbinia.conf --dry-run -o yaml | kubectl replace -f -
-        ```
 
     2. Restart the Turbinia deployment to apply the new configs
 
