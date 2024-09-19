@@ -448,12 +448,27 @@ kubectl delete pvc -l release=my-release
 | `oauth2proxy.configuration.oidcIssuerUrl`                          | OpenID Connect issuer URL                                                                                                                                             | `https://accounts.google.com`                |
 | `oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                                      |
 
+Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
-2. Restart the Turbinia deployment to apply the new configs
+```console
+helm install my-release osdfir-charts/turbinia --set controller.enabled=true 
+```
 
-    ```console
-    kubectl rollout restart deployment -l app.kubernetes.io/name=turbinia
-    ```
+The above command installs Turbinia with the Turbinia Controller deployed.
+
+Alternatively, the `values.yaml` file can be directly updated if the Helm chart
+was pulled locally. For example,
+
+```console
+helm pull osdfir-charts/turbinia --untar
+```
+
+Then make changes to the downloaded `values.yaml` and once done, install the
+chart with the updated values.
+
+```console
+helm install my-release ../turbinia
+```
 
 ## Persistence
 
