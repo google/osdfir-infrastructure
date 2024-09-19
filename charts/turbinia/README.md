@@ -449,6 +449,47 @@ kubectl delete pvc -l release=my-release
 | `oauth2proxy.redis.enabled`                                        | Enable Redis for OAuth Session Storage                                                                                                                                | `false`                                      |
 
 
+Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
+
+```console
+helm install my-release osdfir-charts/turbinia --set controller.enabled=true 
+```
+
+The above command installs Turbinia with the Turbinia Controller deployed.
+
+Alternatively, the `values.yaml` and `values-production.yaml` file can be
+directly updated if the Helm chart was pulled locally. For example,
+
+```console
+helm pull osdfir-charts/turbinia --untar
+```
+
+Then make changes to the downloaded `values.yaml` and once done, install the
+chart with the updated values.
+
+```console
+helm install my-release ../turbinia
+```
+
+## Managing and updating the Turbinia config
+
+This section outlines how to deploy and manage the Turbinia configuration file
+within OSDFIR infrastructure. There are three primary methods:
+
+### Using Default Configurations
+
+If you don't provide your own Turbinia config file during deployment,
+the Turbinia deployment will automatically retrieve the latest default configs
+from the Turbinia Github repository. This method requires no further action from you.
+
+> **Note:**  When using the default method, you cannot update the Turbinia config file directly.
+
+### Embedding Turbinia config in the Helm Chart
+
+To customize Turbinia with your own config file and include it directly in
+the Helm chart deployment, follow these steps:
+
+1. Download and extract the Helm chart:
 
 ## Persistence
 
