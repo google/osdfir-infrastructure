@@ -34,8 +34,8 @@ spec:
       initContainers:
       {{- include "turbinia.initContainer" . | nindent 8 }} 
       # The grace period needs to be set to the largest task timeout as
-      # set in the turbinia configuration file.
-      terminationGracePeriodSeconds: 87000
+      # set in the turbinia configuration file plus five seconds.
+      terminationGracePeriodSeconds: 86405
       containers:
         - name: worker
           securityContext:
