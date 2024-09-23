@@ -17,9 +17,8 @@ spec:
   template:
     metadata:
       annotations:
-        # Restart pod if config was changed within the Helm chart or values.yaml parameters that affect the config
-        checksum/config: {{ (.Files.Glob .Values.config.override).AsConfig | sha256sum }}
-        checksum/initconfig: {{  include (print $.Template.BasePath "/init-configmap.yaml") . | sha256sum }}
+        # Restart pod if values.yaml parameters that affect the config were changed
+        checksum/config: {{  include (print $.Template.BasePath "/init-configmap.yaml") . | sha256sum }}
         {{- if .Values.metrics.enabled }}
         prometheus.io/port: {{ .Values.metrics.port | quote }}
         prometheus.io/scrape: "true"

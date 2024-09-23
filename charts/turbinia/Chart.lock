@@ -8,8 +8,5 @@ dependencies:
 - name: dfdewey
   repository: https://google.github.io/osdfir-infrastructure/
   version: 1.0.0
-- name: kube-prometheus-stack
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 60.3.0
-digest: sha256:4541a72c66cf8ea1bf728dabc3cdabecb0013e04ac4568babc0f82fb59470c58
-generated: "2024-07-15T13:19:48.514639-07:00"
+digest: sha256:6c0c5f81d133cf28a6504d01571d17b1fed42b7908bfa3ef0b4d1a913b62fc03
+generated: "2024-09-23T10:08:20.718691-07:00"

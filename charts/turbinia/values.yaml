@@ -342,11 +342,6 @@ controller:
 ## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
 ##
 config:
-  ## @param config.override Overrides the default Turbinia config to instead use a user specified config. Please ensure
-  ## that the config file is either placed in the root of this directory or point the override flag to a path containing
-  ## your config file
-  ##
-  override: turbinia.conf
   ## @param config.existingConfigMap Use an existing ConfigMap as the default Turbinia config.
   ## Please ensure that the ConfigMap has been created prior to deployment
   ## (e.g. kubectl create configmap turbinia-config --from-file=turbinia.conf)
@@ -452,7 +447,7 @@ persistence:
 ingress:
   ## @param ingress.enabled Enable the Turbinia loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
   ##
-  enabled: false
+  enabled: true
   ## @param ingress.host The domain name Turbinia will be hosted under
   ## Please ensure this value is set when enabling Ingress. If using "gce" for
   ## ingress.className, please ensure you have a DNS record set for the IP address
@@ -468,7 +463,7 @@ ingress:
   ## @param ingress.className IngressClass that will be be used to implement the Ingress
   ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
   ##
-  className: "gce"
+  className: ""
   ## GCP ingress configuration
   ##
   gcp:
@@ -477,11 +472,10 @@ ingress:
     ##
     managedCertificates: false
     ## @param ingress.gcp.staticIPName Name of the static IP address you reserved in GCP
-    ## This is required when using "gce" in ingress.className
     ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
     ##
     staticIPName: ""
-    ## @param ingress.gcp.staticIPV6Name Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address
+    ## @param ingress.gcp.staticIPV6Name Name of the static IPV6 address you reserved. This can be optionally provided to deploy a loadbalancer with an IPV6 address in GCP.
     ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
     ##
     staticIPV6Name: ""
@@ -601,38 +595,6 @@ dfdewey:
         memory: 512Mi
 ## @section Third Party Configuration
 ##
-## @section Monitoring configuration parameters
-## IMPORTANT: Turbinia utilizes the kube-prometheus-stack for monitoring. This includes Prometheus, Grafana, and Alertmanager.
-##
-monitoring:
-  ## @param monitoring.deployKubePrometheus Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.
-  ##
-  deployKubePrometheus: false
-  ## @param monitoring.kubeScheduler.enabled Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
-  ##
-  kubeScheduler:
-    enabled: false
-  ## @param monitoring.kubeControllerManager.enabled Component scraping kube controller. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
-  ##
-  kubeControllerManager:
-    enabled: false
-  ## @param monitoring.coreDns.enabled Component scraping core dns. Disabled by default in favor of kube dns.
-  ##
-  coreDns:
-    enabled: false
-  ## @param monitoring.kubeProxy.enabled Component scraping kube proxy. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
-  ##
-  kubeProxy:
-    enabled: false
-  ## @param monitoring.kubeDns.enabled Component scraping kube dns.
-  ##
-  kubeDns:
-    enabled: true
-  ## @param monitoring.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues Disable so that custom servicemonitors can be created and monitored
-  ##
-  prometheus:
-    prometheusSpec:
-      serviceMonitorSelectorNilUsesHelmValues: false
 ## @section Redis configuration parameters
 ## IMPORTANT: Redis is deployed with Auth enabled by default
 ## To see a full list of available values, run helm show values charts/redis*

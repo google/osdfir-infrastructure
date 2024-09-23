@@ -23,11 +23,6 @@ dependencies:
   name: dfdewey
   repository: https://google.github.io/osdfir-infrastructure/
   version: 1.0.0
-- condition: monitoring.deployKubePrometheus
-  name: kube-prometheus-stack
-  alias: monitoring
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 60.3.0
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com

@@ -138,6 +138,7 @@ Oauth2 Proxy for authentication, run:
     helm upgrade my-release osdfir-charts/turbinia \
         --reuse-values \
         --set ingress.enabled=true \
+        --set ingress.className="gce" \
         --set ingress.host=<DOMAIN> \
         --set ingress.gcp.managedCertificates=true \
         --set ingress.gcp.staticIPName=<GCP_STATIC_IP_NAME> \
@@ -451,10 +452,10 @@ kubectl delete pvc -l release=my-release
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console
-helm install my-release osdfir-charts/turbinia --set controller.enabled=true 
+helm install my-release osdfir-charts/turbinia --set ingress.enabled=true 
 ```
 
-The above command installs Turbinia with the Turbinia Controller deployed.
+The above command installs Turbinia with an attached Ingress.
 
 Alternatively, the `values.yaml` file can be directly updated if the Helm chart
 was pulled locally. For example,
@@ -475,7 +476,7 @@ helm install my-release ../turbinia
 This section outlines how to deploy and manage the Turbinia configuration file
 within OSDFIR infrastructure.
 
-There are three primary methods:
+There are two primary methods:
 
 ### Using Default Configurations
 
@@ -484,47 +485,6 @@ the Turbinia deployment will automatically retrieve the latest default configs
 from the Turbinia Github repository. This method requires no further action from you.
 
 > **NOTE:**  When using the default method, you cannot update the Turbinia config file directly.
-
-### Embedding Turbinia config in the Helm Chart
-
-To customize Turbinia with your own config file and include it directly in
-the Helm chart deployment, follow these steps:
-
-1. Download and extract the Helm chart:
-
-    ```console
-    helm pull osdfir-charts/turbinia --untar
-    cd turbinia/
-    ```
-
-2. Download the default Turbinia config:
-
-    ```console
-    wget https://raw.githubusercontent.com/google/turbinia/master/turbinia/config/turbinia_config_tmpl.py > turbinia.conf
-    ```
-
-3. Modify the config file then deploy the Helm chart:
-
-    ```console
-    helm install my-release ../turbinia 
-    ```
-
-    > **NOTE**: The Helm chart uses the `config.override` value in the `values.yaml` file to determine the location of your config file. By default, `config.override` is set to the root directory of the Helm chart.
-
-To update config changes using this method:
-
-1. Modify your Config File
-
-    Make the necessary changes to your Turbinia config file.
-
-2. Upgrade the Helm Release:
-
-    ```console
-    helm upgrade my-release ../turbinia
-    ```
-
-    This will automatically apply the updated config changes and restart the
-    Turbinia deployment so the changes can be picked up.
 
 ### Managing Turbinia configs externally
 

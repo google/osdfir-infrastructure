@@ -1,4 +1,4 @@
-{{- if and (.Values.ingress.enabled) (eq .Values.ingress.className "gce") }}
+{{- if and (.Values.ingress.enabled) (.Values.ingress.gcp.managedCertificates) }}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
