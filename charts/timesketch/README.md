@@ -158,16 +158,15 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch Configuration Parameters
 
-| Name                                                 | Description                                                                                                                           | Value       |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
-| `config.existingConfigMap`                           | Use an existing ConfigMap as the default Timesketch config.                                                                           | `""`        |
-| `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
-| `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
-| `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
-| `config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`      |
-| `config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`        |
-| `config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`        |
+| Name                                                 | Description                                                                                | Value   |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------- |
+| `config.existingConfigMap`                           | Use an existing ConfigMap as the default Timesketch config.                                | `""`    |
+| `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment | `true`  |
+| `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)               | `false` |
+| `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                               | `""`    |
+| `config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                               | `true`  |
+| `config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                      | `""`    |
+| `config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                   | `""`    |
 
 ### Timesketch Frontend Configuration
 
@@ -212,27 +211,27 @@ kubectl delete pvc -l release=my-release
 
 ### Common Parameters
 
-| Name                              | Description                                                                                                                        | Value               |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `serviceAccount.create`           | Specifies whether a service account should be created                                                                              | `true`              |
-| `serviceAccount.annotations`      | Annotations to add to the service account                                                                                          | `{}`                |
-| `serviceAccount.name`             | The name of the service account to use                                                                                             | `timesketch`        |
-| `service.type`                    | Timesketch service type                                                                                                            | `ClusterIP`         |
-| `service.port`                    | Timesketch service port                                                                                                            | `5000`              |
-| `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
-| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `8080`              |
-| `persistence.name`                | Timesketch persistent volume name                                                                                                  | `timesketchvolume`  |
-| `persistence.size`                | Timesketch persistent volume size                                                                                                  | `2Gi`               |
-| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                            | `""`                |
-| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                              | `["ReadWriteOnce"]` |
-| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                             | `false`             |
-| `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                        | `""`                |
-| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `gce`               |
-| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                       | `false`             |
-| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                     | `false`             |
-| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                   | `false`             |
-| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP. Required when using "gce" in ingress.className                                  | `""`                |
-| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address | `""`                |
+| Name                              | Description                                                                                                                         | Value               |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `serviceAccount.create`           | Specifies whether a service account should be created                                                                               | `true`              |
+| `serviceAccount.annotations`      | Annotations to add to the service account                                                                                           | `{}`                |
+| `serviceAccount.name`             | The name of the service account to use                                                                                              | `""`                |
+| `service.type`                    | Timesketch service type                                                                                                             | `ClusterIP`         |
+| `service.port`                    | Timesketch service port                                                                                                             | `5000`              |
+| `metrics.enabled`                 | Enables metrics scraping                                                                                                            | `true`              |
+| `metrics.port`                    | Port to scrape metrics from                                                                                                         | `8080`              |
+| `persistence.name`                | Timesketch persistent volume name                                                                                                   | `timesketchvolume`  |
+| `persistence.size`                | Timesketch persistent volume size                                                                                                   | `2Gi`               |
+| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                             | `""`                |
+| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                               | `["ReadWriteOnce"]` |
+| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                              | `false`             |
+| `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                         | `""`                |
+| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                          | `""`                |
+| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                        | `false`             |
+| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                      | `false`             |
+| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                    | `false`             |
+| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP.                                                                                  | `""`                |
+| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved. This can be optionally provided to deploy a loadbalancer with an IPV6 address in GCP. | `""`                |
 
 ### Third Party Configuration
 
