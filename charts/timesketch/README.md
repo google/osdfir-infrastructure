@@ -40,34 +40,21 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm repo update
 ```
 
-To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
+To install the chart, specify any release name of your choice. For example,
+using `my-release` as the release name, run:
 
 ```console
 helm install my-release osdfir-charts/timesketch
 ```
 
-The command deploys Timesketch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
-during installation or see [Installating for Production](#installing-for-production)
-for a recommended production installation.
+The command deploys Timesketch on the Kubernetes cluster in the default configuration.
+The [Parameters](#parameters) section lists the parameters that can be configured
+during installation.
 
-> **Tip**:  You can override the default Timesketch configuration by pulling the Helm
-chart locally and adding a `configs/` directory at the root of the Helm chart with user-provided configs.
+> **Tip**:  See the [Managing and updating Timesketch configs](#managing-and-updating-timesketch-configs)
+section for more details on managing the Timesketch configs.
 
-## Installing for Production
-
-Pull the chart locally then cd into `/timesketch` and review the `values-production.yaml` file for a list of values that will be used for production.
-
-```console
-helm pull osdfir-charts/timesketch --untar
-```
-
-Install the chart with the base values in `values.yaml` and the production values in `values-production.yaml`, then using a release name such as `my-release`, run:
-
-```console
-helm install my-release ../timesketch -f values.yaml -f values-production.yaml
-```
-
-### Enabling GKE Ingress and OIDC Authentication
+## Enabling GKE Ingress and OIDC Authentication
 
 Follow these steps to externally expose Timesketch and enable Google Cloud OIDC
 to control user access to Timesketch.
@@ -115,6 +102,7 @@ OAuth client.
     helm upgrade my-release ../timesketch \
         -f values-production.yaml \
         --set ingress.enabled=true \
+        --set ingress.className="gce" \
         --set ingress.host=<DOMAIN_NAME> \
         --set ingress.gcp.staticIPName=<STATIC_IP_NAME> \
         --set ingress.gcp.managedCertificates=true \
@@ -318,8 +306,8 @@ helm install my-release osdfir-charts/timesketch --set opensearch.replicas=3
 
 The above command installs Timesketch with 3 Opensearch Replicas.
 
-Alternatively, the `values.yaml` and `values-production.yaml` file can be
-directly updated if the Helm chart was pulled locally. For example,
+Alternatively, the `values.yaml` file can be directly updated if the Helm chart
+was pulled locally. For example,
 
 ```console
 helm pull osdfir-charts/timesketch --untar
@@ -358,100 +346,61 @@ image tag to `latest` and increasing persistent volume size of an existing volum
 to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
 of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
 
-### Managing and updating Timesketch configs
+## Managing and updating Timesketch configs
 
-This section outlines how to deploy and manage Timesketch configuration files within OSDFIR infrastructure. There are three primary methods:
+This section outlines how to deploy and manage Timesketch configuration files
+within OSDFIR infrastructure.
 
-1. **Using Default Configurations**
+There are two primary methods:
 
-    If you don't provide your own Timesketch config files during deployment,
-    the Timesketch deployment will automatically retrieve the latest default configs
-    from the Timesketch Github repository. This method requires no further action from you.
+### Using Default Configurations**
 
-    > **NOTE:**  When using the default method, you cannot update the Timesketch config files directly.
+If you don't provide your own Timesketch config files during deployment,
+the Timesketch deployment will automatically retrieve the latest default configs
+from the Timesketch Github repository. This method requires no further action from you.
 
-2. **Embedding Timesketch configs in the Helm Chart**
+> **NOTE:**  When using the default method, you cannot update the Timesketch config files directly.
 
-    To customize Timesketch with your own config files and include them directly in the Helm chart deployment, follow these steps:
+### Managing Timesketch configs externally
 
-    1. Download and Extract the Helm chart:
+For more advanced configuration management, you can manage Timesketch config
+files independently of the Helm chart:
 
-        ```console
-        helm pull osdfir-charts/timesketch --untar
-        cd timesketch/
-        ```
+1. Prepare your Config Files:
 
-    2. Download the default Timesketch configs:
+    Organize all the Timesketch configuration files in a directory with your
+    desired customizations.
 
-        ```console
-        ./tools/download-timesketch-configs.sh
-        ```
+2. Create a ConfigMap:
 
-        This script downloads the default Timesketch configuration files to the `config/` directory within the extracted Helm chart directory.
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./timesketch-configs/
+    ```
 
-    3. Modify config files then deploy the Helm chart:
+    Replace `./timesketch-configs/` with the actual path to your configuration files.
 
-        ```console
-        helm install my-release ../timesketch 
-        ```
+3. Install or Upgrade the Helm Chart:
 
-        > **NOTE**: The Helm chart checks the path specified in `config.override` for existing config files. By default this path is set to `configs/` within the Helm chart directory.
+    ```console
+    helm install my-release osdfir-charts/timesketch --set config.existingConfigMap="timesketch-configs"
+    ```
 
-    To update configs changes using this method:
+    This command instructs the Helm chart to use the `timesketch-configs` ConfigMap for
+    Timesketch's config files.
 
-    1. Modify Configuration Files
+To update the config changes using this method:
 
-        Make the necessary changes to your configuration files in the `config/` directory.
+1. Update the ConfigMap:
 
-    2. Upgrade the Helm Release:
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
+    ```
 
-        ```console
-        helm upgrade my-release ../timesketch
-        ```
+2. Restart the Timesketch deployment to apply the new configs
 
-        This will automatically apply the updated config changes and restart the Timesketch deployment so the changes can be picked up.
-
-
-3. **Managing Timesketch configs externally**
-
-    For more advanced configuration management, you can manage Timesketch config
-    files independently of the Helm chart:
-
-    1. Prepare your Config Files:
-
-        Organize all the Timesketch configuration files in a directory with your
-        desired customizations.
-
-    2. Create a ConfigMap:
-
-        ```console
-        kubectl create configmap timesketch-configs --from-file=./my-configs/
-        ```
-
-        Replace `./my-configs/` with the actual path to your configuration files.
-
-    3. Install or Upgrade the Helm Chart:
-
-        ```console
-        helm install my-release osdfir-charts/timesketch --set config.existingConfigMap="timesketch-configs"
-        ```
-
-        This command instructs the Helm chart to use the `timesketch-configs` ConfigMap for
-        Timesketch's config files.
-
-    To update the config changes using this method:
-
-    1. Update the ConfigMap:
-
-        ```console
-        kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
-        ```
-
-    2. Restart the Timesketch deployment to apply the new configs
-
-        ```console
-        kubectl rollout restart deployment -l app.kubernetes.io/name=timesketch
-        ```
+    ```console
+    kubectl rollout restart deployment -l app.kubernetes.io/name=timesketch
+    ```
 
 ### Upgrade Timesketch Database Schema
 

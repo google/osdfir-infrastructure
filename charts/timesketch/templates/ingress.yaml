@@ -8,19 +8,19 @@ metadata:
     {{- include "timesketch.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
-    {{- if .Values.ingress.gcp.managedCertificates }}
-    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
-    {{- end }}
     {{- if .Values.ingress.certManager }}
     kubernetes.io/tls-acme: "true"
     cert-manager.io/issuer: {{ include "timesketch.fullname" . }}-letsencrypt-production
     {{- end }}
+    # GKE specific annotations
     {{- if (eq .Values.ingress.className "gce") }}
     {{- if .Values.ingress.gcp.staticIPName }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPName }}
     networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
-    {{- else }}
-    {{- fail "A valied .Values.ingress.gcp.staticIPName entry is required when using the GCE Ingress" }}
+    {{- end }}
+    {{- if .Values.ingress.gcp.managedCertificates }}
+    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
     {{- end }}
     {{- end }}
 spec:
@@ -31,7 +31,7 @@ spec:
       secretName: {{ include "timesketch.fullname" . }}-tls
   {{- end }}
   rules:
-    - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - path: /
@@ -58,19 +58,18 @@ metadata:
     {{- include "timesketch.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
-    {{- if .Values.ingress.gcp.managedCertificates }}
-    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
-    {{- end }}
     {{- if .Values.ingress.certManager }}
     kubernetes.io/tls-acme: "true"
     cert-manager.io/issuer: {{ include "timesketch.fullname" . }}-letsencrypt-production
     {{- end }}
+    # GKE specific annotations
     {{- if (eq .Values.ingress.className "gce") }}
     {{- if .Values.ingress.gcp.staticIPV6Name }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPV6Name }}
+    {{- end }}
+    {{- if .Values.ingress.gcp.managedCertificates }}
+    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
     networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
-    {{- else }}
-    {{- fail "A valied .Values.ingress.gcp.staticIPV6Name entry is required when using the GCE Ingress" }}
     {{- end }}
     {{- end }}
 spec:
@@ -81,7 +80,7 @@ spec:
       secretName: {{ include "timesketch.fullname" . }}-tls
   {{- end }}
   rules:
-    - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - path: /
