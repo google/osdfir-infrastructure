@@ -57,10 +57,10 @@ server:
     ## @param server.image.pullPolicy Turbinia image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param server.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: latest
+    tag: "20240820"
     ## @param server.image.imagePullSecrets Specify secrets if pulling from a private repository
     ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ## e.g.
@@ -128,10 +128,10 @@ worker:
     ## @param worker.image.pullPolicy Turbinia image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param worker.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: latest
+    tag: "20240820"
     ## @param worker.image.imagePullSecrets Specify secrets if pulling from a private repository
     ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ## e.g.
@@ -209,10 +209,10 @@ api:
     ## @param api.image.pullPolicy Turbinia image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: latest
+    tag: "20240820"
     ## @param api.image.imagePullSecrets Specify secrets if pulling from a private repository
     ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ## e.g.
@@ -262,77 +262,6 @@ api:
   ##
   tolerations: []
   ## @param api.affinity Affinity for Turbinia api pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
-## @section Turbinia controller configuration
-## The controller is not required to use Turbinia and serves as an extra
-## container that can be used for troubleshooting
-##
-controller:
-  ## @param controller.enabled If enabled, deploys the Turbinia controller
-  ##
-  enabled: false
-  image:
-    ## @param controller.image.repository Turbinia image repository for the Turbinia controller
-    ##
-    repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-controller
-    ## @param controller.image.pullPolicy Turbinia image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
-    ##
-    pullPolicy: Always
-    ## @param controller.image.tag Overrides the image tag whose default is the chart appVersion
-    ##
-    tag: latest
-    ## @param controller.image.imagePullSecrets Specify secrets if pulling from a private repository
-    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g.
-    ## imagePullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    imagePullSecrets: []
-  ## @param controller.podSecurityContext Holds pod-level security attributes and common API / Web container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param controller.securityContext Holds security configuration that will be applied to the API / Web container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
-  ## Turbinia controller resource requests and limits
-  ## @param controller.resources.limits Resource limits for the controller container
-  ## @param controller.resources.requests Requested resources for the controller container
-  resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
-  ## @param controller.nodeSelector Node labels for Turbinia controller pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
-  nodeSelector: {}
-  ## @param controller.tolerations Tolerations for Turbinia controller pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param controller.affinity Affinity for Turbinia controller pods assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ##
   affinity: {}
