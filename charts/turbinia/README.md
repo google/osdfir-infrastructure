@@ -245,8 +245,8 @@ kubectl delete pvc -l release=my-release
 | Name                            | Description                                                               | Value                                                                |
 | ------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `server.image.repository`       | Turbinia image repository                                                 | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server` |
-| `server.image.pullPolicy`       | Turbinia image pull policy                                                | `Always`                                                             |
-| `server.image.tag`              | Overrides the image tag whose default is the chart appVersion             | `latest`                                                             |
+| `server.image.pullPolicy`       | Turbinia image pull policy                                                | `IfNotPresent`                                                       |
+| `server.image.tag`              | Overrides the image tag whose default is the chart appVersion             | `20240820`                                                           |
 | `server.image.imagePullSecrets` | Specify secrets if pulling from a private repository                      | `[]`                                                                 |
 | `server.podSecurityContext`     | Holds pod-level security attributes and common server container settings  | `{}`                                                                 |
 | `server.securityContext`        | Holds security configuration that will be applied to the server container | `{}`                                                                 |
@@ -261,8 +261,8 @@ kubectl delete pvc -l release=my-release
 | Name                                                | Description                                                                                                                                   | Value                                                                |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `worker.image.repository`                           | Turbinia image repository                                                                                                                     | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker` |
-| `worker.image.pullPolicy`                           | Turbinia image pull policy                                                                                                                    | `Always`                                                             |
-| `worker.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                 | `latest`                                                             |
+| `worker.image.pullPolicy`                           | Turbinia image pull policy                                                                                                                    | `IfNotPresent`                                                       |
+| `worker.image.tag`                                  | Overrides the image tag whose default is the chart appVersion                                                                                 | `20240820`                                                           |
 | `worker.image.imagePullSecrets`                     | Specify secrets if pulling from a private repository                                                                                          | `[]`                                                                 |
 | `worker.replicaCount`                               | Number of worker pods to run at once                                                                                                          | `1`                                                                  |
 | `worker.autoscaling.enabled`                        | Enables Turbinia Worker autoscaling                                                                                                           | `false`                                                              |
@@ -283,8 +283,8 @@ kubectl delete pvc -l release=my-release
 | Name                         | Description                                                                         | Value                                                                    |
 | ---------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `api.image.repository`       | Turbinia image repository for API / Web server                                      | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-api-server` |
-| `api.image.pullPolicy`       | Turbinia image pull policy                                                          | `Always`                                                                 |
-| `api.image.tag`              | Overrides the image tag whose default is the chart appVersion                       | `latest`                                                                 |
+| `api.image.pullPolicy`       | Turbinia image pull policy                                                          | `IfNotPresent`                                                           |
+| `api.image.tag`              | Overrides the image tag whose default is the chart appVersion                       | `20240820`                                                               |
 | `api.image.imagePullSecrets` | Specify secrets if pulling from a private repository                                | `[]`                                                                     |
 | `api.podSecurityContext`     | Holds pod-level security attributes that will be applied to the API / Web container | `{}`                                                                     |
 | `api.securityContext`        | Holds security configuration that will be applied to the API / Web container        | `{}`                                                                     |
@@ -293,23 +293,6 @@ kubectl delete pvc -l release=my-release
 | `api.nodeSelector`           | Node labels for Turbinia api pods assignment                                        | `{}`                                                                     |
 | `api.tolerations`            | Tolerations for Turbinia api pods assignment                                        | `[]`                                                                     |
 | `api.affinity`               | Affinity for Turbinia api pods assignment                                           | `{}`                                                                     |
-
-### Turbinia controller configuration
-
-| Name                                | Description                                                                  | Value                                                                    |
-| ----------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `controller.enabled`                | If enabled, deploys the Turbinia controller                                  | `false`                                                                  |
-| `controller.image.repository`       | Turbinia image repository for the Turbinia controller                        | `us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-controller` |
-| `controller.image.pullPolicy`       | Turbinia image pull policy                                                   | `Always`                                                                 |
-| `controller.image.tag`              | Overrides the image tag whose default is the chart appVersion                | `latest`                                                                 |
-| `controller.image.imagePullSecrets` | Specify secrets if pulling from a private repository                         | `[]`                                                                     |
-| `controller.podSecurityContext`     | Holds pod-level security attributes and common API / Web container settings  | `{}`                                                                     |
-| `controller.securityContext`        | Holds security configuration that will be applied to the API / Web container | `{}`                                                                     |
-| `controller.resources.limits`       | Resource limits for the controller container                                 | `{}`                                                                     |
-| `controller.resources.requests`     | Requested resources for the controller container                             | `{}`                                                                     |
-| `controller.nodeSelector`           | Node labels for Turbinia controller pods assignment                          | `{}`                                                                     |
-| `controller.tolerations`            | Tolerations for Turbinia controller pods assignment                          | `[]`                                                                     |
-| `controller.affinity`               | Affinity for Turbinia controller pods assignment                             | `{}`                                                                     |
 
 ### Common Parameters
 
