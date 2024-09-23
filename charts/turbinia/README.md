@@ -160,10 +160,13 @@ copy the evidence into Turbinia for processing.  We are actively working to expa
 native disk processing support for other cloud environments in the future.
 Installing the Turbinia Helm Chart remains the same regardless of your cloud provider.
 
-## Deploying Monitoring
+## Metrics & Monitoring
 
-Application and system monitoring is available through Prometheus. The recommended
-installation is the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack). Kube Prometheus is a collection of Grafana dashboards
+Application and system metrics are available through Prometheus. The metrics
+endpoint (defaults to port 9200) can be scraped from within the cluster.
+
+One recommended option for an integrated monitoring solution would be the
+[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack). Kube Prometheus is a collection of Grafana dashboards
 and Prometheus rules combined with documentation to provide easy to operate
 end-to-end K8s cluster monitoring.
 
@@ -175,23 +178,11 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 ```
 
-When using managed Kubernetes services like GKE or EKS, you'll need to adjust
-some settings because Prometheus can't see the control plane nodes. To ensure
-that `kube-prometheus` can correctly monitor your Turbinia deployment and to
-disable the monitoring of unnecessary components, use the following values:
+Create a file to disable the default selector in order for your deployment to be
+properly scraped:
 
 ```console
 cat >> values-monitoring.yaml << EOF
-kubeScheduler:
-  enabled: false
-kubeControllerManager:
-  enabled: false
-coreDns:
-  enabled: false
-kubeProxy:
-  enabled: false
-kubeDns:
-  enabled: true
 prometheus:
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
