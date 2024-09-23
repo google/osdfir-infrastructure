@@ -132,11 +132,19 @@ Postgresql subcharts connection url
 {{- end -}}
 
 {{/*
+Override Opensearch Subchart "opensearch.uname" helper function to allow for
+multiple instances using the Release Name.
+*/}}
+{{- define "opensearch.uname" -}}
+{{- printf "%s-%s" .Release.Name .Values.masterService -}}
+{{- end -}}
+
+{{/*
 Opensearch subcharts host name
 */}}
 {{- define "timesketch.opensearch.host" -}}
 {{- if .Values.opensearch.enabled -}}
-{{- printf "%s" .Values.opensearch.masterService -}}
+{{- printf "%s-%s" .Release.Name .Values.opensearch.masterService -}}
 {{- else -}}
 {{ fail "Attempting to use Opensearch, but the subchart is not enabled. This will lead to misconfiguration" }}
 {{- end -}}

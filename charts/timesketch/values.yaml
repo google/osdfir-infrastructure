@@ -324,7 +324,7 @@ ingress:
   ##
   enabled: false
   ## @param ingress.host Domain name Timesketch will be hosted under
-  ## Please ensure you have a DNS record set for the IP address registered under 
+  ## Please ensure you have a DNS record set for the IP address registered under
   ## ingress.gcp.staticIPName
   ##
   host: ""
@@ -366,6 +366,9 @@ opensearch:
   ## @param opensearch.enabled Enables the Opensearch deployment
   ##
   enabled: true
+  ## @param opensearch.nodeGroup Specifies the node group for this OpenSearch instance. Avoid using "master" as the node group name, as this will prevent the service from resolving correctly.
+  ##
+  nodeGroup: ""
   ## @param opensearch.config.opensearch.yml Opensearch configuration file. Can be appended for additional configuration options
   ## Values must be YAML literal style scalar / YAML multiline string
   ## <filename>: |
