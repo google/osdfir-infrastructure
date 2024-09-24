@@ -376,7 +376,7 @@ persistence:
 ingress:
   ## @param ingress.enabled Enable the Turbinia loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
   ##
-  enabled: true
+  enabled: false
   ## @param ingress.host The domain name Turbinia will be hosted under
   ## Please ensure this value is set when enabling Ingress. If using "gce" for
   ## ingress.className, please ensure you have a DNS record set for the IP address
