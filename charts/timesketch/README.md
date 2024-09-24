@@ -153,7 +153,7 @@ kubectl delete pvc -l release=my-release
 | ------------------------ | ------------------------------------------------------------- | --------------------------------------------------------- |
 | `image.repository`       | Timesketch image repository                                   | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
 | `image.pullPolicy`       | Timesketch image pull policy                                  | `IfNotPresent`                                            |
-| `image.tag`              | Overrides the image tag whose default is the chart appVersion | `latest`                                                  |
+| `image.tag`              | Overrides the image tag whose default is the chart appVersion | `20240828`                                                |
 | `image.imagePullSecrets` | Specify secrets if pulling from a private repository          | `[]`                                                      |
 
 ### Timesketch Configuration Parameters
