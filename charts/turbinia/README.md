@@ -17,18 +17,19 @@ helm install my-release osdfir-charts/turbinia
 > **Note**: By default, Turbinia is not externally accessible and can be
 reached via `kubectl port-forward` within the cluster.
 
-For a quick start with a local Kubernetes cluster on your desktop, check out the
-[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
-
 ## Introduction
 
 This chart bootstraps a [Turbinia](https://github.com/google/turbinia) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
+
 ## Prerequisites
 
-* Kubernetes 1.19+
-* Helm 3.2.0+
+* Kubernetes 1.23+
+* Helm 3.8.0+
 * PV provisioner support in the underlying infrastructure
+* Shared storage for clusters larger then one machine.
 
 ## Installing the Chart
 
@@ -51,6 +52,153 @@ The [Parameters](#parameters) section lists the parameters that can be configure
 during installation.
 
 > **Tip**:  See the [Managing and updating the Turbinia config](#managing-and-updating-the-turbinia-config) section for more details on managing the Turbinia config.
+
+## Configuration and installation details
+
+### Use a different Turbinia version
+
+The Turbinia Helm chart utilizes the latest container release tags by default.
+OSDFIR Infrastructure actively monitors for new versions of the main containers
+and releases updated charts accordingly.
+
+To modify the application version used in Turbinia, specify a different version
+of the image using the `image.tag` parameter and/or a different repository using
+the `image.repository` parameter.
+
+For example, to use the most recent development
+version instead, set the following variables:
+
+```console
+turbinia.server.image.repository="us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-server-dev"
+turbinia.server.image.tag="latest"
+turbinia.api.image.repository="us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-api-server-dev"
+turbinia.api.image.tag="latest"
+turbinia.worker.image.repository="us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-worker-dev"
+turbinia.worker.image.tag="latest"
+```
+
+### Upgrading the Helm chart
+
+Helm chart updates can be retrieved by running `helm repo update`.
+
+To explore available charts and versions, use `helm search repo osdfir-charts/`.
+Install a specific chart version with `helm install my-release osdfir-charts/turbinia --version <version>`.
+
+A major Helm chart version change (like v1.0.0 -> v2.0.0) indicates that there
+is an incompatible breaking change needing manual actions.
+
+### Managing and updating the Turbinia config
+
+This section outlines how to deploy and manage the Turbinia configuration file
+within OSDFIR infrastructure.
+
+There are two primary methods:
+
+#### Using Default Configurations
+
+If you don't provide your own Turbinia config file during deployment,
+the Turbinia deployment will automatically retrieve the latest default configs
+from the Turbinia Github repository. This method requires no further action from you.
+
+> **NOTE:**  When using the default method, you cannot update the Turbinia config file directly.
+
+#### Managing Turbinia configs externally
+
+For more advanced configuration management, you can manage the Turbinia config
+file independently of the Helm chart:
+
+1. Prepare your Config File:
+
+    Organize the Turbinia config file with your desired customizations.
+
+2. Create a ConfigMap:
+
+    ```console
+    kubectl create configmap turbinia-configs --from-file=turbinia.conf
+    ```
+
+    Replace `turbinia.conf` with the actual name of your config file.
+
+3. Install or Upgrade the Helm Chart:
+
+    ```console
+    helm install my-release osdfir-charts/turbinia --set config.existingConfigMap="turbinia-configs"
+    ```
+
+    This command instructs the Helm chart to use the `turbinia-configs` ConfigMap for
+    Turbinia's config file.
+
+To update the config changes using this method:
+
+1. Update the ConfigMap:
+
+    ```console
+    kubectl create configmap turbinia-configs --from-file=turbinia.conf --dry-run -o yaml | kubectl replace -f -
+    ```
+
+2. Restart the Turbinia deployment to apply the new configs
+
+    ```console
+    kubectl rollout restart deployment -l app.kubernetes.io/name=turbinia
+    ```
+
+### Metrics and monitoring
+
+The chart starts a metrics exporter for prometheus. The metrics endpoint (port 9200)
+is exposed in the service. Metrics can be scraped from within the cluster by either
+a Prometheus server running in your cluster or a cloud-based Prometheus service.
+Currently, Turbinia application metrics and system metrics are available.
+
+One recommended option for an integrated monitoring solution would be the
+[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack). 
+
+To setup, first add the repository containing the kube-prometheus-stack
+Helm chart:
+
+```console
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+Create a file to disable the default selector:
+
+```console
+cat >> values-monitoring.yaml << EOF
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+EOF
+```
+
+Then to install the kube prometheus chart in a namespace called `monitoring`:
+
+```console
+helm install kube-prometheus prometheus-community/kube-prometheus-stack -f values-monitoring.yaml --namespace monitoring
+```
+
+> **NOTE**: To confirm Turbinia is recording metrics, check Prometheus or Grafana for entries starting with `turbinia_`. If nothing shows up, you might need to update your Turbinia installation (helm upgrade) to apply the necessary CustomResourceDefinition (CRD).
+
+### Resource requests and limits
+
+OSDFIR Infrastructure charts allow setting resource requests and limits for all
+containers inside the chart deployment. These are inside the `resources` value
+(check parameter table). Setting requests is essential for production workloads
+and these should be adapted to your specific use case.
+
+To maximize deployment success across different environments, resources are
+minimally defined by default.
+
+### Persistence
+
+By default, the chart mounts a Persistent Volume at the `/mnt/turbiniavolume` path.
+The volume is created using dynamic volume provisioning.
+
+Configuration files can be found at the `/etc/turbinia` path of the container
+while logs can be found at `/mnt/turbiniavolume/logs/`.
+
+For clusters running more than one node or machine, the Persistent Volume will
+need to have the ability to be mounted by multiple machines, such as NFS, GCP
+Filestore, AWS EFS, and other shared file storage equivalents.
 
 ## Installing Turbinia for Google Kubernetes Engine (GKE)
 
@@ -159,46 +307,6 @@ providers, you'll need to manually mount the disk to your Turbinia instance or
 copy the evidence into Turbinia for processing.  We are actively working to expand
 native disk processing support for other cloud environments in the future.
 Installing the Turbinia Helm Chart remains the same regardless of your cloud provider.
-
-## Metrics & Monitoring
-
-Application and system metrics are available through Prometheus. The metrics
-endpoint (defaults to port 9200) can be scraped from within the cluster.
-
-One recommended option for an integrated monitoring solution would be the
-[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack). Kube Prometheus is a collection of Grafana dashboards
-and Prometheus rules combined with documentation to provide easy to operate
-end-to-end K8s cluster monitoring.
-
-To setup monitoring, first add the repository containing the kube-prometheus-stack
-Helm chart:
-
-```console
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-```
-
-Create a file to disable the default selector in order for your deployment to be
-properly scraped:
-
-```console
-cat >> values-monitoring.yaml << EOF
-prometheus:
-  prometheusSpec:
-    serviceMonitorSelectorNilUsesHelmValues: false
-EOF
-```
-
-Then to install the kube prometheus chart in a namespace called `monitoring`:
-
-```console
-helm install kube-prometheus prometheus-community/kube-prometheus-stack -f values-monitoring.yaml --namespace monitoring
-```
-
-That's it! To verify Turbinia metrics are being collected, connect to either
-Prometheus or Grafana and search for `turbinia_*` in metrics explorer. If no
-metrics appear, you may need to run a `helm upgrade` on your existing Turbinia
-deployment so that the ServiceMonitor CustomResourceDefinition (CRD) can be applied.
 
 ## Uninstalling the Chart
 
@@ -413,7 +521,10 @@ kubectl delete pvc -l release=my-release
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
 ```console
-helm install my-release osdfir-charts/turbinia --set ingress.enabled=true 
+helm install my-release osdfir-charts/turbinia \
+--set ingress.enabled=true \
+--set ingress.host="mydomain.com" \
+--set ingress.selfSigned=true
 ```
 
 The above command installs Turbinia with an attached Ingress.
@@ -432,89 +543,9 @@ chart with the updated values.
 helm install my-release ../turbinia
 ```
 
-## Managing and updating the Turbinia config
-
-This section outlines how to deploy and manage the Turbinia configuration file
-within OSDFIR infrastructure.
-
-There are two primary methods:
-
-### Using Default Configurations
-
-If you don't provide your own Turbinia config file during deployment,
-the Turbinia deployment will automatically retrieve the latest default configs
-from the Turbinia Github repository. This method requires no further action from you.
-
-> **NOTE:**  When using the default method, you cannot update the Turbinia config file directly.
-
-### Managing Turbinia configs externally
-
-For more advanced configuration management, you can manage the Turbinia config
-file independently of the Helm chart:
-
-1. Prepare your Config File:
-
-    Organize the Turbinia config file with your desired customizations.
-
-2. Create a ConfigMap:
-
-    ```console
-    kubectl create configmap turbinia-configs --from-file=turbinia.conf
-    ```
-
-    Replace `turbinia.conf` with the actual name of your config file.
-
-3. Install or Upgrade the Helm Chart:
-
-    ```console
-    helm install my-release osdfir-charts/turbinia --set config.existingConfigMap="turbinia-configs"
-    ```
-
-    This command instructs the Helm chart to use the `turbinia-configs` ConfigMap for
-    Turbinia's config file.
-
-To update the config changes using this method:
-
-1. Update the ConfigMap:
-
-    ```console
-    kubectl create configmap turbinia-configs --from-file=turbinia.conf --dry-run -o yaml | kubectl replace -f -
-    ```
-
-2. Restart the Turbinia deployment to apply the new configs
-
-    ```console
-    kubectl rollout restart deployment -l app.kubernetes.io/name=turbinia
-    ```
-
-## Persistence
-
-The Turbinia deployment stores data at the `/mnt/turbiniavolume` path of the container and stores configuration files at the `/etc/turbinia` path of the container.
-
-Persistent Volume Claims are used to keep the data across deployments. This is
-known to work in GCP and Minikube. See the Parameters section to configure the
-PVC or to disable persistence.
-
-## Upgrading
-
-If you need to upgrade an existing release to update a value, such as
-persistent volume size or upgrading to a new release, you can run
-[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/).
-For example, to set a new release and upgrade storage capacity, run:
-
-```console
-helm upgrade my-release ../turbinia \
-    --set image.tag=latest \
-    --set persistence.size=10T
-```
-
-The above command upgrades an existing release named `my-release` updating the
-image tag to `latest` and increasing persistent volume size of an existing volume to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
-of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
-
 ## License
 
-Copyright &copy; 2023 OSDFIR Infrastructure
+Copyright &copy; 2024 OSDFIR Infrastructure
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -30,7 +30,7 @@ maintainers:
 sources:
 - https://github.com/google/osdfir-infrastructure
 icon: https://raw.githubusercontent.com/google/turbinia/master/web/src/assets/turbinia-logo-mark.png
-appVersion: "latest"
+appVersion: "20240820"
 annotations:
   category: Security
   licenses: Apache-2.0
