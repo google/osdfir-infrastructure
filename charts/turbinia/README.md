@@ -150,7 +150,7 @@ a Prometheus server running in your cluster or a cloud-based Prometheus service.
 Currently, Turbinia application metrics and system metrics are available.
 
 One recommended option for an integrated monitoring solution would be the
-[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack). 
+[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack).
 
 To setup, first add the repository containing the kube-prometheus-stack
 Helm chart:
