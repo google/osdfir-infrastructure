@@ -17,30 +17,31 @@ helm install my-release osdfir-charts/timesketch
 > **Note**: By default, Timesketch is not externally accessible and can be
 reached via `kubectl port-forward` within the cluster.
 
-For a quick start with a local Kubernetes cluster on your desktop, check out the
-[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
-
 ## Introduction
 
 This chart bootstraps a [Timesketch](https://github.com/google/timesketch/blob/master/docker/release/build/Dockerfile-latest)
 deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
+
 ## Prerequisites
 
-- Kubernetes 1.19+
-- Helm 3.2.0+
+- Kubernetes 1.23+
+- Helm 3.8.0+
 - PV provisioner support in the underlying infrastructure
+- Shared storage for clusters larger then one machine.
 
 ## Installing the Chart
 
-The first step is to add the repo and then update to pick up any new changes.
+The first step is to add and update the repo:
 
 ```console
 helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm repo update
 ```
 
-To install the chart, specify any release name of your choice. For example,
+Then to install the chart, specify any release name of your choice. For example,
 using `my-release` as the release name, run:
 
 ```console
@@ -53,6 +54,150 @@ during installation.
 
 > **Tip**:  See the [Managing and updating Timesketch configs](#managing-and-updating-timesketch-configs)
 section for more details on managing the Timesketch configs.
+
+## Configuration and installation details
+
+### Use a different Timesketch version
+
+The Timesketch Helm chart utilizes the latest container release tags by default.
+OSDFIR Infrastructure actively monitors for new versions of the main containers
+and releases updated charts accordingly.
+
+To modify the application version used in Timesketch, specify a different version
+of the image using the `image.tag` parameter and/or a different repository using
+the `image.repository` parameter. For example, to use the most recent development
+version instead, set `image.tag` to `latest`.
+
+### Upgrading the Helm chart
+
+Helm chart updates can be retrieved by running `helm repo update`.
+
+To explore available charts and versions, use `helm search repo osdfir-charts/`.
+Install a specific chart version with `helm install my-release osdfir-charts/timesketch --version <version>`.
+
+A major Helm chart version change (like v1.0.0 -> v2.0.0) indicates that there
+is an incompatible breaking change needing manual actions.
+
+### Managing and updating Timesketch configs
+
+This section outlines how to deploy and manage Timesketch configuration files
+within OSDFIR infrastructure.
+
+There are two primary methods:
+
+#### Using Default Configurations
+
+If you don't provide your own Timesketch config files during deployment,
+the Timesketch deployment will automatically retrieve the latest default configs
+from the Timesketch Github repository. This method requires no further action from you.
+
+> **NOTE:**  When using the default method, you cannot update the Timesketch config files directly.
+
+#### Managing Timesketch configs externally
+
+For more advanced configuration management, you can manage Timesketch config
+files independently of the Helm chart:
+
+1. Prepare your Config Files:
+
+    Organize all the Timesketch configuration files in a directory with your
+    desired customizations.
+
+2. Create a ConfigMap:
+
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./timesketch-configs/
+    ```
+
+    Replace `./timesketch-configs/` with the actual path to your configuration files.
+
+3. Install or Upgrade the Helm Chart:
+
+    ```console
+    helm install my-release osdfir-charts/timesketch --set config.existingConfigMap="timesketch-configs"
+    ```
+
+    This command instructs the Helm chart to use the `timesketch-configs` ConfigMap for
+    Timesketch's config files.
+
+To update the config changes using this method:
+
+1. Update the ConfigMap:
+
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
+    ```
+
+2. Restart the Timesketch deployment to apply the new configs
+
+    ```console
+    kubectl rollout restart deployment -l app.kubernetes.io/name=timesketch
+    ```
+
+### Upgrading the Timesketch Database Schema
+
+From time to time, a Timesketch release requires a manual database upgrade if
+the schema has changed.
+The [Timesketch release page](https://github.com/google/timesketch/releases)
+will indicate if a database upgrade is required.
+
+Follow these steps to upgrade the database on your Kubernetes deployment:
+
+1. **Upgrade Timesketch (if not already done):**
+   - Upgrade your Timesketch deployment to the desired release version:
+
+     ```bash
+     helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION> --set image.pullPolicy=Always
+     ```
+
+2. **Connect to Timesketch Pod:**
+   - Once the upgraded pods are ready, shell into the Timesketch pod:
+
+     ```bash
+     kubectl exec -it my-release-timesketch-<RANDOM> -- /bin/bash
+     ```
+
+     - Find your pod name using `kubectl get pods`.
+
+3. **Perform Database Upgrade:**
+   - Follow the detailed steps in the [Timesketch documentation to upgrade your database](https://timesketch.org/guides/admin/upgrade/#upgrade-the-database-schema).
+
+4. **Restart Timesketch (Recommended):**
+   - After a successful database upgrade, it is recommended to restart your
+   Timesketch deployment for the changes to take full effect:
+
+      ```bash
+      kubectl rollout restart deployment my-release-timesketch-web
+      ```
+
+### Metrics and monitoring
+
+The chart starts a metrics exporter for prometheus. The metrics endpoint (port 8080)
+is exposed in the service. Metrics can be scraped from within the cluster by either
+a Prometheus server running in your cluster or a cloud-based Prometheus service.
+Currently, the available metrics is limited to system metrics.
+
+### Resource requests and limits
+
+OSDFIR Infrastructure charts allow setting resource requests and limits for all
+containers inside the chart deployment. These are inside the `resources` value
+(check parameter table). Setting requests is essential for production workloads
+and these should be adapted to your specific use case.
+
+To maximize deployment success across different environments, resources are
+minimally defined by default.
+
+### Persistence
+
+By default, the chart mounts a Persistent Volume at the `/mnt/timesketchvolume` path.
+The volume is created using dynamic volume provisioning.
+
+Configuration files can be found at the `/etc/timesketch` path of the container
+while logs can be found at `/var/log/timesketch`.
+
+For clusters running more than one nodes or machines, the Persistent Volume will
+need to have the ability to be mounted by multiple machines, such as NFS, GCP
+Filestore, AWS EFS, and other shared file storage equivalents.
 
 ## Enabling GKE Ingress and OIDC Authentication
 
@@ -320,125 +465,10 @@ chart with the updated values.
 helm install my-release ../timesketch
 ```
 
-## Persistence
-
-The Timesketch deployment stores data at the `/mnt/timesketchvolume` path of the
-container and stores configuration files at the `/etc/timesketch` path of the container.
-
-Persistent Volume Claims are used to keep the data across deployments. This is
-known to work in GCP and Minikube. See the Parameters section to configure the
-PVC or to disable persistence.
-
-## Upgrading
-
-If you need to upgrade an existing release to update a value, such as persistent
-volume size or upgrading to a new release, you can run [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/).
-For example, to set a new release and upgrade storage capacity, run:
-
-```console
-helm upgrade my-release ../timesketch \
-    --set image.tag=latest \
-    --set persistence.size=10T
-```
-
-The above command upgrades an existing release named `my-release` updating the
-image tag to `latest` and increasing persistent volume size of an existing volume
-to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
-of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
-
-## Managing and updating Timesketch configs
-
-This section outlines how to deploy and manage Timesketch configuration files
-within OSDFIR infrastructure.
-
-There are two primary methods:
-
-### Using Default Configurations**
-
-If you don't provide your own Timesketch config files during deployment,
-the Timesketch deployment will automatically retrieve the latest default configs
-from the Timesketch Github repository. This method requires no further action from you.
-
-> **NOTE:**  When using the default method, you cannot update the Timesketch config files directly.
-
-### Managing Timesketch configs externally
-
-For more advanced configuration management, you can manage Timesketch config
-files independently of the Helm chart:
-
-1. Prepare your Config Files:
-
-    Organize all the Timesketch configuration files in a directory with your
-    desired customizations.
-
-2. Create a ConfigMap:
-
-    ```console
-    kubectl create configmap timesketch-configs --from-file=./timesketch-configs/
-    ```
-
-    Replace `./timesketch-configs/` with the actual path to your configuration files.
-
-3. Install or Upgrade the Helm Chart:
-
-    ```console
-    helm install my-release osdfir-charts/timesketch --set config.existingConfigMap="timesketch-configs"
-    ```
-
-    This command instructs the Helm chart to use the `timesketch-configs` ConfigMap for
-    Timesketch's config files.
-
-To update the config changes using this method:
-
-1. Update the ConfigMap:
-
-    ```console
-    kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
-    ```
-
-2. Restart the Timesketch deployment to apply the new configs
-
-    ```console
-    kubectl rollout restart deployment -l app.kubernetes.io/name=timesketch
-    ```
-
-### Upgrade Timesketch Database Schema
-
-From time to time, a Timesketch release requires a manual database upgrade if
-the schema has changed.
-The [Timesketch release page](https://github.com/google/timesketch/releases)
-will indicate if a database upgrade is required.
-
-Follow these steps to upgrade the database on your Kubernetes deployment:
-
-1. **Upgrade Timesketch (if not already done):**
-   - Upgrade your Timesketch deployment to the desired release version:
-
-     ```bash
-     helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION> --set image.pullPolicy=Always
-     ```
-
-2. **Connect to Timesketch Pod:**
-   - Once the upgraded pods are ready, shell into the Timesketch pod:
-
-     ```bash
-     kubectl exec -it my-release-timesketch-<RANDOM> -- /bin/bash
-     ```
-
-     - Find your pod name using `kubectl get pods`.
-
-3. **Perform Database Upgrade:**
-   - Follow the detailed steps in the [Timesketch documentation to upgrade your database](https://timesketch.org/guides/admin/upgrade/#upgrade-the-database-schema).
-
-4. **Restart Timesketch (Recommended):**
-   - After a successful database upgrade, it is recommended to restart your
-   Timesketch deployment for the changes to take full effect:
-
-      ```bash
-      kubectl rollout restart deployment my-release-timesketch-web
-      ```
-
 ## Troubleshooting
+
+Find more information about how to deal with common errors in OSDFIR Infrastructure
+Helm charts in this [troubleshooting guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/troubleshooting.md).
 
 There is a known issue causing PostgreSQL authentication to fail. This occurs
 when you `delete` the deployed Helm chart and then redeploy the Chart without
@@ -448,7 +478,7 @@ for more details.
 
 ## License
 
-Copyright &copy; 2023 OSDFIR Infrastructure
+Copyright &copy; 2024 OSDFIR Infrastructure
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
