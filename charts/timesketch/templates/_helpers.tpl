@@ -28,11 +28,10 @@ Return the proper persistence volume claim name
 */}}
 {{- define "timesketch.pvc.name" -}}
 {{- $pvcName := .Values.persistence.name -}}
-{{- if .Values.global -}}
-    {{- if .Values.global.existingPVC -}}
-        {{- $pvcName = .Values.global.existingPVC -}}
-    {{- end -}}
-{{- printf "%s-%s" $pvcName "claim" }}
+{{- if and .Values.global .Values.global.existingPVC -}}
+{{- .Values.global.existingPVC -}}
+{{- else -}}
+{{- printf "%s-%s-claim" .Release.Name $pvcName }}
 {{- end -}}
 {{- end -}}
 
@@ -93,10 +92,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "timesketch.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "timesketch.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.serviceAccount.name }}
+{{- .Values.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- printf "%s-%s" .Release.Name "timesketch" }}
 {{- end }}
 {{- end }}
 
@@ -133,11 +132,19 @@ Postgresql subcharts connection url
 {{- end -}}
 
 {{/*
+Override Opensearch Subchart "opensearch.uname" helper function to allow for
+multiple instances using the Release Name.
+*/}}
+{{- define "opensearch.uname" -}}
+{{- printf "%s-%s" .Release.Name .Values.masterService -}}
+{{- end -}}
+
+{{/*
 Opensearch subcharts host name
 */}}
 {{- define "timesketch.opensearch.host" -}}
 {{- if .Values.opensearch.enabled -}}
-{{- printf "%s" .Values.opensearch.masterService -}}
+{{- printf "%s-%s" .Release.Name .Values.opensearch.masterService -}}
 {{- else -}}
 {{ fail "Attempting to use Opensearch, but the subchart is not enabled. This will lead to misconfiguration" }}
 {{- end -}}
@@ -170,13 +177,5 @@ Timesketch service port
 {{- .Values.config.oidc.authenticatedEmailsFile.existingSecret -}}
 {{- else -}}
 {{- printf "%s-access-list" (include "timesketch.fullname" .) -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "timesketch.configmap" -}}
-{{- if .Values.config.existingConfigMap -}}
-{{- .Values.config.existingConfigMap -}}
-{{- else -}}
-{{- include "timesketch.fullname" . }}-configmap
 {{- end -}}
 {{- end -}}

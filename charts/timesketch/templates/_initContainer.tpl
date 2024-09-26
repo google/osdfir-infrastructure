@@ -59,11 +59,13 @@ Worker pod upon startup.
       name: init-timesketch
     - mountPath: /etc/timesketch
       name: timesketch-configs
+    {{- if .Values.config.existingConfigMap }}
     - mountPath: /tmp/timesketch
       name: uploaded-configs
-  {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
+    {{- end }}
+    {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
     - name: authenticated-emails
       mountPath: /init/authenticated-emails
       readOnly: true
-  {{- end }}
+    {{- end }}
 {{- end }}
