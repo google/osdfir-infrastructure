@@ -51,7 +51,8 @@ The command deploys Turbinia on the Kubernetes cluster in the default configurat
 The [Parameters](#parameters) section lists the parameters that can be configured
 during installation.
 
-> **Tip**:  See the [Managing and updating the Turbinia config](#managing-and-updating-the-turbinia-config) section for more details on managing the Turbinia config.
+> **Tip**:  See the [Managing and updating the Turbinia config](#managing-and-updating-the-turbinia-config)
+section for more details on managing the Turbinia config.
 
 ## Configuration and installation details
 
@@ -100,7 +101,9 @@ If you don't provide your own Turbinia config file during deployment,
 the Turbinia deployment will automatically retrieve the latest default configs
 from the Turbinia Github repository. This method requires no further action from you.
 
-> **NOTE:**  When using the default method, you cannot update the Turbinia config file directly.
+> **NOTE:**  When using the default method, you cannot update the Turbinia config
+file directly. See the next section below for instructions on using a custom Turbinia
+config instead.
 
 #### Managing Turbinia configs externally
 
@@ -279,7 +282,7 @@ the CLI client, also create a Desktop/Native OAuth client.
     kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
     ```
 
-8. Then to upgrade an existing, externally expose Turbinia through a load balancer with GCP managed certificates, and deploy the
+8. Then to upgrade an existing release, externally expose Turbinia through a load balancer with GCP managed certificates, and deploy the
 Oauth2 Proxy for authentication, run:
 
     ```console
@@ -297,7 +300,8 @@ Oauth2 Proxy for authentication, run:
 
 > **Warning**: Turbinia relies on the Oauth2 Proxy for authentication. If you
 plan to expose Turbinia with a public facing IP, it is highly recommended that
-the Oauth2 Proxy is deployed alongside with the command provided above.
+the Oauth2 Proxy is deployed alongside with the command provided above. Otherwise,
+Turbinia will be accessible from anyone on the internet without authentication.
 
 ## Installing Turbinia for Other Cloud Platforms
 
