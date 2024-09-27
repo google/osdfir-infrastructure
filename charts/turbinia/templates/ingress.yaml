@@ -19,8 +19,6 @@ metadata:
     {{- if .Values.ingress.gcp.staticIPName }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPName }}
     networking.gke.io/v1beta1.FrontendConfig: {{ include "turbinia.fullname" . }}-frontend-config
-    {{- else }}
-    {{- fail "A valied .Values.ingress.gcp.staticIPName entry is required when using the GCE Ingress" }}
     {{- end }}
     {{- end }}
 spec:
@@ -31,7 +29,7 @@ spec:
       secretName: {{ include "turbinia.fullname" . }}-tls
   {{- end }}
   rules:
-    - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - path: /
@@ -72,14 +70,14 @@ metadata:
     kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ include "turbinia.fullname" . }}-managed-ssl
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "turbinia.fullname" . }}-frontend-config
     {{- end }}
     {{- if .Values.ingress.certManager }}
     kubernetes.io/tls-acme: "true"
     cert-manager.io/issuer: {{ include "turbinia.fullname" . }}-letsencrypt-production
     {{- end }}
-    {{- if (eq .Values.ingress.className "gce") }}
+    {{- if .Values.ingress.gcp.staticIPV6Name }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPV6Name }}
-    networking.gke.io/v1beta1.FrontendConfig: {{ include "turbinia.fullname" . }}-frontend-config
     {{- end }}
 spec:
   {{- if or .Values.ingress.selfSigned .Values.ingress.certManager }}
@@ -89,7 +87,7 @@ spec:
       secretName: {{ include "turbinia.fullname" . }}-tls
   {{- end }}
   rules:
-    - host: {{ required "A valid .Values.ingress.host entry is required!" .Values.ingress.host }}
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - path: /

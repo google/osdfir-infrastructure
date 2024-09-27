@@ -60,7 +60,7 @@ server:
     pullPolicy: IfNotPresent
     ## @param server.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: latest
+    tag: "20240820"
     ## @param server.image.imagePullSecrets Specify secrets if pulling from a private repository
     ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ## e.g.
@@ -131,7 +131,7 @@ worker:
     pullPolicy: IfNotPresent
     ## @param worker.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: latest
+    tag: "20240820"
     ## @param worker.image.imagePullSecrets Specify secrets if pulling from a private repository
     ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ## e.g.
@@ -212,7 +212,7 @@ api:
     pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: latest
+    tag: "20240820"
     ## @param api.image.imagePullSecrets Specify secrets if pulling from a private repository
     ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ## e.g.
@@ -265,88 +265,12 @@ api:
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ##
   affinity: {}
-## @section Turbinia controller configuration
-## The controller is not required to use Turbinia and serves as an extra
-## container that can be used for troubleshooting
-##
-controller:
-  ## @param controller.enabled If enabled, deploys the Turbinia controller
-  ##
-  enabled: false
-  image:
-    ## @param controller.image.repository Turbinia image repository for the Turbinia controller
-    ##
-    repository: us-docker.pkg.dev/osdfir-registry/turbinia/release/turbinia-controller
-    ## @param controller.image.pullPolicy Turbinia image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
-    ##
-    pullPolicy: IfNotPresent
-    ## @param controller.image.tag Overrides the image tag whose default is the chart appVersion
-    ##
-    tag: latest
-    ## @param controller.image.imagePullSecrets Specify secrets if pulling from a private repository
-    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g.
-    ## imagePullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    imagePullSecrets: []
-  ## @param controller.podSecurityContext Holds pod-level security attributes and common API / Web container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param controller.securityContext Holds security configuration that will be applied to the API / Web container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
-  ## Turbinia controller resource requests and limits
-  ## @param controller.resources.limits Resource limits for the controller container
-  ## @param controller.resources.requests Requested resources for the controller container
-  resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    limits: {}
-    ## Example:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 1Gi
-    requests: {}
-  ## @param controller.nodeSelector Node labels for Turbinia controller pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
-  nodeSelector: {}
-  ## @param controller.tolerations Tolerations for Turbinia controller pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param controller.affinity Affinity for Turbinia controller pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
 ## @section Common Parameters
 ##
 ## Turbinia configuration parameters
 ## ref: https://github.com/google/turbinia/blob/master/turbinia/config/turbinia_config_tmpl.py
 ##
 config:
-  ## @param config.override Overrides the default Turbinia config to instead use a user specified config. Please ensure
-  ## that the config file is either placed in the root of this directory or point the override flag to a path containing
-  ## your config file
-  ##
-  override: turbinia.conf
   ## @param config.existingConfigMap Use an existing ConfigMap as the default Turbinia config.
   ## Please ensure that the ConfigMap has been created prior to deployment
   ## (e.g. kubectl create configmap turbinia-config --from-file=turbinia.conf)
@@ -468,7 +392,7 @@ ingress:
   ## @param ingress.className IngressClass that will be be used to implement the Ingress
   ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
   ##
-  className: "gce"
+  className: ""
   ## GCP ingress configuration
   ##
   gcp:
@@ -477,11 +401,10 @@ ingress:
     ##
     managedCertificates: false
     ## @param ingress.gcp.staticIPName Name of the static IP address you reserved in GCP
-    ## This is required when using "gce" in ingress.className
     ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
     ##
     staticIPName: ""
-    ## @param ingress.gcp.staticIPV6Name Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address
+    ## @param ingress.gcp.staticIPV6Name Name of the static IPV6 address you reserved. This can be optionally provided to deploy a loadbalancer with an IPV6 address in GCP.
     ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
     ##
     staticIPV6Name: ""
@@ -601,38 +524,6 @@ dfdewey:
         memory: 512Mi
 ## @section Third Party Configuration
 ##
-## @section Monitoring configuration parameters
-## IMPORTANT: Turbinia utilizes the kube-prometheus-stack for monitoring. This includes Prometheus, Grafana, and Alertmanager.
-##
-monitoring:
-  ## @param monitoring.deployKubePrometheus Deploy kube-prometheus-stack as a subchart. For production environments, it is best practice to deploy this chart separately.
-  ##
-  deployKubePrometheus: false
-  ## @param monitoring.kubeScheduler.enabled Component scraping kube scheduler. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
-  ##
-  kubeScheduler:
-    enabled: false
-  ## @param monitoring.kubeControllerManager.enabled Component scraping kube controller. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
-  ##
-  kubeControllerManager:
-    enabled: false
-  ## @param monitoring.coreDns.enabled Component scraping core dns. Disabled by default in favor of kube dns.
-  ##
-  coreDns:
-    enabled: false
-  ## @param monitoring.kubeProxy.enabled Component scraping kube proxy. Disabled by default due to lack of Prometheus endpoint access for managed K8s clusters (e.g. GKE, EKS).
-  ##
-  kubeProxy:
-    enabled: false
-  ## @param monitoring.kubeDns.enabled Component scraping kube dns.
-  ##
-  kubeDns:
-    enabled: true
-  ## @param monitoring.prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues Disable so that custom servicemonitors can be created and monitored
-  ##
-  prometheus:
-    prometheusSpec:
-      serviceMonitorSelectorNilUsesHelmValues: false
 ## @section Redis configuration parameters
 ## IMPORTANT: Redis is deployed with Auth enabled by default
 ## To see a full list of available values, run helm show values charts/redis*
