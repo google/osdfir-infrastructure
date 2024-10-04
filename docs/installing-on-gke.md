@@ -258,7 +258,7 @@ to a different project. To do this, you can use the dfTimewolf recipe
 to your analysis project running OSDFIR Infrastructure, then processes it with
 Turbinia and sends the Plaso results to Timesketch.
 
-#### Processing Files and Directories with Turbinia
+#### Processing Local Evidence with Turbinia
 
 This method is useful when you have evidence that is not located on a GCP disk
 (e.g., evidence from a local machine).
@@ -299,7 +299,7 @@ Then, submit a Turbinia request for the evidence:
 
 
 ```bash
-turbinia-client submit directory --source_path /mnt/turbiniavolume/my_evidence.dd
+turbinia-client submit rawdisk --source_path /mnt/turbiniavolume/my_evidence.dd
 ```
 
 This command submits a Turbinia request for the evidence you copied. The
