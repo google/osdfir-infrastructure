@@ -185,7 +185,7 @@ cat >> ~/.dftimewolfrc << EOF
 {
 "timesketch_username": "timesketch",
 "timesketch_password": "$TIMESKETCH_PASSWORD",
-"timesketch_endpoint": "http://127.0.0.1:5000"
+"timesketch_endpoint": "http://127.0.0.1:5000",
 "turbinia_api": "http://127.0.0.1:8000"
 }
 EOF
