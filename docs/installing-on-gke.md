@@ -6,7 +6,9 @@ to process a Google Cloud disk using Turbinia and then import any created timeli
 into Timesketch.
 
 
-GRR is not currently supported in this Helm chart deployment. We are working to add GRR support in a future release. In the meantime, you can find a dedicated guide for deploying GRR on GKE [here](https://github.com/google/osdfir-infrastructure/tree/main/cloud).
+GRR is not currently supported in this Helm chart deployment. We are working to
+add GRR support in a future release. In the meantime, you can find a dedicated
+guide for deploying GRR on GKE [here](https://github.com/google/osdfir-infrastructure/tree/main/cloud).
 
 ## Step 1: Set up Environment Variables
 
@@ -34,7 +36,7 @@ gcloud container clusters create $CLUSTER \
     --num-nodes=1 \
     --machine-type "e2-standard-4" \
     --zone $ZONE \
-    --workload-pool=$PROJECT.svc.id.goog \
+    --workload-pool=$PROJECT_ID.svc.id.goog \
     --addons GcpFilestoreCsiDriver
 ```
 
@@ -61,12 +63,12 @@ plugin for kubectl:
 ```bash
 gcloud components install gke-gcloud-auth-plugin
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-gcloud container clusters get-credentials $CLUSTER
+gcloud container clusters get-credentials $CLUSTER --zone $ZONE
 ```
 
 Now check that you can connect to the cluster:
 
-```console
+```bash
 kubectl get nodes -o wide
 ```
 
@@ -85,8 +87,8 @@ gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
 
 ```bash
 # Grant the Service Account user role to allow the account to act as a service account
-$ gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
-    --role=roles/compute.serviceAccountUser \
+gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
+    --role=roles/iam.serviceAccountUser \
     --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/$KSA_NAME
 ```
 
@@ -117,14 +119,11 @@ helm install my-release osdfir-charts/osdfir-infrastructure \
     --set turbinia.gcp.projectID=$PROJECT_ID \
     --set turbinia.gcp.projectRegion=$REGION \
     --set turbinia.gcp.projectZone=$ZONE \
-    --set turbinia.serviceaccount.name=$KSA_NAME \
-    --set turbinia.worker.autoscaling.enabled=true  
+    --set turbinia.serviceaccount.name=$KSA_NAME
 ```
 
 The command deploys OSDFIR Infrastructure on the Kubernetes cluster while enabling
-Turbinia GCP integration and enabling autoscaling for Turbinia worker. Autoscaling
-allows Turbinia to automatically adjust the number of worker pods based on CPU
-utilization.
+Turbinia GCP integration.
 
 Verify the deployment:
 
@@ -132,7 +131,8 @@ Verify the deployment:
 kubectl get pods
 ```
 
-You should see pods for Timesketch, Turbinia, and Yeti in a Running state.
+You should see pods for Timesketch, Turbinia, and Yeti in a Running state. It may
+take a few minutes for all the services to deploy.
 
 ### Provisioning shared filestorage (optional)
 
@@ -188,6 +188,7 @@ cat >> ~/.dftimewolfrc << EOF
 "timesketch_endpoint": "http://127.0.0.1:5000"
 "turbinia_api": "http://127.0.0.1:8000"
 }
+EOF
 ```
 
 Now you have dfTimewolf installed and configured to interact with your OSDFIR
@@ -211,15 +212,22 @@ gcloud compute disks create test-disk --zone $ZONE
 > *Important*: The recipe requires that the disk being processed
 is in the same zone Turbinia is deployed to.
 
-You'll need to use `kubectl port-forward` to forward the Turbinia and Timesketch services locally to your machine. This allows you to access the Turbinia UI and the Timesketch API from your local machine.
+You'll need to use `kubectl port-forward` to forward the Turbinia and Timesketch
+services locally to your machine. This allows you to access the Turbinia UI and
+the Timesketch API from your local machine.
 
-For example, to port-forward from a release named `my-release`, run the following commands:
+For example, to port-forward from a release named `my-release`, run the following
+commands in two seperate terminals:
 
 ```bash
-kubectl --namespace default port-forward service/my-release-turbinia 8000:8000 && kubectl --namespace default port-forward service/my-release-timesketch 5000:5000  
+kubectl --namespace default port-forward service/my-release-turbinia 8000:8000 
+kubectl --namespace default port-forward service/my-release-timesketch 5000:5000  
 ```
 
-Then run the recipe
+This will allow dfTimewolf to access the Turbinia and Timesketch services locally
+from your machine.
+
+Then on a third terminal, run the dfTimewolf recipe:
 
 ```bash
 dftimewolf gcp_turbinia_ts $PROJECT_ID --disk_names test-disk
@@ -231,35 +239,49 @@ This command will:
 Plaso and looking for prevelant anomalies.
 * Export any generated Plaso files to Timesketch.
 
-You can monitor the progress of the processing in the Turbinia UI (`http://localhost:8000`) and in the
-dfTimewolf output. Once the processing is complete, log in to Timesketch (`http://localhost:5000`) and verify that a new timeline
-has been created. You can then explore the timeline to analyze the processed artifacts.
+You can monitor the progress of the processing in the Turbinia UI
+(`http://localhost:8000`) and in the dfTimewolf output. Once the processing is
+complete, log in to Timesketch (`http://localhost:5000`) and verify that a new
+timeline has been created. You can then explore the timeline to analyze the
+processed artifacts.
 
-Congratulations on completing the setup and processing your first disk! Please feel free to see the optional workflows below for more examples.
+Congratulations on completing the setup and processing your first disk! Please
+feel free to see the optional workflows below for more examples.
 
 ### Additional Workflows
 
 #### Processing Disks from a Different Project
 
-In a real-world scenario, you may need to process a GCP instance or disk belonging to a different project. To do this, you can use the dfTimewolf recipe `gcp_turbinia_disk_copy_ts`. This recipe copies the disk from the source project to your analysis project running OSDFIR Infrastructure, then processes it with Turbinia and sends the Plaso results to Timesketch.
+In a real-world scenario, you may need to process a GCP instance or disk belonging
+to a different project. To do this, you can use the dfTimewolf recipe
+`gcp_turbinia_disk_copy_ts`. This recipe copies the disk from the source project
+to your analysis project running OSDFIR Infrastructure, then processes it with
+Turbinia and sends the Plaso results to Timesketch.
 
 #### Processing Files and Directories with Turbinia
 
-This method is useful when you have evidence that is not located on a GCP disk (e.g., evidence from a local machine).
+This method is useful when you have evidence that is not located on a GCP disk
+(e.g., evidence from a local machine).
 
-To copy evidence data into the Turbinia pod, first identify a Turbinia pod by running `kubectl get pods`. Then, use the `kubectl cp` command to copy the evidence file to the desired location within the pod. For example, to copy `my_evidence.dd` from your current directory to the `/mnt/turbiniavolume` directory in the `my-release-turbinia-server-0` pod, run:
+To copy evidence data into the Turbinia pod, first identify a Turbinia pod by
+running `kubectl get pods`. Then, use the `kubectl cp` command to copy the evidence
+file to the desired location within the pod. For example, to copy `my_evidence.dd`
+from your current directory to the `/mnt/turbiniavolume` directory in the
+`my-release-turbinia-server-0` pod, run:
 
 ```bash
 kubectl cp ./my_evidence.dd my-release-turbinia-server-0:/mnt/turbiniavolume/my_evidence.dd
 ```
 
-To interact with Turbinia and submit processing jobs, you'll need to install the Turbinia client and configure it to connect to your Turbinia server.
+To interact with Turbinia and submit processing jobs, you'll need to install the
+Turbinia client and configure it to connect to your Turbinia server.
 
 ```bash
 pip3 install turbinia-client
 ```
 
-Create a configuration file named `.turbinia_api_config.json` in your home directory with the following content:
+Create a configuration file named `.turbinia_api_config.json` in your home
+directory with the following content:
 
 ```bash
 cat >> ~/.turbinia_api_config.json << EOF
@@ -270,6 +292,7 @@ cat >> ~/.turbinia_api_config.json << EOF
         "API_AUTHENTICATION_ENABLED": false
     }
 }
+EOF
 ```
 
 Then, submit a Turbinia request for the evidence:
@@ -279,12 +302,18 @@ Then, submit a Turbinia request for the evidence:
 turbinia-client submit directory --source_path /mnt/turbiniavolume/my_evidence.dd
 ```
 
-This command submits a Turbinia request for the evidence you copied. The `--source_path` parameter specifies the path to the evidence within the Turbinia pod.
+This command submits a Turbinia request for the evidence you copied. The
+`--source_path` parameter specifies the path to the evidence within the Turbinia
+pod.
 
-You can monitor the progress of the processing in the Turbinia UI (accessible by port-forwarding). Any Plaso jobs that run can have their output directly downloaded from the Turbinia UI and imported into Timesketch.
+You can monitor the progress of the processing in the Turbinia UI
+(accessible by port-forwarding). Any Plaso jobs that run can have their output
+directly downloaded from the Turbinia UI and imported into Timesketch.
 
 #### Searching for IoCs with Yeti
 
-Yeti enhances your Timesketch investigations by enabling you to search for Yeti Intelligence (IoCs, threat data, etc.) across Timesketch timelines.
+Yeti enhances your Timesketch investigations by enabling you to search for
+Yeti Intelligence (IoCs, threat data, etc.) across Timesketch timelines.
 
-Learn how to use Yeti with Timesketch by following this [guide](https://yeti-platform.io/guides/indicators-timesketch/investigation/).
+Learn how to use Yeti with Timesketch by following this
+[guide](https://yeti-platform.io/guides/indicators-timesketch/investigation/).
