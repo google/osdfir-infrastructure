@@ -289,7 +289,9 @@ cat >> ~/.turbinia_api_config.json << EOF
     "default": {
         "API_SERVER_ADDRESS": "http://localhost",
         "API_SERVER_PORT": 8000,
-        "API_AUTHENTICATION_ENABLED": false
+        "API_AUTHENTICATION_ENABLED": false,
+        "CREDENTIALS_FILENAME": "",
+        "CLIENT_SECRETS_FILENAME": ""
     }
 }
 EOF
