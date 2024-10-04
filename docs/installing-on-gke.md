@@ -129,7 +129,7 @@ utilization.
 Verify the deployment:
 
 ```bash
-kubectl get pods -n $NAMESPACE
+kubectl get pods
 ```
 
 You should see pods for Timesketch, Turbinia, and Yeti in a Running state.
@@ -138,7 +138,7 @@ You should see pods for Timesketch, Turbinia, and Yeti in a Running state.
 
 While this example uses a single node, you might need persistent storage for
 multi-node deployments. To enable persistent storage with a `ReadWriteMany` PVC,
-add the following --set flags to your helm install command:
+add the following `--set` flags to your helm install command:
 
 ```bash
 --set persistence.storageClass="standard-rwx" \
@@ -158,7 +158,7 @@ like Timesketch.
 
 To install dfTimewolf, you'll need to have Python 3.11 or greater, `git`, and
 `pip` installed on your machine. dfTimewolf uses Poetry for simplified dependency
-management. Then, follow these steps:
+management. Follow these steps to install dfTimewolf:
 
 ```bash
 git clone https://github.com/log2timeline/dftimewolf.git && cd dftimewolf
@@ -208,7 +208,7 @@ First, create a disk to process using a name such as `test-disk`:
 gcloud compute disks create test-disk --zone $ZONE
 ```
 
-> Important: The recipe requires that the disk being processed
+> *Important*: The recipe requires that the disk being processed
 is in the same zone Turbinia is deployed to.
 
 You'll need to use `kubectl port-forward` to forward the Turbinia and Timesketch services locally to your machine. This allows you to access the Turbinia UI and the Timesketch API from your local machine.
@@ -247,10 +247,10 @@ In a real-world scenario, you may need to process a GCP instance or disk belongi
 
 This method is useful when you have evidence that is not located on a GCP disk (e.g., evidence from a local machine).
 
-To copy evidence data into the Turbinia pod, first identify a Turbinia worker pod by running `kubectl get pods`. Then, use the `kubectl cp` command to copy the evidence file to the desired location within the pod. For example, to copy `my_evidence.dd` from your current directory to the `/mnt/turbiniavolume` directory in the turbinia-server-0 pod, run:
+To copy evidence data into the Turbinia pod, first identify a Turbinia pod by running `kubectl get pods`. Then, use the `kubectl cp` command to copy the evidence file to the desired location within the pod. For example, to copy `my_evidence.dd` from your current directory to the `/mnt/turbiniavolume` directory in the `my-release-turbinia-server-0` pod, run:
 
 ```bash
-kubectl cp ./my_evidence.dd turbinia-server-0:/mnt/turbiniavolume/my_evidence.dd
+kubectl cp ./my_evidence.dd my-release-turbinia-server-0:/mnt/turbiniavolume/my_evidence.dd
 ```
 
 To interact with Turbinia and submit processing jobs, you'll need to install the Turbinia client and configure it to connect to your Turbinia server.
