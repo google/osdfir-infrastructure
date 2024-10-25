@@ -10,10 +10,81 @@ GRR is not currently supported in this Helm chart deployment. We are working to
 add GRR support in a future release. In the meantime, you can find a dedicated
 guide for deploying GRR on GKE [here](https://github.com/google/osdfir-infrastructure/tree/main/cloud).
 
-## Step 1: Set up Environment Variables
+## Prerequisites
+
+💻 **Google Cloud Account**: You'll need a Google Cloud Platform (GCP) account.
+To create an account, you'll need to provide a credit card or bank account for
+verification. Visit the [Get started with Google Cloud page](https://cloud.google.com/docs/get-started)
+and follow the instructions.
+
+> *Note*: 💵 If you have never used Google Cloud before, you may be eligible for
+the [Google Cloud Free Program](https://cloud.google.com/free/docs/gcp-free-tier/#free-trial),
+which gives you a 90 day trial period that includes $300 in free Cloud Billing
+credits to explore and evaluate Google Cloud.
+
+💻 **Software**: You will also need to install the following software on your laptop:
+
+1. [gcloud](https://cloud.google.com/sdk/docs/install): A set of tools to create
+and manage Google Cloud resources.
+2. [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl): The Kubernetes
+command-line tool which allows you to configure Kubernetes clusters.
+3. [Helm](https://helm.sh/): The package manager for Kubernetes to which we will
+be installing OSDFIR Infrastructure with.
+
+ℹ️ We recommend using [Google Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell)
+when following this tutorial. It already has the required software installed by default.
+
+
+## Step 0: Configure gcloud with a Google Cloud project
+
+To set up your Google Cloud environment, run the following command:
+
+```bash
+gcloud init
+```
+
+You will need to answer "yes" to the following question:
+
+```bash
+Do you want to configure a default Compute Region and Zone? (Y/n)?  Y
+```
+
+After running the command, you'll be prompted to configure a default Compute
+Region and Zone. Choose a region and zone that are geographically close to you
+for optimal performance. You'll then see your project name, the selected default
+region, and default zone.
+
+Throughout this tutorial, we'll use environment variables like `$PROJECT_ID` to
+represent values specific to your GCP setup. You have two options for handling
+these:
+
+1. **Manual Replacement**: Replace the variable with your actual value directly
+in the command before executing it.
+2. **Export Variables**: Export the variables in your shell session, as shown in
+the next step. This allows you to use the variables directly in commands.
+
+In the following steps, we'll use the second option: exporting environment
+variables. If a step requires you to manually replace a variable, we'll explicitly
+state that.
+
+## Step 1: Enable the required Google Cloud APIs
+
+Enable the necessary APIs:
+
+```bash
+gcloud services enable iam.googleapis.com \
+                       container.googleapis.com \
+                       compute.googleapis.com \
+                       file.googleapis.com
+```
+
+## Step 2: Set up Environment Variables
 
 Before creating the Kubernetes (K8s) cluster, define the following environment
-variables in your terminal. Replace the placeholders with your actual values:
+variables in your terminal. You do not have to create any of these resources
+beforehand, as this guide will walk you through the process.
+
+Replace the placeholders with your actual values:
 
 ```bash
 export PROJECT_ID="your-gcp-project"  # Your Google Cloud project ID
@@ -27,7 +98,7 @@ export KSA_NAME="turbinia"  # Your Turbinia K8s service account (defaults to 'tu
 
 > *Note*: You can find the GCP project number by running `gcloud projects describe $PROJECT_ID`
 
-## Step 2: Create a Kubernetes Cluster
+## Step 3: Create a Kubernetes Cluster
 
 Now, create the Kubernetes cluster with the specified configurations:
 
@@ -48,6 +119,7 @@ for running OSDFIR Infrastructure.
 Important Considerations:
 
 * GKE Autopilot is not currently supported because Turbinia workers require
+* Only a single zone cluster can be used with Turbinia.
 elevated privileges for disk processing.
 * You need a machine type of at least `e2-standard-4` (or equivalent with at
 least 4 CPUs) when deploying to GKE.
@@ -61,7 +133,7 @@ Once the cluster has been created, set up the Google Kubernetes Engine auth
 plugin for kubectl:
 
 ```bash
-gcloud components install gke-gcloud-auth-plugin
+sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 gcloud container clusters get-credentials $CLUSTER --zone $ZONE
 ```
@@ -72,7 +144,7 @@ Now check that you can connect to the cluster:
 kubectl get nodes -o wide
 ```
 
-## Step 3: Create the Turbinia GCP Service Account
+## Step 4: Create the Turbinia GCP Service Account
 
 To process virtual machine disks in Google Cloud Platform (GCP) with Turbinia,
 you need a dedicated GCP service account with the necessary permissions to attach
@@ -99,7 +171,7 @@ VMs for processing.
 * Service Account User: Allows the Turbinia service account to act as this newly
 created service account.
 
-## Step 4: Deploy the OSDFIR Infrastructure Helm Chart
+## Step 5: Deploy the OSDFIR Infrastructure Helm Chart
 
 Now it is time to deploy the OSDFIR Infrastructure Helm chart.
 
@@ -149,7 +221,7 @@ This configures OSDFIR Infrastructure to provision a GCP Filestore instance with
 `ReadWriteMany` access mode, which is suitable for multi-node clusters where
 shared storage is required.
 
-## Step 5: Setup dfTimewolf and CLI configs
+## Step 6: Setup dfTimewolf and CLI configs
 
 OSDFIR Infrastructure utilizes dfTimewolf for orchestrating forensic collection
 and processing. dfTimewolf allows you to define "recipes" that specify how data
@@ -158,16 +230,29 @@ like Timesketch.
 
 To install dfTimewolf, you'll need to have Python 3.11 or greater, `git`, and
 `pip` installed on your machine. dfTimewolf uses Poetry for simplified dependency
-management. Follow these steps to install dfTimewolf:
+management.
+
+First, clone the dfTimewolf repository:
 
 ```bash
 git clone https://github.com/log2timeline/dftimewolf.git && cd dftimewolf
+```
+
+Install Poetry, then use it to install dfTimewolf's dependencies:
+
+```bash
 pip install poetry
 poetry install && poetry shell
 ```
 
-Retrieve the Timesketch password from your deployment. For example, to grab
-it from a release named `my-release`, run:
+> *Note*: If Poetry is not found, add its bin directory to your PATH:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Once done, retrieve the Timesketch password from your deployment. For example,
+to grab it from a release named `my-release`, run:
 
 ```bash
 kubectl get secret --namespace default my-release-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d
@@ -183,10 +268,10 @@ Now, create a `.dftimewolfrc` file in your HOME directory, replacing
 ```bash
 cat >> ~/.dftimewolfrc << EOF
 {
-"timesketch_username": "timesketch",
-"timesketch_password": "$TIMESKETCH_PASSWORD",
-"timesketch_endpoint": "http://127.0.0.1:5000",
-"turbinia_api": "http://127.0.0.1:8000"
+    "timesketch_username": "timesketch",
+    "timesketch_password": "$TIMESKETCH_PASSWORD",
+    "timesketch_endpoint": "http://127.0.0.1:5000",
+    "turbinia_api": "http://127.0.0.1:8000"
 }
 EOF
 ```
@@ -194,7 +279,7 @@ EOF
 Now you have dfTimewolf installed and configured to interact with your OSDFIR
 Infrastructure deployment.
 
-## Step 6: Process a Google Cloud Disk
+## Step 7: Process a Google Cloud Disk
 
 With OSDFIR Infrastructure deployed and dfTimewolf installed and configured,
 you're ready to process a GCP disk.
@@ -203,16 +288,33 @@ This example uses the dfTimewolf `gcp_turbinia_ts` recipe, which processes an
 existing GCP persistent disk with Turbinia and sends the resulting Plaso timeline
 to Timesketch.
 
-First, create a disk to process using a name such as `test-disk`:
+First, create a disk to process. For example, to create a disk with one of the
+base debian images, run:
 
 ```bash
-gcloud compute disks create test-disk --zone $ZONE
+gcloud compute disks create test-debian-image \
+  --image=debian-12-bookworm-arm64-v20241009 \
+  --image-project debian-cloud \
+  --size 10GB \
+  --zone $ZONE 
 ```
 
-> *Important*: The recipe requires that the disk being processed
-is in the same zone Turbinia is deployed to.
+Important Considerations:
 
-You'll need to use `kubectl port-forward` to forward the Turbinia and Timesketch
+* The recipe requires that the disk being processed is in the same zone
+Turbinia is deployed to.
+
+* If you encounter an error stating that the image cannot be found, you can list
+the available Debian images by running:
+
+    ```bash
+    gcloud compute images list --filter debian-cloud
+    ```
+
+Then, choose an available image name from the list and update the `--image` flag
+in the disk creation command accordingly.
+
+You'll then need to use `kubectl port-forward` to forward the Turbinia and Timesketch
 services locally to your machine. This allows you to access the Turbinia UI and
 the Timesketch API from your local machine.
 
@@ -227,10 +329,11 @@ kubectl --namespace default port-forward service/my-release-timesketch 5000:5000
 This will allow dfTimewolf to access the Turbinia and Timesketch services locally
 from your machine.
 
-Then on a third terminal, run the dfTimewolf recipe:
+Then on your original terminal where you initially set the environment variables
+for, run the dfTimewolf recipe:
 
 ```bash
-dftimewolf gcp_turbinia_ts $PROJECT_ID --disk_names test-disk
+dftimewolf gcp_turbinia_ts $PROJECT_ID $ZONE --disk_names test-debian-image
 ```
 
 This command will:
