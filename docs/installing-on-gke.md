@@ -191,11 +191,13 @@ helm install my-release osdfir-charts/osdfir-infrastructure \
     --set turbinia.gcp.projectID=$PROJECT_ID \
     --set turbinia.gcp.projectRegion=$REGION \
     --set turbinia.gcp.projectZone=$ZONE \
-    --set turbinia.serviceaccount.name=$KSA_NAME
+    --set turbinia.serviceaccount.name=$KSA_NAME \
+    --set persistence.size=10Gi
 ```
 
 The command deploys OSDFIR Infrastructure on the Kubernetes cluster while enabling
-Turbinia GCP integration.
+Turbinia GCP integration and increasing the OSDFIR Infrastructure disk size to
+10 Gigabytes to allow for enough space for the processed forensic output.
 
 Verify the deployment:
 
