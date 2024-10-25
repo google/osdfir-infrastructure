@@ -311,8 +311,8 @@ the available Debian images by running:
     gcloud compute images list --filter debian-cloud
     ```
 
-Then, choose an available image name from the list and update the `--image` flag
-in the disk creation command accordingly.
+    Then, choose an available image name from the list and update the `--image` flag
+    in the disk creation command accordingly.
 
 You'll then need to use `kubectl port-forward` to forward the Turbinia and Timesketch
 services locally to your machine. This allows you to access the Turbinia UI and
