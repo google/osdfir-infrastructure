@@ -435,7 +435,7 @@ directly downloaded from the Turbinia UI and imported into Timesketch.
 
 #### Using Timesketch
 
-To learn more about using Timesketch check out the [User Guide](https://timesketch.org/guides/user/sketch-overview/).
+To learn more about using Timesketch in detail check out the [user guide](https://timesketch.org/guides/user/sketch-overview/).
 
 #### Searching for IoCs with Yeti
 
