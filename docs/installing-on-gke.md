@@ -105,7 +105,7 @@ Now, create the Kubernetes cluster with the specified configurations:
 ```bash
 gcloud container clusters create $CLUSTER \
     --num-nodes=1 \
-    --machine-type "e2-standard-4" \
+    --machine-type "e2-standard-8" \
     --zone $ZONE \
     --workload-pool=$PROJECT_ID.svc.id.goog \
     --addons GcpFilestoreCsiDriver
@@ -119,13 +119,19 @@ for running OSDFIR Infrastructure.
 Important Considerations:
 
 * GKE Autopilot is not currently supported because Turbinia workers require
-* Only a single zone cluster can be used with Turbinia.
 elevated privileges for disk processing.
-* You need a machine type of at least `e2-standard-4` (or equivalent with at
-least 4 CPUs) when deploying to GKE.
-* For clusters with more than one node, you'll need to set up a shared filesystem
-like GCP Filestore. In Kubernetes, this translates to using a Persistent Volume
-Claim (PVC) with `ReadWriteMany` access.
+* Only a single zone cluster can be used with Turbinia.
+* Deployments require a machine type of at least `e2-standard-8`
+(or an equivalent with at least 8 vCPUs).
+* For clusters with more than one node, a shared filesystem like GCP Filestore is
+required. This involves configuring a Persistent Volume Claim (PVC) with `ReadWriteMany`
+access in K8s. Detailed instructions for provisioning shared filesystems
+are provided in the 'Provisioning shared filestorage (optional)' section.
+
+OSDFIR Infrastructure provides a [shell script](https://github.com/google/osdfir-infrastructure/blob/main/tools/init-gke.sh)
+for automating provisioning of a private GKE cluster. However, working through
+these manual steps first is recommended to gain a foundational understanding and
+minimize the chances of encountering issues during deployment.
 
 ### Configure kubectl to Access the Cluster
 
@@ -257,7 +263,7 @@ Once done, retrieve the Timesketch password from your deployment. For example,
 to grab it from a release named `my-release`, run:
 
 ```bash
-kubectl get secret --namespace default my-release-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d
+kubectl get secret --namespace default my-release-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d && echo ""
 ```
 
 dfTimewolf uses a configuration file called `.dftimewolfrc` to store settings
@@ -290,7 +296,7 @@ This example uses the dfTimewolf `gcp_turbinia_ts` recipe, which processes an
 existing GCP persistent disk with Turbinia and sends the resulting Plaso timeline
 to Timesketch.
 
-First, create a disk to process. For example, to create a disk with one of the
+To begin, create a disk to process. For example, to create a disk with one of the
 base debian images, run:
 
 ```bash
@@ -303,8 +309,9 @@ gcloud compute disks create test-debian-image \
 
 Important Considerations:
 
-* The recipe requires that the disk being processed is in the same zone
-Turbinia is deployed to.
+* The recipe requires that the disk being processed is in the same zone Turbinia
+is deployed to. To process a disk from a different GCP project or zone, refer to
+the "Additional Workflows" section on using the `gcp_turbinia_disk_copy_ts` recipe.
 
 * If you encounter an error stating that the image cannot be found, you can list
 the available Debian images by running:
@@ -320,19 +327,26 @@ You'll then need to use `kubectl port-forward` to forward the Turbinia and Times
 services locally to your machine. This allows you to access the Turbinia UI and
 the Timesketch API from your local machine.
 
-For example, to port-forward from a release named `my-release`, run the following
-commands in two seperate terminals:
+For example, to port-forward from a release named `my-release`, open up two new
+tabs or terminals, then run the following commands in each terminal.
+
+For the Turbinia service:
 
 ```bash
-kubectl --namespace default port-forward service/my-release-turbinia 8000:8000 
+kubectl --namespace default port-forward service/my-release-turbinia 8000:8000
+```
+
+For the Timesketch service:
+
+```bash
 kubectl --namespace default port-forward service/my-release-timesketch 5000:5000  
 ```
 
 This will allow dfTimewolf to access the Turbinia and Timesketch services locally
 from your machine.
 
-Then on your original terminal where you initially set the environment variables
-for, run the dfTimewolf recipe:
+In your original terminal (where you set the environment variables), run the
+dfTimewolf recipe:
 
 ```bash
 dftimewolf gcp_turbinia_ts $PROJECT_ID $ZONE --disk_names test-debian-image
@@ -348,14 +362,16 @@ You can monitor the progress of the processing in the Turbinia UI
 (`http://localhost:8000`) and in the dfTimewolf output. Once the processing is
 complete, log in to Timesketch (`http://localhost:5000`) and verify that a new
 timeline has been created. You can then explore the timeline to analyze the
-processed artifacts.
+processed artifacts. When using Google Cloud Shell, you can utilize the
+[web preview feature](https://cloud.google.com/shell/docs/using-web-preview#preview_the_application)
+to view the UIs.
 
-Congratulations on completing the setup and processing your first disk! Please
-feel free to see the optional workflows below for more examples.
+Congratulations on completing the setup and processing your first disk! Explore
+the optional workflows for more examples.
 
 ### Additional Workflows
 
-#### Processing Disks from a Different Project
+#### Processing Disks from a Different Project or Zone
 
 In a real-world scenario, you may need to process a GCP instance or disk belonging
 to a different project. To do this, you can use the dfTimewolf recipe
