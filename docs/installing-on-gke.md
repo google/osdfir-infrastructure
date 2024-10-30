@@ -125,7 +125,7 @@ elevated privileges for disk processing.
 (or an equivalent with at least 8 vCPUs).
 * For clusters with more than one node, a shared filesystem like GCP Filestore is
 required. This involves configuring a Persistent Volume Claim (PVC) with `ReadWriteMany`
-access in K8s. Detailed instructions for provisioning shared filesystems
+access in Kubernetes. Detailed instructions for provisioning shared filesystems
 are provided in the 'Provisioning shared filestorage (optional)' section.
 
 OSDFIR Infrastructure provides a [shell script](https://github.com/google/osdfir-infrastructure/blob/main/tools/init-gke.sh)
