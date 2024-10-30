@@ -61,7 +61,7 @@ Return the proper persistence volume claim name
 {{- define "turbinia.pvc.name" -}}
 {{- $pvcName := .Values.persistence.name -}}
 {{- if and .Values.global .Values.global.existingPVC -}}
-{{- .Values.global.existingPVC -}}
+{{- printf "%s-%s" .Values.global.existingPVC "claim" }}
 {{- else -}}
 {{- printf "%s-%s-claim" .Release.Name $pvcName }}
 {{- end -}}
