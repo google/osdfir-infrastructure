@@ -253,7 +253,7 @@ pip install poetry
 poetry install && poetry shell
 ```
 
-> *Note*: If Poetry is not found, add its bin directory to your PATH:
+*Troubleshooting*: If Poetry is not found, add its bin directory to your PATH:
 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
