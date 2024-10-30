@@ -374,10 +374,14 @@ the optional workflows for more examples.
 #### Processing Disks from a Different Project or Zone
 
 In a real-world scenario, you may need to process a GCP instance or disk belonging
-to a different project. To do this, you can use the dfTimewolf recipe
+to a different project or zone. To do this, you can use the dfTimewolf recipe
 `gcp_turbinia_disk_copy_ts`. This recipe copies the disk from the source project
 to your analysis project running OSDFIR Infrastructure, then processes it with
 Turbinia and sends the Plaso results to Timesketch.
+
+This recipe also proves useful when your disk resides within the same project but
+in a different zone. In this case, simply specify your analysis project as both
+the source and destination project within the recipe.
 
 #### Processing Local Evidence with Turbinia
 
