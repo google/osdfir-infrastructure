@@ -433,6 +433,10 @@ You can monitor the progress of the processing in the Turbinia UI
 (accessible by port-forwarding). Any Plaso jobs that run can have their output
 directly downloaded from the Turbinia UI and imported into Timesketch.
 
+#### Using Timesketch
+
+To learn more about using Timesketch check out the [User Guide](https://timesketch.org/guides/user/sketch-overview/).
+
 #### Searching for IoCs with Yeti
 
 Yeti enhances your Timesketch investigations by enabling you to search for
