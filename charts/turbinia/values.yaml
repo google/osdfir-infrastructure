@@ -321,9 +321,6 @@ serviceAccount:
   ## If not set and create is true, a name is generated using the fullname template
   ##
   name: "turbinia"
-  ## @param serviceAccount.gcpName The name of the GCP service account to annotate. Applied only if `.Values.gcp.enabled` is set to `true`
-  ##
-  gcpName: "turbinia"
 ## Turbinia service parameters
 ##
 service:

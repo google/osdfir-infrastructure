@@ -34,9 +34,12 @@ VPC_NETWORK='default'
 # private, this is required for the control pane and cluster to communicate
 # privately.
 VPC_CONTROL_PANE='172.16.0.0/28' # Set to default
-# The Turbinia service account name. If you update this name, please be sure to
-# to update the `turbinia.gcp.ServiceAccountName` value in the Helm chart.
-SA_NAME="turbinia"
+# The Turbinia K8s service account name. If you update this name, please be sure to
+# to update the `turbinia.serviceAccount.name` value in the Helm chart.
+KSA_NAME="turbinia"
+# The Turbinia K8s namespace to install the Helm chart to. If you update this value,
+# please be sure to install the Helm chart in the namespace you specified.
+NAMESPACE="default"
 
 # Help menu
 if [[ "$*" == *--help ||  "$*" == *-h ]] ; then
@@ -58,18 +61,19 @@ if [[ -z "$( which gcloud )" ]] ; then
 fi
 
 # Check configured gcloud project
-if [[ -z "$DEVSHELL_PROJECT_ID" ]] ; then
-  DEVSHELL_PROJECT_ID=$(gcloud config get-value project)
+if [[ -z "$PROJECT_ID" ]] ; then
+  PROJECT_ID=$(gcloud config get-value project)
+  PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
   ERRMSG="ERROR: Could not get configured project. Please either restart "
   ERRMSG+="Google Cloudshell, or set configured project with "
   ERRMSG+="'gcloud config set project PROJECT' when running outside of Cloudshell."
-  if [[ -z "$DEVSHELL_PROJECT_ID" ]] ; then
+  if [[ -z "$PROJECT_ID" ]] ; then
     echo $ERRMSG
     exit 1
   fi
-  echo "Environment variable \$DEVSHELL_PROJECT_ID was not set at start time "
+  echo "Environment variable \$PROJECT_ID was not set at start time "
   echo "so attempting to get project config from gcloud config."
-  echo -n "Do you want to use $DEVSHELL_PROJECT_ID as the target project? (y / n) > "
+  echo -n "Do you want to use $PROJECT_ID as the target project? (y / n) > "
   read response
   if [[ $response != "y" && $response != "Y" ]] ; then
     echo $ERRMSG
@@ -78,34 +82,16 @@ if [[ -z "$DEVSHELL_PROJECT_ID" ]] ; then
 fi
 
 # TODO: Do real check to make sure credentials have adequate roles
-if [[ $( gcloud -q --project $DEVSHELL_PROJECT_ID auth list --filter="status:ACTIVE" --format="value(account)" | wc -l ) -eq 0 ]] ; then
+if [[ $( gcloud -q --project $PROJECT_ID auth list --filter="status:ACTIVE" --format="value(account)" | wc -l ) -eq 0 ]] ; then
   echo "No gcloud credentials found.  Use 'gcloud auth login' or 'gcloud auth application-default login' to log in"
   exit 1
 fi
 
-# Create the Turbinia service account
-if [[ "$*" != *--no-turbinia-sa* ]] ; then
-    # Enable IAM services
-    gcloud -q --project $DEVSHELL_PROJECT_ID services enable iam.googleapis.com
-    SA_MEMBER="serviceAccount:$SA_NAME@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com"
-    if [[ -z "$(gcloud -q --project $DEVSHELL_PROJECT_ID iam service-accounts list --format='value(name)' --filter=name:/$SA_NAME@)" ]] ; then
-      gcloud --project $DEVSHELL_PROJECT_ID iam service-accounts create "${SA_NAME}" --display-name "${SA_NAME}"
-      # Grant IAM roles to the service account
-      echo "Grant permissions on service account"
-      gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member=$SA_MEMBER --role='roles/compute.instanceAdmin'
-      gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member=$SA_MEMBER --role='roles/iam.serviceAccountUser'
-    else
-      echo "The Turbinia GCP service account $SA_NAME already exists. Skipping creation..."
-    fi
-else
-  echo "--no-turbinia-sa specified. Skipping Turbinia GCP service account creation..."
-fi
-
 # Deploy the VPC Network if it does not already exist
-networks=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute networks list --filter="name=$VPC_NETWORK" |wc -l)
+networks=$(gcloud -q --project $PROJECT_ID compute networks list --filter="name=$VPC_NETWORK" |wc -l)
 if [[ "${networks}" -lt "2" ]]; then
   echo "VPC network $VPC_NETWORK not found. Creating VPC network $VPC_NETWORK..."
-  gcloud compute networks create $VPC_NETWORK --subnet-mode=auto --project $DEVSHELL_PROJECT_ID
+  gcloud compute networks create $VPC_NETWORK --subnet-mode=auto --project $PROJECT_ID
 else
   echo "VPC network $VPC_NETWORK found. Skipping VPC network creation...."
 fi
@@ -113,18 +99,18 @@ fi
 # Allow Egress connectivity through GCP Cloud Router & NAT
 if [[ "$*" != *--no-nat* ]] ; then
     # Deploy the GCP Cloud router if it does not already exist
-    routers=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute routers list --regions="$REGION" --filter="name=$VPC_NETWORK" | wc -l)
+    routers=$(gcloud -q --project $PROJECT_ID compute routers list --regions="$REGION" --filter="name=$VPC_NETWORK" | wc -l)
     if [[ "${routers}" -lt "2" ]]; then
       echo "GCP router $VPC_NETWORK not found in $REGION. Creating GCP router $VPC_NETWORK for $REGION ..."
-      gcloud compute routers create $VPC_NETWORK --network $VPC_NETWORK --region $REGION --project $DEVSHELL_PROJECT_ID
+      gcloud compute routers create $VPC_NETWORK --network $VPC_NETWORK --region $REGION --project $PROJECT_ID
     else
       echo "GCP router $VPC_NETWORK found in $REGION. Skipping GCP router creation..."
     fi
     # Deploy the GCP NAT if it does not already exist
-    nat=$(gcloud -q --project $DEVSHELL_PROJECT_ID compute routers nats list --router=$VPC_NETWORK --router-region $REGION | wc -l)
+    nat=$(gcloud -q --project $PROJECT_ID compute routers nats list --router=$VPC_NETWORK --router-region $REGION | wc -l)
     if [[ "${routers}" -lt "2" ]]; then
       echo "Cloud NAT $VPC_NETWORK not found in $REGION. Creating Cloud NAT $VPC_NETWORK for $REGION ..."
-      gcloud compute routers nats create $VPC_NETWORK --project $DEVSHELL_PROJECT_ID --router-region $REGION --router $VPC_NETWORK --nat-all-subnet-ip-ranges --auto-allocate-nat-external-ips
+      gcloud compute routers nats create $VPC_NETWORK --project $PROJECT_ID --router-region $REGION --router $VPC_NETWORK --nat-all-subnet-ip-ranges --auto-allocate-nat-external-ips
     else
       echo "Cloud NAT $VPC_NETWORK found in $REGION. Skipping Cloud NAT creation..."
     fi
@@ -135,20 +121,35 @@ fi
 # Create GKE cluster and authenticate to it
 if [[ "$*" != *--no-cluster* ]] ; then
   echo "Enabling Container API"
-  gcloud -q --project $DEVSHELL_PROJECT_ID services enable container.googleapis.com
+  gcloud -q --project $PROJECT_ID services enable container.googleapis.com
   echo "Enabling Compute API"
-  gcloud -q --project $DEVSHELL_PROJECT_ID services enable compute.googleapis.com
+  gcloud -q --project $PROJECT_ID services enable compute.googleapis.com
   echo "Enabling Filestore API"
-  gcloud -q --project $DEVSHELL_PROJECT_ID services enable file.googleapis.com
+  gcloud -q --project $PROJECT_ID services enable file.googleapis.com
   if [[ "$*" != *--node-autoscale* ]] ; then
     echo "Creating cluster $CLUSTER_NAME with a node size of $CLUSTER_MIN_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
-    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
+    gcloud -q --project $PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$PROJECT_ID.svc.id.goog --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
   else
     echo "--node-autoscale specified. Creating cluster $CLUSTER_NAME with a minimum node size of $CLUSTER_MIN_NODE_SIZE to scale up to a maximum node size of $CLUSTER_MAX_NODE_SIZE. Each node will be configured with a machine type $CLUSTER_MACHINE_TYPE and disk size of $CLUSTER_DISK_SIZE"
-    gcloud -q --project $DEVSHELL_PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$DEVSHELL_PROJECT_ID.svc.id.goog --enable-autoscaling --min-nodes=$CLUSTER_MIN_NODE_SIZE --max-nodes=$CLUSTER_MAX_NODE_SIZE --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
+    gcloud -q --project $PROJECT_ID container clusters create $CLUSTER_NAME --machine-type $CLUSTER_MACHINE_TYPE --disk-size $CLUSTER_DISK_SIZE --num-nodes $CLUSTER_MIN_NODE_SIZE --master-ipv4-cidr $VPC_CONTROL_PANE --network $VPC_NETWORK --zone $ZONE --shielded-secure-boot --shielded-integrity-monitoring --no-enable-master-authorized-networks --enable-private-nodes --enable-ip-alias --scopes "https://www.googleapis.com/auth/cloud-platform" --labels "osdfir-infra=true" --workload-pool=$PROJECT_ID.svc.id.goog --enable-autoscaling --min-nodes=$CLUSTER_MIN_NODE_SIZE --max-nodes=$CLUSTER_MAX_NODE_SIZE --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcpFilestoreCsiDriver
   fi
-  # Add Workload Identity bind
-  gcloud iam service-accounts add-iam-policy-binding $SA_NAME@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:$DEVSHELL_PROJECT_ID.svc.id.goog[default/$SA_NAME]" --project $DEVSHELL_PROJECT_ID
 else
   echo "--no-cluster specified. Skipping GKE cluster creation..."
+fi
+
+# Create the Turbinia service account
+if [[ "$*" != *--no-turbinia-sa* ]] ; then
+    # Enable IAM services
+    gcloud -q --project $PROJECT_ID services enable iam.googleapis.com
+    # Grant the Compute Instance Admin role for attaching and detaching disks
+    gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
+        --role=roles/compute.instanceAdmin \
+        --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/$KSA_NAME
+
+    # Grant the Service Account user role to allow the account to act as a service account
+    gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
+        --role=roles/iam.serviceAccountUser \
+        --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/$KSA_NAME
+else
+  echo "--no-turbinia-sa specified. Skipping Turbinia GCP service account creation..."
 fi
