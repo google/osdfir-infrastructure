@@ -794,7 +794,7 @@ yeti:
       pullPolicy: Always
       ## @param yeti.arangodb.image.tag Overrides the image tag whose default is the chart appVersion
       ##
-      tag: latest
+      tag: 3.11
     ## Yeti arangodb resource requests and limits
     ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
     ## @param yeti.arangodb.resources.limits Resource limits for the arangodb container

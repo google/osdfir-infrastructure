@@ -17,57 +17,189 @@ helm install my-release osdfir-charts/timesketch
 > **Note**: By default, Timesketch is not externally accessible and can be
 reached via `kubectl port-forward` within the cluster.
 
-For a quick start with a local Kubernetes cluster on your desktop, check out the
-[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
-
 ## Introduction
 
 This chart bootstraps a [Timesketch](https://github.com/google/timesketch/blob/master/docker/release/build/Dockerfile-latest)
 deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
+For a quick start with a local Kubernetes cluster on your desktop, check out the
+[getting started with Minikube guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/getting-started.md).
+
 ## Prerequisites
 
-- Kubernetes 1.19+
-- Helm 3.2.0+
+- Kubernetes 1.23+
+- Helm 3.8.0+
 - PV provisioner support in the underlying infrastructure
+- Shared storage for clusters larger then one machine.
 
 ## Installing the Chart
 
-The first step is to add the repo and then update to pick up any new changes.
+The first step is to add and update the repo:
 
 ```console
 helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm repo update
 ```
 
-To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
+Then to install the chart, specify any release name of your choice. For example,
+using `my-release` as the release name, run:
 
 ```console
 helm install my-release osdfir-charts/timesketch
 ```
 
-The command deploys Timesketch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
-during installation or see [Installating for Production](#installing-for-production)
-for a recommended production installation.
+The command deploys Timesketch on the Kubernetes cluster in the default configuration.
+The [Parameters](#parameters) section lists the parameters that can be configured
+during installation.
 
-> **Tip**:  You can override the default Timesketch configuration by pulling the Helm
-chart locally and adding a `configs/` directory at the root of the Helm chart with user-provided configs.
+> **Tip**:  See the [Managing and updating Timesketch configs](#managing-and-updating-timesketch-configs)
+section for more details on managing the Timesketch configs.
 
-## Installing for Production
+## Configuration and installation details
 
-Pull the chart locally then cd into `/timesketch` and review the `values-production.yaml` file for a list of values that will be used for production.
+### Use a different Timesketch version
 
-```console
-helm pull osdfir-charts/timesketch --untar
-```
+The Timesketch Helm chart utilizes the latest container release tags by default.
+OSDFIR Infrastructure actively monitors for new versions of the main containers
+and releases updated charts accordingly.
 
-Install the chart with the base values in `values.yaml` and the production values in `values-production.yaml`, then using a release name such as `my-release`, run:
+To modify the application version used in Timesketch, specify a different version
+of the image using the `image.tag` parameter and/or a different repository using
+the `image.repository` parameter. For example, to use the most recent development
+version instead, set `image.tag` to `latest`.
 
-```console
-helm install my-release ../timesketch -f values.yaml -f values-production.yaml
-```
+### Upgrading the Helm chart
 
-### Enabling GKE Ingress and OIDC Authentication
+Helm chart updates can be retrieved by running `helm repo update`.
+
+To explore available charts and versions, use `helm search repo osdfir-charts/`.
+Install a specific chart version with `helm install my-release osdfir-charts/timesketch --version <version>`.
+
+A major Helm chart version change (like v1.0.0 -> v2.0.0) indicates that there
+is an incompatible breaking change needing manual actions.
+
+### Managing and updating Timesketch configs
+
+This section outlines how to deploy and manage Timesketch configuration files
+within OSDFIR infrastructure.
+
+There are two primary methods:
+
+#### Using Default Configurations
+
+If you don't provide your own Timesketch config files during deployment,
+the Timesketch deployment will automatically retrieve the latest default configs
+from the Timesketch Github repository. This method requires no further action from you.
+
+> **NOTE:**  When using the default method, you cannot update the Timesketch config files directly.
+
+#### Managing Timesketch configs externally
+
+For more advanced configuration management, you can manage Timesketch config
+files independently of the Helm chart:
+
+1. Prepare your Config Files:
+
+    Organize all the Timesketch configuration files in a directory with your
+    desired customizations.
+
+2. Create a ConfigMap:
+
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./timesketch-configs/
+    ```
+
+    Replace `./timesketch-configs/` with the actual path to your configuration files.
+
+3. Install or Upgrade the Helm Chart:
+
+    ```console
+    helm install my-release osdfir-charts/timesketch --set config.existingConfigMap="timesketch-configs"
+    ```
+
+    This command instructs the Helm chart to use the `timesketch-configs` ConfigMap for
+    Timesketch's config files.
+
+To update the config changes using this method:
+
+1. Update the ConfigMap:
+
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
+    ```
+
+2. Restart the Timesketch deployment to apply the new configs
+
+    ```console
+    kubectl rollout restart deployment -l app.kubernetes.io/name=timesketch
+    ```
+
+### Upgrading the Timesketch Database Schema
+
+From time to time, a Timesketch release requires a manual database upgrade if
+the schema has changed.
+The [Timesketch release page](https://github.com/google/timesketch/releases)
+will indicate if a database upgrade is required.
+
+Follow these steps to upgrade the database on your Kubernetes deployment:
+
+1. **Upgrade Timesketch (if not already done):**
+   - Upgrade your Timesketch deployment to the desired release version:
+
+     ```bash
+     helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION> --set image.pullPolicy=Always
+     ```
+
+2. **Connect to Timesketch Pod:**
+   - Once the upgraded pods are ready, shell into the Timesketch pod:
+
+     ```bash
+     kubectl exec -it my-release-timesketch-<RANDOM> -- /bin/bash
+     ```
+
+     - Find your pod name using `kubectl get pods`.
+
+3. **Perform Database Upgrade:**
+   - Follow the detailed steps in the [Timesketch documentation to upgrade your database](https://timesketch.org/guides/admin/upgrade/#upgrade-the-database-schema).
+
+4. **Restart Timesketch (Recommended):**
+   - After a successful database upgrade, it is recommended to restart your
+   Timesketch deployment for the changes to take full effect:
+
+      ```bash
+      kubectl rollout restart deployment my-release-timesketch-web
+      ```
+
+### Metrics and monitoring
+
+The chart starts a metrics exporter for prometheus. The metrics endpoint (port 8080)
+is exposed in the service. Metrics can be scraped from within the cluster by either
+a Prometheus server running in your cluster or a cloud-based Prometheus service.
+Currently, the available metrics is limited to system metrics.
+
+### Resource requests and limits
+
+OSDFIR Infrastructure charts allow setting resource requests and limits for all
+containers inside the chart deployment. These are inside the `resources` value
+(check parameter table). Setting requests is essential for production workloads
+and these should be adapted to your specific use case.
+
+To maximize deployment success across different environments, resources are
+minimally defined by default.
+
+### Persistence
+
+By default, the chart mounts a Persistent Volume at the `/mnt/timesketchvolume` path.
+The volume is created using dynamic volume provisioning.
+
+Configuration files can be found at the `/etc/timesketch` path of the container
+while logs can be found at `/var/log/timesketch`.
+
+For clusters running more than one nodes or machines, the Persistent Volume will
+need to have the ability to be mounted by multiple machines, such as NFS, GCP
+Filestore, AWS EFS, and other shared file storage equivalents.
+
+## Enabling GKE Ingress and OIDC Authentication
 
 Follow these steps to externally expose Timesketch and enable Google Cloud OIDC
 to control user access to Timesketch.
@@ -115,6 +247,7 @@ OAuth client.
     helm upgrade my-release ../timesketch \
         -f values-production.yaml \
         --set ingress.enabled=true \
+        --set ingress.className="gce" \
         --set ingress.host=<DOMAIN_NAME> \
         --set ingress.gcp.staticIPName=<STATIC_IP_NAME> \
         --set ingress.gcp.managedCertificates=true \
@@ -165,20 +298,20 @@ kubectl delete pvc -l release=my-release
 | ------------------------ | ------------------------------------------------------------- | --------------------------------------------------------- |
 | `image.repository`       | Timesketch image repository                                   | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
 | `image.pullPolicy`       | Timesketch image pull policy                                  | `IfNotPresent`                                            |
-| `image.tag`              | Overrides the image tag whose default is the chart appVersion | `latest`                                                  |
+| `image.tag`              | Overrides the image tag whose default is the chart appVersion | `20240828`                                                |
 | `image.imagePullSecrets` | Specify secrets if pulling from a private repository          | `[]`                                                      |
 
 ### Timesketch Configuration Parameters
 
-| Name                                                 | Description                                                                                                                           | Value       |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `config.override`                                    | Overrides the default Timesketch configs to instead use a user specified directory if present on the root directory of the Helm chart | `configs/*` |
-| `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                                            | `true`      |
-| `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                                          | `false`     |
-| `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                                          | `""`        |
-| `config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                                          | `true`      |
-| `config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                                                 | `""`        |
-| `config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                                              | `""`        |
+| Name                                                 | Description                                                                                | Value   |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------- |
+| `config.existingConfigMap`                           | Use an existing ConfigMap as the default Timesketch config.                                | `""`    |
+| `config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment | `true`  |
+| `config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)               | `false` |
+| `config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                               | `""`    |
+| `config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                               | `true`  |
+| `config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                      | `""`    |
+| `config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                   | `""`    |
 
 ### Timesketch Frontend Configuration
 
@@ -223,49 +356,50 @@ kubectl delete pvc -l release=my-release
 
 ### Common Parameters
 
-| Name                              | Description                                                                                                                        | Value               |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `serviceAccount.create`           | Specifies whether a service account should be created                                                                              | `true`              |
-| `serviceAccount.annotations`      | Annotations to add to the service account                                                                                          | `{}`                |
-| `serviceAccount.name`             | The name of the service account to use                                                                                             | `timesketch`        |
-| `service.type`                    | Timesketch service type                                                                                                            | `ClusterIP`         |
-| `service.port`                    | Timesketch service port                                                                                                            | `5000`              |
-| `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
-| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `8080`              |
-| `persistence.name`                | Timesketch persistent volume name                                                                                                  | `timesketchvolume`  |
-| `persistence.size`                | Timesketch persistent volume size                                                                                                  | `2Gi`               |
-| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                            | `""`                |
-| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                              | `["ReadWriteOnce"]` |
-| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                             | `false`             |
-| `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                        | `""`                |
-| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `gce`               |
-| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                       | `false`             |
-| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                     | `false`             |
-| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                   | `false`             |
-| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP. Required when using "gce" in ingress.className                                  | `""`                |
-| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved in GCP. This can be optionally provided to deploy a loadbalancer with an IPV6 address | `""`                |
+| Name                              | Description                                                                                                                         | Value               |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `serviceAccount.create`           | Specifies whether a service account should be created                                                                               | `true`              |
+| `serviceAccount.annotations`      | Annotations to add to the service account                                                                                           | `{}`                |
+| `serviceAccount.name`             | The name of the service account to use                                                                                              | `""`                |
+| `service.type`                    | Timesketch service type                                                                                                             | `ClusterIP`         |
+| `service.port`                    | Timesketch service port                                                                                                             | `5000`              |
+| `metrics.enabled`                 | Enables metrics scraping                                                                                                            | `true`              |
+| `metrics.port`                    | Port to scrape metrics from                                                                                                         | `8080`              |
+| `persistence.name`                | Timesketch persistent volume name                                                                                                   | `timesketchvolume`  |
+| `persistence.size`                | Timesketch persistent volume size                                                                                                   | `2Gi`               |
+| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                             | `""`                |
+| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                               | `["ReadWriteOnce"]` |
+| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                              | `false`             |
+| `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                         | `""`                |
+| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                          | `""`                |
+| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                        | `false`             |
+| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                      | `false`             |
+| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                    | `false`             |
+| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP.                                                                                  | `""`                |
+| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved. This can be optionally provided to deploy a loadbalancer with an IPV6 address in GCP. | `""`                |
 
 ### Third Party Configuration
 
 
 ### Opensearch Configuration Parameters
 
-| Name                                   | Description                                                                                                 | Value                                                                                    |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `opensearch.enabled`                   | Enables the Opensearch deployment                                                                           | `true`                                                                                   |
-| `opensearch.config.opensearch.yml`     | Opensearch configuration file. Can be appended for additional configuration options                         | `{"opensearch.yml":"plugins:\n  security:\n    allow_unsafe_democertificates: false\n"}` |
-| `opensearch.extraEnvs[0].name`         | Environment variable to disable Opensearch Demo config                                                      | `DISABLE_INSTALL_DEMO_CONFIG`                                                            |
-| `opensearch.extraEnvs[0].value`        | Disables Opensearch Demo config                                                                             | `true`                                                                                   |
-| `opensearch.extraEnvs[1].name`         | Environment variable to disable Opensearch Security plugin given that                                       | `DISABLE_SECURITY_PLUGIN`                                                                |
-| `opensearch.extraEnvs[1].value`        | Disables Opensearch Security plugin                                                                         | `true`                                                                                   |
-| `opensearch.replicas`                  | Number of Opensearch instances to deploy                                                                    | `1`                                                                                      |
-| `opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                      | `true`                                                                                   |
-| `opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M`                                                                      |
-| `opensearch.httpPort`                  | Opensearch service port                                                                                     | `9200`                                                                                   |
-| `opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                                                                                    |
-| `opensearch.resources.requests.cpu`    | The requested cpu for the Opensearch container                                                              | `250m`                                                                                   |
-| `opensearch.resources.requests.memory` | The requested memory for the Opensearch container                                                           | `512Mi`                                                                                  |
-| `opensearch.nodeSelector`              | Node labels for Opensearch pods assignment                                                                  | `{}`                                                                                     |
+| Name                                   | Description                                                                                                                                                    | Value                                                                                    |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `opensearch.enabled`                   | Enables the Opensearch deployment                                                                                                                              | `true`                                                                                   |
+| `opensearch.nodeGroup`                 | Specifies the node group for this OpenSearch instance. Avoid using "master" as the node group name, as this will prevent the service from resolving correctly. | `""`                                                                                     |
+| `opensearch.config.opensearch.yml`     | Opensearch configuration file. Can be appended for additional configuration options                                                                            | `{"opensearch.yml":"plugins:\n  security:\n    allow_unsafe_democertificates: false\n"}` |
+| `opensearch.extraEnvs[0].name`         | Environment variable to disable Opensearch Demo config                                                                                                         | `DISABLE_INSTALL_DEMO_CONFIG`                                                            |
+| `opensearch.extraEnvs[0].value`        | Disables Opensearch Demo config                                                                                                                                | `true`                                                                                   |
+| `opensearch.extraEnvs[1].name`         | Environment variable to disable Opensearch Security plugin given that                                                                                          | `DISABLE_SECURITY_PLUGIN`                                                                |
+| `opensearch.extraEnvs[1].value`        | Disables Opensearch Security plugin                                                                                                                            | `true`                                                                                   |
+| `opensearch.replicas`                  | Number of Opensearch instances to deploy                                                                                                                       | `1`                                                                                      |
+| `opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                                                                         | `true`                                                                                   |
+| `opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                                                                      | `-Xmx512M -Xms512M`                                                                      |
+| `opensearch.httpPort`                  | Opensearch service port                                                                                                                                        | `9200`                                                                                   |
+| `opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running                                                    | `2Gi`                                                                                    |
+| `opensearch.resources.requests.cpu`    | The requested cpu for the Opensearch container                                                                                                                 | `250m`                                                                                   |
+| `opensearch.resources.requests.memory` | The requested memory for the Opensearch container                                                                                                              | `512Mi`                                                                                  |
+| `opensearch.nodeSelector`              | Node labels for Opensearch pods assignment                                                                                                                     | `{}`                                                                                     |
 
 ### Redis Configuration Parameters
 
@@ -317,8 +451,8 @@ helm install my-release osdfir-charts/timesketch --set opensearch.replicas=3
 
 The above command installs Timesketch with 3 Opensearch Replicas.
 
-Alternatively, the `values.yaml` and `values-production.yaml` file can be
-directly updated if the Helm chart was pulled locally. For example,
+Alternatively, the `values.yaml` file can be directly updated if the Helm chart
+was pulled locally. For example,
 
 ```console
 helm pull osdfir-charts/timesketch --untar
@@ -331,33 +465,10 @@ chart with the updated values.
 helm install my-release ../timesketch
 ```
 
-## Persistence
-
-The Timesketch deployment stores data at the `/mnt/timesketchvolume` path of the
-container and stores configuration files at the `/etc/timesketch` path of the container.
-
-Persistent Volume Claims are used to keep the data across deployments. This is
-known to work in GCP and Minikube. See the Parameters section to configure the
-PVC or to disable persistence.
-
-## Upgrading
-
-If you need to upgrade an existing release to update a value, such as persistent
-volume size or upgrading to a new release, you can run [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/).
-For example, to set a new release and upgrade storage capacity, run:
-
-```console
-helm upgrade my-release ../timesketch \
-    --set image.tag=latest \
-    --set persistence.size=10T
-```
-
-The above command upgrades an existing release named `my-release` updating the
-image tag to `latest` and increasing persistent volume size of an existing volume
-to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
-of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
-
 ## Troubleshooting
+
+Find more information about how to deal with common errors in OSDFIR Infrastructure
+Helm charts in this [troubleshooting guide](https://github.com/google/osdfir-infrastructure/blob/main/docs/troubleshooting.md).
 
 There is a known issue causing PostgreSQL authentication to fail. This occurs
 when you `delete` the deployed Helm chart and then redeploy the Chart without
@@ -367,7 +478,7 @@ for more details.
 
 ## License
 
-Copyright &copy; 2023 OSDFIR Infrastructure
+Copyright &copy; 2024 OSDFIR Infrastructure
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

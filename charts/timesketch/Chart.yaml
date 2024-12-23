@@ -1,6 +1,6 @@
 apiVersion: v2
 name: timesketch
-version: 1.0.5
+version: 1.0.8
 description: A Helm chart for Timesketch Kubernetes deployments.
 keywords:
 - timesketch
@@ -29,7 +29,7 @@ sources:
 - https://github.com/google/timesketch
 - https://github.com/google/osdfir-infrastructure
 icon: https://raw.githubusercontent.com/google/timesketch/master/timesketch/frontend-ng/dist/timesketch-color.png
-appVersion: "latest"
+appVersion: "20240828"
 annotations:
   category: Security
   licenses: Apache-2.0

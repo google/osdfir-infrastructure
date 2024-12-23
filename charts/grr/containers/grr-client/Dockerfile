@@ -14,21 +14,19 @@
 FROM ghcr.io/google/grr:latest AS grr
 COPY config /config
 COPY grr-client-config.yaml /config/grr.client.yaml
-COPY executable-signing.key /config/
 
 RUN mkdir /client_installers && \
     grr_config_updater repack_clients \
       --secondary_configs /config/grr.yaml \
       --noupload
 
-WORKDIR /
-
 FROM ubuntu:22.04
 WORKDIR /
 
-COPY config /config
-COPY --from=grr /config/grr.client.yaml /config/grr.client.yaml
+COPY --from=grr /config/communicator.txt /etc/fleetspeak-client/communicator.txt
+COPY --from=grr /config/config.textproto /etc/fleetspeak-client/client.config
+COPY --from=grr /config/grr.client.yaml /etc/fleetspeak-client/grr.client.yaml
 
 COPY --from=grr /client_installers/grr_*_amd64.deb .
 RUN dpkg -i grr_*_amd64.deb && rm grr_*_amd64.deb
-ENTRYPOINT ["fleetspeak-client", "-config" , "/config/config.textproto", "-alsologtostderr"]
+ENTRYPOINT ["fleetspeak-client", "-config" , "/etc/fleetspeak-client/client.config", "-alsologtostderr"]

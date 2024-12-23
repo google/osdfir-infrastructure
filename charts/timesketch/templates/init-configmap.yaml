@@ -16,6 +16,7 @@ data:
 
     if [ $(ls /tmp/timesketch/ | wc -l) -gt 0 ]; then
       echo "Using existing configuration files provided."
+      ls /tmp/timesketch
       cp /tmp/timesketch/* /etc/timesketch/
     else
       echo -n "* Fetching configuration files.." 

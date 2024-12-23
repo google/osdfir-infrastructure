@@ -33,7 +33,7 @@ fleetspeak:
   admin:
     ## @param fleetspeak.admin.image Sets the Fleetspeak admin container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:v0.1.15"
+    image: "ghcr.io/google/fleetspeak:v0.1.17"
     ## @param fleetspeak.admin.listenPort Sets the Fleetspeak admin listen port to use.
     ##
     listenPort: 4444
@@ -47,7 +47,7 @@ fleetspeak:
     healthCheckPort: 8080
     ## @param fleetspeak.frontend.image Sets the Fleetspeak fronend container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:v0.1.15"
+    image: "ghcr.io/google/fleetspeak:v0.1.17"
     ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
     ##
     listenPort: 4443
@@ -82,10 +82,6 @@ fleetspeak:
 ## @section GRR parameters
 ##
 grr:
-  ## @param grr.generateExecutableSigningCert Enables the generation of self-signed executable signging certificate.
-  ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
-  ##
-  generateExecutableSigningCert: true
   ## @param grr.namespace Sets the GRR namespace.
   ##
   namespace: "grr"
@@ -96,7 +92,7 @@ grr:
   admin:
     ## @param grr.admin.image Sets the GRR admin container image to use.
     ##
-    image: "ghcr.io/google/grr:v3.4.7.4-release"
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
     ## @param grr.admin.listenPort Sets the GRR admin listen port to use.
     ##
     listenPort: 8000
@@ -108,16 +104,16 @@ grr:
     ##
     bucket: "GRR_BLOBSTORE_BUCKET"
   daemon:
-    ## @param grr.daemon.image Sets the GRR daemon container image to use.
+    ## @param grr.daemon.image Sets the GRR client container image to use.
     ##
-    image: "GRR_DAEMON_IMAGE"
-    ## @param grr.daemon.imagePullPolicy Sets the GRR daemon container image pull policy to use.
+    image: "GRR_CLIENT_IMAGE"
+    ## @param grr.daemon.imagePullPolicy Sets the GRR client container image pull policy to use.
     ##
     imagePullPolicy: "Always"
   frontend:
     ## @param grr.frontend.image Sets the GRR frontend container image to use.
     ##
-    image: "ghcr.io/google/grr:v3.4.7.4-release"
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
     ## @param grr.frontend.listenPort Sets the GRR frontend listen port to use.
     ##
     listenPort: 11111
@@ -143,7 +139,7 @@ grr:
   worker:
     ## @param grr.worker.image Sets the GRR worker container image to use.
     ##
-    image: "ghcr.io/google/grr:v3.4.7.4-release"
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
   pubsub:
     ## @param grr.pubsub.project Sets the Project ID where for the PubSub Topic.
     ##

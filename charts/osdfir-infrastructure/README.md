@@ -364,7 +364,7 @@ kubectl delete pvc -l release=my-release
 | `yeti.redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`        |
 | `yeti.arangodb.image.repository`        | Yeti arangodb image repository                                                               | `arangodb`  |
 | `yeti.arangodb.image.pullPolicy`        | Yeti image pull policy                                                                       | `Always`    |
-| `yeti.arangodb.image.tag`               | Overrides the image tag whose default is the chart appVersion                                | `latest`    |
+| `yeti.arangodb.image.tag`               | Overrides the image tag whose default is the chart appVersion                                | `3.11`      |
 | `yeti.arangodb.resources.limits`        | Resource limits for the arangodb container                                                   | `{}`        |
 | `yeti.arangodb.resources.requests`      | Requested resources for the arangodb container                                               | `{}`        |
 

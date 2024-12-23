@@ -15,8 +15,8 @@ spec:
   template:
     metadata:
       annotations:
-        # Have Deployment restart after each upgrade
-        roll: {{ randAlphaNum 5 | quote }}
+        # Restart pod if values.yaml parameters that affect the config were changed
+        checksum/config: {{  include (print $.Template.BasePath "/init-configmap.yaml") . | sha256sum }}
         {{- if .Values.metrics.enabled }} 
         prometheus.io/port: {{ .Values.metrics.port | quote }}
         prometheus.io/scrape: "true"
@@ -83,10 +83,11 @@ spec:
             defaultMode: 0744
         - name: timesketch-configs
           emptyDir: {}
+        {{- if .Values.config.existingConfigMap }}
         - name: uploaded-configs
           configMap:
-            name: {{ include "timesketch.fullname" . }}-configmap
-            optional: true
+            name: {{ .Values.config.existingConfigMap }}
+        {{- end }}
         {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
         - name: authenticated-emails
           secret:

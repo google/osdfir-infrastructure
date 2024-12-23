@@ -46,9 +46,9 @@ spec:
         - name: grr-worker-config
           mountPath: /usr/src/grr/grr/core/install_data/etc/server.local.yaml
           subPath: server.local.yaml
-        - name: cert-volume
+        - name: grr-exe-sign-keys
           readOnly: true
-          mountPath: "/grr/certs"
+          mountPath: "/grr/exe/sign/keys"
       volumes:
       - name: grr-worker-config
         secret:
@@ -56,6 +56,6 @@ spec:
           items:
           - key: server.local.yaml
             path: server.local.yaml
-      - name: cert-volume
+      - name: grr-exe-sign-keys
         secret:
-          secretName: sec-grr-executable-signing-cert
+          secretName: sec-grr-executable-signing-keys
