@@ -2,7 +2,7 @@
 
 [OpenRelik](https://openrelik.org) OpenRelik is an open-source (Apache-2.0) platform designed to streamline collaborative digital forensic investigations.
 
-[Overview of GRR](https://openrelik.org/docs/)
+[Overview of OpenRelik](https://openrelik.org/docs/)
 
 [Chart Source Code](https://github.com/openrelik)
 
@@ -51,7 +51,7 @@ minikube tunnel &
 
 ### 1.1. Installing the Chart
 
-To install the chart, specify any release name of your choice. For example, using `grr-on-k8s' as the release name, run:
+To install the chart, specify any release name of your choice. For example, using `openrelik-on-k8s' as the release name, run:
 
 ```console
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
@@ -62,7 +62,7 @@ kubectl get pods
 # NAME                                      READY   STATUS    RESTARTS   AGE
 ```
 
-The command deploys GRR on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+The command deploys OpenRelik on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
 ### 1.2. Connect to the OpenRelik Frontend
 
@@ -137,7 +137,7 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values-gcp.yaml
 ```
 
-#### 2.2.5. Wait for all GRR pods to be in 'Running' status
+#### 2.2.5. Wait for all OpenReik pods to be in 'Running' status
 
 ```console
 # Check that all the pods are in the 'Running' status.
@@ -203,58 +203,28 @@ helm uninstall openrelik-on-k8s
 
 | Name                         | Description                                                    | Value   |
 | ---------------------------- | -------------------------------------------------------------- | ------- |
-| `global.selfManagedMysql`    | Enables a mySQL DB containter to be deployed into the cluster. | `true`  |
-| `global.useResourceRequests` | Allocates resources to the pods.                               | `false` |
 
-### Fleetspeak parameters
-
-| Name                                   | Description                                                                                       | Value                               |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| `fleetspeak.generateCert`              | Enables the generation of self-signed Fleetspeak x509 certificate.                                | `true`                              |
-| `fleetspeak.httpsHeaderChecksum`       | Defines on whether to add a HTTPS header checksum                                                 | `false`                             |
-| `fleetspeak.subjectCommonName`         | Sets the Fleetspeak x509 certificate subject common name.                                         | `fleetspeak-frontend`               |
-| `fleetspeak.admin.image`               | Sets the Fleetspeak admin container image to use.                                                 | `ghcr.io/google/fleetspeak:v0.1.17` |
-| `fleetspeak.admin.listenPort`          | Sets the Fleetspeak admin listen port to use.                                                     | `4444`                              |
-| `fleetspeak.admin.replicas`            | Sets the amount of Fleetspeak admin pods to run.                                                  | `1`                                 |
-| `fleetspeak.frontend.healthCheckPort`  | Sets the Fleetspeak frontend health check port to use.                                            | `8080`                              |
-| `fleetspeak.frontend.image`            | Sets the Fleetspeak fronend container image to use.                                               | `ghcr.io/google/fleetspeak:v0.1.17` |
-| `fleetspeak.frontend.listenPort`       | Sets the Fleetspeak frontend listen port to use.                                                  | `4443`                              |
-| `fleetspeak.frontend.neg`              | Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service. | `false`                             |
-| `fleetspeak.frontend.notificationPort` | Sets the Fleetspeak frontend notificaton port to use.                                             | `12000`                             |
-| `fleetspeak.frontend.replicas`         | Sets the amount of Fleetspeak frontend pods to run.                                               | `1`                                 |
-| `fleetspeak.mysqlDb.address`           | Sets the Fleetspeak DB address to use.                                                            | `mysql`                             |
-| `fleetspeak.mysqlDb.name`              | Sets the Fleetspeak DB name to use.                                                               | `fleetspeak`                        |
-| `fleetspeak.mysqlDb.port`              | Sets the Fleetspeak DB port to use.                                                               | `3306`                              |
-| `fleetspeak.mysqlDb.userName`          | Sets the Fleetspeak DB user name to use.                                                          | `fleetspeak-user`                   |
-| `fleetspeak.mysqlDb.userPassword`      | Sets the Fleetspeak DB password to use.                                                           | `fleetspeak-password`               |
-
-### GRR parameters
+### OpenRelik parameters
 
 | Name                         | Description                                             | Value                                 |
 | ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
-| `grr.admin.image`            | Sets the GRR admin container image to use.              | `ghcr.io/google/grr:v3.4.7.5-release` |
-| `grr.admin.listenPort`       | Sets the GRR admin listen port to use.                  | `8000`                                |
-| `grr.admin.replicas`         | Sets the amount of GRR admin pods to run.               | `1`                                   |
-| `grr.daemon.image`           | Sets the GRR client container image to use.             | `grr-client:v0.1`                     |
-| `grr.daemon.imagePullPolicy` | Sets the GRR client container image pull policy to use. | `Never`                               |
-| `grr.frontend.image`         | Sets the GRR frontend container image to use.           | `ghcr.io/google/grr:v3.4.7.5-release` |
-| `grr.frontend.listenPort`    | Sets the GRR frontend listen port to use.               | `11111`                               |
-| `grr.frontend.replicas`      | Sets the amount of GRR frontend pods to run.            | `1`                                   |
-| `grr.mysqlDb.address`        | Sets the GRR DB address to use.                         | `mysql`                               |
-| `grr.mysqlDb.name`           | Sets the GRR DB name to use                             | `grr`                                 |
-| `grr.mysqlDb.port`           | Sets the GRR DB port to use.                            | `3306`                                |
-| `grr.mysqlDb.userName`       | Sets the GRR DB user name to use.                       | `grr-user`                            |
-| `grr.mysqlDb.userPassword`   | Sets the GRR DB user password to use.                   | `grr-password`                        |
-| `grr.worker.image`           | Sets the GRR worker container image to use.             | `ghcr.io/google/grr:v3.4.7.5-release` |
 
-### Prometheus parameters
+### Postgres parameters
 
-| Name                     | Description                                 | Value   |
-| ------------------------ | ------------------------------------------- | ------- |
-| `prometheus.metricsPort` | Sets the port to expose Prometheus metrics. | `19090` |
+| Name                         | Description                                             | Value                                 |
+| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
 
+### Redis parameters
 
-Copyright &copy; 2024 OSDFIR Infrastructure
+| Name                         | Description                                             | Value                                 |
+| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
+
+### Gateway API parameters
+
+| Name                         | Description                                             | Value                                 |
+| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
+
+Copyright &copy; 2025 OSDFIR Infrastructure
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
