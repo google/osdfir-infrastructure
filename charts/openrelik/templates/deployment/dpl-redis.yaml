@@ -1,0 +1,24 @@
+{{- if .Values.redis.managed }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: openrelik-redis
+  name: openrelik-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: openrelik-redis
+  template:
+    metadata:
+      labels:
+        io.kompose.service: openrelik-redis
+    spec:
+      containers:
+        - args:
+            - redis-server
+          image: {{ .Values.redis.image }}
+          name: openrelik-redis
+      restartPolicy: Always
+{{- end }}

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrelik-worker-hayabusa
+  namespace: openrelik
+  labels:
+    worker: hayabusa
+spec:
+  replicas: {{ .Values.openrelik.worker.hayabusa.replicas }}
+  selector:
+    matchLabels:
+      worker: hayabusa
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        worker: hayabusa
+    spec:
+      containers:
+        - image: {{ .Values.openrelik.worker.hayabusa.image }}
+          name: openrelik-worker-hayabusa
+          args:
+            - celery
+            - --app=src.app
+            - worker
+            - --task-events
+            - --concurrency=4
+            - --loglevel=INFO
+            - -Q
+            - openrelik-worker-hayabusa
+          env:
+          - name: REDIS_URL
+            value: {{ .Values.redis.url }}
+          volumeMounts:
+          {{- if .Values.filestore.managed }}
+          - name: vol-filestore
+            mountPath: /usr/share/openrelik
+          {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- if .Values.filestore.managed }}
+        - name: vol-filestore
+          persistentVolumeClaim:
+            claimName: pvc-filestore
+        {{- end }}

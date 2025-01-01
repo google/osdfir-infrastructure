@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrelik-ui
+  namespace: openrelik
+  labels:
+    app: ui
+spec:
+  replicas: {{ .Values.openrelik.ui.replicas }}
+  selector:
+    matchLabels:
+      app: ui
+  template:
+    metadata:
+      labels:
+        app: ui
+    spec:
+      containers:
+        - name: openrelik-ui
+          image: {{ .Values.openrelik.ui.image }}
+          env:
+            - name: OPENRELIK_API_VERSION
+              value: v1
+            - name: OPENRELIK_AUTH_METHODS
+              value: local
+            - name: OPENRELIK_SERVER_URL
+              value: '{{ .Values.openrelik.server.url }}'
+          ports:
+            - containerPort: {{ .Values.openrelik.ui.port }}
+              protocol: TCP
+      restartPolicy: Always

@@ -60,6 +60,7 @@ If not then go ahead and issue the `git clone` command below:
 git clone https://github.com/daschwanden/openrelik-infra.git
 cd openrelik-infra
 export REPO=$(pwd)
+cd cloud/openrelik
 ```
 
 We are good to go now!
@@ -67,7 +68,6 @@ We are good to go now!
 ### 2.1. Setup the Platform Infrasturcture
 
 ```console
-cd cloud
 terraform init
 terraform plan -var "project_id=$PROJECT_ID"
 terraform apply -var "project_id=$PROJECT_ID"

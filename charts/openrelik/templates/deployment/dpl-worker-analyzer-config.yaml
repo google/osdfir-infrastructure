@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrelik-worker-analyzer-config
+  namespace: openrelik
+  labels:
+    worker: analyzer-config
+spec:
+  replicas: {{ .Values.openrelik.worker.analyzer-config.replicas }}
+  selector:
+    matchLabels:
+      worker: analyzer-config
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        worker: analyzer-config
+    spec:
+      containers:
+        - name: openrelik-worker-analyzer-config
+          image: {{ .Values.openrelik.worker.analyzer-config.image }}
+          args:
+            - celery
+            - --app=src.app
+            - worker
+            - --task-events
+            - --concurrency=4
+            - --loglevel=INFO
+            - -Q
+            - openrelik-worker-analyzer-config
+          env:
+            - name: REDIS_URL
+              value: {{ .Values.redis.url }}
+          volumeMounts:
+            - name: vol-filestore
+              mountPath: /usr/share/openrelik
+      restartPolicy: Always
+      volumes:
+        {{- if .Values.filestore.managed }}
+        - name: vol-filestore
+          persistentVolumeClaim:
+            claimName: pvc-filestore
+        {{- end }}

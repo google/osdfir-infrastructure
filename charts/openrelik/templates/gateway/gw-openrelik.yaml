@@ -1,0 +1,20 @@
+{{- if .Values.gateway.managed }}
+kind: Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: openrelik-external
+  namespace: openrelik
+spec:
+  gatewayClassName: gke-l7-global-external-managed
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      options:
+        networking.gke.io/pre-shared-certs: {{ .Values.gateway.certificateName }}
+  addresses:
+  - type: NamedAddress
+    value: openrelik-frontend
+{{- end }}

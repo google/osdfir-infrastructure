@@ -1,0 +1,15 @@
+{{- if .Values.filestore.managed }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc-ms-512
+  namespace: openrelik
+provisioner: filestore.csi.storage.gke.io
+parameters:
+  tier: enterprise
+  multishare: "true"
+  max-volume-size: "512Gi"
+  network: gke-vpc
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+{{- end }}

@@ -1,0 +1,35 @@
+{{- if .Values.postgres.selfManaged }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: openrelik-postgres
+  name: openrelik-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: openrelik-postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: openrelik-postgres
+    spec:
+      containers:
+        - env:
+            - name: {{ .Values.postgres.db }}
+            - name: {{ .Values.postgres.password }}
+            - name: {{ .Values.postgres.user }}
+          image: {{ .Values.postgres.image }}
+          name: openrelik-postgres
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: vol-openrelik
+      restartPolicy: Always
+      volumes:
+        - name: vol-openrelik
+          persistentVolumeClaim:
+            claimName: claim-openrelik
+{{- end }}

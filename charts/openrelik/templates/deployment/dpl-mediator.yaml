@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrelik-mediator
+  namespace: openrelik
+  labels:
+    app: mediator
+spec:
+  replicas: {{ .Values.openrelik.mediator.replicas }}
+  selector:
+    matchLabels:
+      app: mediator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mediator
+    spec:
+      serviceAccountName: openrelik-sa
+      {{- if .Values.postgres.managedSecret }}
+      initContainers:
+        - name: init-server
+          image: busybox:1.37.0
+          command: ["/bin/sh", "-c"]
+          args: ["export DB_PWD=$(cat /var/secrets/password.txt); cp /etc/openrelik/settings.toml /var/config/settings.toml; sed -i \"s/<REPLACE_WITH_POSTGRES_PASSWORD>/$DB_PWD/g\" /var/config/settings.toml"]
+          volumeMounts:
+          - name: vol-openrelik-db-sec
+            mountPath: /var/secrets
+          - name: vol-settings
+            mountPath: /etc/openrelik/settings.toml
+            subPath: settings.toml
+          - name: vol-config
+            mountPath: /var/config
+      {{- end }}
+      containers:
+        - image: {{ .Values.openrelik.mediator.image }}
+          name: openrelik-mediator
+          args:
+            - python
+            - mediator.py
+          env:
+            - name: OPENRELIK_SERVER_SETTINGS
+              value: /var/config/settings.toml
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: REDIS_URL
+              value: {{ .Values.redis.url }}
+          volumeMounts:
+            {{- if .Values.filestore.managed }}
+            - name: vol-filestore
+              mountPath: /usr/share/openrelik
+            {{- end }}
+            - name: vol-config
+              mountPath: /var/config
+      restartPolicy: Always
+      volumes:
+        - name: vol-settings
+          configMap:
+            name: cm-settings
+        {{- if .Values.filestore.managed }}
+        - name: vol-filestore
+          persistentVolumeClaim:
+            claimName: pvc-filestore
+        {{- end }}
+        {{- if .Values.postgres.managedSecret }}
+        - name: vol-openrelik-db-sec
+          csi:
+            driver: secrets-store-gke.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: sec-openrelik-db
+        - name: vol-config
+          emptyDir: {}
+        {{- end }}

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrelik-worker-extraction
+  namespace: openrelik
+  labels:
+    worker: extraction
+spec:
+  replicas: {{ .Values.openrelik.worker.extraction.replicas }}
+  selector:
+    matchLabels:
+      worker: extraction
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        worker: extraction
+    spec:
+      containers:
+        - name: openrelik-worker-extraction
+          image: {{ .Values.openrelik.worker.extractioni.image }}
+          args:
+            - celery
+            - --app=src.app
+            - worker
+            - --task-events
+            - --concurrency=2
+            - --loglevel=INFO
+            - -Q
+            - openrelik-worker-extraction
+          env:
+            - name: OPENRELIK_PYDEBUG
+              value: "0"
+            - name: REDIS_URL
+              value: {{ .Values.redis.url }}
+          volumeMounts:
+          {{- if .Values.filestore.managed }}
+          - name: vol-filestore
+            mountPath: /usr/share/openrelik
+          {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- if .Values.filestore.managed }}
+        - name: vol-filestore
+          persistentVolumeClaim:
+            claimName: pvc-filestore
+        {{- end }}

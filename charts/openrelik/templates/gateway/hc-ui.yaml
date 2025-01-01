@@ -1,0 +1,23 @@
+{{- if .Values.gateway.managed }}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: hc-ui
+  namespace: openrelik
+spec:
+  default:
+    checkIntervalSec: 5
+    timeoutSec: 5
+    healthyThreshold: 3
+    unhealthyThreshold: 3
+    logConfig:
+      enabled: true
+    config:
+      type: TCP
+      httpHealthCheck:
+        port: {{ .Values.openrelik.ui.port }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: svc-ui
+{{- end }} 

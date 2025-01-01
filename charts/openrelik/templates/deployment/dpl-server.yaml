@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrelik-server
+  namespace: openrelik
+  labels:
+    app: server
+spec:
+  replicas: {{ .Values.openrelik.server.replicas }}
+  selector:
+    matchLabels:
+      app: server
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      serviceAccountName: openrelik-sa
+      {{- if .Values.postgres.managedSecret }}
+      initContainers:
+        - name: init-server
+          image: busybox:1.37.0
+          command: ["/bin/sh", "-c"]
+          args: ["export DB_PWD=$(cat /var/secrets/password.txt); cp /etc/openrelik/settings.toml /var/config/settings.toml; sed -i \"s/<REPLACE_WITH_POSTGRES_PASSWORD>/$DB_PWD/g\" /var/config/settings.toml"]
+          volumeMounts:
+          - name: vol-openrelik-db-sec
+            mountPath: /var/secrets
+          - name: vol-settings
+            mountPath: /etc/openrelik/settings.toml
+            subPath: settings.toml
+          - name: vol-config
+            mountPath: /var/config
+      {{- end }}
+      containers:
+        - name: openrelik-server
+          image: {{ .Values.openrelik.server.image }}
+          args:
+            - uvicorn
+            - main:app
+            - --proxy-headers
+            - --forwarded-allow-ips
+            - '*'
+            - --workers
+            - "1"
+            - --host
+            - 0.0.0.0
+            - --port
+            - "{{ .Values.openrelik.server.port }}"
+          env:
+            - name: OPENRELIK_SERVER_SETTINGS
+              value: /var/config/settings.toml
+            - name: REDIS_URL
+              value: {{ .Values.redis.url }}
+          ports:
+            - containerPort: {{ .Values.openrelik.server.port }}
+              protocol: TCP
+          volumeMounts:
+            {{- if .Values.filestore.managed }
+            - name: vol-filestore
+              mountPath: /usr/share/openrelik
+            {{- end }}
+            - name: vol-config
+              mountPath: /var/config
+      restartPolicy: Always
+      volumes:
+        - name: vol-settings
+          configMap:
+            name: cm-settings
+        {{- if .Values.filestore.managed }
+        - name: vol-filestore
+          persistentVolumeClaim:
+            claimName: pvc-filestore
+        {{- end }}
+        {{- if .Values.postgres.managedSecret }}
+        - name: vol-openrelik-db-sec
+          csi:
+            driver: secrets-store-gke.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: sec-openrelik-db
+        - name: vol-config
+          emptyDir: {}
+        {{- end }}

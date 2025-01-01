@@ -1,0 +1,17 @@
+{{- if .Values.gateway.managed }}
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: rte-server
+  namespace: openrelik
+spec:
+  parentRefs:
+  - kind: Gateway
+    name: openrelik-external
+  hostnames:
+  - "{{ .Values.openrelik.server.hostname }}"
+  rules:
+  - backendRefs:
+    - name: svc-server
+      port: {{ .Values.openrelik.server.port }}
+{{- end }}

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrelik-worker-plaso
+  namespace: openrelik
+  labels:
+    worker: plaso
+spec:
+  replicas: {{ .Values.openrelik.worker.plaso.replicas }}
+  selector:
+    matchLabels:
+      worker: plaso
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        worker: plaso
+    spec:
+      containers:
+        - image: {{ .Values.openrelik.worker.plaso.image }}
+          name: openrelik-worker-plaso
+          args:
+            - celery
+            - --app=src.app
+            - worker
+            - --task-events
+            - --concurrency=2
+            - --loglevel=INFO
+            - -Q
+            - openrelik-worker-plaso
+          env:
+            - name: OPENRELIK_PYDEBUG
+              value: "0"
+            - name: OPENRELIK_PYDEBUG_PORT
+              value: "5678"
+            - name: REDIS_URL
+              value: {{ .Values.redis.url }}
+          volumeMounts:
+          {{- if .Values.filestore.managed }}
+          - name: vol-filestore
+            mountPath: /usr/share/openrelik
+          {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- if .Values.filestore.managed }}
+        - name: vol-filestore
+          persistentVolumeClaim:
+            claimName: pvc-filestore
+        {{- end }}
