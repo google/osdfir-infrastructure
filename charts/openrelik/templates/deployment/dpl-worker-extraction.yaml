@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: openrelik-worker-extraction
-          image: {{ .Values.openrelik.worker.extractioni.image }}
+          image: {{ .Values.openrelik.worker.extraction.image }}
           args:
             - celery
             - --app=src.app

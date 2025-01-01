@@ -57,7 +57,7 @@ spec:
             - containerPort: {{ .Values.openrelik.server.port }}
               protocol: TCP
           volumeMounts:
-            {{- if .Values.filestore.managed }
+            {{- if .Values.filestore.managed }}
             - name: vol-filestore
               mountPath: /usr/share/openrelik
             {{- end }}
@@ -68,7 +68,7 @@ spec:
         - name: vol-settings
           configMap:
             name: cm-settings
-        {{- if .Values.filestore.managed }
+        {{- if .Values.filestore.managed }}
         - name: vol-filestore
           persistentVolumeClaim:
             claimName: pvc-filestore

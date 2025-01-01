@@ -43,8 +43,8 @@ spec:
         {{- end }}
       restartPolicy: Always
       volumes:
-        {{- if .Values.filestore.managed }}
-        - name: vol-filestore
+      {{- if .Values.filestore.managed }}
+      - name: vol-filestore
         persistentVolumeClaim:
           claimName: pvc-filestore
-        {{- end }}
+      {{- end }}

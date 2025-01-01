@@ -6,7 +6,7 @@ metadata:
   labels:
     worker: analyzer-config
 spec:
-  replicas: {{ .Values.openrelik.worker.analyzer-config.replicas }}
+  replicas: {{ .Values.openrelik.worker.analyzer.replicas }}
   selector:
     matchLabels:
       worker: analyzer-config
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: openrelik-worker-analyzer-config
-          image: {{ .Values.openrelik.worker.analyzer-config.image }}
+          image: {{ .Values.openrelik.worker.analyzer.image }}
           args:
             - celery
             - --app=src.app

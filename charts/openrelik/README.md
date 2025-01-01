@@ -1,10 +1,10 @@
-# GRR Helm Chart
+# OpenRelik Helm Chart
 
-[GRR](https://github.com/google/grr) Rapid Response is an incident response framework focused on remote live forensics.
+[OpenRelik](https://openrelik.org) OpenRelik is an open-source (Apache-2.0) platform designed to streamline collaborative digital forensic investigations.
 
-[Overview of GRR](https://grr-doc.readthedocs.io/)
+[Overview of GRR](https://openrelik.org/docs/)
 
-[Chart Source Code](https://github.com/google/osdfir-infrastructure)
+[Chart Source Code](https://github.com/openrelik)
 
 Before we get started make sure you clone the repo onto your machine.
 
@@ -21,15 +21,14 @@ export REPO=$(pwd)
 ```console
 minikube start
 minikube tunnel &
-./charts/grr/createSigningKeys.sh
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
+helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 ```
 
-> **Note**: For a more real life scenario see [Installing on Cloud](#2-installing-grr-on-cloud) for deploying GRR on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).
+> **Note**: For a more real life scenario see [Installing on Cloud](#2-installing-openrelik-on-cloud) for deploying OpenRelik on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).
 
 ## Introduction
 
-This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a [OpenRelik](https://github.com/openrelik) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 
@@ -39,7 +38,7 @@ This chart bootstraps a [GRR](https://github.com/google/grr) deployment on a [Ku
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl) v1.29.2+
 - [Helm](https://helm.sh/docs/intro/install/) 3.14.1+
 
-## 1. Installing GRR on minikube
+## 1. Installing OpenRelik on minikube
 
 Let's start ```minikube``` and set up tunneling for later interactions.
 The [minikube tunnel](https://minikube.sigs.k8s.io/docs/commands/tunnel/) feature creates a network route on the host to Kubernetes services using the cluster’s IP address as a gateway.
@@ -48,7 +47,6 @@ The tunnel command exposes the IP address to any program running on the host ope
 ```console
 minikube start
 minikube tunnel &
-./charts/grr/createSigningKeys.sh
 ```
 
 ### 1.1. Installing the Chart
@@ -56,95 +54,34 @@ minikube tunnel &
 To install the chart, specify any release name of your choice. For example, using `grr-on-k8s' as the release name, run:
 
 ```console
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values.yaml
+helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 
-# Verify that all the GRR component pods are in 'Running' state (this might take a moment)
+# Verify that all the OpenRelik component pods are in 'Running' state (this might take a moment)
 kubectl get pods
 # The output should look similar to the below:
 # NAME                                      READY   STATUS    RESTARTS   AGE
-# dpl-fleetspeak-admin-576754755b-hj27p     1/1     Running   0          1m1s
-# dpl-fleetspeak-frontend-78bd9889d-jvb5v   1/1     Running   0          1m1s
-# dpl-grr-admin-6b84cd996b-d54zn            1/1     Running   0          1m1s
-# dpl-grr-frontend-5fc7f8dc5b-7hsbd         1/1     Running   0          1m1s
-# dpl-grr-worker-cc96f574c-kxr9l            1/1     Running   0          1m1s
-# mysql-5cd45cc59f-bgwlv                    1/1     Running   0          3m59s
 ```
 
 The command deploys GRR on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
-### 1.2. Deploy a GRR client as a Kubernetes DaemonSet
+### 1.2. Connect to the OpenRelik Frontend
 
-For test and demo purposes we will deploy a GRR client as a [Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/).
-To do so we will
-
-- retrieve the values for some configuration parameters,
-- then build a Docker container with the GRR client and its dependencies, and
-- finally deploy the container as a DaemonSet.
-
-#### 1.2.1. Retrieve the configuration parameter values
+You can now point your browser to the OpenRelik Frontend.
 
 ```console
-cd charts/grr/containers/grr-client/
-export FLEETSPEAK_FRONTEND_ADDRESS="fleetspeak-frontend"
-export FLEETSPEAK_FRONTEND_IP=$(kubectl get svc svc-fleetspeak-frontend --output jsonpath='{.spec.clusterIP}')
-export FLEETSPEAK_FRONTEND_PORT=4443
-export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect \
-                         $FLEETSPEAK_FRONTEND_IP:$FLEETSPEAK_FRONTEND_PORT< /dev/null | \
-                         openssl x509 -outform pem | sed ':a;N;$!ba;s/\n/\\\\n/g')
-sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND_ADDRESS'g" config/config.textproto.tmpl > config/config.textproto
-sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" config/config.textproto
-sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" config/config.textproto
+export OPENRELIK_FRONTEND_IP=$(kubectl get svc svc-ui --output jsonpath='{.spec.clusterIP}')
+echo http://localhost:8711
 ```
 
-#### 1.2.2. Build the GRR client Docker container
+## 2. Installing OpenRelik on Cloud
 
-```console
-eval $(minikube docker-env)
-docker build -t grr-client:v0.1 .
-```
-
-#### 1.2.3. Deploy the GRR client DaemonSet
-
-```console
-kubectl label nodes minikube grrclient=installed
-
-# Verify that the GRR client DaemonSet got deployed.
-kubectl get daemonset
-# The output should look similar to the below:
-# NAME   DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR         AGE
-# grr    1         1         1       1            1           grrclient=installed   53s
-```
-
-### 1.3. Connect to the GRR Admin Frontend
-
-You can now point your browser to the GRR Admin Frontend to investigate the node with the GRR client.
-
-```console
-export GRR_ADMIN_IP=$(kubectl get svc svc-grr-admin --output jsonpath='{.spec.clusterIP}')
-echo http://${GRR_ADMIN_IP}:8000
-```
-
-The GRR Admin Frontend can now be reached on the following URL (note that you might have to tunnel to your server first):
-[http://${GRR_ADMIN_IP}:8000](http://${GRR_ADMIN_IP}:8000)
-
-## 2. Installing GRR on Cloud
-
-After installing GRR on minikube and kicking the tires you likely aim for running GRR in a more real life scenario.
-For this you could consider installing GRR on a managed Kubernetes cluster in the cloud like on [Google Cloud's Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).
-We have you covered by documenting two flavours below on how you can quickly get up to speed with a GKE based GRR installation:
-
-- GRR on GKE with layer 4 load balancer (TODO)
-- GRR on GKE with layer 7 load balancer
-
-![GRR / Fleetspeak Demo Architecture](../../docs/images/grr-fleetspeak-demo-architecture.png "GRR / Fleetspeak Demo Architecture")`
-
-Your choice of load balancer will determine how your GRR client fleet communicates with GRR's [Fleetspeak](https://github.com/google/fleetspeak) based communication layer.
-You can find more details and background on the different modes of exposing GRR's Fleetspeak based communication layer in this [blog post](https://osdfir.blogspot.com/2023/12/running-grr-everywhrr.html).
+After installing OpenRelik on minikube and kicking the tires you likely aim for running OpenRelik in a more real life scenario.
+For this you could consider installing OpenRelik on a managed Kubernetes cluster in the cloud like on [Google Cloud's Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE).
 
 ### 2.1. GKE Installation
 
-Before we can install GRR we need to provision a GKE cluster and its related infrastructure.
-The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [installation instructions](../../cloud/README.md).
+Before we can install OpenRelik we need to provision a GKE cluster and its related infrastructure.
+The quickest way to provision a ready to run environment on Google Cloud is by following the steps in these [installation instructions](../../cloud/openrelik/README.md).
 
 We recommend that you start with cloning this repo again to avoid carrying over any configurations from the minikube based instructions above.
 
@@ -156,26 +93,30 @@ export REPO=$(pwd)
 
 Once you have provisioned your infrastructure you can continue with the instructions below.
 
-### 2.2. Installing GRR on GKE
+### 2.2. Installing OpenRelik on GKE
 
 In case you followed the Google Cloud environment installation instructions you should already have the following environment variables configured.
-Otherwise, either run the [installation instruction step](../../cloud/README.md#22-capture-environment-variables-for-later-use) again or set the environment variables to values that match your setup.
+Otherwise, either run the [installation instruction step](../../cloud/openrelik/README.md#22-capture-environment-variables-for-later-use) again or set the environment variables to values that match your setup.
 You can check that they have a value assigned by runnig the commands below.
 
 ```console
-echo "FLEETSPEAK_FRONTEND: $FLEETSPEAK_FRONTEND"
-echo "GKE_CLUSTER_LOCATION: $GKE_CLUSTER_LOCATION"
-echo "GKE_CLUSTER_NAME: $GKE_CLUSTER_NAME"
-echo "GRR_BLOBSTORE_BUCKET: $GRR_BLOBSTORE_BUCKET"
-echo "GRR_CLIENT_IMAGE: $GRR_CLIENT_IMAGE"
-echo "GRR_OPERATOR_IMAGE: $GRR_OPERATOR_IMAGE"
-echo "LOADBALANCER_CERT: $LOADBALANCER_CERT"
-echo "MYSQL_DB_ADDRESS: $MYSQL_DB_ADDRESS"
-echo "PROJECT_ID: $PROJECT_ID"
-echo "PUBSUB_SUBSCRIPTION: $PUBSUB_SUBSCRIPTION"
-echo "PUBSUB_TOPIC: $PUBSUB_TOPIC"
-echo "REGION: $REGION"
-echo "ZONE: $ZONE"
+export ARTIFACT_REGISTRY=$(terraform output -json | jq -r .artifact_registry_id.value)
+export CERTIFICATE_NAME=$(terraform output -json | jq -r .certname.value)
+export DB_SECRET_NAME=$(terraform output -json | jq -r .db_secret_name.value)
+export DB_SECRET_VERSION=$(terraform output -json | jq -r .db_secret_version.value)
+export GKE_CLUSTER_LOCATION=$(terraform output -json | jq -r .gke_cluster_location.value)
+export GKE_CLUSTER_NAME=$(terraform output -json | jq -r .gke_cluster_name.value)
+export PROJECT=$(terraform output -json | jq -r .project_id.value)
+export OPENRELIK_DB=$(terraform output -json | jq -r .openrelik_db.value)
+export OPENRELIK_DB_INSTANCE=$(terraform output -json | jq -r .openrelik_db_instance.value)
+export OPENRELIK_DB_USER=$(terraform output -json | jq -r .openrelik_db_user.value)
+export OPENRELIK_DB_ADDRESS=$(gcloud sql instances describe ${OPENRELIK_DB_INSTANCE} --project=${PROJECT} --format=json | jq -r .settings.ipConfiguration.pscConfig.pscAutoConnections[0].ipAddress)
+export OPENRELIK_HOSTNAME=$(terraform output -json | jq -r .hostname.value)
+export REDIS_ADDRESS=$(terraform output -json | jq -r .redis_address.value)
+export REGION=$(terraform output -json | jq -r .region.value)
+export ZONE=$(terraform output -json | jq -r .zone.value)
+
+export ENABLE_GCP=true
 ```
 
 #### 2.2.1. Fetch the GKE cluster credentials
@@ -184,158 +125,53 @@ echo "ZONE: $ZONE"
 gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID
 ```
 
-#### 2.2.2. Set the default values for the GRR chart
-
-> **Note**: The Google Cloud environment [installation Terraform script](../../cloud/README.md#21-setup-the-platform-infrasturcture) has provisioned a managed [Cloud SQL for MySQL](https://cloud.google.com/sql/mysql) database. In case to choose to self-manage the MySQL database you can enable it by setting ```selfManagedMysql: true``` in the ```values-gcp.yaml``` configuration file. Make sure you adjust the ```MYSQL_DB_ADDRESS=mysql``` in the commands below accordingly.
+#### 2.2.2. Set the default values for the OpenRelik Helm chart
 
 ```console
-sed -i "s'FLEETSPEAK_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
-sed -i "s'GRR_BLOBSTORE_BUCKET'$GRR_BLOBSTORE_BUCKET'g" charts/grr/values-gcp.yaml
-sed -i "s'GRR_CLIENT_IMAGE'$GRR_CLIENT_IMAGE'g" charts/grr/values-gcp.yaml
-sed -i "s'GRR_DB_ADDRESS'$MYSQL_DB_ADDRESS'g" charts/grr/values-gcp.yaml
-sed -i "s'PUBSUB_PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
-sed -i "s'PUBSUB_SUBSCRIPTION'$PUBSUB_SUBSCRIPTION'g" charts/grr/values-gcp.yaml
-sed -i "s'PUBSUB_TOPIC'$PUBSUB_TOPIC'g" charts/grr/values-gcp.yaml
-sed -i "s'PROJECT_ID'$PROJECT_ID'g" charts/grr/values-gcp.yaml
+./config.sh
 ```
 
-#### 2.2.3. Generate the GRR client executable signing keys
+#### 2.2.4. Install the Helm chart
 
 ```console
-# Generate the GRR client executable signing private/public key pair
-./charts/grr/createSigningKeys.sh
-```
-
-#### 2.2.4. Install the Chart
-
-```console
-helm install grr-on-k8s ./charts/grr -f ./charts/grr/values-gcp.yaml
+helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values-gcp.yaml
 ```
 
 #### 2.2.5. Wait for all GRR pods to be in 'Running' status
 
 ```console
 # Check that all the pods are in the 'Running' status.
-kubectl get pods -n grr
+kubectl get pods -n openrelik
 # The output should look something like the below:
 # NAME                                     READY STATUS  RESTARTS AGE
-# dpl-fleetspeak-admin-7f5c6ff877-4x89d    1/1   Running 0        1m34s
-# dpl-fleetspeak-frontend-856dd98bf5-ljhds 1/1   Running 0        1m34s
-# dpl-grr-admin-78b67cfc76-rjwp2           1/1   Running 0        1m33s
-# dpl-grr-frontend-69fd89c495-vlk54        1/1   Running 0        1m34s
-# dpl-grr-worker-7d69984fc8-z82k7          1/1   Running 0        1m33s
 ```
 
-### 2.3. Add the NEG to the Backend Service
+#### 2.2.6. Initialise the Openrelik DB
 
-This step is very important. We need to add the Standalone Network Endpoint Group (NEG) to the Backend Service of our GLB7.
-See the [Google Cloud online docs](https://cloud.google.com/kubernetes-engine/docs/how-to/standalone-neg#standalone_negs) for more info on Standalone NEGs.
-
-Both GKE and the Terraform scripts have done their half.
-It is our job to glue them together.
-
-```console
-# Get the NEG
-gcloud compute network-endpoint-groups list
-# The output should look something like the below:
-# NAME: k8s-fleetspeak-frontend-neg
-# LOCATION: europe-west1-b
-# ENDPOINT_TYPE: GCE_VM_IP_PORT
-# SIZE: 1
-
-# Get the Backend Service
-# The output should look something like the below:
-gcloud compute backend-services list
-# NAME: l7-xlb-backend-service
-# BACKENDS:
-# PROTOCOL: HTTPS
-
-# Add the NEG to the Backend Service
-gcloud compute backend-services add-backend l7-xlb-backend-service \
-  --global \
-  --network-endpoint-group=k8s-fleetspeak-frontend-neg \
-  --network-endpoint-group-zone=$ZONE \
-  --balancing-mode RATE \
-  --max-rate-per-endpoint 5
+```
+kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -- \
+        bash -c "cd /app/openrelik/datastores/sql && \
+                 SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //") && \
+                 alembic upgrade head"
 ```
 
-### 2.4. Testing
+#### 2.2.7. Create the ```admin``` user
 
-Let's go and test the setup.
-To do so we need three things:
-
-- Build the GRR client container image, and
-- Deploy the GRR client, and
-- Access to the GRR Admin UI
-
-#### 2.4.1. Build the GRR client container image
-
-```console
-cd charts/grr/
-
-# Prepare the GRR client builder Kubernetes Job
-sed -i "s'GRR_CLIENT_IMAGE'$GRR_CLIENT_IMAGE'g" job-build-grr-client.yaml
-sed -i "s'FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" job-build-grr-client.yaml 
-
-# Build the GRR client container image
-kubectl apply -f job-build-grr-client.yaml
-
-# Wait for the build job to complete
-# You can follow the build process progress with the following command:
-kubectl logs -f job-grr-client-builder-xxxxx -n grr
-
-cd $REPO
+```
+export USER_PWD="<YOUR_USER_PWD HERE>";
+kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -- \
+        bash -c "python admin.py create-user admin --password ${USER_PWD} --admin"
 ```
 
-Once the Kubernetes Job has completed building the ```grr-client``` container image you can deploy it following the instructions in the next section.
+## 3. Connect to the UI
 
-#### 2.4.2. Deploy the GRR client
+Run the command below and then point your browser to the displayed URL:
 
-This will spin up a pod with the GRR client as a daemonset on the selected node.
-We can interact with in the next step.
-
-```console
-# Find your node names
-kubectl get nodes
-# The output should look similar to the below:
-# NAME                                             STATUS   ROLES    AGE   VERSION
-# gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g   Ready    <none>   18m   v1.27.8-gke.1067004
-# gke-osdfir-cluster-grr-node-pool-7b71cc80-z8wp   Ready    <none>   18m   v1.27.8-gke.1067004
-
-# Chose one of the node names and replace it in the command below.
-# Then run the below command to label the node so it receives a grr daemonset.
-kubectl label nodes gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g grrclient=installed
-
-# This will trigger the grr daemonset to be deployed to this node.
-# You can check that the daemonset is running by issueing the command below:
-kubectl get daemonset -n grr-client
-# The output should look something like the below:
-# NAME DESIRED CURRENT READY UP-TO-DATE AVAILABLE NODE SELECTOR       AGE
-# grr  1       1       1     1          1         grrclient=installed 15m
-
-# You can also check that the pod is in the 'Running' status.
-kubectl get pods -n grr-client
-# The output should look something like the below:
-# NAME      READY STATUS  RESTARTS AGE
-# grr-7cc7l 1/1   Running 0        13s
+```
+echo "https://$OPENRELIK_HOSTNAME"
 ```
 
-#### 2.4.3. Create a tunnel to access the GRR Admin UI
-
-```console
-gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_LOCATION --project $PROJECT_ID \
- && kubectl port-forward -n grr \
-    $(kubectl get pod -n grr --selector="app.kubernetes.io/name=grr-admin" --output jsonpath='{.items[0].metadata.name}') 8000:8000
-```
-
-You can now point your browser at: [http://127.0.0.1:8000](http:127.0.0.1:8000) to access the GRR Admin UI.
-
-In case you would like to test collecting ```containerd``` forensic artifacts then you can upload the ```ContainerdArtifacts.yaml``` definition file.
-This file contains an artifact group with a set of 6 ```containerd``` specific artifacts.
-Note: These artifacts are enabled in the container image we use for the ```daemonset``` based GRR client we installed above.
-You will not be able to run these artifacts on a 'standard' GRR client.
-
-## 3. Cleaning up
+## 4. Cleaning up
 
 We recommend that you clean up the installation after you are done with your testing to avoid any future charges.
 To do so you have two options to clean up the installation.
@@ -353,26 +189,10 @@ You can find more info in the [online documentation](https://cloud.google.com/re
 Sequentially building back the installation can be useful for cases where you would like to make some adjustments to your current installtion.
 For such cases just build back as far as needed to make your adjustments and then roll forward the installation again following the original instructions.
 
-Here is the full set of steps to do a sequential build back:
+To uninstall/delete a Helm deployment with a release name of `openrelik-on-k8s`:
 
 ```console
-# Remove the GRR client (daemonset)
-# Make sure you substitute the node name with your value
-kubectl label nodes --overwrite gke-osdfir-cluster-grr-node-pool-7b71cc80-s84g grrclient=
-
-# Rempove the NEG from the Backend Service
-gcloud compute backend-services remove-backend l7-xlb-backend-service \
-  --global \
-  --network-endpoint-group=k8s-fleetspeak-frontend-neg \
-  --network-endpoint-group-zone=$ZONE
-```
-
-### 3.3. Uninstalling the Chart
-
-To uninstall/delete a Helm deployment with a release name of `grr-on-k8s`:
-
-```console
-helm uninstall grr-on-k8s
+helm uninstall openrelik-on-k8s
 ```
 
 > **Tip**: Please update based on the release name chosen. You can list all releases using `helm list`
