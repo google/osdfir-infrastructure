@@ -1,0 +1,68 @@
+[server]
+
+# This should be set to the URL of your backend server.
+api_server_url = "<REPLACE_WITH_API_SERVER_URL>"
+
+# This should be set to the URL of your frontend server.
+ui_server_url = "<REPLACE_WITH_UI_SERVER_URL>"
+
+# This should be set to the URL of your frontend server.
+allowed_origins = ["<REPLACE_WITH_ALLOWED_ORIGIN>"]
+
+# Path to files
+storage_path = "<REPLACE_WITH_STORAGE_PATH>"
+
+[datastores.sqlalchemy]
+# Postgresql: postgresql://user:password@postgresserver/db
+database_url = "postgresql://<REPLACE_WITH_POSTGRES_USER>:<REPLACE_WITH_POSTGRES_PASSWORD>@<REPLACE_WITH_POSTGRES_SERVER>/<REPLACE_WITH_POSTGRES_DATABASE_NAME>"
+
+[auth]
+# Secret key for the Session middleware and JWT signing.
+# IMPORTANT: Create a random string, e.g: openssl rand -base64 32
+secret_session_key = "<REPLACE_WITH_RANDOM_SESSION_STRING>"
+secret_jwt_key = "<REPLACE_WITH_RANDOM_JWT_STRING>"
+
+# Algorithm to use for JWT.
+jwt_algorithm = "HS256"
+
+# UI token expiration in minutes.
+jwt_cookie_refresh_expire_minutes = 1440  # 24 hours
+jwt_cookie_access_expire_minutes = 720  # 12 hours
+
+# API key token expiration in minutes, if not set by the user upon creation.
+jwt_header_default_refresh_expire_minutes = 10080  # 7 days
+jwt_header_default_access_expire_minutes = 5  # 5 minutes
+
+[auth.google]
+# Google OAuth authentication. You need to create credentials in a Google Cloud project:
+# https://developers.google.com/workspace/guides/create-credentials#oauth-client-id
+client_id = ""
+client_secret = ""
+
+# Restrict logins from a Google Workspace domain.
+# Empty value = any domain, including gmail.com
+workspace_domain = ""
+
+# Allow only these users (email address) to access the server.
+allowlist = ["<REPLACE_WITH_USERNAME>@gmail.com"]
+
+# Allow anyone (who is authenitcated) to access the server.
+# Note: If a workspace_domain is set then the public_access is limited to that domain.
+# WARNING: This allows anyone to login to your server!
+public_access = false
+
+[ui]
+# data_types that will be rendered using unescaped HTML in a sandboxed iframe in the
+# frontend UI.
+allowed_data_types_preview = [
+    "openrelik:hayabusa:html_report"
+]
+
+# Enable cloud features such as adding cloud disks.
+# This requires your OpenRelik installation to run on cloud VMs.
+[cloud.gcp]
+name = "gcp"
+display_name = "Google Cloud Platform"
+project_name = "<REPLACE_WITH_PROJECT_ID>"
+zone = "<REPLACE_WITH_ZONE>"
+enabled = "<REPLACE_WITH_ENABLE_GCP>"

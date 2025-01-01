@@ -117,7 +117,7 @@ redis:
   image: "redis:7"
   ## @param redis.url Sets the Redis URL.
   ##
-  url: REDIS_URL
+  url: "redis://openrelik-redis:6379"
   ## @param redisi.selfManaged Enables a Redis containter to be deployed into the cluster.
   ##
   selfManaged: true

@@ -129,6 +129,9 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 
 ```console
 ./config.sh
+
+mkdir charts/openrelik/templates/configmap
+kubectl create configmap cm-settings --dry-run --from-file=settings.toml -n openrelik charts/openrelik/templates/configmap/cm-settings.yaml
 ```
 
 #### 2.2.3. Create the Filestore share
