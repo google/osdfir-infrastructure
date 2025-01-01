@@ -64,12 +64,6 @@ output "zone" {
   value       = var.zone
 }
 
-output "db_password" {
-  description = "The DB password"
-  sensitive   = true
-  value       = random_password.openrelik.result
-}
-
 output "hostname" {
   description = "The Openrelik frontend external hostname"
   value       = local.hostname
