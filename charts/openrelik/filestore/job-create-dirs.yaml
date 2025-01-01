@@ -11,11 +11,11 @@ spec:
         image: busybox:1.37
         command: ['sh', '-c', "rm -rf /usr/share/openrelik/* ; mkdir -p /usr/share/openrelik/data/postgresql; mkdir -p /usr/share/openrelik/data/artifacts; mkdir -p /usr/share/openrelik/config"]
         volumeMounts:
-        - name: vol-openrelik
+        - name: vol-filestore
           mountPath: /usr/share/openrelik
       restartPolicy: Never
       volumes:
-        - name: vol-openrelik
+        - name: vol-filestore
           persistentVolumeClaim:
-            claimName: pvc-openrelik
+            claimName: pvc-filestore
   backoffLimit: 4

@@ -1,4 +1,3 @@
-{{- if .Values.filestore.managed }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -12,4 +11,3 @@ parameters:
   network: gke-vpc
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
-{{- end }}

@@ -131,13 +131,33 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 ./config.sh
 ```
 
+#### 2.2.3. Create the Filestore share
+
+> **Tip**: For more details see [Filestore Multishares](https://cloud.google.com/filestore/docs/optimize-multishares)
+
+```
+kubectl apply -f charts/openrelik/filestore/sc-ms-512.yaml
+
+kubectl apply -f charts/openrelik/filestore/pvc-filestore.yaml
+
+# Make sure you let the Filestore creation process finish before continuing.
+watch -n 1 kubectl get pvc -n openrelik
+
+# You should see a message like the one below once the Filestore has been created:
+# NAME          STATUS VOLUME                        CAPACITY ACCESS MODES STORAGECLASS VOLUMEATTRIBUTESCLASS AGE
+# pvc-filestore Bound  pvc-2404aa93-...-f18e560b9534 512Gi    RWX          sc-ms-512    <unset>               1m 
+
+# Create the directory structure OpenRelik expects to be in place
+kubectl apply -f charts/openrelik/filestore/job-create-dirs.yaml
+```
+
 #### 2.2.4. Install the Helm chart
 
 ```console
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values-gcp.yaml
 ```
 
-#### 2.2.5. Wait for all OpenReik pods to be in 'Running' status
+#### 2.2.5. Wait for all OpenRelik pods to be in 'Running' status
 
 ```console
 # Check that all the pods are in the 'Running' status.
