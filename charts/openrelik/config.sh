@@ -49,53 +49,52 @@ replace_in_file() {
   fi
 }
 
-echo "ARTIFACT_REGISTRY: ${ARTIFACT_REGISTRY}"
-echo "GKE_CLUSTER_LOCATION: ${GKE_CLUSTER_LOCATION}"
-echo "GKE_CLUSTER_NAME: ${GKE_CLUSTER_NAME}"
-echo "OPENRELIK_DB: ${OPENRELIK_DB}"
-echo "OPENRELIK_DB_ADDRESS: ${OPENRELIK_DB_ADDRESS}"
-echo "OPENRELIK_DB_INSTANCE: ${OPENRELIK_DB_INSTANCE}"
-echo "OPENRELIK_DB_USER: ${OPENRELIK_DB_USER}"
-echo "PROJECT: ${PROJECT}"
-echo "REDIS_ADDRESS: ${REDIS_ADDRESS}"
-echo "REGION: ${REGION}"
-echo "ZONE: ${ZONE}"
-
 # Setup variables
 echo -e "\033[1;34m[1/8] Setting up variables...\033[0m\c"
-BASE_DEPLOY_URL="https://raw.githubusercontent.com/openrelik/openrelik-deploy/main/docker"
-BASE_SERVER_URL="https://raw.githubusercontent.com/openrelik/openrelik-server/main"
 STORAGE_PATH="\/usr\/share\/openrelik\/data\/artifacts"
-POSTGRES_USER=${OPENRELIK_DB_USER}
-POSTGRES_SERVER=${OPENRELIK_DB_ADDRESS}
-POSTGRES_DATABASE_NAME=${OPENRELIK_DB}
-RANDOM_SESSION_STRING="$(generate_random_string)"
+POSTRES_PASSWORD="$(generate_random_string)"
 RANDOM_JWT_STRING="$(generate_random_string)"
+RANDOM_SESSION_STRING="$(generate_random_string)"
+
 echo -e "\r\033[1;32m[1/8] Setting up variables... Done\033[0m"
+echo "CERTIFICATE_NAME: ${CERTIFICATE_NAME}"
+echo "ENABLE_GCP: ${ENABLE_GCP}"
+echo "OPENRELIK_DB: ${OPENRELIK_DB}"
+echo "OPENRELIK_DB_ADDRESS: ${OPENRELIK_DB_ADDRESS}"
+echo "OPENRELIK_DB_USER: ${OPENRELIK_DB_USER}"
+echo "OPENRELIK_HOSTNAME: ${OPENRELIK_HOSTNAME}"
+echo "PROJECT: ${PROJECT}"
+echo "RANDOM_JWT_STRING: ${RANDOM_JWT_STRING}"
+echo "RANDOM_SESSION_STRING: ${RANDOM_SESSION_STRING}"
+echo "REDIS_ADDRESS: ${REDIS_ADDRESS}"
+echo "STORAGE_PATH: ${STORAGE_PATH}"
+echo "ZONE: ${ZONE}"
 
 # Fetch installation files
-echo -e "\033[1;34m[2/8] Downloading configuration files...\033[0m\c"
-cp config_template.env config.env
+echo -e "\033[1;34m[2/8] Copying settings file...\033[0m\c"
 cp settings_template.toml settings.toml
-echo -e "\r\033[1;32m[2/8] Downloading configuration files... Done\033[0m"
+echo -e "\r\033[1;32m[2/8] Copying settings file... Done\033[0m"
 
 # Replace placeholder values in settings.toml
 echo -e "\033[1;34m[3/8] Configuring settings...\033[0m\c"
-replace_in_file "<REPLACE_WITH_STORAGE_PATH>" "${STORAGE_PATH}" "settings.toml"
-replace_in_file "<REPLACE_WITH_POSTGRES_USER>" "${POSTGRES_USER}" "settings.toml"
-replace_in_file "<REPLACE_WITH_POSTGRES_SERVER>" "${POSTGRES_SERVER}" "settings.toml"
-replace_in_file "<REPLACE_WITH_POSTGRES_DATABASE_NAME>" "${POSTGRES_DATABASE_NAME}" "settings.toml"
+replace_in_file "<REPLACE_WITH_ALLOWED_ORIGIN>" "https:\/\/${OPENRELIK_HOSTNAME}" "settings.toml"
+replace_in_file "<REPLACE_WITH_API_SERVER_URL>" "https:\/\/openrelik.${OPENRELIK_HOSTNAME}" "settings.toml"
+replace_in_file "<REPLACE_WITH_ENABLE_GCP>" "${ENABLE_GCP}" "settings.toml"
+replace_in_file "<REPLACE_WITH_POSTGRES_DATABASE_NAME>" "${OPENRELIK_DB}" "settings.toml"
+replace_in_file "<REPLACE_WITH_POSTGRES_USER>" "${OPENRELIK_DB_USER}" "settings.toml"
+replace_in_file "<REPLACE_WITH_POSTGRES_SERVER>" "${OPENRELIK_DB_ADDRESS}" "settings.toml"
+replace_in_file "<REPLACE_WITH_PROJECT_ID>" "${PROJECT}" "settings.toml"
 replace_in_file "<REPLACE_WITH_RANDOM_SESSION_STRING>" "${RANDOM_SESSION_STRING}" "settings.toml"
 replace_in_file "<REPLACE_WITH_RANDOM_JWT_STRING>" "${RANDOM_JWT_STRING}" "settings.toml"
-replace_in_file "<REPLACE_WITH_PROJECT_ID>" "${PROJECT}" "settings.toml"
-replace_in_file "<REPLACE_WITH_ZONE>" "${ZONE}" "settings.toml"
-replace_in_file "<REPLACE_WITH_ENABLE_GCP>" "${ENABLE_GCP}" "settings.toml"
-replace_in_file "<REPLACE_WITH_API_SERVER_URL>" "https:\/\/openrelik.${OPENRELIK_HOSTNAME}" "settings.toml"
+replace_in_file "<REPLACE_WITH_STORAGE_PATH>" "${STORAGE_PATH}" "settings.toml"
 replace_in_file "<REPLACE_WITH_UI_SERVER_URL>" "https:\/\/${OPENRELIK_HOSTNAME}" "settings.toml"
-replace_in_file "<REPLACE_WITH_ALLOWED_ORIGIN>" "https:\/\/${OPENRELIK_HOSTNAME}" "settings.toml"
+replace_in_file "<REPLACE_WITH_ZONE>" "${ZONE}" "settings.toml"
 
 # Replace placeholder values in config.env
-replace_in_file "<REPLACE_WITH_POSTGRES_USER>" "${POSTGRES_USER}" "config.env"
-replace_in_file "<REPLACE_WITH_POSTGRES_DATABASE_NAME>" "${POSTGRES_DATABASE_NAME}" "config.env"
-replace_in_file "<REPLACE_WITH_API_SERVER_URL>" "https:\/\/openrelik.${OPENRELIK_HOSTNAME}" "config.env"
+replace_in_file "<REPLACE_WITH_API_SERVER_HOSTNAME>" "openrelik.${OPENRELIK_HOSTNAME}" "values-gcp.yaml"
+replace_in_file "<REPLACE_WITH_CERTIFICATE_NAME>" "${CERTIFICATE_NAME}" "values-gcp.yaml"
+replace_in_file "<REPLACE_WITH_POSTGRES_PASSWORD>" "${POSTGRES_PASSWORD}" "values.yaml"
+replace_in_file "<REPLACE_WITH_PROJECT_ID>" "${PROJECT}" "values-gcp.yaml"
+replace_in_file "<REPLACE_WITH_REDIS_URL>" "redis:\/\/${REDIS_ADDRESS}:6379" "values-gcp.yaml"
+replace_in_file "<REPLACE_WITH_UI_SERVER_HOSTNAME>" "${OPENRELIK_HOSTNAME}" "values-gcp.yaml"
 echo -e "\r\033[1;32m[3/8] Configuration settings... Done\033[0m"

@@ -139,6 +139,8 @@ kubectl create configmap cm-settings --dry-run --from-file=settings.toml -n open
 > **Tip**: For more details see [Filestore Multishares](https://cloud.google.com/filestore/docs/optimize-multishares)
 
 ```
+kubectl apply -f charts/openrelik/templates/namespace/ns-openrelik.yaml
+
 kubectl apply -f charts/openrelik/filestore/sc-ms-512.yaml
 
 kubectl apply -f charts/openrelik/filestore/pvc-filestore.yaml

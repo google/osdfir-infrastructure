@@ -6,7 +6,7 @@
 global:
   ## @param global.projectId Sets the Google Cloud Project ID.
   ##
-  projectId: PROJECT_ID
+  projectId: <REPLACE_WITH_PROJECT_ID>
   ## @param global.useResourceRequests Allocates resources to the pods.
   ##
   useResourceRequests: true
@@ -25,7 +25,7 @@ openrelik:
   server:
     ## @param openrelik.server.hostname Sets the OpenRelik server hostname to use.
     ##
-    hostname: SERVER_HOSTNAME
+    hostname: <REPLACE_WITH_UI_SERVER_HOSTNAME>
     ## @param openrelik.server.image Sets the OpenRelik server container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-server:2024.12.12"
@@ -39,7 +39,7 @@ openrelik:
   ui:
     ## @param openrelik.ui.hostname Sets the OpenRelik UI hostname to use.
     ##
-    hostname: UI_HOSTNAME
+    hostname: <REPLACE_WITH_UI_SERVER_HOSTNAME>
     ## @param openrelik.ui.image Sets the OpenRelik UI container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-ui:2024.12.12"
@@ -108,7 +108,7 @@ postgres:
 redis:
   ## @param redis.url Sets the Redis URL.
   ##
-  url: REDIS_URL
+  url: <REPLACE_WITH_REDIS_URL>
   ## @param redisi.selfManaged Enables a Redis containter to be deployed into the cluster.
   ##
   selfManaged: false
@@ -125,7 +125,7 @@ filestore:
 gateway:
   ## @param gateway.certificateName Sets the name of the OpenRelik certificate.
   ##
-  certificateName: CERTIFICATE_NAME
+  certificateName: <REPLACE_WITH_CERTIFICATE_NAME>
   ## @param gateway.managed Enables a Gateway API Global Loadbalancer to be deployed.
   ##
   managed: true

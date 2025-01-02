@@ -20,9 +20,6 @@ openrelik:
     replicas: 1
 
   server:
-    ## @param openrelik.server.hostname Sets the OpenRelik server hostname to use.
-    ##
-    hostname: SERVER_HOSTNAME
     ## @param openrelik.server.image Sets the OpenRelik server container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-server:2024.12.12"
@@ -34,9 +31,6 @@ openrelik:
     replicas: 1
 
   ui:
-    ## @param openrelik.ui.hostname Sets the OpenRelik UI hostname to use.
-    ##
-    hostname: UI_HOSTNAME
     ## @param openrelik.ui.image Sets the OpenRelik UI container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-ui:2024.12.12"
@@ -101,7 +95,7 @@ postgres:
   managedSecretVersion: 1
   ## @param postgres.password Sets the Postgres DB password.
   ##
-  password: POSTGRES_PASSWORD
+  password: <REPLACE_WITH_POSTGRES_PASSWORD>
   ## @param postgres.user Sets the Postgres DB user name.
   ##
   user: "openrelik"
