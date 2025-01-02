@@ -13,3 +13,8 @@ turbinia.conf
 
 # Exclude sub charts
 charts/osdfir-infrastructure/charts/
+
+**/.terraform/*
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
