@@ -10,6 +10,8 @@
 # Exclude config files
 charts/timesketch/configs
 turbinia.conf
+charts/openrelik/templates/configmap
+charts/openrelik/settings.toml
 
 # Exclude sub charts
 charts/osdfir-infrastructure/charts/

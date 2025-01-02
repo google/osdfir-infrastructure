@@ -127,10 +127,13 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 #### 2.2.2. Set the default values for the OpenRelik Helm chart
 
 ```console
+cd $REPO/charts/openrelik
 ./config.sh
 
-mkdir charts/openrelik/templates/configmap
-kubectl create configmap cm-settings --dry-run --from-file=settings.toml -n openrelik charts/openrelik/templates/configmap/cm-settings.yaml
+mkdir templates/configmap
+kubectl create configmap cm-settings --dry-run=client -o=yaml --from-file=settings.toml -n openrelik > templates/configmap/cm-settings.yaml
+
+cd $REPO
 ```
 
 #### 2.2.3. Create the Filestore share
@@ -167,23 +170,31 @@ helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values-gc
 # Check that all the pods are in the 'Running' status.
 kubectl get pods -n openrelik
 # The output should look something like the below:
-# NAME                                     READY STATUS  RESTARTS AGE
+# NAME                                               READY STATUS   RESTARTS  AGE
+# openrelik-mediator-75b4659b97-znvhb                1/1   Running  0         34s
+# openrelik-server-5957548585-zzhpj                  1/1   Running  0         34s
+# openrelik-ui-6597bc774d-nnjln                      1/1   Running  0         34s
+# openrelik-worker-analyzer-config-78f84979ff-9v5fp  1/1   Running  0         34s
+# openrelik-worker-extraction-6dc457bc6-6kjjl        1/1   Running  0         34s
+# openrelik-worker-hayabusa-74d9c78bb5-ttkv4         1/1   Running  0         34s
+# openrelik-worker-plaso-78ffb5b75-dmnnc             1/1   Running  0         34s
+# openrelik-worker-strings-9648dfbf-b5s55            1/1   Running  0         33s
 ```
 
 #### 2.2.6. Initialise the Openrelik DB
 
 ```
-kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -- \
+kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -c openrelik-server -- \
         bash -c "cd /app/openrelik/datastores/sql && \
-                 SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //") && \
+                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //" | sed 's/"//g') && \
                  alembic upgrade head"
 ```
 
 #### 2.2.7. Create the ```admin``` user
 
 ```
-export USER_PWD="<YOUR_USER_PWD HERE>";
-kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -- \
+export USER_PWD="<YOUR_USER_PWD HERE>"
+kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -c openrelik-server -- \
         bash -c "python admin.py create-user admin --password ${USER_PWD} --admin"
 ```
 

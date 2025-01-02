@@ -2,3 +2,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: openrelik
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+  annotations:
+    meta.helm.sh/release-name: "openrelik-on-k8s"
+    meta.helm.sh/release-namespace: "default"
