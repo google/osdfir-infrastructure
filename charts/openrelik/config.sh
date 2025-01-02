@@ -92,6 +92,7 @@ replace_in_file "<REPLACE_WITH_ZONE>" "${ZONE}" "settings.toml"
 
 # Replace placeholder values in config.env
 replace_in_file "<REPLACE_WITH_API_SERVER_HOSTNAME>" "openrelik.${OPENRELIK_HOSTNAME}" "values-gcp.yaml"
+replace_in_file "<REPLACE_WITH_API_SERVER_URL>" "https:\/\/openrelik.${OPENRELIK_HOSTNAME}" "values-gcp.yaml"
 replace_in_file "<REPLACE_WITH_CERTIFICATE_NAME>" "${CERTIFICATE_NAME}" "values-gcp.yaml"
 replace_in_file "<REPLACE_WITH_POSTGRES_PASSWORD>" "${POSTGRES_PASSWORD}" "values.yaml"
 replace_in_file "<REPLACE_WITH_PROJECT_ID>" "${PROJECT}" "values-gcp.yaml"
