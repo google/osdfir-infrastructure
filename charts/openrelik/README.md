@@ -100,23 +100,22 @@ Otherwise, either run the [installation instruction step](../../cloud/openrelik/
 You can check that they have a value assigned by runnig the commands below.
 
 ```console
-export ARTIFACT_REGISTRY=$(terraform output -json | jq -r .artifact_registry_id.value)
-export CERTIFICATE_NAME=$(terraform output -json | jq -r .certname.value)
-export DB_SECRET_NAME=$(terraform output -json | jq -r .db_secret_name.value)
-export DB_SECRET_VERSION=$(terraform output -json | jq -r .db_secret_version.value)
-export GKE_CLUSTER_LOCATION=$(terraform output -json | jq -r .gke_cluster_location.value)
-export GKE_CLUSTER_NAME=$(terraform output -json | jq -r .gke_cluster_name.value)
-export PROJECT=$(terraform output -json | jq -r .project_id.value)
-export OPENRELIK_DB=$(terraform output -json | jq -r .openrelik_db.value)
-export OPENRELIK_DB_INSTANCE=$(terraform output -json | jq -r .openrelik_db_instance.value)
-export OPENRELIK_DB_USER=$(terraform output -json | jq -r .openrelik_db_user.value)
-export OPENRELIK_DB_ADDRESS=$(gcloud sql instances describe ${OPENRELIK_DB_INSTANCE} --project=${PROJECT} --format=json | jq -r .settings.ipConfiguration.pscConfig.pscAutoConnections[0].ipAddress)
-export OPENRELIK_HOSTNAME=$(terraform output -json | jq -r .hostname.value)
-export REDIS_ADDRESS=$(terraform output -json | jq -r .redis_address.value)
-export REGION=$(terraform output -json | jq -r .region.value)
-export ZONE=$(terraform output -json | jq -r .zone.value)
-
-export ENABLE_GCP=true
+echo "ARTIFACT_REGISTRY: $ARTIFACT_REGISTRY"
+echo "CERTIFICATE_NAME: $CERTIFICATE_NAME"
+echo "DB_SECRET_NAME: $DB_SECRET_NAME"
+echo "DB_SECRET_VERSION: $DB_SECRET_VERSION"
+echo "ENABLE_GCP: $ENABLE_GCP"
+echo "GKE_CLUSTER_LOCATION: $GKE_CLUSTER_LOCATION"
+echo "GKE_CLUSTER_NAME: $GKE_CLUSTER_NAME"
+echo "PROJECT: $PROJECT"
+echo "OPENRELIK_DB: $OPENRELIK_DB"
+echo "OPENRELIK_DB_INSTANCE: $OPENRELIK_DB_INSTANCE"
+echo "OPENRELIK_DB_USER: $OPENRELIK_DB_USER"
+echo "OPENRELIK_DB_ADDRESS: $OPENRELIK_DB_ADDRESS"
+echo "OPENRELIK_HOSTNAME: $OPENRELIK_HOSTNAME"
+echo "REDIS_ADDRESS: $REDIS_ADDRESS"
+echo "REGION: $REGION"
+echo "ZONE: $ZONE"
 ```
 
 #### 2.2.1. Fetch the GKE cluster credentials
