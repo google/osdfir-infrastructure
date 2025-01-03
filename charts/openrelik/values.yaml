@@ -95,7 +95,7 @@ postgres:
   managedSecretVersion: 1
   ## @param postgres.password Sets the Postgres DB password.
   ##
-  password: <REPLACE_WITH_POSTGRES_PASSWORD>
+  password: "<REPLACE_WITH_POSTGRES_PASSWORD>"
   ## @param postgres.user Sets the Postgres DB user name.
   ##
   user: "openrelik"

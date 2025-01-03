@@ -19,8 +19,18 @@ export REPO=$(pwd)
 > **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ```console
+# Start minikube
 minikube start
 minikube tunnel &
+
+# Create the configuration files
+cd charts/openrelik
+./config.sh local
+mkdir templates/configmap
+kubectl create configmap cm-settings --dry-run=client -o=yaml --from-file=settings.toml -n openrelik > templates/configmap/cm-settings.yaml
+cd $REPO
+
+# Install the OpenRelik Helm chart
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 ```
 
@@ -54,6 +64,14 @@ minikube tunnel &
 To install the chart, specify any release name of your choice. For example, using `openrelik-on-k8s' as the release name, run:
 
 ```console
+# Create the configuration files
+cd charts/openrelik
+./config.sh local
+mkdir templates/configmap
+kubectl create configmap cm-settings --dry-run=client -o=yaml --from-file=settings.toml -n openrelik > templates/configmap/cm-settings.yaml
+cd $REPO
+
+# Install the OpenRelik Helm chart
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 
 # Verify that all the OpenRelik component pods are in 'Running' state (this might take a moment)
@@ -128,7 +146,7 @@ gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_
 
 ```console
 cd $REPO/charts/openrelik
-./config.sh
+./config.sh cloud
 
 mkdir templates/configmap
 kubectl create configmap cm-settings --dry-run=client -o=yaml --from-file=settings.toml -n openrelik > templates/configmap/cm-settings.yaml
