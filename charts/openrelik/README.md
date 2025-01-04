@@ -77,7 +77,17 @@ helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.ya
 # Verify that all the OpenRelik component pods are in 'Running' state (this might take a moment)
 kubectl get pods
 # The output should look similar to the below:
-# NAME                                      READY   STATUS    RESTARTS   AGE
+# NAME                                               READY  STATUS   RESTARTS  AGE
+# openrelik-mediator-7c58c4d667-j8l9t                1/1    Running  0         8s
+# openrelik-postgres-589c44cd5f-ggk6p                1/1    Running  0         8s
+# openrelik-redis-66d8946695-4jv6j                   1/1    Running  0         8s
+# openrelik-server-5864d95fc7-cdw7x                  1/1    Running  0         8s
+# openrelik-ui-d5c646bc7-xnwgx                       1/1    Running  0         8s
+# openrelik-worker-analyzer-config-58b4ddd59f-4pfjd  1/1    Running  0         8s
+# openrelik-worker-extraction-68f94856f6-kpksl       1/1    Running  0         8s
+# openrelik-worker-hayabusa-676bb647dc-6wck5         1/1    Running  0         8s
+# openrelik-worker-plaso-55f97c9555-j9skb            1/1    Running  0         8s
+# openrelik-worker-strings-7db674c997-z4n66          1/1    Running  0         8s
 ```
 
 The command deploys OpenRelik on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -87,8 +97,9 @@ The command deploys OpenRelik on the Kubernetes cluster in the default configura
 You can now point your browser to the OpenRelik Frontend.
 
 ```console
-export OPENRELIK_FRONTEND_IP=$(kubectl get svc svc-ui --output jsonpath='{.spec.clusterIP}')
-echo http://localhost:8711
+export UI_IP=$(kubectl get svc svc-ui -n openrelik --output jsonpath='{.spec.clusterIP}')
+export SERVER_IP=$(kubectl get svc svc-server -n openrelik --output jsonpath='{.spec.clusterIP}')
+echo http://UI_IP:8711
 ```
 
 ## 2. Installing OpenRelik on Cloud

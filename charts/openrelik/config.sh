@@ -29,7 +29,7 @@ cat << "EOF"
 EOF
 
 OPENRELIK_API_URL="http://localhost:8710"
-OPENRELIK_URL="http://localhost:9711"
+OPENRELIK_URL="http://localhost:8711"
 
 if [[ "$1" == "cloud" ]]; then
   OPENRELIK_API_HOSTNAME="openrelik.${OPENRELIK_HOSTNAME}"
@@ -43,7 +43,7 @@ if [[ "$1" == "cloud" ]]; then
 elif [[ "$1" == "local" ]]; then
   ENABLE_GCP=false
   OPENRELIK_DB="openrelik"
-  OPENRELIK_DB_ADDRESS="openrelik-postgres"
+  OPENRELIK_DB_ADDRESS="svc-postgres"
   OPENRELIK_DB_USER="openrelik"
   PROJECT="none"
   ZONE="none"
@@ -127,5 +127,6 @@ if [[ "$1" == "local" ]]; then
 # Replace placeholders in values.yaml
 replace_in_file "<REPLACE_WITH_POSTGRES_PASSWORD>" "${POSTGRES_PASSWORD}" "settings.toml"
 replace_in_file "<REPLACE_WITH_POSTGRES_PASSWORD>" "${POSTGRES_PASSWORD}" "values.yaml"
+replace_in_file "<REPLACE_WITH_POSTGRES_USER>" "${OPENRELIK_DB_USER}" "values.yaml"
 fi
 echo -e "\r\033[1;32m[3/8] Configuration settings... Done\033[0m"

@@ -101,7 +101,7 @@ postgres:
   password: "<REPLACE_WITH_POSTGRES_PASSWORD>"
   ## @param postgres.user Sets the Postgres DB user name.
   ##
-  user: "openrelik"
+  user: "<REPLACE_WITH_POSTGRES_USER>"
   ## @param postgres.selfManaged Enables a Postgres DB containter to be deployed into the cluster.
   ##
   selfManaged: true
@@ -114,7 +114,7 @@ redis:
   image: "redis:7"
   ## @param redis.url Sets the Redis URL.
   ##
-  url: "redis://openrelik-redis:6379"
+  url: "redis://svc-redis:6379"
   ## @param redisi.selfManaged Enables a Redis containter to be deployed into the cluster.
   ##
   selfManaged: true

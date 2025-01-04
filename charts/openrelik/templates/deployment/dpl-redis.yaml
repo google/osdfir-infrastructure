@@ -1,11 +1,11 @@
-{{- if .Values.redis.managed }}
+{{- if .Values.redis.selfManaged }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: openrelik-redis
   name: openrelik-redis
   namespace: openrelik
+  labels:
+    app: openrelik-redis
 spec:
   replicas: 1
   selector:
@@ -17,9 +17,12 @@ spec:
         app: openrelik-redis
     spec:
       containers:
-        - args:
+        - name: openrelik-redis
+          args:
             - redis-server
           image: {{ .Values.redis.image }}
-          name: openrelik-redis
+          ports:
+          - containerPort: 6379
+            protocol: TCP
       restartPolicy: Always
 {{- end }}

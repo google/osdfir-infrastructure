@@ -2,38 +2,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: openrelik-postgres
   name: openrelik-postgres
   namespace: openrelik
+  labels:
+    app: openrelik-postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: openrelik-postgres
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
         app: openrelik-postgres
     spec:
       containers:
-        - env:
+        - name: openrelik-postgres
+          image: {{ .Values.postgres.image }}
+          ports:
+            - containerPort: 5432
+          env:
             - name: POSTGRES_DB
               value: {{ .Values.postgres.db }}
             - name: POSTGRES_USER
               value: {{ .Values.postgres.user }}
             - name: POSTGRES_PASSWORD
               value: {{ .Values.postgres.password }}
-          image: {{ .Values.postgres.image }}
-          name: openrelik-postgres
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: vol-openrelik
+              name: vol-postgres
       restartPolicy: Always
       volumes:
-        - name: vol-openrelik
+        - name: vol-postgres
           persistentVolumeClaim:
-            claimName: pvc-local
+            claimName: pvc-postgres
 {{- end }}

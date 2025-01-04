@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-create-dirs
+  namespace: openrelik
+spec:
+  template:
+    spec:
+      containers:
+      - name: create-dirs
+        image: busybox:1.37
+        command: ['sh', '-c', "rm -rf /usr/share/openrelik/* ; mkdir -p /usr/share/openrelik/data/postgresql; mkdir -p /usr/share/openrelik/data/artifacts; mkdir -p /usr/share/openrelik/config"]
+        volumeMounts:
+        - name: vol-data
+          mountPath: /usr/share/openrelik
+      restartPolicy: Never
+      volumes:
+        - name: vol-data
+          persistentVolumeClaim:
+            claimName: pvc-local
+  backoffLimit: 4

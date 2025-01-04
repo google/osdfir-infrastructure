@@ -1,0 +1,14 @@
+{{- if .Values.redis.selfManaged }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-redis
+  namespace: openrelik
+spec:
+  ports:
+    - name: "redis"
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: openrelik-redis
+{{- end }}
