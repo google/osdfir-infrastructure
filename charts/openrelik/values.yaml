@@ -4,6 +4,9 @@
 ## @section Global parameters
 ##
 global:
+  ## @param global.localData Allocates local PVC for data storage.
+  ##
+  localData: true
   ## @param global.useResourceRequests Allocates resources to the pods.
   ##
   useResourceRequests: false
@@ -42,11 +45,11 @@ openrelik:
     replicas: 1
 
   worker:
-    analyzer-config:
-      ## @param openrelik.worker.analyzer-config.image Sets the analyzer-config container image to use.
+    analyzer:
+      ## @param openrelik.worker.analyzer.image Sets the analyzer-config container image to use.
       ##
       image: "ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27"
-      ## @param openrelik.worker.analyzer-configi.replicas Sets the amount of analyzer-config pods to run.
+      ## @param openrelik.worker.analyzer.replicas Sets the amount of analyzer-config pods to run.
       ##
       replicas: 1
     extraction:

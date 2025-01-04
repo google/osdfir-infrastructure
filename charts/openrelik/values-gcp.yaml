@@ -4,6 +4,9 @@
 ## @section Global parameters
 ##
 global:
+  ## @param global.localData Allocates local PVC for data storage.
+  ##
+  localData: false
   ## @param global.projectId Sets the Google Cloud Project ID.
   ##
   projectId: <REPLACE_WITH_PROJECT_ID>

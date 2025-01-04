@@ -35,14 +35,17 @@ spec:
             - name: REDIS_URL
               value: {{ .Values.redis.url }}
           volumeMounts:
-          {{- if .Values.filestore.managed }}
-          - name: vol-filestore
+          - name: vol-data
             mountPath: /usr/share/openrelik
-          {{- end }}
       restartPolicy: Always
       volumes:
+        {{- if .Values.global.localData }}
+        - name: vol-data
+          persistentVolumeClaim:
+            claimName: pvc-local
+        {{- end }}
         {{- if .Values.filestore.managed }}
-        - name: vol-filestore
+        - name: vol-data
           persistentVolumeClaim:
             claimName: pvc-filestore
         {{- end }}

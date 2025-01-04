@@ -3,25 +3,29 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    io.kompose.service: openrelik-postgres
+    app: openrelik-postgres
   name: openrelik-postgres
+  namespace: openrelik
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: openrelik-postgres
+      app: openrelik-postgres
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        io.kompose.service: openrelik-postgres
+        app: openrelik-postgres
     spec:
       containers:
         - env:
-            - name: {{ .Values.postgres.db }}
-            - name: {{ .Values.postgres.password }}
-            - name: {{ .Values.postgres.user }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.db }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.user }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.password }}
           image: {{ .Values.postgres.image }}
           name: openrelik-postgres
           volumeMounts:
@@ -31,5 +35,5 @@ spec:
       volumes:
         - name: vol-openrelik
           persistentVolumeClaim:
-            claimName: claim-openrelik
+            claimName: pvc-local
 {{- end }}

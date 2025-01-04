@@ -3,17 +3,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    io.kompose.service: openrelik-redis
+    app: openrelik-redis
   name: openrelik-redis
+  namespace: openrelik
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: openrelik-redis
+      app: openrelik-redis
   template:
     metadata:
       labels:
-        io.kompose.service: openrelik-redis
+        app: openrelik-redis
     spec:
       containers:
         - args:

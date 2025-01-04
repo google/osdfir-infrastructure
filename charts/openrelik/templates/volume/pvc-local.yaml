@@ -1,0 +1,13 @@
+{{- if .Values.global.localData }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-local
+  namespace: openrelik
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+{{- end }}
