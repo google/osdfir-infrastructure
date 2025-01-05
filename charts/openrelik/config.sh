@@ -126,6 +126,7 @@ fi
 if [[ "$1" == "local" ]]; then
 # Replace placeholders in values.yaml
 replace_in_file "<REPLACE_WITH_POSTGRES_PASSWORD>" "${POSTGRES_PASSWORD}" "settings.toml"
+replace_in_file "<REPLACE_WITH_API_SERVER_URL>" "${OPENRELIK_API_URL}" "values.yaml"
 replace_in_file "<REPLACE_WITH_POSTGRES_PASSWORD>" "${POSTGRES_PASSWORD}" "values.yaml"
 replace_in_file "<REPLACE_WITH_POSTGRES_USER>" "${OPENRELIK_DB_USER}" "values.yaml"
 fi

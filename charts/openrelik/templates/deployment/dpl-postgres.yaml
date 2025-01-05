@@ -30,10 +30,10 @@ spec:
               value: {{ .Values.postgres.password }}
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: vol-postgres
+              name: vol-data
       restartPolicy: Always
       volumes:
-        - name: vol-postgres
+        - name: vol-data
           persistentVolumeClaim:
-            claimName: pvc-postgres
+            claimName: pvc-local
 {{- end }}

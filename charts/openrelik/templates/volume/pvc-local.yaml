@@ -1,0 +1,13 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-local
+  namespace: openrelik
+  labels:
+    app: openrelik
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi

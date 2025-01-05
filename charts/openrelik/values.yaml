@@ -32,6 +32,9 @@ openrelik:
     ## @param openrelik.server.replicas Sets the amount of OpenRelik server pods to run.
     ##
     replicas: 1
+    ## @param openrelik.server.url Sets the OpenRelik server URL to use.
+    ##
+    url: <REPLACE_WITH_API_SERVER_URL>
 
   ui:
     ## @param openrelik.ui.image Sets the OpenRelik UI container image to use.
