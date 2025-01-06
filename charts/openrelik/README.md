@@ -79,7 +79,7 @@ To install the chart, specify any release name of your choice. For example, usin
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 
 # Verify that all the OpenRelik component pods are in 'Running' state (this might take a moment)
-kubectl get pods
+kubectl get pods -n openrelik
 # The output should look similar to the below:
 # NAME                                               READY  STATUS   RESTARTS  AGE
 # openrelik-mediator-7c58c4d667-j8l9t                1/1    Running  0         8s
@@ -100,9 +100,9 @@ The command deploys OpenRelik on the Kubernetes cluster in the default configura
 
 ```
 kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-server -- \
-        bash -c "cd /app/openrelik/datastores/sql && \
-                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //" | sed 's/"//g') && \
-                 alembic upgrade head"
+        bash -c 'cd /app/openrelik/datastores/sql && \
+                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed #s/database_url = //# | sed #s/"//g#) && \
+                 alembic upgrade head'
 ```
 
 ### 1.4. Create the ```admin``` user
@@ -121,9 +121,9 @@ You can now point your browser to the OpenRelik Frontend.
 export UI_IP=$(kubectl get svc svc-ui -n openrelik --output jsonpath='{.spec.clusterIP}')
 export SERVER_IP=$(kubectl get svc svc-server -n openrelik --output jsonpath='{.spec.clusterIP}')
 
-ssh -L 8711:$UI_IP:8711 -L 8710:$SERVER_IP:8710 minikube
+echo "ssh -L 8711:$UI_IP:8711 -L 8710:$SERVER_IP:8710 minikube"
 
-http://localhost:8710
+echo "http://localhost:8711"
 ```
 
 ## 2. Installing OpenRelik on Cloud
@@ -233,9 +233,9 @@ kubectl get pods -n openrelik
 
 ```
 kubectl exec -it openrelik-server-5957548585-zzhpj -n openrelik -c openrelik-server -- \
-        bash -c "cd /app/openrelik/datastores/sql && \
-                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //" | sed 's/"//g') && \
-                 alembic upgrade head"
+        bash -c 'cd /app/openrelik/datastores/sql && \
+                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed #s/database_url = //# | sed #s/"//g#) && \
+                 alembic upgrade head'
 ```
 
 #### 2.2.7. Create the ```admin``` user
