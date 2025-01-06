@@ -66,9 +66,7 @@ minikube start
 minikube tunnel &
 ```
 
-### 1.1. Installing the Chart
-
-To install the chart, specify any release name of your choice. For example, using `openrelik-on-k8s' as the release name, run:
+### 1.1. Creating the configuration
 
 ```console
 # Create the configuration files
@@ -76,8 +74,26 @@ cd charts/openrelik
 ./config.sh local
 mkdir templates/configmap
 kubectl create configmap cm-settings --dry-run=client -o=yaml --from-file=settings.toml -n openrelik > templates/configmap/cm-settings.yaml
+```
+
+### 1.2. Creating the volume
+
+```
 cd $REPO
 
+# Create the OpenRelik namespace
+kubectl apply -f charts/openrelik/templates/namespace/ns-openrelik.yaml
+
+# Create a local volume that we can mount into the containers
+kubectl apply -f charts/openrelik/localstore/pvc-local.yaml
+kubectl apply -f charts/openrelik/localstore/job-create-dirs.yaml
+```
+
+### 1.3. Installing the Chart
+
+To install the chart, specify any release name of your choice. For example, using `openrelik-on-k8s' as the release name, run:
+
+```
 # Install the OpenRelik Helm chart
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 
@@ -99,7 +115,7 @@ kubectl get pods
 
 The command deploys OpenRelik on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
-### 1.2. Initialise the Openrelik DB
+### 1.4. Initialise the Openrelik DB
 
 ```
 kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-server -- \
@@ -108,7 +124,7 @@ kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-ser
                  alembic upgrade head"
 ```
 
-## 1.3. Create the ```admin``` user
+### 1.5. Create the ```admin``` user
 
 ```
 export USER_PWD="<YOUR_USER_PWD HERE>"
@@ -116,7 +132,7 @@ kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-ser
         bash -c "python admin.py create-user admin --password ${USER_PWD} --admin"
 ```
 
-### 1.4. Connect to the OpenRelik Frontend
+### 1.6. Connect to the OpenRelik Frontend
 
 You can now point your browser to the OpenRelik Frontend.
 
