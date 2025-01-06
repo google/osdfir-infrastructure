@@ -74,7 +74,7 @@ cd $REPO
 
 To install the chart, specify any release name of your choice. For example, using `openrelik-on-k8s' as the release name, run:
 
-```
+```console
 # Install the OpenRelik Helm chart
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 
@@ -98,18 +98,20 @@ The command deploys OpenRelik on the Kubernetes cluster in the default configura
 
 ### 1.3. Initialise the Openrelik DB
 
-```
-kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-server -- \
+```console
+export SERVER_POD=$(kubectl get pod -l app=server -n openrelik -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it ${SERVER_POD} -n openrelik -c openrelik-server -- \
         bash -c 'cd /app/openrelik/datastores/sql && \
-                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed #s/database_url = //# | sed #s/"//g#) && \
+                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //" | sed "s/\"//g") && \
                  alembic upgrade head'
 ```
 
 ### 1.4. Create the ```admin``` user
 
-```
+```console
+export SERVER_POD=$(kubectl get pod -l app=server -n openrelik -o jsonpath="{.items[0].metadata.name}")
 export USER_PWD="<YOUR_USER_PWD HERE>"
-kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-server -- \
+kubectl exec -it ${SERVER_POD} -n openrelik -c openrelik-server -- \
         bash -c "python admin.py create-user admin --password ${USER_PWD} --admin"
 ```
 
@@ -121,8 +123,10 @@ You can now point your browser to the OpenRelik Frontend.
 export UI_IP=$(kubectl get svc svc-ui -n openrelik --output jsonpath='{.spec.clusterIP}')
 export SERVER_IP=$(kubectl get svc svc-server -n openrelik --output jsonpath='{.spec.clusterIP}')
 
+# Create an SSH port forward tunnel for both the UI and API server ports
 echo "ssh -L 8711:$UI_IP:8711 -L 8710:$SERVER_IP:8710 minikube"
 
+# Point your browser at the OpenRelik UI
 echo "http://localhost:8711"
 ```
 
@@ -150,7 +154,7 @@ Once you have provisioned your infrastructure you can continue with the instruct
 
 In case you followed the Google Cloud environment installation instructions you should already have the following environment variables configured.
 Otherwise, either run the [installation instruction step](../../cloud/openrelik/README.md#22-capture-environment-variables-for-later-use) again or set the environment variables to values that match your setup.
-You can check that they have a value assigned by runnig the commands below.
+You can check that they have a value assigned by running the commands below.
 
 ```console
 echo "ARTIFACT_REGISTRY: $ARTIFACT_REGISTRY"
@@ -191,7 +195,7 @@ cd $REPO
 
 > **Tip**: For more details see [Filestore Multishares](https://cloud.google.com/filestore/docs/optimize-multishares)
 
-```
+```console
 kubectl apply -f charts/openrelik/templates/namespace/ns-openrelik.yaml
 
 kubectl apply -f charts/openrelik/filestore/sc-ms-512.yaml
@@ -231,18 +235,20 @@ kubectl get pods -n openrelik
 
 #### 2.2.6. Initialise the Openrelik DB
 
-```
-kubectl exec -it openrelik-server-5957548585-zzhpj -n openrelik -c openrelik-server -- \
+```console
+export SERVER_POD=$(kubectl get pod -l app=server -n openrelik -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it ${SERVER_POD} -n openrelik -c openrelik-server -- \
         bash -c 'cd /app/openrelik/datastores/sql && \
-                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed #s/database_url = //# | sed #s/"//g#) && \
+                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //" | sed "s/\"//g") && \
                  alembic upgrade head'
 ```
 
 #### 2.2.7. Create the ```admin``` user
 
-```
+```console
 export USER_PWD="<YOUR_USER_PWD HERE>"
-kubectl exec -it openrelik-server-5957548585-zzhpj -n openrelik -c openrelik-server -- \
+export SERVER_POD=$(kubectl get pod -l app=server -n openrelik -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it ${SERVER_POD} -n openrelik -c openrelik-server -- \
         bash -c "python admin.py create-user admin --password ${USER_PWD} --admin"
 ```
 
@@ -250,7 +256,7 @@ kubectl exec -it openrelik-server-5957548585-zzhpj -n openrelik -c openrelik-ser
 
 Run the command below and then point your browser to the displayed URL:
 
-```
+```console
 echo "https://$OPENRELIK_HOSTNAME"
 ```
 
@@ -313,7 +319,7 @@ helm uninstall openrelik-on-k8s
 | `openrelik.worker.strings.image`       | Sets the strings container image to use.            | `ghcr.io/openrelik/openrelik-worker-strings:2024.11.27`         |
 | `openrelik.worker.strings.replicas`    | Sets the amount of strings pods to run.             | `1`                                                             |
 
-### Gateway API parameters
+### Postgres parameters
 
 | Name                            | Description                                                          | Value                              |
 | ------------------------------- | -------------------------------------------------------------------- | ---------------------------------- |

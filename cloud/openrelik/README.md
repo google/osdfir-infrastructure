@@ -76,7 +76,7 @@ terraform apply -var "project_id=$PROJECT_ID"
 
 ### 2.2. Capture Environment Variables for later use
 
-```
+```console
 export ARTIFACT_REGISTRY=$(terraform output -json | jq -r .artifact_registry_id.value)
 export CERTIFICATE_NAME=$(terraform output -json | jq -r .certname.value)
 export DB_SECRET_NAME=$(terraform output -json | jq -r .db_secret_name.value)

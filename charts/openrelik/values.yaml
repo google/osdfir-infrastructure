@@ -84,7 +84,7 @@ openrelik:
       ##
       replicas: 1
 
-## @section Gateway API parameters
+## @section Postgres parameters
 ##
 postgres:
   ## @param postgres.db Sets the Postgres DB name.

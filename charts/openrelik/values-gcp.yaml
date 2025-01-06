@@ -93,7 +93,7 @@ openrelik:
       ##
       replicas: 1
 
-## @section Gateway API parameters
+## @section Postgres parameters
 ##
 postgres:
   ## @param postgres.managedSecret Enables a managed secret for the Postgres DB password.
