@@ -42,6 +42,12 @@ spec:
       containers:
         - name: openrelik-server
           image: {{ .Values.openrelik.server.image }}
+          {{- if .Values.global.useResourceRequests }}
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+          {{- end }}
           args:
             - uvicorn
             - main:app

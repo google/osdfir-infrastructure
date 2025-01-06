@@ -42,6 +42,12 @@ spec:
       containers:
         - name: openrelik-mediator
           image: {{ .Values.openrelik.mediator.image }}
+          {{- if .Values.global.useResourceRequests }}
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+          {{- end }}
           args:
             - python
             - mediator.py

@@ -27,6 +27,12 @@ spec:
       containers:
       - name: openrelik-worker-strings
         image: {{ .Values.openrelik.worker.strings.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+        {{- end }}
         args:
           - celery
           - --app=src.app

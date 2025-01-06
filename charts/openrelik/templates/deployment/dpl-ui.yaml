@@ -18,6 +18,12 @@ spec:
       containers:
         - name: openrelik-ui
           image: {{ .Values.openrelik.ui.image }}
+          {{- if .Values.global.useResourceRequests }}
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+          {{- end }}
           env:
             - name: OPENRELIK_API_VERSION
               value: v1
