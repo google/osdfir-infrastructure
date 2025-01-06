@@ -30,6 +30,13 @@ mkdir templates/configmap
 kubectl create configmap cm-settings --dry-run=client -o=yaml --from-file=settings.toml -n openrelik > templates/configmap/cm-settings.yaml
 cd $REPO
 
+# Create the OpenRelik namespace
+kubectl apply -f charts/openrelik/templates/namespace/ns-openrelik.yaml
+
+# Create a local volume that we can mount into the containers
+kubectl apply -f charts/openrelik/localstore/pvc-local.yaml
+kubectl apply -f charts/openrelik/localstore/job-create-dirs.yaml
+
 # Install the OpenRelik Helm chart
 helm install openrelik-on-k8s ./charts/openrelik -f ./charts/openrelik/values.yaml
 ```
@@ -92,14 +99,34 @@ kubectl get pods
 
 The command deploys OpenRelik on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
-### 1.2. Connect to the OpenRelik Frontend
+### 1.2. Initialise the Openrelik DB
+
+```
+kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-server -- \
+        bash -c "cd /app/openrelik/datastores/sql && \
+                 export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //" | sed 's/"//g') && \
+                 alembic upgrade head"
+```
+
+## 1.3. Create the ```admin``` user
+
+```
+export USER_PWD="<YOUR_USER_PWD HERE>"
+kubectl exec -it openrelik-server-5864d95fc7-cdw7x -n openrelik -c openrelik-server -- \
+        bash -c "python admin.py create-user admin --password ${USER_PWD} --admin"
+```
+
+### 1.4. Connect to the OpenRelik Frontend
 
 You can now point your browser to the OpenRelik Frontend.
 
 ```console
 export UI_IP=$(kubectl get svc svc-ui -n openrelik --output jsonpath='{.spec.clusterIP}')
 export SERVER_IP=$(kubectl get svc svc-server -n openrelik --output jsonpath='{.spec.clusterIP}')
-echo http://UI_IP:8711
+
+ssh -L 8711:$UI_IP:8711 -L 8710:$SERVER_IP:8710 minikube
+
+http://localhost:8710
 ```
 
 ## 2. Installing OpenRelik on Cloud
@@ -213,7 +240,7 @@ kubectl get pods -n openrelik
 #### 2.2.6. Initialise the Openrelik DB
 
 ```
-kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -c openrelik-server -- \
+kubectl exec -it openrelik-server-5957548585-zzhpj -n openrelik -c openrelik-server -- \
         bash -c "cd /app/openrelik/datastores/sql && \
                  export SQLALCHEMY_DATABASE_URL=$(grep database_url /var/config/settings.toml | sed "s/database_url = //" | sed 's/"//g') && \
                  alembic upgrade head"
@@ -223,7 +250,7 @@ kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -c openrelik-ser
 
 ```
 export USER_PWD="<YOUR_USER_PWD HERE>"
-kubectl exec -it openrelik-server-699bb6c77c-tc2tp -n openrelik -c openrelik-server -- \
+kubectl exec -it openrelik-server-5957548585-zzhpj -n openrelik -c openrelik-server -- \
         bash -c "python admin.py create-user admin --password ${USER_PWD} --admin"
 ```
 
