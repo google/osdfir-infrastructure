@@ -34,7 +34,7 @@ openrelik:
     replicas: 1
     ## @param openrelik.server.url Sets the OpenRelik server URL to use.
     ##
-    url: http://localhost:8710
+    url: <REPLACE_WITH_API_SERVER_URL>
 
   ui:
     ## @param openrelik.ui.image Sets the OpenRelik UI container image to use.
@@ -101,10 +101,10 @@ postgres:
   managedSecretVersion: 1
   ## @param postgres.password Sets the Postgres DB password.
   ##
-  password: "9ntMBEy09HtM8wE38y8mVL3i2SgeyOwx"
+  password: "<REPLACE_WITH_POSTGRES_PASSWORD>"
   ## @param postgres.user Sets the Postgres DB user name.
   ##
-  user: "openrelik"
+  user: "<REPLACE_WITH_POSTGRES_USER>"
   ## @param postgres.selfManaged Enables a Postgres DB containter to be deployed into the cluster.
   ##
   selfManaged: true

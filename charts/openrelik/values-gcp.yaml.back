@@ -1,15 +1,18 @@
 ## OpenRelik Helm Chart
-## Please use this Helm chart for deploying OpenRelik to a Kubernetes cluster.
+## Please use this Helm chart for deploying OpenRelik to a Google Kubernetes Engine (GKE) environment.
 ##
 ## @section Global parameters
 ##
 global:
   ## @param global.localData Allocates local PVC for data storage.
   ##
-  localData: true
+  localData: false
+  ## @param global.projectId Sets the Google Cloud Project ID.
+  ##
+  projectId: <REPLACE_WITH_PROJECT_ID>
   ## @param global.useResourceRequests Allocates resources to the pods.
   ##
-  useResourceRequests: false
+  useResourceRequests: true
 
 ## @section OpenRelik parameters
 ##
@@ -23,6 +26,9 @@ openrelik:
     replicas: 1
 
   server:
+    ## @param openrelik.server.hostname Sets the OpenRelik server hostname to use.
+    ##
+    hostname: <REPLACE_WITH_API_SERVER_HOSTNAME>
     ## @param openrelik.server.image Sets the OpenRelik server container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-server:2024.12.12"
@@ -34,9 +40,12 @@ openrelik:
     replicas: 1
     ## @param openrelik.server.url Sets the OpenRelik server URL to use.
     ##
-    url: http://localhost:8710
+    url: <REPLACE_WITH_API_SERVER_URL>
 
   ui:
+    ## @param openrelik.ui.hostname Sets the OpenRelik UI hostname to use.
+    ##
+    hostname: <REPLACE_WITH_UI_SERVER_HOSTNAME>
     ## @param openrelik.ui.image Sets the OpenRelik UI container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-ui:2024.12.12"
@@ -87,51 +96,42 @@ openrelik:
 ## @section Gateway API parameters
 ##
 postgres:
-  ## @param postgres.db Sets the Postgres DB name.
-  ##
-  db: "openrelik"
-  ## @param postgres.image Sets the strings container image to use.
-  ##
-  image: "postgres:17"
   ## @param postgres.managedSecret Enables a managed secret for the Postgres DB password.
   ##
-  managedSecret: false
+  managedSecret: true
   ## @param postgres.managedSecretVersion Sets the version of the managed secret for the Postgres DB password.
   ##
   managedSecretVersion: 1
-  ## @param postgres.password Sets the Postgres DB password.
-  ##
-  password: "9ntMBEy09HtM8wE38y8mVL3i2SgeyOwx"
   ## @param postgres.user Sets the Postgres DB user name.
   ##
   user: "openrelik"
   ## @param postgres.selfManaged Enables a Postgres DB containter to be deployed into the cluster.
   ##
-  selfManaged: true
+  selfManaged: false
 
 ## @section Redis parameters
 ##
 redis:
-  ## @param redis.image Sets the strings container image to use.
-  ##
-  image: "redis:7"
   ## @param redis.url Sets the Redis URL.
   ##
-  url: "redis://svc-redis:6379"
-  ## @param redisi.selfManaged Enables a Redis containter to be deployed into the cluster.
+  url: <REPLACE_WITH_REDIS_URL>
+  ## @param redis.selfManaged Enables a Redis containter to be deployed into the cluster.
   ##
-  selfManaged: true
+  selfManaged: false
 
 ## @section Filestore parameters
 ##
 filestore:
   ## @param filestore.managed Enables a Google Cloud Filestore instance to be deployed.
   ##
-  managed: false
+  managed: true
 
 ## @section Gateway API parameters
 ##
 gateway:
-  ## @param global.managed Enables a Gateway API Global Loadbalancer to be deployed.
+  ## @param gateway.certificateName Sets the name of the OpenRelik certificate.
   ##
-  managed: false
+  certificateName: <REPLACE_WITH_CERTIFICATE_NAME>
+  ## @param gateway.managed Enables a Gateway API Global Loadbalancer to be deployed.
+  ##
+  managed: true

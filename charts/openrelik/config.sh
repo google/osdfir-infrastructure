@@ -131,3 +131,6 @@ replace_in_file "<REPLACE_WITH_POSTGRES_PASSWORD>" "${POSTGRES_PASSWORD}" "value
 replace_in_file "<REPLACE_WITH_POSTGRES_USER>" "${OPENRELIK_DB_USER}" "values.yaml"
 fi
 echo -e "\r\033[1;32m[3/8] Configuration settings... Done\033[0m"
+
+mkdir -p templates/configmap
+kubectl create configmap cm-settings --dry-run=client -o=yaml --from-file=settings.toml -n openrelik > templates/configmap/cm-settings.yaml
