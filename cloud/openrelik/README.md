@@ -57,9 +57,10 @@ We assume that you have already cloned this repository to your machine.
 If not then go ahead and issue the `git clone` command below:
 
 ```console
-git clone https://github.com/daschwanden/openrelik-infra.git
-cd openrelik-infra
+git clone https://github.com/google/osdfir-infrastructure.git
+cd osdfir-infrastructure
 export REPO=$(pwd)
+
 cd cloud/openrelik
 ```
 
