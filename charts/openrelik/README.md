@@ -284,28 +284,66 @@ helm uninstall openrelik-on-k8s
 
 ### Global parameters
 
-| Name                         | Description                                                    | Value   |
-| ---------------------------- | -------------------------------------------------------------- | ------- |
+| Name                         | Description                           | Value   |
+| ---------------------------- | ------------------------------------- | ------- |
+| `global.localData`           | Allocates local PVC for data storage. | `true`  |
+| `global.useResourceRequests` | Allocates resources to the pods.      | `false` |
 
 ### OpenRelik parameters
 
-| Name                         | Description                                             | Value                                 |
-| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
-
-### Postgres parameters
-
-| Name                         | Description                                             | Value                                 |
-| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
-
-### Redis parameters
-
-| Name                         | Description                                             | Value                                 |
-| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| Name                                   | Description                                         | Value                                                           |
+| -------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------- |
+| `openrelik.mediator.image`             | Sets the OpenRelik mediator container image to use. | `ghcr.io/openrelik/openrelik-mediator:2024.12.12`               |
+| `openrelik.mediator.replicas`          | Sets the amount of OpenRelik mediator pods to run.  | `1`                                                             |
+| `openrelik.server.image`               | Sets the OpenRelik server container image to use.   | `ghcr.io/openrelik/openrelik-server:2024.12.12`                 |
+| `openrelik.server.port`                | Sets the OpenRelik server port to use.              | `8710`                                                          |
+| `openrelik.server.replicas`            | Sets the amount of OpenRelik server pods to run.    | `1`                                                             |
+| `openrelik.server.url`                 | Sets the OpenRelik server URL to use.               | `<REPLACE_WITH_API_SERVER_URL>`                                 |
+| `openrelik.ui.image`                   | Sets the OpenRelik UI container image to use.       | `ghcr.io/openrelik/openrelik-ui:2024.12.12`                     |
+| `openrelik.ui.port`                    | Sets the OpenRelik UI port to use.                  | `8711`                                                          |
+| `openrelik.ui.replicas`                | Sets the amount of OpenRelik UI pods to run.        | `1`                                                             |
+| `openrelik.worker.analyzer.image`      | Sets the analyzer-config container image to use.    | `ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27` |
+| `openrelik.worker.analyzer.replicas`   | Sets the amount of analyzer-config pods to run.     | `1`                                                             |
+| `openrelik.worker.extraction.image`    | Sets the extraction container image to use.         | `ghcr.io/openrelik/openrelik-worker-extraction:2024.11.27`      |
+| `openrelik.worker.extraction.replicas` | Sets the amount of extraction pods to run.          | `1`                                                             |
+| `openrelik.worker.hayabusa.image`      | Sets the hayabusa container image to use.           | `ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27`        |
+| `openrelik.worker.hayabusa.replicas`   | Sets the amount of hayabusa pods to run.            | `1`                                                             |
+| `openrelik.worker.plaso.image`         | Sets the plaso container image to use.              | `ghcr.io/openrelik/openrelik-worker-plaso:2024.11.27`           |
+| `openrelik.worker.plaso.replicas`      | Sets the amount of plaso pods to run.               | `1`                                                             |
+| `openrelik.worker.strings.image`       | Sets the strings container image to use.            | `ghcr.io/openrelik/openrelik-worker-strings:2024.11.27`         |
+| `openrelik.worker.strings.replicas`    | Sets the amount of strings pods to run.             | `1`                                                             |
 
 ### Gateway API parameters
 
-| Name                         | Description                                             | Value                                 |
-| ---------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| Name                            | Description                                                          | Value                              |
+| ------------------------------- | -------------------------------------------------------------------- | ---------------------------------- |
+| `postgres.db`                   | Sets the Postgres DB name.                                           | `openrelik`                        |
+| `postgres.image`                | Sets the strings container image to use.                             | `postgres:17`                      |
+| `postgres.managedSecret`        | Enables a managed secret for the Postgres DB password.               | `false`                            |
+| `postgres.managedSecretVersion` | Sets the version of the managed secret for the Postgres DB password. | `1`                                |
+| `postgres.password`             | Sets the Postgres DB password.                                       | `<REPLACE_WITH_POSTGRES_PASSWORD>` |
+| `postgres.user`                 | Sets the Postgres DB user name.                                      | `<REPLACE_WITH_POSTGRES_USER>`     |
+| `postgres.selfManaged`          | Enables a Postgres DB containter to be deployed into the cluster.    | `true`                             |
+
+### Redis parameters
+
+| Name                | Description                                                 | Value                    |
+| ------------------- | ----------------------------------------------------------- | ------------------------ |
+| `redis.image`       | Sets the strings container image to use.                    | `redis:7`                |
+| `redis.url`         | Sets the Redis URL.                                         | `redis://svc-redis:6379` |
+| `redis.selfManaged` | Enables a Redis containter to be deployed into the cluster. | `true`                   |
+
+### Filestore parameters
+
+| Name                | Description                                               | Value   |
+| ------------------- | --------------------------------------------------------- | ------- |
+| `filestore.managed` | Enables a Google Cloud Filestore instance to be deployed. | `false` |
+
+### Gateway API parameters
+
+| Name              | Description                                               | Value   |
+| ----------------- | --------------------------------------------------------- | ------- |
+| `gateway.managed` | Enables a Gateway API Global Loadbalancer to be deployed. | `false` |
 
 Copyright &copy; 2025 OSDFIR Infrastructure
 

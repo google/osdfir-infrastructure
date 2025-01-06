@@ -26,7 +26,7 @@ openrelik:
     ## @param openrelik.server.image Sets the OpenRelik server container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-server:2024.12.12"
-    ## @param openrelik.server.containerPort Sets the OpenRelik server port to use.
+    ## @param openrelik.server.port Sets the OpenRelik server port to use.
     ##
     port: 8710
     ## @param openrelik.server.replicas Sets the amount of OpenRelik server pods to run.
@@ -40,7 +40,7 @@ openrelik:
     ## @param openrelik.ui.image Sets the OpenRelik UI container image to use.
     ##
     image: "ghcr.io/openrelik/openrelik-ui:2024.12.12"
-    ## @param openrelik.ui.containerPort Sets the OpenRelik UI port to use.
+    ## @param openrelik.ui.port Sets the OpenRelik UI port to use.
     ##
     port: 8711
     ## @param openrelik.ui.replicas Sets the amount of OpenRelik UI pods to run.
@@ -118,7 +118,7 @@ redis:
   ## @param redis.url Sets the Redis URL.
   ##
   url: "redis://svc-redis:6379"
-  ## @param redisi.selfManaged Enables a Redis containter to be deployed into the cluster.
+  ## @param redis.selfManaged Enables a Redis containter to be deployed into the cluster.
   ##
   selfManaged: true
 
@@ -132,6 +132,6 @@ filestore:
 ## @section Gateway API parameters
 ##
 gateway:
-  ## @param global.managed Enables a Gateway API Global Loadbalancer to be deployed.
+  ## @param gateway.managed Enables a Gateway API Global Loadbalancer to be deployed.
   ##
   managed: false
