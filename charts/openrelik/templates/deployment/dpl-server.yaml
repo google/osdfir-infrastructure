@@ -18,8 +18,14 @@ spec:
         app: server
     spec:
       serviceAccountName: openrelik-sa
-      {{- if .Values.postgres.managedSecret }}
       initContainers:
+        - name: create-dirs
+          image: busybox:1.37
+          command: ['sh', '-c', "mkdir -p /usr/share/openrelik/data/artifacts; mkdir -p /usr/share/openrelik/config"]
+          volumeMounts:
+          - name: vol-data
+            mountPath: /usr/share/openrelik
+      {{- if .Values.postgres.managedSecret }}
         - name: init-server
           image: busybox:1.37.0
           command: ["/bin/sh", "-c"]

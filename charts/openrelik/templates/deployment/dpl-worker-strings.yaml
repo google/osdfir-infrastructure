@@ -17,6 +17,13 @@ spec:
       labels:
         worker: strings
     spec:
+      initContainers:
+        - name: create-dirs
+          image: busybox:1.37
+          command: ['sh', '-c', "mkdir -p /usr/share/openrelik/data/artifacts; mkdir -p /usr/share/openrelik/config"]
+          volumeMounts:
+          - name: vol-data
+            mountPath: /usr/share/openrelik
       containers:
       - name: openrelik-worker-strings
         image: {{ .Values.openrelik.worker.strings.image }}

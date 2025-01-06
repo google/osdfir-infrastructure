@@ -18,8 +18,14 @@ spec:
         app: mediator
     spec:
       serviceAccountName: openrelik-sa
-      {{- if .Values.postgres.managedSecret }}
       initContainers:
+        - name: create-dirs
+          image: busybox:1.37
+          command: ['sh', '-c', "mkdir -p /usr/share/openrelik/data/artifacts; mkdir -p /usr/share/openrelik/config"]
+          volumeMounts:
+          - name: vol-data
+            mountPath: /usr/share/openrelik
+      {{- if .Values.postgres.managedSecret }}
         - name: init-server
           image: busybox:1.37.0
           command: ["/bin/sh", "-c"]
@@ -34,8 +40,8 @@ spec:
             mountPath: /var/config
       {{- end }}
       containers:
-        - image: {{ .Values.openrelik.mediator.image }}
-          name: openrelik-mediator
+        - name: openrelik-mediator
+          image: {{ .Values.openrelik.mediator.image }}
           args:
             - python
             - mediator.py
@@ -69,7 +75,7 @@ spec:
             claimName: pvc-local
         {{- end }}
         {{- if .Values.filestore.managed }}
-        - name: vol-filestore
+        - name: vol-data
           persistentVolumeClaim:
             claimName: pvc-filestore
         {{- end }}
