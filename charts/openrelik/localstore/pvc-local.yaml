@@ -6,7 +6,6 @@ metadata:
   labels:
     app: openrelik
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteMany
   resources:
