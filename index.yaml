@@ -2053,6 +2053,37 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: latest
+    created: "2025-01-17T22:06:07.97221583Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.3.2
+    description: A Helm chart for Yeti Kubernetes deployments.
+    digest: 3e628e49a54f9a229de8406bf77e9e037c089c2eafb51a5c7c44a2bb2a0ef788
+    home: https://yeti-platform.io/
+    keywords:
+    - yeti
+    - dfir
+    - threatintel
+    - threat-hunting
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: yeti
+    sources:
+    - https://github.com/yeti-platform/yeti
+    - https://github.com/google/osdfir-infrastructure
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/yeti-1.0.5/yeti-1.0.5.tgz
+    version: 1.0.5
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
     created: "2024-06-07T18:15:14.721851375Z"
     dependencies:
     - condition: redis.enabled
@@ -2232,4 +2263,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2024-12-20T18:21:21.072224414Z"
+generated: "2025-01-17T22:06:07.97231772Z"
