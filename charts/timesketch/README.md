@@ -294,12 +294,11 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch image configuration
 
-| Name                     | Description                                                   | Value                                                     |
-| ------------------------ | ------------------------------------------------------------- | --------------------------------------------------------- |
-| `image.repository`       | Timesketch image repository                                   | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
-| `image.pullPolicy`       | Timesketch image pull policy                                  | `IfNotPresent`                                            |
-| `image.tag`              | Overrides the image tag whose default is the chart appVersion | `20240828`                                                |
-| `image.imagePullSecrets` | Specify secrets if pulling from a private repository          | `[]`                                                      |
+| Name               | Description                                                   | Value                                                     |
+| ------------------ | ------------------------------------------------------------- | --------------------------------------------------------- |
+| `image.repository` | Timesketch image repository                                   | `us-docker.pkg.dev/osdfir-registry/timesketch/timesketch` |
+| `image.pullPolicy` | Timesketch image pull policy                                  | `IfNotPresent`                                            |
+| `image.tag`        | Overrides the image tag whose default is the chart appVersion | `20240828`                                                |
 
 ### Timesketch Configuration Parameters
 
@@ -315,68 +314,44 @@ kubectl delete pvc -l release=my-release
 
 ### Timesketch Frontend Configuration
 
-| Name                          | Description                                                                 | Value |
-| ----------------------------- | --------------------------------------------------------------------------- | ----- |
-| `frontend.podSecurityContext` | Holds pod-level security attributes and common frontend container settings  | `{}`  |
-| `frontend.securityContext`    | Holds security configuration that will be applied to the frontend container | `{}`  |
-| `frontend.resources.limits`   | The resources limits for the frontend container                             | `{}`  |
-| `frontend.resources.requests` | The requested resources for the frontend container                          | `{}`  |
-| `frontend.nodeSelector`       | Node labels for Timesketch frontend pods assignment                         | `{}`  |
-| `frontend.tolerations`        | Tolerations for Timesketch frontend pods assignment                         | `[]`  |
-| `frontend.affinity`           | Affinity for Timesketch frontend pods assignment                            | `{}`  |
+| Name                          | Description                                         | Value |
+| ----------------------------- | --------------------------------------------------- | ----- |
+| `frontend.resources.limits`   | The resources limits for the frontend container     | `{}`  |
+| `frontend.resources.requests` | The requested resources for the frontend container  | `{}`  |
+| `frontend.nodeSelector`       | Node labels for Timesketch frontend pods assignment | `{}`  |
 
 ### Timesketch Worker Configuration
 
-| Name                               | Description                                                               | Value   |
-| ---------------------------------- | ------------------------------------------------------------------------- | ------- |
-| `worker.podSecurityContext`        | Holds pod-level security attributes and common worker container settings  | `{}`    |
-| `worker.securityContext`           | Holds security configuration that will be applied to the worker container | `{}`    |
-| `worker.resources.limits`          | The resources limits for the worker container                             | `{}`    |
-| `worker.resources.requests.cpu`    | The requested cpu for the worker container                                | `250m`  |
-| `worker.resources.requests.memory` | The requested memory for the worker container                             | `256Mi` |
-| `worker.nodeSelector`              | Node labels for Timesketch worker pods assignment                         | `{}`    |
-| `worker.tolerations`               | Tolerations for Timesketch worker pods assignment                         | `[]`    |
-| `worker.affinity`                  | Affinity for Timesketch worker pods assignment                            | `{}`    |
+| Name                               | Description                                       | Value   |
+| ---------------------------------- | ------------------------------------------------- | ------- |
+| `worker.resources.limits`          | The resources limits for the worker container     | `{}`    |
+| `worker.resources.requests.cpu`    | The requested cpu for the worker container        | `250m`  |
+| `worker.resources.requests.memory` | The requested memory for the worker container     | `256Mi` |
+| `worker.nodeSelector`              | Node labels for Timesketch worker pods assignment | `{}`    |
 
 ### Timesketch Nginx Configuration
 
-| Name                              | Description                                                              | Value                |
-| --------------------------------- | ------------------------------------------------------------------------ | -------------------- |
-| `nginx.image.repository`          | Nginx image repository                                                   | `nginx`              |
-| `nginx.image.tag`                 | Nginx image tag                                                          | `1.25.5-alpine-slim` |
-| `nginx.image.pullPolicy`          | Nginx image pull policy                                                  | `Always`             |
-| `nginx.podSecurityContext`        | Holds pod-level security attributes and common nginx container settings  | `{}`                 |
-| `nginx.securityContext`           | Holds security configuration that will be applied to the nginx container | `{}`                 |
-| `nginx.resources.limits`          | The resources limits for the nginx container                             | `{}`                 |
-| `nginx.resources.requests.cpu`    | The requested cpu for the nginx container                                | `250m`               |
-| `nginx.resources.requests.memory` | The requested memory for the nginx container                             | `256Mi`              |
-| `nginx.nodeSelector`              | Node labels for Timesketch nginx pods assignment                         | `{}`                 |
-| `nginx.tolerations`               | Tolerations for Timesketch nginx pods assignment                         | `[]`                 |
-| `nginx.affinity`                  | Affinity for Timesketch nginx pods assignment                            | `{}`                 |
-
-### Common Parameters
-
-| Name                              | Description                                                                                                                         | Value               |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `serviceAccount.create`           | Specifies whether a service account should be created                                                                               | `true`              |
-| `serviceAccount.annotations`      | Annotations to add to the service account                                                                                           | `{}`                |
-| `serviceAccount.name`             | The name of the service account to use                                                                                              | `""`                |
-| `service.type`                    | Timesketch service type                                                                                                             | `ClusterIP`         |
-| `service.port`                    | Timesketch service port                                                                                                             | `5000`              |
-| `metrics.enabled`                 | Enables metrics scraping                                                                                                            | `true`              |
-| `metrics.port`                    | Port to scrape metrics from                                                                                                         | `8080`              |
-| `persistence.name`                | Timesketch persistent volume name                                                                                                   | `timesketchvolume`  |
-| `persistence.size`                | Timesketch persistent volume size                                                                                                   | `2Gi`               |
-| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                             | `""`                |
-| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                               | `["ReadWriteOnce"]` |
-| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                              | `false`             |
-| `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                         | `""`                |
-| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                          | `""`                |
-| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                        | `false`             |
-| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                      | `false`             |
-| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                    | `false`             |
-| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP.                                                                                  | `""`                |
-| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved. This can be optionally provided to deploy a loadbalancer with an IPV6 address in GCP. | `""`                |
+| Name                              | Description                                                                                                                         | Value                |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `nginx.image.repository`          | Nginx image repository                                                                                                              | `nginx`              |
+| `nginx.image.tag`                 | Nginx image tag                                                                                                                     | `1.25.5-alpine-slim` |
+| `nginx.image.pullPolicy`          | Nginx image pull policy                                                                                                             | `IfNotPresent`       |
+| `nginx.resources.limits`          | The resources limits for the nginx container                                                                                        | `{}`                 |
+| `nginx.resources.requests.cpu`    | The requested cpu for the nginx container                                                                                           | `250m`               |
+| `nginx.resources.requests.memory` | The requested memory for the nginx container                                                                                        | `256Mi`              |
+| `nginx.nodeSelector`              | Node labels for Timesketch nginx pods assignment                                                                                    | `{}`                 |
+| `persistence.name`                | Timesketch persistent volume name                                                                                                   | `timesketchvolume`   |
+| `persistence.size`                | Timesketch persistent volume size                                                                                                   | `2Gi`                |
+| `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                             | `""`                 |
+| `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                               | `["ReadWriteOnce"]`  |
+| `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                              | `false`              |
+| `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                         | `""`                 |
+| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                          | `""`                 |
+| `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                        | `false`              |
+| `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                      | `false`              |
+| `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                    | `false`              |
+| `ingress.gcp.staticIPName`        | Name of the static IP address you reserved in GCP.                                                                                  | `""`                 |
+| `ingress.gcp.staticIPV6Name`      | Name of the static IPV6 address you reserved. This can be optionally provided to deploy a loadbalancer with an IPV6 address in GCP. | `""`                 |
 
 ### Third Party Configuration
 
