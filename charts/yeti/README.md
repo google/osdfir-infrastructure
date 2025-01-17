@@ -137,13 +137,20 @@ kubectl delete pvc -l release=my-release
 
 ### Common Parameters
 
+| Name                         | Description                                           | Value       |
+| ---------------------------- | ----------------------------------------------------- | ----------- |
+| `serviceAccount.create`      | Specifies whether a service account should be created | `true`      |
+| `serviceAccount.annotations` | Annotations to add to the service account             | `{}`        |
+| `serviceAccount.name`        | The name of the service account to use                | `yeti`      |
+| `service.type`               | Yeti service type                                     | `ClusterIP` |
+| `service.port`               | Yeti service port                                     | `9000`      |
+
+### Yeti Configuration Parameters
+
 | Name                              | Description                                                                                                                        | Value               |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `serviceAccount.create`           | Specifies whether a service account should be created                                                                              | `true`              |
-| `serviceAccount.annotations`      | Annotations to add to the service account                                                                                          | `{}`                |
-| `serviceAccount.name`             | The name of the service account to use                                                                                             | `yeti`              |
-| `service.type`                    | Yeti service type                                                                                                                  | `ClusterIP`         |
-| `service.port`                    | Yeti service port                                                                                                                  | `9000`              |
+| `config.oidc.enabled`             | Enables Yeti OIDC authentication (currently only supports Google OIDC)                                                             | `false`             |
+| `config.oidc.existingSecret`      | Existing secret with the client ID, secret and cookie secret                                                                       | `""`                |
 | `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
 | `metrics.port`                    | Port to scrape metrics from                                                                                                        | `9200`              |
 | `persistence.name`                | Yeti persistent volume name                                                                                                        | `yetivolume`        |

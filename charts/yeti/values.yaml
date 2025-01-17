@@ -280,6 +280,19 @@ service:
   ## @param service.port Yeti service port
   ##
   port: 9000
+## @section Yeti Configuration Parameters
+## ref: https://github.com/yeti-platform/yeti/blob/main/yeti.conf.sample
+##
+config:
+  ## Yeti OIDC configuration
+  ##
+  oidc:
+    ## @param config.oidc.enabled Enables Yeti OIDC authentication (currently only supports Google OIDC)
+    ##
+    enabled: false
+    ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
+    ##
+    existingSecret: ""
 ## Metrics Parameters
 ## IMPORTANT: Yeti utilizes Prometheus to scrape metrics through annotations
 ## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
