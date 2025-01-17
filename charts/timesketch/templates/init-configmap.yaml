@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "timesketch.fullname" . }}-init-configmap
+  name: {{ .Release.Name }}-timesketch-init-configmap
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "timesketch.labels" . | nindent 4 }}
@@ -43,7 +43,7 @@ data:
 
     # Set up upload folder
     sed -i 's#^UPLOAD_ENABLED = False#UPLOAD_ENABLED = True#' timesketch.conf
-    sed -i 's#^UPLOAD_FOLDER =.*#UPLOAD_FOLDER =  {{ (include "timesketch.uploadPath" .) | quote }}#' timesketch.conf
+    sed -i 's#^UPLOAD_FOLDER =.*#UPLOAD_FOLDER =  "/mnt/timesketchvolume/uploads"#' timesketch.conf
 
     # Update scenarios paths
     sed -i 's#^SCENARIOS_PATH =.*#SCENARIOS_PATH = "/etc/timesketch/scenarios.yaml"#' timesketch.conf

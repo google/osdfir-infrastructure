@@ -4,7 +4,7 @@ kind: PersistentVolumeClaim
 metadata:
   annotations: 
     helm.sh/resource-policy: keep
-  name: {{ include "timesketch.pvc.name"  . }}
+  name: {{ .Release.Name }}-timesketchvolume-claim
   namespace: {{ .Release.Namespace | quote }}
 spec:
   {{- include "timesketch.storage.class" . | nindent 2 }}

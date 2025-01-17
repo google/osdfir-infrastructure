@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "timesketch.fullname" . }}
+  name: {{ .Release.Name }}-timesketch
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "timesketch.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ include "timesketch.service.port" . }}
+    - port: 5000
       protocol: TCP
       targetPort: 5000
   selector:

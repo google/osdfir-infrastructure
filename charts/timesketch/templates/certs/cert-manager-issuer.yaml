@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "timesketch.fullname" . }}-letsencrypt-production
+  name: {{ .Release.Name }}-timesketch-letsencrypt-production
   labels:
     {{- include "timesketch.labels" . | nindent 4 }}
   annotations:

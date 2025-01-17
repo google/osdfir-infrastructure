@@ -2,7 +2,7 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ include "timesketch.fullname" . }}-managed-ssl
+  name: {{ .Release.Name }}-timesketch-managed-ssl
   namespace: {{ .Release.Namespace | quote }}
 spec:
   domains: 

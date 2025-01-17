@@ -11,7 +11,7 @@ Worker pod upon startup.
     - name: TIMESKETCH_SECRET
       valueFrom:
         secretKeyRef:
-          name: {{ include "timesketch.fullname" . }}-secret 
+          name: {{ .Release.Name }}-timesketch-secret 
           key: timesketch-secret
     {{- if and .Values.redis.enabled .Values.redis.auth.enabled }}
     - name: REDIS_PASSWORD

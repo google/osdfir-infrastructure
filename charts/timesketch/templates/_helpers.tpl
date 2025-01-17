@@ -1,41 +1,4 @@
 {{/*
-Expand the name of the chart.
-*/}}
-{{- define "timesketch.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{/*
-Create a default fully qualified app name.
-*/}}
-{{- define "timesketch.fullname" -}}
-{{- if contains .Chart.Name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name "timesketch" | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "timesketch.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{/*
-Return the proper persistence volume claim name
-*/}}
-{{- define "timesketch.pvc.name" -}}
-{{- $pvcName := .Values.persistence.name -}}
-{{- if and .Values.global .Values.global.existingPVC -}}
-{{- .Values.global.existingPVC -}}
-{{- else -}}
-{{- printf "%s-%s-claim" .Release.Name $pvcName }}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return the proper Storage Class
 */}}
 {{- define "timesketch.storage.class" -}}
@@ -55,27 +18,11 @@ Return the proper Storage Class
 {{- end -}}
 
 {{/*
-Create the upload path.
-*/}}
-{{- define "timesketch.uploadPath" -}}
-{{- $pvcName := .Values.persistence.name -}}
-{{- if .Values.global -}}
-    {{- if .Values.global.existingPVC -}}
-        {{- $pvcName = .Values.global.existingPVC -}}
-    {{- end -}}
-{{- printf "/mnt/%s/upload" $pvcName }}
-{{- end }}
-{{- end }}
-
-{{/*
 Common labels
 */}}
 {{- define "timesketch.labels" -}}
-helm.sh/chart: {{ include "timesketch.chart" . }}
 {{ include "timesketch.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 date: "{{ now | htmlDate }}"
 {{- end }}
@@ -84,19 +31,8 @@ date: "{{ now | htmlDate }}"
 Selector labels
 */}}
 {{- define "timesketch.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "timesketch.name" . }}
+app.kubernetes.io/name: timesketch
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "timesketch.serviceAccountName" -}}
-{{- if .Values.serviceAccount.name }}
-{{- .Values.serviceAccount.name }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name "timesketch" }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -161,21 +97,10 @@ Opensearch subcharts port
 {{- end -}}
 {{- end -}}
 
-{{/*
-Timesketch service port
-*/}}
-{{- define "timesketch.service.port" -}}
-{{- if .Values.global.timesketch.servicePort -}}
-{{ .Values.global.timesketch.servicePort }}
-{{- else -}}
-{{ .Values.service.port }}
-{{- end -}}
-{{- end -}}
-
 {{- define "timesketch.oidc.authenticatedemails" -}}
 {{- if .Values.config.oidc.authenticatedEmailsFile.existingSecret -}}
 {{- .Values.config.oidc.authenticatedEmailsFile.existingSecret -}}
 {{- else -}}
-{{- printf "%s-access-list" (include "timesketch.fullname" .) -}}
+{{- printf "%s-timesketch-access-list" (.Release.Name) -}}
 {{- end -}}
 {{- end -}}

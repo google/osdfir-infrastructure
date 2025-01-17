@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  {{ include "timesketch.fullname" . }}
+  name: {{ .Release.Name }}-timesketch
   namespace: {{ .Release.Namespace | quote }}
   labels:
     app.kubernetes.io/component: frontend
@@ -17,24 +17,18 @@ spec:
       annotations:
         # Restart pod if values.yaml parameters that affect the config were changed
         checksum/config: {{  include (print $.Template.BasePath "/init-configmap.yaml") . | sha256sum }}
-        {{- if .Values.metrics.enabled }} 
-        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
-        {{- end }}
       labels:
         app.kubernetes.io/component: frontend
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "timesketch.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.frontend.podSecurityContext | nindent 8 }}
+      automountServiceAccountToken: false
       initContainers:
       {{- include "timesketch.initContainer" . | nindent 8 }}
       containers:
         - name: frontend
-          securityContext:
-              {{- toYaml .Values.frontend.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["sh", "-c", "./docker-entrypoint.sh timesketch-web"]
           {{- if .Values.config.createUser }}
@@ -53,11 +47,11 @@ spec:
             - name: TIMESKETCH_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "timesketch.fullname" . }}-secret 
+                  name: {{ .Release.Name }}-timesketch-secret 
                   key: timesketch-user
             {{- end }}
           volumeMounts:
-            - mountPath: {{ (include "timesketch.uploadPath" .) | quote }}
+            - mountPath: /mnt/timesketchvolume
               name: timesketchvolume
               subPath: uploads
             - mountPath: /var/log/timesketch
@@ -66,20 +60,18 @@ spec:
             - mountPath: /etc/timesketch
               name: timesketch-configs
           ports:
-            {{- if .Values.metrics.enabled }}
-            - containerPort: {{ .Values.metrics.port }}
-            {{- end }}
+            - containerPort: 8080
             - containerPort: 5000
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}
       volumes:
         - name: timesketchvolume
           persistentVolumeClaim:
-            claimName: {{ include "timesketch.pvc.name"  . }}
+            claimName: {{ .Release.Name }}-timesketchvolume-claim
             readOnly: false
         - name: init-timesketch
           configMap:
-            name: {{ include "timesketch.fullname" . }}-init-configmap
+            name: {{ .Release.Name }}-timesketch-init-configmap
             defaultMode: 0744
         - name: timesketch-configs
           emptyDir: {}
@@ -98,13 +90,5 @@ spec:
         {{- end }}
       {{- with .Values.frontend.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.frontend.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.frontend.tolerations }}
-      tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

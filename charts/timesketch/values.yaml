@@ -53,13 +53,6 @@ image:
   ## @param image.tag Overrides the image tag whose default is the chart appVersion
   ##
   tag: "20240828"
-  ## @param image.imagePullSecrets Specify secrets if pulling from a private repository
-  ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ## e.g.
-  ## imagePullSecrets:
-  ##   - myRegistryKeySecretName
-  ##
-  imagePullSecrets: []
 ## @section Timesketch Configuration Parameters
 ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
 ##
@@ -101,25 +94,6 @@ config:
 ## @section Timesketch Frontend Configuration
 ##
 frontend:
-  ## @param frontend.podSecurityContext Holds pod-level security attributes and common frontend container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param frontend.securityContext Holds security configuration that will be applied to the frontend container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
   ## Timesketch Frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We leave the default resources as a choice for the user in order to increase
@@ -143,36 +117,9 @@ frontend:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param frontend.tolerations Tolerations for Timesketch frontend pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param frontend.affinity Affinity for Timesketch frontend pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
 ## @section Timesketch Worker Configuration
 ##
 worker:
-  ## @param worker.podSecurityContext Holds pod-level security attributes and common worker container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param worker.securityContext Holds security configuration that will be applied to the worker container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
   ## Timesketch Worker resource requests and limits
   ## @param worker.resources.limits The resources limits for the worker container
   ## @param worker.resources.requests.cpu The requested cpu for the worker container
@@ -191,14 +138,6 @@ worker:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param worker.tolerations Tolerations for Timesketch worker pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param worker.affinity Affinity for Timesketch worker pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
 ## @section Timesketch Nginx Configuration
 ##
 nginx:
@@ -213,26 +152,7 @@ nginx:
     tag: 1.25.5-alpine-slim
     ## @param nginx.image.pullPolicy Nginx image pull policy
     ##
-    pullPolicy: Always
-  ## @param nginx.podSecurityContext Holds pod-level security attributes and common nginx container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param nginx.securityContext Holds security configuration that will be applied to the nginx container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
+    pullPolicy: IfNotPresent
   ## Timesketch Nginx resource requests and limits
   ## @param nginx.resources.limits The resources limits for the nginx container
   ## @param nginx.resources.requests.cpu The requested cpu for the nginx container
@@ -251,49 +171,6 @@ nginx:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param nginx.tolerations Tolerations for Timesketch nginx pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param nginx.affinity Affinity for Timesketch nginx pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
-## @section Common Parameters
-##
-## Service Account Parameters
-##
-serviceAccount:
-  ## @param serviceAccount.create Specifies whether a service account should be created
-  ##
-  create: true
-  ## @param serviceAccount.annotations Annotations to add to the service account
-  ##
-  annotations: {}
-  ## @param serviceAccount.name The name of the service account to use
-  ## If not set and create is true, a name is generated using the fullname template
-  ##
-  name: ""
-## Service Parameters
-##
-service:
-  ## @param service.type Timesketch service type
-  ##
-  type: ClusterIP
-  ## @param service.port Timesketch service port
-  ##
-  port: 5000
-## Metrics Parameters
-## IMPORTANT: Timesketch utilizes Prometheus to scrape metrics through annotations
-## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
-##
-metrics:
-  ## @param metrics.enabled Enables metrics scraping
-  ##
-  enabled: true
-  ## @param metrics.port Port to scrape metrics from
-  ##
-  port: 8080
 ## Persistence Storage Parameters
 ##
 persistence:
