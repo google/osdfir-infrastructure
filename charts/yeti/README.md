@@ -89,61 +89,36 @@ kubectl delete pvc -l release=my-release
 
 ### Yeti frontend configuration
 
-| Name                              | Description                                                               | Value                        |
-| --------------------------------- | ------------------------------------------------------------------------- | ---------------------------- |
-| `frontend.image.repository`       | Yeti frontend image repository                                            | `yetiplatform/yeti-frontend` |
-| `frontend.image.pullPolicy`       | Yeti image pull policy                                                    | `Always`                     |
-| `frontend.image.tag`              | Overrides the image tag whose default is the chart appVersion             | `latest`                     |
-| `frontend.image.imagePullSecrets` | Specify secrets if pulling from a private repository                      | `[]`                         |
-| `frontend.podSecurityContext`     | Holds pod-level security attributes and common server container settings  | `{}`                         |
-| `frontend.securityContext`        | Holds security configuration that will be applied to the server container | `{}`                         |
-| `frontend.resources.limits`       | Resource limits for the frontend container                                | `{}`                         |
-| `frontend.resources.requests`     | Requested resources for the frontend container                            | `{}`                         |
-| `frontend.nodeSelector`           | Node labels for Yeti frontend pods assignment                             | `{}`                         |
-| `frontend.tolerations`            | Tolerations for Yeti frontend pods assignment                             | `[]`                         |
-| `frontend.affinity`               | Affinity for Yeti frontend pods assignment                                | `{}`                         |
+| Name                          | Description                                                   | Value                        |
+| ----------------------------- | ------------------------------------------------------------- | ---------------------------- |
+| `frontend.image.repository`   | Yeti frontend image repository                                | `yetiplatform/yeti-frontend` |
+| `frontend.image.pullPolicy`   | Yeti image pull policy                                        | `IfNotPresent`               |
+| `frontend.image.tag`          | Overrides the image tag whose default is the chart appVersion | `latest`                     |
+| `frontend.resources.limits`   | Resource limits for the frontend container                    | `{}`                         |
+| `frontend.resources.requests` | Requested resources for the frontend container                | `{}`                         |
+| `frontend.nodeSelector`       | Node labels for Yeti frontend pods assignment                 | `{}`                         |
 
 ### Yeti api configuration
 
-| Name                         | Description                                                            | Value               |
-| ---------------------------- | ---------------------------------------------------------------------- | ------------------- |
-| `api.image.repository`       | Yeti API image repository                                              | `yetiplatform/yeti` |
-| `api.image.pullPolicy`       | Yeti image pull policy                                                 | `Always`            |
-| `api.image.tag`              | Overrides the image tag whose default is the chart appVersion          | `latest`            |
-| `api.image.imagePullSecrets` | Specify secrets if pulling from a private repository                   | `[]`                |
-| `api.podSecurityContext`     | Holds pod-level security attributes and common API container settings  | `{}`                |
-| `api.securityContext`        | Holds security configuration that will be applied to the API container | `{}`                |
-| `api.resources.limits`       | Resource limits for the API container                                  | `{}`                |
-| `api.resources.requests`     | Requested resources for the API container                              | `{}`                |
-| `api.nodeSelector`           | Node labels for Yeti API pods assignment                               | `{}`                |
-| `api.tolerations`            | Tolerations for Yeti API pods assignment                               | `[]`                |
-| `api.affinity`               | Affinity for Yeti API pods assignment                                  | `{}`                |
+| Name                     | Description                                                   | Value               |
+| ------------------------ | ------------------------------------------------------------- | ------------------- |
+| `api.image.repository`   | Yeti API image repository                                     | `yetiplatform/yeti` |
+| `api.image.pullPolicy`   | Yeti image pull policy                                        | `IfNotPresent`      |
+| `api.image.tag`          | Overrides the image tag whose default is the chart appVersion | `latest`            |
+| `api.resources.limits`   | Resource limits for the API container                         | `{}`                |
+| `api.resources.requests` | Requested resources for the API container                     | `{}`                |
+| `api.nodeSelector`       | Node labels for Yeti API pods assignment                      | `{}`                |
 
 ### Yeti Tasks configuration
 
-| Name                           | Description                                                              | Value               |
-| ------------------------------ | ------------------------------------------------------------------------ | ------------------- |
-| `tasks.image.repository`       | Yeti tasks image repository                                              | `yetiplatform/yeti` |
-| `tasks.image.pullPolicy`       | Yeti image pull policy                                                   | `Always`            |
-| `tasks.image.tag`              | Overrides the image tag whose default is the chart appVersion            | `latest`            |
-| `tasks.image.imagePullSecrets` | Specify secrets if pulling from a private repository                     | `[]`                |
-| `tasks.podSecurityContext`     | Holds pod-level security attributes and common tasks container settings  | `{}`                |
-| `tasks.securityContext`        | Holds security configuration that will be applied to the tasks container | `{}`                |
-| `tasks.resources.limits`       | Resource limits for the tasks container                                  | `{}`                |
-| `tasks.resources.requests`     | Requested resources for the tasks container                              | `{}`                |
-| `tasks.nodeSelector`           | Node labels for Yeti tasks pods assignment                               | `{}`                |
-| `tasks.tolerations`            | Tolerations for Yeti tasks pods assignment                               | `[]`                |
-| `tasks.affinity`               | Affinity for Yeti tasks pods assignment                                  | `{}`                |
-
-### Common Parameters
-
-| Name                         | Description                                           | Value       |
-| ---------------------------- | ----------------------------------------------------- | ----------- |
-| `serviceAccount.create`      | Specifies whether a service account should be created | `true`      |
-| `serviceAccount.annotations` | Annotations to add to the service account             | `{}`        |
-| `serviceAccount.name`        | The name of the service account to use                | `yeti`      |
-| `service.type`               | Yeti service type                                     | `ClusterIP` |
-| `service.port`               | Yeti service port                                     | `9000`      |
+| Name                       | Description                                                   | Value               |
+| -------------------------- | ------------------------------------------------------------- | ------------------- |
+| `tasks.image.repository`   | Yeti tasks image repository                                   | `yetiplatform/yeti` |
+| `tasks.image.pullPolicy`   | Yeti image pull policy                                        | `IfNotPresent`      |
+| `tasks.image.tag`          | Overrides the image tag whose default is the chart appVersion | `latest`            |
+| `tasks.resources.limits`   | Resource limits for the tasks container                       | `{}`                |
+| `tasks.resources.requests` | Requested resources for the tasks container                   | `{}`                |
+| `tasks.nodeSelector`       | Node labels for Yeti tasks pods assignment                    | `{}`                |
 
 ### Yeti Configuration Parameters
 
@@ -151,15 +126,12 @@ kubectl delete pvc -l release=my-release
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
 | `config.oidc.enabled`             | Enables Yeti OIDC authentication (currently only supports Google OIDC)                                                             | `false`             |
 | `config.oidc.existingSecret`      | Existing secret with the client ID, secret and cookie secret                                                                       | `""`                |
-| `metrics.enabled`                 | Enables metrics scraping                                                                                                           | `true`              |
-| `metrics.port`                    | Port to scrape metrics from                                                                                                        | `9200`              |
-| `persistence.name`                | Yeti persistent volume name                                                                                                        | `yetivolume`        |
-| `persistence.size`                | Yeti persistent volume size                                                                                                        | `2Gi`               |
-| `persistence.storageClass`        | PVC Storage Class for Yeti volume                                                                                                  | `""`                |
-| `persistence.accessModes`         | PVC Access Mode for Yeti volume                                                                                                    | `["ReadWriteOnce"]` |
+| `persistence.size`                | Yeti ArangoDB persistent volume size                                                                                               | `2Gi`               |
+| `persistence.storageClass`        | PVC Storage Class for Yeti ArangoDB volume                                                                                         | `""`                |
+| `persistence.accessModes`         | PVC Access Mode for Yeti ArangoDB volume                                                                                           | `["ReadWriteOnce"]` |
 | `ingress.enabled`                 | Enable the Yeti loadbalancer for external access                                                                                   | `false`             |
 | `ingress.host`                    | Domain name Yeti will be hosted under                                                                                              | `""`                |
-| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `gce`               |
+| `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `""`                |
 | `ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                       | `false`             |
 | `ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                     | `false`             |
 | `ingress.gcp.managedCertificates` | Enables GCP managed certificates for your domain                                                                                   | `false`             |
@@ -191,21 +163,14 @@ kubectl delete pvc -l release=my-release
 
 ### Yeti Arangodb configuration
 
-| Name                              | Description                                                                 | Value       |
-| --------------------------------- | --------------------------------------------------------------------------- | ----------- |
-| `arangodb.image.repository`       | Yeti arangodb image repository                                              | `arangodb`  |
-| `arangodb.image.pullPolicy`       | Yeti image pull policy                                                      | `Always`    |
-| `arangodb.image.tag`              | Overrides the image tag whose default is the chart appVersion               | `3.11.8`    |
-| `arangodb.image.imagePullSecrets` | Specify secrets if pulling from a private repository                        | `[]`        |
-| `arangodb.service.type`           | Yeti service type                                                           | `ClusterIP` |
-| `arangodb.service.port`           | Yeti service port                                                           | `8529`      |
-| `arangodb.podSecurityContext`     | Holds pod-level security attributes and common server container settings    | `{}`        |
-| `arangodb.securityContext`        | Holds security configuration that will be applied to the arangodb container | `{}`        |
-| `arangodb.resources.limits`       | Resource limits for the arangodb container                                  | `{}`        |
-| `arangodb.resources.requests`     | Requested resources for the arangodb container                              | `{}`        |
-| `arangodb.nodeSelector`           | Node labels for Yeti arangodb pods assignment                               | `{}`        |
-| `arangodb.tolerations`            | Tolerations for Yeti arangodb pods assignment                               | `[]`        |
-| `arangodb.affinity`               | Affinity for Yeti arangodb pods assignment                                  | `{}`        |
+| Name                          | Description                                                   | Value      |
+| ----------------------------- | ------------------------------------------------------------- | ---------- |
+| `arangodb.image.repository`   | Yeti arangodb image repository                                | `arangodb` |
+| `arangodb.image.pullPolicy`   | Yeti image pull policy                                        | `Always`   |
+| `arangodb.image.tag`          | Overrides the image tag whose default is the chart appVersion | `3.11.8`   |
+| `arangodb.resources.limits`   | Resource limits for the arangodb container                    | `{}`       |
+| `arangodb.resources.requests` | Requested resources for the arangodb container                | `{}`       |
+| `arangodb.nodeSelector`       | Node labels for Yeti arangodb pods assignment                 | `{}`       |
 
 Specify each parameter using the --set key=value[,key=value] argument to helm
 install. For example,
