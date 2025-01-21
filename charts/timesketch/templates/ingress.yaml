@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name:  {{ include "timesketch.fullname" . }}-ingress
+  name: {{ .Release.Name }}-timesketch-ingress
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "timesketch.labels" . | nindent 4 }}
@@ -10,17 +10,17 @@ metadata:
     kubernetes.io/ingressClassName: {{ .Values.ingress.className }}
     {{- if .Values.ingress.certManager }}
     kubernetes.io/tls-acme: "true"
-    cert-manager.io/issuer: {{ include "timesketch.fullname" . }}-letsencrypt-production
+    cert-manager.io/issuer: {{ .Release.Name }}-timesketch-letsencrypt-production
     {{- end }}
     # GKE specific annotations
     {{- if (eq .Values.ingress.className "gce") }}
     {{- if .Values.ingress.gcp.staticIPName }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.staticIPName }}
-    networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Release.Name }}-timesketch-frontend-config
     {{- end }}
     {{- if .Values.ingress.gcp.managedCertificates }}
-    networking.gke.io/managed-certificates: {{ include "timesketch.fullname" . }}-managed-ssl
-    networking.gke.io/v1beta1.FrontendConfig: {{ include "timesketch.fullname" . }}-frontend-config
+    networking.gke.io/managed-certificates: {{ .Release.Name }}-timesketch-managed-ssl
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Release.Name }}-timesketch-frontend-config
     {{- end }}
     {{- end }}
 spec:
@@ -28,7 +28,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.ingress.host | quote }}
-      secretName: {{ include "timesketch.fullname" . }}-tls
+      secretName: {{ .Release.Name }}-timesketch-tls
   {{- end }}
   rules:
     - host: {{ .Values.ingress.host }}
@@ -38,12 +38,12 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "timesketch.fullname" . }}-nginx
+                name: {{ .Release.Name }}-timesketch-nginx
                 port:
                   number: 80
   defaultBackend:
     service:
-      name: {{ include "timesketch.fullname" . }}-nginx # Name of the Service targeted by the Ingress
+      name: {{ .Release.Name }}-timesketch-nginx # Name of the Service targeted by the Ingress
       port:
         number: 80 # Should match the port used by the Service
 {{- end }}

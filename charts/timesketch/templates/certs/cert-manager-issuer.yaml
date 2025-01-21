@@ -12,9 +12,9 @@ spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
-      name: {{ include "timesketch.fullname" . }}-letsencrypt-production
+      name: {{ .Release.Name }}-timesketch-letsencrypt-production
     solvers:
     - http01:
         ingress:
-          name: {{ include "timesketch.fullname" . }}-ingress
+          name: {{ .Release.Name }}-timesketch-ingress
 {{- end }}
