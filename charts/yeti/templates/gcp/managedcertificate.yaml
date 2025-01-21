@@ -2,7 +2,7 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ include "yeti.fullname" . }}-managed-ssl
+  name: {{ .Release.Name }}-yeti-managed-ssl
   namespace: {{ .Release.Namespace | quote }}
 spec:
   domains: 

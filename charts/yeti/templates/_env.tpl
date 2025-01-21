@@ -11,9 +11,9 @@ Worker pod upon startup.
 - name: YETI_REDIS_DATABASE
   value: "0"
 - name: YETI_ARANGODB_HOST
-  value: {{ include "yeti.fullname" . }}-arangodb
+  value: {{ .Release.Name }}-yeti-arangodb
 - name: YETI_ARANGODB_PORT
-  value: {{ .Values.arangodb.service.port | quote }}
+  value: "8529"
 - name: YETI_ARANGODB_DATABASE
   value: yeti
 - name: YETI_ARANGODB_USERNAME
@@ -51,17 +51,17 @@ Worker pod upon startup.
 - name: YETI_USER_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "yeti.fullname" . }}-secret 
+      name: {{ .Release.Name }}-yeti-secret 
       key: yeti-user
 - name: YETI_ARANGODB_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "yeti.fullname" . }}-secret 
+      name: {{ .Release.Name }}-yeti-secret 
       key: yeti-arangodb
 - name: YETI_API_KEY
   valueFrom:
     secretKeyRef:
-      name: {{ include "yeti.fullname" . }}-secret 
+      name: {{ .Release.Name }}-yeti-secret 
       key: yeti-api
 {{- if .Values.global.timesketch.enabled }}
 - name: YETI_TIMESKETCH_ENDPOINT

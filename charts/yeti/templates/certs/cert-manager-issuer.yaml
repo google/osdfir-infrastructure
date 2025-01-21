@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "yeti.fullname" . }}-letsencrypt-production
+  name: {{ .Release.Name }}-yeti-letsencrypt-production
   labels:
     {{- include "yeti.labels" . | nindent 4 }}
   annotations:
@@ -12,9 +12,9 @@ spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
-      name: {{ include "yeti.fullname" . }}-letsencrypt-production
+      name: {{ .Release.Name }}-yeti-letsencrypt-production
     solvers:
     - http01:
         ingress:
-          name: {{ include "yeti.fullname" . }}-ingress
+          name: {{ .Release.Name }}-yeti-ingress
 {{- end }}

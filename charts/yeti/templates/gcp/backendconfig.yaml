@@ -2,7 +2,7 @@
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
-  name: {{ include "yeti.fullname" . }}-backend-config
+  name: {{ .Release.Name }}-yeti-backend-config
   namespace: {{ .Release.Namespace | quote }}
 spec:
   timeoutSec: 300

@@ -53,36 +53,10 @@ frontend:
     ## @param frontend.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
-    ## @param frontend.image.imagePullSecrets Specify secrets if pulling from a private repository
-    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g.
-    ## imagePullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    imagePullSecrets: []
-  ## @param frontend.podSecurityContext Holds pod-level security attributes and common server container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param frontend.securityContext Holds security configuration that will be applied to the server container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
   ## Yeti frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We leave the default resources as a choice for the user in order to increase
@@ -106,14 +80,6 @@ frontend:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param frontend.tolerations Tolerations for Yeti frontend pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param frontend.affinity Affinity for Yeti frontend pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
 ## @section Yeti api configuration
 ##
 api:
@@ -124,36 +90,10 @@ api:
     ## @param api.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
-    ## @param api.image.imagePullSecrets Specify secrets if pulling from a private repository
-    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g.
-    ## imagePullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    imagePullSecrets: []
-  ## @param api.podSecurityContext Holds pod-level security attributes and common API container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param api.securityContext Holds security configuration that will be applied to the API container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
   ## Yeti api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We leave the default resources as a choice for the user in order to increase
@@ -177,14 +117,6 @@ api:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param api.tolerations Tolerations for Yeti API pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param api.affinity Affinity for Yeti API pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
 ## @section Yeti Tasks configuration
 ##
 tasks:
@@ -195,36 +127,10 @@ tasks:
     ## @param tasks.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param tasks.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: latest
-    ## @param tasks.image.imagePullSecrets Specify secrets if pulling from a private repository
-    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g.
-    ## imagePullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    imagePullSecrets: []
-  ## @param tasks.podSecurityContext Holds pod-level security attributes and common tasks container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param tasks.securityContext Holds security configuration that will be applied to the tasks container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
   ## Yeti tasks resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We leave the default resources as a choice for the user in order to increase
@@ -248,38 +154,6 @@ tasks:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param tasks.tolerations Tolerations for Yeti tasks pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param tasks.affinity Affinity for Yeti tasks pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}
-## @section Common Parameters
-##
-## Service Account Parameters
-##
-serviceAccount:
-  ## @param serviceAccount.create Specifies whether a service account should be created
-  ##
-  create: true
-  ## @param serviceAccount.annotations Annotations to add to the service account
-  ##
-  annotations: {}
-  ## @param serviceAccount.name The name of the service account to use
-  ## If not set and create is true, a name is generated using the fullname template
-  ##
-  name: "yeti"
-## Service Parameters
-##
-service:
-  ## @param service.type Yeti service type
-  ##
-  type: ClusterIP
-  ## @param service.port Yeti service port
-  ##
-  port: 9000
 ## @section Yeti Configuration Parameters
 ## ref: https://github.com/yeti-platform/yeti/blob/main/yeti.conf.sample
 ##
@@ -293,27 +167,13 @@ config:
     ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
     ##
     existingSecret: ""
-## Metrics Parameters
-## IMPORTANT: Yeti utilizes Prometheus to scrape metrics through annotations
-## Please ensure the Prometheus server is also installed to the cluster for metrics to scrape properly
-##
-metrics:
-  ## @param metrics.enabled Enables metrics scraping
-  ##
-  enabled: true
-  ## @param metrics.port Port to scrape metrics from
-  ##
-  port: 9200
-## Persistence Storage Parameters
+## Persistence Storage Parameters for Yeti ArangoDB storage
 ##
 persistence:
-  ## @param persistence.name Yeti persistent volume name
-  ##
-  name: yetivolume
-  ## @param persistence.size Yeti persistent volume size
+  ## @param persistence.size Yeti ArangoDB persistent volume size
   ##
   size: 2Gi
-  ## @param persistence.storageClass PVC Storage Class for Yeti volume
+  ## @param persistence.storageClass PVC Storage Class for Yeti ArangoDB volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
@@ -321,7 +181,7 @@ persistence:
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
   storageClass: ""
-  ## @param persistence.accessModes PVC Access Mode for Yeti volume
+  ## @param persistence.accessModes PVC Access Mode for Yeti ArangoDB volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
@@ -342,7 +202,7 @@ ingress:
   ## @param ingress.className IngressClass that will be be used to implement the Ingress
   ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
   ##
-  className: "gce"
+  className: ""
   ## @param ingress.selfSigned Create a TLS secret for this ingress record using self-signed certificates generated by Helm
   ##
   selfSigned: false
@@ -473,41 +333,6 @@ arangodb:
     ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: 3.11.8
-    ## @param arangodb.image.imagePullSecrets Specify secrets if pulling from a private repository
-    ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g.
-    ## imagePullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    imagePullSecrets: []
-  ## Service Parameters
-  ##
-  service:
-    ## @param arangodb.service.type Yeti service type
-    ##
-    type: ClusterIP
-    ## @param arangodb.service.port Yeti service port
-    ##
-    port: 8529
-  ## @param arangodb.podSecurityContext Holds pod-level security attributes and common server container settings
-  ## Some fields are also present in container.securityContext. Field values of container.securityContext take precedence over field values of PodSecurityContext
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-  ## e.g.
-  ## fsgroup: 2000
-  ##
-  podSecurityContext: {}
-  ## @param arangodb.securityContext Holds security configuration that will be applied to the arangodb container
-  ## Some fields are present in both SecurityContext and PodSecurityContext. When both are set, the values in SecurityContext take precedence
-  ## ref https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-  ## e.g.
-  ## capabilities
-  ##   drop:
-  ##   - ALL
-  ## readOnlyRootFilesystem: true
-  ## runAsNonRoot: true
-  ## runAsUser: 1000
-  ##
-  securityContext: {}
   ## Yeti arangodb resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We leave the default resources as a choice for the user in order to increase
@@ -531,11 +356,3 @@ arangodb:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param arangodb.tolerations Tolerations for Yeti arangodb pods assignment
-  ## ref https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  ##
-  tolerations: []
-  ## @param arangodb.affinity Affinity for Yeti arangodb pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  affinity: {}

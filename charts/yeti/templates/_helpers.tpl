@@ -59,11 +59,8 @@ Return the proper Storage Class
 Common labels
 */}}
 {{- define "yeti.labels" -}}
-helm.sh/chart: {{ include "yeti.chart" . }}
 {{ include "yeti.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version }} 
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 date: "{{ now | htmlDate }}"
 {{- end }}
@@ -72,19 +69,8 @@ date: "{{ now | htmlDate }}"
 Selector labels
 */}}
 {{- define "yeti.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "yeti.name" . }}
+app.kubernetes.io/name: yeti
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "yeti.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "yeti.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}
 
 {{/*

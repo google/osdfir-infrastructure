@@ -11,8 +11,8 @@ To connect to the Yeti URL, run:
   {{- if and (.Values.ingress.enabled) (.Values.ingress.host) }}
   $ echo "Visit https://{{ .Values.ingress.host }} to access Yeti externally"
   {{- end }}
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "yeti.fullname" . }} {{ include "yeti.service.port" . }}:{{ include "yeti.service.port" . }}
-  $ echo "Visit http://127.0.0.1:{{ include "yeti.service.port" . }} to access Yeti through port-forwarding"
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-yeti 9000:9000
+  $ echo "Visit http://127.0.0.1:9000 to access Yeti through port-forwarding"
 
 Login to Yeti with the User `yeti`. To get your password run:
-  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ include "yeti.fullname" . }}-secret -o jsonpath="{.data.yeti-user}" | base64 -d
+  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ .Release.Name }}-yeti-secret -o jsonpath="{.data.yeti-user}" | base64 -d
