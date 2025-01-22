@@ -38,11 +38,6 @@ spec:
                 command: ["/bin/sh", "-c", "tsctl create-user timesketch --password $TIMESKETCH_USER"]
           {{- end }}
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-                  apiVersion: v1
             {{- if .Values.config.createUser }}
             - name: TIMESKETCH_USER
               valueFrom:

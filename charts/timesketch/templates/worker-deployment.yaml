@@ -32,11 +32,6 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["sh", "-c", "./docker-entrypoint.sh timesketch-worker"]
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-                  apiVersion: v1
             - name: WORKER_LOG_LEVEL
               value: "DEBUG"
           volumeMounts:
