@@ -1,23 +1,4 @@
 {{/*
-Return the proper Storage Class
-*/}}
-{{- define "timesketch.storage.class" -}}
-{{- $storageClass := .Values.persistence.storageClass -}}
-{{- if .Values.global -}}
-    {{- if .Values.global.storageClass -}}
-        {{- $storageClass = .Values.global.storageClass -}}
-    {{- end -}}
-{{- end -}}
-{{- if $storageClass -}}
-  {{- if (eq "-" $storageClass) -}}
-      {{- printf "storageClassName: \"\"" -}}
-  {{- else }}
-      {{- printf "storageClassName: %s" $storageClass -}}
-  {{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Common labels
 */}}
 {{- define "timesketch.labels" -}}
