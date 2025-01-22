@@ -143,23 +143,18 @@ kubectl delete pvc -l release=my-release
 
 ### Redis Configuration Parameters
 
-| Name                                | Description                                                                                  | Value       |
-| ----------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
-| `redis.enabled`                     | Enables the Redis deployment                                                                 | `true`      |
-| `redis.auth.enabled`                | Enables Redis Authentication. Disabled due to incompatibility with Yeti                      | `false`     |
-| `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`     |
-| `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
-| `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP` |
-| `redis.master.service.ports.redis`  | Redis master service port                                                                    | `6379`      |
-| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `2Gi`       |
-| `redis.master.resources.limits`     | The resources limits for the Redis master containers                                         | `{}`        |
-| `redis.master.resources.requests`   | The requested resources for the Redis master containers                                      | `{}`        |
-| `redis.replica.replicaCount`        | Number of Redis replicas to deploy                                                           | `0`         |
-| `redis.replica.service.type`        | Redis replicas service type                                                                  | `ClusterIP` |
-| `redis.replica.service.ports.redis` | Redis replicas service port                                                                  | `6379`      |
-| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `2Gi`       |
-| `redis.replica.resources.limits`    | The resources limits for the Redis replica containers                                        | `{}`        |
-| `redis.replica.resources.requests`  | The requested resources for the Redis replica containers                                     | `{}`        |
+| Name                               | Description                                                                                  | Value       |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- | ----------- |
+| `redis.enabled`                    | Enables the Redis deployment                                                                 | `true`      |
+| `redis.auth.enabled`               | Enables Redis Authentication. Disabled due to incompatibility with Yeti                      | `false`     |
+| `redis.sentinel.enabled`           | Enables Redis Sentinel on Redis pods                                                         | `false`     |
+| `redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`         |
+| `redis.master.service.type`        | Redis master service type                                                                    | `ClusterIP` |
+| `redis.master.service.ports.redis` | Redis master service port                                                                    | `6379`      |
+| `redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`       |
+| `redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`        |
+| `redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`        |
+| `redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`         |
 
 ### Yeti Arangodb configuration
 
