@@ -289,36 +289,6 @@ redis:
     ## @param redis.replica.replicaCount Number of Redis replicas to deploy
     ##
     replicaCount: 0
-    ## Redis replicas service parameters
-    ##
-    service:
-      ## @param redis.replica.service.type Redis replicas service type
-      ##
-      type: ClusterIP
-      ## @param redis.replica.service.ports.redis Redis replicas service port
-      ##
-      ports:
-        redis: 6379
-    ## Redis replicas persistence configuration
-    ##
-    persistence:
-      ## @param redis.replica.persistence.size Redis replica Persistent Volume size
-      ##
-      size: 2Gi
-    ## Redis Replica resource requests and limits
-    ## @param redis.replica.resources.limits The resources limits for the Redis replica containers
-    ## @param redis.replica.resources.requests The requested resources for the Redis replica containers
-    resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests: {}
 ## @section Yeti Arangodb configuration
 ##
 arangodb:
