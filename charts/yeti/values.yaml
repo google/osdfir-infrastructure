@@ -59,10 +59,6 @@ frontend:
     tag: latest
   ## Yeti frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a choice for the user in order to increase
-  ## the chances charts run on environments with little resources, such as Minikube.
-  ## If you want to specify resources, uncomment the following lines, adjust them as
-  ## necessary, and remove the curly braces after 'resources:'.
   ## @param frontend.resources.limits Resource limits for the frontend container
   ## @param frontend.resources.requests Requested resources for the frontend container
   resources:
@@ -96,10 +92,6 @@ api:
     tag: latest
   ## Yeti api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a choice for the user in order to increase
-  ## the chances charts run on environments with little resources, such as Minikube.
-  ## If you want to specify resources, uncomment the following lines, adjust them as
-  ## necessary, and remove the curly braces after 'resources:'.
   ## @param api.resources.limits Resource limits for the API container
   ## @param api.resources.requests Requested resources for the API container
   resources:
@@ -133,10 +125,6 @@ tasks:
     tag: latest
   ## Yeti tasks resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a choice for the user in order to increase
-  ## the chances charts run on environments with little resources, such as Minikube.
-  ## If you want to specify resources, uncomment the following lines, adjust them as
-  ## necessary, and remove the curly braces after 'resources:'.
   ## @param tasks.resources.limits Resource limits for the tasks container
   ## @param tasks.resources.requests Requested resources for the tasks container
   resources:
@@ -167,26 +155,6 @@ config:
     ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
     ##
     existingSecret: ""
-## Persistence Storage Parameters for Yeti ArangoDB storage
-##
-persistence:
-  ## @param persistence.size Yeti ArangoDB persistent volume size
-  ##
-  size: 2Gi
-  ## @param persistence.storageClass PVC Storage Class for Yeti ArangoDB volume
-  ## If set to "-", storageClassName: "", which disables dynamic provisioning
-  ## If undefined or set to null, no storageClassName spec is
-  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-  ##   GKE, AWS & OpenStack)
-  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
-  ##
-  storageClass: ""
-  ## @param persistence.accessModes PVC Access Mode for Yeti ArangoDB volume
-  ## Access mode may need to be updated based on the StorageClass
-  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
-  ##
-  accessModes:
-    - ReadWriteOnce
 ## Ingress Parameters
 ##
 ingress:
@@ -299,16 +267,18 @@ arangodb:
     ## @param arangodb.image.pullPolicy Yeti image pull policy
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: 3.11.8
+  ## Persistence Storage Parameters for Yeti ArangoDB storage
+  ##
+  persistence:
+    ## @param arangodb.persistence.size Yeti ArangoDB persistent volume size
+    ##
+    size: 2Gi
   ## Yeti arangodb resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## We leave the default resources as a choice for the user in order to increase
-  ## the chances charts run on environments with little resources, such as Minikube.
-  ## If you want to specify resources, uncomment the following lines, adjust them as
-  ## necessary, and remove the curly braces after 'resources:'.
   ## @param arangodb.resources.limits Resource limits for the arangodb container
   ## @param arangodb.resources.requests Requested resources for the arangodb container
   resources:

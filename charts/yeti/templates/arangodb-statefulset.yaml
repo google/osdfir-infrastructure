@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-yeti-arangodb
   namespace: {{ .Release.Namespace | quote }}
@@ -30,17 +30,20 @@ spec:
                   key: yeti-arangodb
           volumeMounts:
             - mountPath: /var/lib/arangodb3
-              name: arangodbvolume
+              name: data
           ports:
             - containerPort: 8529 
           resources:
             {{- toYaml .Values.arangodb.resources | nindent 12 }}
-      volumes:
-        - name: arangodbvolume
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-arangodbvolume-claim
-            readOnly: false
       {{- with .Values.arangodb.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.arangodb.persistence.size | quote }}
