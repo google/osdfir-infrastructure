@@ -378,44 +378,34 @@ kubectl delete pvc -l release=my-release
 
 ### Redis Configuration Parameters
 
-| Name                                | Description                                                                                  | Value        |
-| ----------------------------------- | -------------------------------------------------------------------------------------------- | ------------ |
-| `redis.enabled`                     | Enables the Redis deployment                                                                 | `true`       |
-| `redis.sentinel.enabled`            | Enables Redis Sentinel on Redis pods                                                         | `false`      |
-| `redis.architecture`                | Specifies the Redis architecture. Allowed values: `standalone` or `replication`              | `standalone` |
-| `redis.master.count`                | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`          |
-| `redis.master.service.type`         | Redis master service type                                                                    | `ClusterIP`  |
-| `redis.master.service.ports.redis`  | Redis master service port                                                                    | `6379`       |
-| `redis.master.persistence.size`     | Redis master Persistent Volume size                                                          | `2Gi`        |
-| `redis.master.resources.limits`     | The resources limits for the Redis master containers                                         | `{}`         |
-| `redis.master.resources.requests`   | The requested resources for the Redis master containers                                      | `{}`         |
-| `redis.replica.replicaCount`        | Number of Redis replicas to deploy                                                           | `0`          |
-| `redis.replica.service.type`        | Redis replicas service type                                                                  | `ClusterIP`  |
-| `redis.replica.service.ports.redis` | Redis replicas service port                                                                  | `6379`       |
-| `redis.replica.persistence.size`    | Redis replica Persistent Volume size                                                         | `2Gi`        |
-| `redis.replica.resources.limits`    | The resources limits for the Redis replica containers                                        | `{}`         |
-| `redis.replica.resources.requests`  | The requested resources for the Redis replica containers                                     | `{}`         |
+| Name                               | Description                                                                                  | Value        |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- | ------------ |
+| `redis.enabled`                    | Enables the Redis deployment                                                                 | `true`       |
+| `redis.sentinel.enabled`           | Enables Redis Sentinel on Redis pods                                                         | `false`      |
+| `redis.architecture`               | Specifies the Redis architecture. Allowed values: `standalone` or `replication`              | `standalone` |
+| `redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`          |
+| `redis.master.service.type`        | Redis master service type                                                                    | `ClusterIP`  |
+| `redis.master.service.ports.redis` | Redis master service port                                                                    | `6379`       |
+| `redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`        |
+| `redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`         |
+| `redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`         |
+| `redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`          |
 
 ### Postgresql Configuration Parameters
 
-| Name                                               | Description                                                                 | Value        |
-| -------------------------------------------------- | --------------------------------------------------------------------------- | ------------ |
-| `postgresql.enabled`                               | Enables the Postgresql deployment                                           | `true`       |
-| `postgresql.architecture`                          | PostgreSQL architecture (`standalone` or `replication`)                     | `standalone` |
-| `postgresql.auth.username`                         | Name for a custom PostgreSQL user to create                                 | `postgres`   |
-| `postgresql.auth.database`                         | Name for a custom PostgreSQL database to create (overrides `auth.database`) | `timesketch` |
-| `postgresql.primary.service.type`                  | PostgreSQL primary service type                                             | `ClusterIP`  |
-| `postgresql.primary.service.ports.postgresql`      | PostgreSQL primary service port                                             | `5432`       |
-| `postgresql.primary.persistence.size`              | PostgreSQL Persistent Volume size                                           | `2Gi`        |
-| `postgresql.primary.resources.limits`              | The resources limits for the PostgreSQL primary containers                  | `{}`         |
-| `postgresql.primary.resources.requests.cpu`        | The requested cpu for the PostgreSQL primary containers                     | `250m`       |
-| `postgresql.primary.resources.requests.memory`     | The requested memory for the PostgreSQL primary containers                  | `256Mi`      |
-| `postgresql.readReplicas.replicaCount`             | Number of PostgreSQL read only replicas                                     | `0`          |
-| `postgresql.readReplicas.service.type`             | PostgreSQL read replicas service type                                       | `ClusterIP`  |
-| `postgresql.readReplicas.service.ports.postgresql` | PostgreSQL read replicas service port                                       | `5432`       |
-| `postgresql.readReplicas.persistence.size`         | PostgreSQL Persistent Volume size                                           | `2Gi`        |
-| `postgresql.readReplicas.resources.limits`         | The resources limits for the PostgreSQL read only containers                | `{}`         |
-| `postgresql.readReplicas.resources.requests`       | The requested resources for the PostgreSQL read only containers             | `{}`         |
+| Name                                           | Description                                                                 | Value        |
+| ---------------------------------------------- | --------------------------------------------------------------------------- | ------------ |
+| `postgresql.enabled`                           | Enables the Postgresql deployment                                           | `true`       |
+| `postgresql.architecture`                      | PostgreSQL architecture (`standalone` or `replication`)                     | `standalone` |
+| `postgresql.auth.username`                     | Name for a custom PostgreSQL user to create                                 | `postgres`   |
+| `postgresql.auth.database`                     | Name for a custom PostgreSQL database to create (overrides `auth.database`) | `timesketch` |
+| `postgresql.primary.service.type`              | PostgreSQL primary service type                                             | `ClusterIP`  |
+| `postgresql.primary.service.ports.postgresql`  | PostgreSQL primary service port                                             | `5432`       |
+| `postgresql.primary.persistence.size`          | PostgreSQL Persistent Volume size                                           | `2Gi`        |
+| `postgresql.primary.resources.limits`          | The resources limits for the PostgreSQL primary containers                  | `{}`         |
+| `postgresql.primary.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers                     | `250m`       |
+| `postgresql.primary.resources.requests.memory` | The requested memory for the PostgreSQL primary containers                  | `256Mi`      |
+| `postgresql.readReplicas.replicaCount`         | Number of PostgreSQL read only replicas                                     | `0`          |
 
 Specify each parameter using the --set key=value[,key=value] argument to helm
 install. For example,
