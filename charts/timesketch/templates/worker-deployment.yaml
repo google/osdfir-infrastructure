@@ -30,7 +30,7 @@ spec:
         - name: worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["sh", "-c", "celery -A timesketch.lib.tasks worker"]
+          command: ["sh", "-c", "celery -A timesketch.lib.tasks worker --loglevel=DEBUG"]
           env:
             - name: WORKER_LOG_LEVEL
               value: "DEBUG"
