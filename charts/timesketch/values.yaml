@@ -313,6 +313,9 @@ redis:
   ## @param redis.enabled Enables the Redis deployment
   ##
   enabled: true
+  ## @param redis.nameOverride Overrides the Redis deployment name
+  ##
+  nameOverride: timesketch-redis
   ## @param redis.sentinel.enabled Enables Redis Sentinel on Redis pods
   ## IMPORTANT: This has not been tested for Timesketch so would leave this disabled
   ##
@@ -371,6 +374,9 @@ postgresql:
   ## @param postgresql.enabled Enables the Postgresql deployment
   ##
   enabled: true
+  ## @param postgresql.nameOverride Overrides the Postgresql deployment name
+  ##
+  nameOverride: timesketch-postgres
   ## @param postgresql.architecture PostgreSQL architecture (`standalone` or `replication`)
   ##
   architecture: standalone

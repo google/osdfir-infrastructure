@@ -65,7 +65,7 @@ Worker pod upon startup.
       key: yeti-api
 {{- if .Values.global.timesketch.enabled }}
 - name: YETI_TIMESKETCH_ENDPOINT
-  value: {{ printf "http://%s-timesketch:%.0f" .Release.Name .Values.global.timesketch.servicePort | quote }}
+  value: {{ printf "http://%s-timesketch:5000" .Release.Name | quote }}
 - name: YETI_TIMESKETCH_USERNAME
   value: timesketch
 - name: YETI_TIMESKETCH_PASSWORD
