@@ -344,6 +344,7 @@ kubectl delete pvc -l release=my-release
 | `persistence.size`                | Timesketch persistent volume size                                                                                                   | `2Gi`                |
 | `persistence.storageClass`        | PVC Storage Class for Timesketch volume                                                                                             | `""`                 |
 | `persistence.accessModes`         | PVC Access Mode for Timesketch volume                                                                                               | `["ReadWriteOnce"]`  |
+| `securityContext.enabled`         | Enable SecurityContext for Timesketch pods                                                                                          | `true`               |
 | `ingress.enabled`                 | Enable the Timesketch loadbalancer for external access                                                                              | `false`              |
 | `ingress.host`                    | Domain name Timesketch will be hosted under                                                                                         | `""`                 |
 | `ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                          | `""`                 |
