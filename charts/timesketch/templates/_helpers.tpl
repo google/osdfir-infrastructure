@@ -20,32 +20,16 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Redis subcharts connection url
 */}}
 {{- define "timesketch.redis.url" -}}
-{{- if .Values.redis.enabled -}}
-{{- $name := include "common.names.fullname" (dict "Chart" (dict "Name" "redis") "Release" .Release "Values" .Values.redis) -}}
-{{- $port := .Values.redis.master.service.ports.redis -}}
-{{- if .Values.redis.auth.enabled -}}
-{{- printf "redis://default:'$REDIS_PASSWORD'@%s-master:%.0f" $name $port -}}
-{{- else -}}
-{{- printf "redis://%s-master:%.0f" $name $port -}}
-{{- end -}}
-{{- else -}}
-{{ fail "Attempting to use Redis, but the subchart is not enabled. This will lead to misconfiguration" }}
-{{- end -}}
+{{- $name := printf "%s-timesketch-redis" (.Release.Name) -}}
+{{- printf "redis://default:'$REDIS_PASSWORD'@%s:6379" $name -}}
 {{- end -}}
 
 {{/*
 Postgresql subcharts connection url
 */}}
 {{- define "timesketch.postgresql.url" -}}
-{{- if .Values.postgresql.enabled -}}
-{{- $name := include "common.names.fullname" (dict "Chart" (dict "Name" "postgresql") "Release" .Release "Values" .Values.postgresql) -}}
-{{- $port := .Values.postgresql.primary.service.ports.postgresql -}}
-{{- $username := .Values.postgresql.auth.username -}}
-{{- $database := .Values.postgresql.auth.database -}}
-{{- printf "postgresql://%s:'$POSTGRES_PASSWORD'@%s:%.0f/%s" $username $name $port $database -}}
-{{- else -}}
-{{ fail "Attempting to use Postgresql, but the subchart is not enabled. This will lead to misconfiguration" }}
-{{- end -}}
+{{- $name := printf "%s-timesketch-postgres" (.Release.Name) -}}
+{{- printf "postgresql://postgres:'$POSTGRES_PASSWORD'@%s:5432/timesketch" $name -}}
 {{- end -}}
 
 {{/*

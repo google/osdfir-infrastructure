@@ -40,12 +40,12 @@ spec:
               service:
                 name: {{ .Release.Name }}-timesketch-nginx
                 port:
-                  number: 80
+                  number: 8080
   defaultBackend:
     service:
       name: {{ .Release.Name }}-timesketch-nginx # Name of the Service targeted by the Ingress
       port:
-        number: 80 # Should match the port used by the Service
+        number: 8080 # Should match the port used by the Service
 {{- end }}
 {{- if and .Values.ingress.enabled .Values.ingress.gcp.staticIPV6Name }}
 ---

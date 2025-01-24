@@ -9,8 +9,8 @@ metadata:
 data:
   default.conf: |
     server {
-        listen 80;
-        listen [::]:80;
+        listen 8080;
+        listen [::]:8080;
         client_max_body_size 0m;
         location / {
             proxy_buffer_size 128k;

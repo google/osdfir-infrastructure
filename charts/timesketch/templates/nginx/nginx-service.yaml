@@ -9,14 +9,14 @@ metadata:
   {{- if or (eq .Values.ingress.className "gce") (eq .Values.global.ingress.className "gce") }}
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
-    cloud.google.com/backend-config: '{"ports": {"80":"{{ .Release.Name }}-timesketch-backend-config"}}'
+    cloud.google.com/backend-config: '{"ports": {"8080":"{{ .Release.Name }}-timesketch-backend-config"}}'
   {{- end }}
 spec:
   type: ClusterIP
   ports:
-    - port: 80
+    - port: 8080
       protocol: TCP
-      targetPort: 80
+      targetPort: 8080
   selector:
     app.kubernetes.io/component: nginx
     {{- include "timesketch.selectorLabels" . | nindent 4 }}

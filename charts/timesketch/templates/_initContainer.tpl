@@ -13,22 +13,16 @@ Worker pod upon startup.
         secretKeyRef:
           name: {{ .Release.Name }}-timesketch-secret 
           key: timesketch-secret
-    {{- if and .Values.redis.enabled .Values.redis.auth.enabled }}
     - name: REDIS_PASSWORD
       valueFrom:
-        # Referencing from charts/redis/templates/_helpers.tpl
         secretKeyRef:
-          name: {{ include "redis.secretName" .Subcharts.redis }}
-          key: {{ include "redis.secretPasswordKey" .Subcharts.redis }}
-    {{- end }}
-    {{- if .Values.postgresql.enabled }}
+          name: {{ .Release.Name }}-timesketch-secret 
+          key: redis-user
     - name: POSTGRES_PASSWORD
       valueFrom:
-        # Referencing from charts/postgresql/templates/_helpers.tpl
         secretKeyRef:
-          name: {{ include "postgresql.v1.secretName" .Subcharts.postgresql }}
-          key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
-    {{- end }}
+          name: {{ .Release.Name }}-timesketch-secret 
+          key: postgres-user
     {{- if .Values.global.yeti.enabled }} 
     - name: YETI_API_KEY
       valueFrom:

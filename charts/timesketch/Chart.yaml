@@ -9,14 +9,6 @@ keywords:
 - security
 home: "https://timesketch.org/"
 dependencies:
-- condition: postgresql.enabled
-  name: postgresql
-  version: 15.3.2
-  repository: https://charts.bitnami.com/bitnami
-- condition: redis.enabled
-  name: redis
-  version: 19.3.2
-  repository: https://charts.bitnami.com/bitnami
 - condition: opensearch.enabled
   name: opensearch
   version: 2.20.0
