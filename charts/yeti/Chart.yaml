@@ -9,11 +9,6 @@ keywords:
 - threat-hunting
 - security
 home: "https://yeti-platform.io/"
-dependencies:
-- condition: redis.enabled
-  name: redis
-  version: 19.3.2
-  repository: https://charts.bitnami.com/bitnami
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com

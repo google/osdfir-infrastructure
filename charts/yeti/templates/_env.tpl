@@ -5,9 +5,9 @@ Worker pod upon startup.
 */}}
 {{- define "yeti.envs" -}}
 - name: YETI_REDIS_HOST
-  value: {{ include "yeti.redis.url" . }}
+  value: "{{ .Release.Name }}-yeti-redis"
 - name: YETI_REDIS_PORT
-  value: "{{ .Values.redis.master.service.ports.redis }}"
+  value: "6379"
 - name: YETI_REDIS_DATABASE
   value: "0"
 - name: YETI_ARANGODB_HOST

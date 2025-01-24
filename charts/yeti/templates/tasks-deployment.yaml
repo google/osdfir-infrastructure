@@ -18,11 +18,22 @@ spec:
         app.kubernetes.io/component: tasks
         {{- include "yeti.selectorLabels" . | nindent 8 }}
     spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
       containers:
         - name: tasks
           image: "{{ .Values.tasks.image.repository }}:{{ .Values.tasks.image.tag }}"
           imagePullPolicy: {{ .Values.tasks.image.pullPolicy }}
           command: ["sh", "-c", "/docker-entrypoint.sh tasks"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            seccompProfile:
+              type: RuntimeDefault
           env:
           {{- include "yeti.envs" . | nindent 12 }}
           resources:

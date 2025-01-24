@@ -5,12 +5,17 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "yeti.labels" . | nindent 4 }}
+  {{- if or (eq .Values.ingress.className "gce") (eq .Values.global.ingress.className "gce") }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"ports": {"9000":"{{ .Release.Name }}-yeti-backend-config"}}'
+  {{- end }}
 spec:
   type: ClusterIP
   ports:
     - port: 9000
       protocol: TCP
-      targetPort: 80
+      targetPort: 9000
   selector:
     app.kubernetes.io/component: frontend
     {{- include "yeti.selectorLabels" . | nindent 4 }}

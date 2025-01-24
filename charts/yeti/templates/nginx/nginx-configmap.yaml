@@ -8,7 +8,8 @@ metadata:
 data:
   default.conf: |
     server {
-
+        listen 9000;
+        listen [::]:9000;
         root /www;
 
         location /api/v2 {
