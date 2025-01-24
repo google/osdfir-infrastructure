@@ -378,36 +378,22 @@ kubectl delete pvc -l release=my-release
 
 ### Redis Configuration Parameters
 
-| Name                               | Description                                                                                  | Value              |
-| ---------------------------------- | -------------------------------------------------------------------------------------------- | ------------------ |
-| `redis.enabled`                    | Enables the Redis deployment                                                                 | `true`             |
-| `redis.nameOverride`               | Overrides the Redis deployment name                                                          | `timesketch-redis` |
-| `redis.sentinel.enabled`           | Enables Redis Sentinel on Redis pods                                                         | `false`            |
-| `redis.architecture`               | Specifies the Redis architecture. Allowed values: `standalone` or `replication`              | `standalone`       |
-| `redis.master.count`               | Number of Redis master instances to deploy (experimental, requires additional configuration) | `1`                |
-| `redis.master.service.type`        | Redis master service type                                                                    | `ClusterIP`        |
-| `redis.master.service.ports.redis` | Redis master service port                                                                    | `6379`             |
-| `redis.master.persistence.size`    | Redis master Persistent Volume size                                                          | `2Gi`              |
-| `redis.master.resources.limits`    | The resources limits for the Redis master containers                                         | `{}`               |
-| `redis.master.resources.requests`  | The requested resources for the Redis master containers                                      | `{}`               |
-| `redis.replica.replicaCount`       | Number of Redis replicas to deploy                                                           | `0`                |
+| Name                       | Description                                             | Value |
+| -------------------------- | ------------------------------------------------------- | ----- |
+| `redis.persistence.size`   | Redis master Persistent Volume size                     | `2Gi` |
+| `redis.resources.limits`   | The resources limits for the Redis master containers    | `{}`  |
+| `redis.resources.requests` | The requested resources for the Redis master containers | `{}`  |
+| `redis.nodeSelector`       | Node labels for Timesketch Redis pods assignment        | `{}`  |
 
 ### Postgresql Configuration Parameters
 
-| Name                                           | Description                                                                 | Value                 |
-| ---------------------------------------------- | --------------------------------------------------------------------------- | --------------------- |
-| `postgresql.enabled`                           | Enables the Postgresql deployment                                           | `true`                |
-| `postgresql.nameOverride`                      | Overrides the Postgresql deployment name                                    | `timesketch-postgres` |
-| `postgresql.architecture`                      | PostgreSQL architecture (`standalone` or `replication`)                     | `standalone`          |
-| `postgresql.auth.username`                     | Name for a custom PostgreSQL user to create                                 | `postgres`            |
-| `postgresql.auth.database`                     | Name for a custom PostgreSQL database to create (overrides `auth.database`) | `timesketch`          |
-| `postgresql.primary.service.type`              | PostgreSQL primary service type                                             | `ClusterIP`           |
-| `postgresql.primary.service.ports.postgresql`  | PostgreSQL primary service port                                             | `5432`                |
-| `postgresql.primary.persistence.size`          | PostgreSQL Persistent Volume size                                           | `2Gi`                 |
-| `postgresql.primary.resources.limits`          | The resources limits for the PostgreSQL primary containers                  | `{}`                  |
-| `postgresql.primary.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers                     | `250m`                |
-| `postgresql.primary.resources.requests.memory` | The requested memory for the PostgreSQL primary containers                  | `256Mi`               |
-| `postgresql.readReplicas.replicaCount`         | Number of PostgreSQL read only replicas                                     | `0`                   |
+| Name                                   | Description                                                | Value   |
+| -------------------------------------- | ---------------------------------------------------------- | ------- |
+| `postgresql.persistence.size`          | PostgreSQL Persistent Volume size                          | `2Gi`   |
+| `postgresql.resources.limits`          | The resources limits for the PostgreSQL primary containers | `{}`    |
+| `postgresql.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers    | `250m`  |
+| `postgresql.resources.requests.memory` | The requested memory for the PostgreSQL primary containers | `256Mi` |
+| `postgresql.nodeSelector`              | Node labels for Timesketch postgresql pods assignment      | `{}`    |
 
 Specify each parameter using the --set key=value[,key=value] argument to helm
 install. For example,
