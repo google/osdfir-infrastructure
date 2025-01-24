@@ -236,39 +236,6 @@ ingress:
 ## To see a full list of available values, run helm show values charts/opensearch*
 ##
 opensearch:
-  ## @param opensearch.enabled Enables the Opensearch deployment
-  ##
-  enabled: true
-  ## @param opensearch.nodeGroup Specifies the node group for this OpenSearch instance. Avoid using "master" as the node group name, as this will prevent the service from resolving correctly.
-  ##
-  nodeGroup: ""
-  ## @param opensearch.config.opensearch.yml Opensearch configuration file. Can be appended for additional configuration options
-  ## Values must be YAML literal style scalar / YAML multiline string
-  ## <filename>: |
-  ##   <formatted-value(s)>
-  ##
-  config:
-    opensearch.yml: |
-      plugins:
-        security:
-          allow_unsafe_democertificates: false
-  ## IMPORTANT: Removing the environment variables below will cause the deployment to fail without
-  ## additional configuration
-  ##
-  extraEnvs:
-    ## @param opensearch.extraEnvs[0].name Environment variable to disable Opensearch Demo config
-    ##
-    - name: DISABLE_INSTALL_DEMO_CONFIG
-    ## @param opensearch.extraEnvs[0].value Disables Opensearch Demo config
-    ##
-      value: "true"
-    ## @param opensearch.extraEnvs[1].name Environment variable to disable Opensearch Security plugin given that
-    ## certificates were not setup as part of this deployment
-    ##
-    - name: DISABLE_SECURITY_PLUGIN
-    ## @param opensearch.extraEnvs[1].value Disables Opensearch Security plugin
-    ##
-      value: "true"
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
   replicas: 1
@@ -280,9 +247,6 @@ opensearch:
   ## It is recommended to use at least half the system's available ram
   ##
   opensearchJavaOpts: "-Xmx512M -Xms512M"
-  ## @param opensearch.httpPort Opensearch service port
-  ##
-  httpPort: 9200
   ## Opensearch persistence configuration
   ##
   persistence:

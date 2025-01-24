@@ -17,7 +17,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Redis subcharts connection url
+Redis connection url
 */}}
 {{- define "timesketch.redis.url" -}}
 {{- $name := printf "%s-timesketch-redis" (.Release.Name) -}}
@@ -25,7 +25,7 @@ Redis subcharts connection url
 {{- end -}}
 
 {{/*
-Postgresql subcharts connection url
+Postgresql connection url
 */}}
 {{- define "timesketch.postgresql.url" -}}
 {{- $name := printf "%s-timesketch-postgres" (.Release.Name) -}}
@@ -33,33 +33,21 @@ Postgresql subcharts connection url
 {{- end -}}
 
 {{/*
-Override Opensearch Subchart "opensearch.uname" helper function to allow for
-multiple instances using the Release Name.
-*/}}
-{{- define "opensearch.uname" -}}
-{{- printf "%s-%s" .Release.Name .Values.masterService -}}
-{{- end -}}
-
-{{/*
-Opensearch subcharts host name
+Opensearch host name
 */}}
 {{- define "timesketch.opensearch.host" -}}
-{{- if .Values.opensearch.enabled -}}
-{{- printf "%s-%s" .Release.Name .Values.opensearch.masterService -}}
-{{- else -}}
-{{ fail "Attempting to use Opensearch, but the subchart is not enabled. This will lead to misconfiguration" }}
-{{- end -}}
+{{- printf "%s-opensearch-cluster" .Release.Name -}}
 {{- end -}}
 
 {{/*
-Opensearch subcharts port
+Opensearch endpoints
 */}}
-{{- define "timesketch.opensearch.port" -}}
-{{- if .Values.opensearch.enabled -}}
-{{- printf "%.0f" .Values.opensearch.httpPort -}}
-{{- else -}}
-{{ printf "Attempting to use Opensearch, but the subchart is not enabled. This will lead to misconfiguration" }}
-{{- end -}}
+{{- define "timesketch.opensearch.endpoints" -}}
+{{- $replicas := int (toString (.Values.opensearch.replicas)) }}
+{{- $uname := printf "%s-opensearch-cluster" (.Release.Name) }}
+  {{- range $i, $e := untilStep 0 $replicas 1 -}}
+{{ $uname }}-{{ $i }},
+  {{- end -}}
 {{- end -}}
 
 {{- define "timesketch.oidc.authenticatedemails" -}}

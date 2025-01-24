@@ -8,11 +8,6 @@ keywords:
 - analysis
 - security
 home: "https://timesketch.org/"
-dependencies:
-- condition: opensearch.enabled
-  name: opensearch
-  version: 2.20.0
-  repository: https://opensearch-project.github.io/helm-charts/
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com
