@@ -190,6 +190,12 @@ persistence:
   ##
   accessModes:
     - ReadWriteOnce
+## Security Context Parameters
+##
+securityContext:
+  ## @param securityContext.enabled Enable SecurityContext for Timesketch pods
+  ##
+  enabled: true
 ## Ingress Parameters
 ##
 ingress:

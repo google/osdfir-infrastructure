@@ -23,6 +23,8 @@ spec:
         app.kubernetes.io/component: worker
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
     spec:
+      hostNetwork: false
+      hostIPC: false
       automountServiceAccountToken: false
       initContainers:
       {{- include "timesketch.initContainer" . | nindent 8 }}
@@ -31,6 +33,16 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["sh", "-c", "celery -A timesketch.lib.tasks worker --loglevel=DEBUG"]
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            seccompProfile:
+              type: RuntimeDefault
+          {{- end }}
           volumeMounts:
             - mountPath: /mnt/timesketchvolume
               name: timesketchvolume
