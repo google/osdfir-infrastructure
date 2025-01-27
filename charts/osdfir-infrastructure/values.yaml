@@ -157,7 +157,7 @@ timesketch:
   ## Persistence Storage Parameters
   ##
   persistence:
-    ## @param persistence.size Timesketch persistent volume size
+    ## @param timesketch.persistence.size Timesketch persistent volume size
     ##
     size: 2Gi
     ## @param timesketch.persistence.storageClass PVC Storage Class for Timesketch volume
