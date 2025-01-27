@@ -140,12 +140,14 @@ kubectl delete pvc -l release=my-release
 
 ### Redis Configuration Parameters
 
-| Name                       | Description                                      | Value |
-| -------------------------- | ------------------------------------------------ | ----- |
-| `redis.persistence.size`   | Redis master Persistent Volume size              | `2Gi` |
-| `redis.resources.limits`   | The resources limits for the Redis containers    | `{}`  |
-| `redis.resources.requests` | The requested resources for the Redis containers | `{}`  |
-| `redis.nodeSelector`       | Node labels for Yeti redis pods assignment       | `{}`  |
+| Name                       | Description                                      | Value          |
+| -------------------------- | ------------------------------------------------ | -------------- |
+| `redis.image.repository`   | Redis image repository                           | `redis`        |
+| `redis.image.tag`          | Redis image tag                                  | `7.4.2-alpine` |
+| `redis.persistence.size`   | Redis master Persistent Volume size              | `2Gi`          |
+| `redis.resources.limits`   | The resources limits for the Redis containers    | `{}`           |
+| `redis.resources.requests` | The requested resources for the Redis containers | `{}`           |
+| `redis.nodeSelector`       | Node labels for Yeti redis pods assignment       | `{}`           |
 
 ### Yeti Arangodb configuration
 
