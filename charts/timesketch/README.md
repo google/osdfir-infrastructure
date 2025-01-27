@@ -359,34 +359,40 @@ kubectl delete pvc -l release=my-release
 
 ### Opensearch Configuration Parameters
 
-| Name                                   | Description                                                                                                 | Value               |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------- |
-| `opensearch.replicas`                  | Number of Opensearch instances to deploy                                                                    | `1`                 |
-| `opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                      | `true`              |
-| `opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M` |
-| `opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`               |
-| `opensearch.resources.requests.cpu`    | The requested cpu for the Opensearch container                                                              | `250m`              |
-| `opensearch.resources.requests.memory` | The requested memory for the Opensearch container                                                           | `512Mi`             |
-| `opensearch.nodeSelector`              | Node labels for Opensearch pods assignment                                                                  | `{}`                |
+| Name                                   | Description                                                                                                 | Value                          |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `opensearch.image.repository`          | Opensearch image repository                                                                                 | `opensearchproject/opensearch` |
+| `opensearch.image.tag`                 | Opensearch image tag                                                                                        | `2.15.0`                       |
+| `opensearch.replicas`                  | Number of Opensearch instances to deploy                                                                    | `1`                            |
+| `opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                      | `true`                         |
+| `opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M`            |
+| `opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`                          |
+| `opensearch.resources.requests.cpu`    | The requested cpu for the Opensearch container                                                              | `250m`                         |
+| `opensearch.resources.requests.memory` | The requested memory for the Opensearch container                                                           | `512Mi`                        |
+| `opensearch.nodeSelector`              | Node labels for Opensearch pods assignment                                                                  | `{}`                           |
 
 ### Redis Configuration Parameters
 
-| Name                       | Description                                             | Value |
-| -------------------------- | ------------------------------------------------------- | ----- |
-| `redis.persistence.size`   | Redis master Persistent Volume size                     | `2Gi` |
-| `redis.resources.limits`   | The resources limits for the Redis master containers    | `{}`  |
-| `redis.resources.requests` | The requested resources for the Redis master containers | `{}`  |
-| `redis.nodeSelector`       | Node labels for Timesketch Redis pods assignment        | `{}`  |
+| Name                       | Description                                             | Value          |
+| -------------------------- | ------------------------------------------------------- | -------------- |
+| `redis.image.repository`   | Redis image repository                                  | `redis`        |
+| `redis.image.tag`          | Redis image tag                                         | `7.4.2-alpine` |
+| `redis.persistence.size`   | Redis master Persistent Volume size                     | `2Gi`          |
+| `redis.resources.limits`   | The resources limits for the Redis master containers    | `{}`           |
+| `redis.resources.requests` | The requested resources for the Redis master containers | `{}`           |
+| `redis.nodeSelector`       | Node labels for Timesketch Redis pods assignment        | `{}`           |
 
 ### Postgresql Configuration Parameters
 
-| Name                                   | Description                                                | Value   |
-| -------------------------------------- | ---------------------------------------------------------- | ------- |
-| `postgresql.persistence.size`          | PostgreSQL Persistent Volume size                          | `2Gi`   |
-| `postgresql.resources.limits`          | The resources limits for the PostgreSQL primary containers | `{}`    |
-| `postgresql.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers    | `250m`  |
-| `postgresql.resources.requests.memory` | The requested memory for the PostgreSQL primary containers | `256Mi` |
-| `postgresql.nodeSelector`              | Node labels for Timesketch postgresql pods assignment      | `{}`    |
+| Name                                   | Description                                                | Value         |
+| -------------------------------------- | ---------------------------------------------------------- | ------------- |
+| `postgresql.image.repository`          | Postgresql image repository                                | `postgres`    |
+| `postgresql.image.tag`                 | Postgresql image tag                                       | `17.2-alpine` |
+| `postgresql.persistence.size`          | PostgreSQL Persistent Volume size                          | `2Gi`         |
+| `postgresql.resources.limits`          | The resources limits for the PostgreSQL primary containers | `{}`          |
+| `postgresql.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers    | `250m`        |
+| `postgresql.resources.requests.memory` | The requested memory for the PostgreSQL primary containers | `256Mi`       |
+| `postgresql.nodeSelector`              | Node labels for Timesketch postgresql pods assignment      | `{}`          |
 
 Specify each parameter using the --set key=value[,key=value] argument to helm
 install. For example,
