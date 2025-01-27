@@ -8,9 +8,6 @@ To learn more about the release, try:
   $ kubectl get pods
 
 To connect to the Yeti URL, run:
-  {{- if and (.Values.ingress.enabled) (.Values.ingress.host) }}
-  $ echo "Visit https://{{ .Values.ingress.host }} to access Yeti externally"
-  {{- end }}
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-yeti 9000:9000
   $ echo "Visit http://127.0.0.1:9000 to access Yeti through port-forwarding"
 

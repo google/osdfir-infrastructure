@@ -19,12 +19,18 @@ global:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: true
-  ## Global ingress parameters used to configure Turbinia, Timesketch, Yeti under a single loadbalancer
+  ## Global ingress parameters used to configure Timesketch, Yeti under a loadbalancer
   ##
   ingress:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+    ## @param global.ingress.timesketchHost Domain name Timesketch will be hosted under
+    ##
+    timesketchHost: ""
+    ## @param global.ingress.yetiHost Domain name Yeti will be hosted under
+    ##
+    yetiHost: ""
     ## @param global.ingress.className IngressClass that will be be used to implement the Ingress
     ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
     ##
@@ -180,14 +186,6 @@ timesketch:
     ## @param timesketch.securityContext.enabled Enable SecurityContext for Timesketch pods
     ##
     enabled: true
-  ## Ingress Parameters
-  ##
-  ingress:
-    ## @param timesketch.ingress.host Domain name Timesketch will be hosted under
-    ## Please ensure you have a DNS record set for the IP address registered under
-    ## ingress.gcp.staticIPName
-    ##
-    host: ""
   ## Third Party Timesketch Configuration
   ## This section contains all the main configuration for third party dependencies Timesketch needs to run
   ##
@@ -361,15 +359,6 @@ yeti:
       ## @param yeti.config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
       ##
       existingSecret: ""
-  ## Ingress Parameters
-  ##
-  ingress:
-    ## @param yeti.ingress.host Domain name Yeti will be hosted under
-    ## Please ensure this value is set when enabling Ingress. If using "gce" for
-    ## ingress.className, please ensure you have a DNS record set for the IP address
-    ## registered under ingress.gcp.staticIPName
-    ##
-    host: ""
   ## Third Party Configuration
   ## This section contains all the main configuration for third party dependencies Yeti needs to run
   ##

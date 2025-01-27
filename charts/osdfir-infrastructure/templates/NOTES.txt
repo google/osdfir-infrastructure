@@ -9,8 +9,8 @@ To learn more about the release, try:
 
 {{ if .Values.global.timesketch.enabled -}}
 To connect to the Timesketch UI, run:
-  {{- if and (.Values.global.ingress.enabled) (.Values.timesketch.ingress.host) }}
-  $ echo "Visit https://{{ .Values.timesketch.ingress.host }} to access Timesketch externally"
+  {{- if and (.Values.global.ingress.enabled) (.Values.global.ingress.timesketchHost) }}
+  $ echo "Visit https://{{ .Values.global.ingress.timesketchHost }} to access Timesketch externally"
   {{- end }}
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-timesketch 5000:5000
   $ echo "Visit http://127.0.0.1:5000 to access Timesketch"
@@ -23,8 +23,8 @@ Login to Timesketch with the User `timesketch`. To get your password run:
 
 {{ if .Values.global.yeti.enabled -}}
 To connect to the Yeti URL, run:
-  {{- if and (.Values.global.ingress.enabled) (.Values.yeti.ingress.host) }}
-  $ echo "Visit https://{{ .Values.yeti.ingress.host }} to access Yeti externally"
+  {{- if and (.Values.global.ingress.enabled) (.Values.global.ingress.yetiHost) }}
+  $ echo "Visit https://{{ .Values.global.ingress.yetiHost }} to access Yeti externally"
   {{- end }}
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }} 9000:9000
   $ echo "Visit http://127.0.0.1:9000 to access Yeti through port-forwarding"

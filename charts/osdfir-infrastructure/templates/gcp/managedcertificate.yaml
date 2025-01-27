@@ -6,10 +6,10 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
 spec:
   domains:
-    {{- if and .Values.global.timesketch.enabled .Values.timesketch.ingress.host }}
-    - {{ .Values.timesketch.ingress.host }}
+    {{- if and .Values.global.timesketch.enabled .Values.global.ingress.timesketchHost }}
+    - {{ .Values.global.ingress.timesketchHost }}
     {{- end }}
-     {{- if and .Values.global.yeti.enabled .Values.yeti.ingress.host }}
-    - {{ .Values.yeti.ingress.host }}
+     {{- if and .Values.global.yeti.enabled .Values.global.ingress.yetiHost }}
+    - {{ .Values.global.ingress.yetiHost }}
     {{- end }}
 {{- end }}
