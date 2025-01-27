@@ -36,7 +36,7 @@ jobs:
           echo ${charts_dirs_changed}
           for chart in ${charts_dirs_changed}; do
             echo "Updating README.md for ${chart}"
-            readme-generator --values "charts/${chart}/values.yaml" --readme "charts/${chart}/README.md"
+            readme-generator --values "${chart}/values.yaml" --readme "${chart}/README.md"
           done
       - name: Push changes
         run: |
