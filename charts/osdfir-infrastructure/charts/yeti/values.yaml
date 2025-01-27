@@ -54,7 +54,7 @@ frontend:
     ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
     pullPolicy: Always
-    ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
+    ## @param frontend.image.tag Ovrrides the image tag whose default is the chart appVersion
     ##
     tag: latest
     ## @param frontend.image.imagePullSecrets Specify secrets if pulling from a private repository
