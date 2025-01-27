@@ -14,13 +14,6 @@ global:
     ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
     ##
     servicePort:
-  turbinia:
-    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
-    ##
-    enabled: false
-    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
-    ##
-    servicePort:
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -110,7 +103,6 @@ frontend:
     ##    memory: 1Gi
     requests: {}
   ## @param frontend.nodeSelector Node labels for Timesketch frontend pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## @section Timesketch Worker Configuration
@@ -131,7 +123,6 @@ worker:
       cpu: 250m
       memory: 256Mi
   ## @param worker.nodeSelector Node labels for Timesketch worker pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## @section Timesketch Nginx Configuration
@@ -164,7 +155,6 @@ nginx:
       cpu: 250m
       memory: 256Mi
   ## @param nginx.nodeSelector Node labels for Timesketch nginx pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## Persistence Storage Parameters
@@ -233,13 +223,11 @@ ingress:
     ##
     staticIPV6Name: ""
 ## @section Third Party Configuration
-## This section contains all the main configuration for third party dependencies
-## Timesketch requires to run
+## This section contains all the main configuration for third party dependencies Timesketch needs to run
 ##
 ## @section Opensearch Configuration Parameters
 ## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
 ## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
-## To see a full list of available values, run helm show values charts/opensearch*
 ##
 opensearch:
   ## Opensearch image configuration
@@ -281,12 +269,9 @@ opensearch:
       cpu: 250m
       memory: 512Mi
   ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## @section Redis Configuration Parameters
-## IMPORTANT: Redis is deployed with Auth enabled by default
-## To see a full list of available values, run helm show values charts/redis*
 ##
 redis:
   ## Redis image configuration
@@ -301,12 +286,12 @@ redis:
   ## Redis persistence configuration
   ##
   persistence:
-    ## @param redis.persistence.size Redis master Persistent Volume size
+    ## @param redis.persistence.size Redis Persistent Volume size
     ##
     size: 2Gi
   ## Redis resource requests and limits
-  ## @param redis.resources.limits The resources limits for the Redis master containers
-  ## @param redis.resources.requests The requested resources for the Redis master containers
+  ## @param redis.resources.limits The resources limits for the Redis containers
+  ## @param redis.resources.requests The requested resources for the Redis containers
   resources:
     ## Example:
     ## limits:
@@ -319,7 +304,6 @@ redis:
     ##    memory: 1Gi
     requests: {}
   ## @param redis.nodeSelector Node labels for Timesketch Redis pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## @section Postgresql Configuration Parameters
@@ -359,6 +343,5 @@ postgresql:
       cpu: 250m
       memory: 256Mi
   ## @param postgresql.nodeSelector Node labels for Timesketch postgresql pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
