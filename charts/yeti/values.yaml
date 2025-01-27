@@ -201,6 +201,15 @@ ingress:
 ## To see a full list of available values, run helm show values charts/redis*
 ##
 redis:
+  ## Redis image configuration
+  ##
+  image:
+    ## @param redis.image.repository Redis image repository
+    ##
+    repository: redis
+    ## @param redis.image.tag Redis image tag
+    ##
+    tag: "7.4.2-alpine"
   ## Redis persistence configuration
   ##
   persistence:
