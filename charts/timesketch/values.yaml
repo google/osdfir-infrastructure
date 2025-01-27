@@ -242,6 +242,15 @@ ingress:
 ## To see a full list of available values, run helm show values charts/opensearch*
 ##
 opensearch:
+  ## Opensearch image configuration
+  ##
+  image:
+    ## @param opensearch.image.repository Opensearch image repository
+    ##
+    repository: opensearchproject/opensearch
+    ## @param opensearch.image.tag Opensearch image tag
+    ##
+    tag: "2.15.0"
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
   replicas: 1
@@ -280,6 +289,15 @@ opensearch:
 ## To see a full list of available values, run helm show values charts/redis*
 ##
 redis:
+  ## Redis image configuration
+  ##
+  image:
+    ## @param redis.image.repository Redis image repository
+    ##
+    repository: redis
+    ## @param redis.image.tag Redis image tag
+    ##
+    tag: "7.4.2-alpine"
   ## Redis persistence configuration
   ##
   persistence:
@@ -305,10 +323,17 @@ redis:
   ##
   nodeSelector: {}
 ## @section Postgresql Configuration Parameters
-## IMPORTANT: Postgresql is deployed with Auth enabled by default
-## To see a full list of available values, run helm show values charts/postgresql*
 ##
 postgresql:
+  ## Postgresql image configuration
+  ##
+  image:
+    ## @param postgresql.image.repository Postgresql image repository
+    ##
+    repository: postgres
+    ## @param postgresql.image.tag Postgresql image tag
+    ##
+    tag: "17.2-alpine"
   ## PostgreSQL persistence configuration
   ##
   persistence:

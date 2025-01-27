@@ -60,7 +60,7 @@ spec:
             seLinuxOptions: {}
             seccompProfile:
               type: RuntimeDefault
-          image: "opensearchproject/opensearch:2.15.0"
+          image: "{{ .Values.opensearch.image.repository }}:{{ .Values.opensearch.image.tag }}"
           imagePullPolicy: IfNotPresent
           env:
             - name: node.name

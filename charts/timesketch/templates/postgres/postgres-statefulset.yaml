@@ -41,7 +41,7 @@ spec:
             seLinuxOptions: {}
             seccompProfile:
               type: RuntimeDefault
-          image: "postgres:17"
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: IfNotPresent
           env:
             - name: POSTGRES_DB
