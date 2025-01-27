@@ -160,9 +160,6 @@ nginx:
 ## Persistence Storage Parameters
 ##
 persistence:
-  ## @param persistence.name Timesketch persistent volume name
-  ##
-  name: timesketchvolume
   ## @param persistence.size Timesketch persistent volume size
   ##
   size: 2Gi

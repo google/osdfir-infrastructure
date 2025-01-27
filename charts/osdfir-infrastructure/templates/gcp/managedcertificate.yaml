@@ -2,13 +2,10 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ include "osdfir.fullname" . }}-managed-ssl
+  name: {{ .Release.Name }}-osdfir-managed-ssl
   namespace: {{ .Release.Namespace | quote }}
 spec:
   domains:
-     {{- if and .Values.global.turbinia.enabled .Values.turbinia.ingress.host }}
-    - {{ .Values.turbinia.ingress.host }}
-    {{- end }}
     {{- if and .Values.global.timesketch.enabled .Values.timesketch.ingress.host }}
     - {{ .Values.timesketch.ingress.host }}
     {{- end }}

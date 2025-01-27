@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "osdfir.fullname" . }}-letsencrypt-production
+  name: {{ .Release.Name }}-osdfir-letsencrypt-production
   labels:
     {{- include "osdfir.labels" . | nindent 4 }}
   annotations:
@@ -12,9 +12,9 @@ spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
-      name: {{ include "osdfir.fullname" . }}-letsencrypt-production
+      name: {{ .Release.Name }}-osdfir-letsencrypt-production
     solvers:
     - http01:
         ingress:
-          name: {{ include "osdfir.fullname" . }}-ingress
+          name: {{ .Release.Name }}-osdfir-ingress
 {{- end }}
