@@ -10,5 +10,3 @@ chart-dirs:
 check-version-increment: true
 validate-maintainers: false
 helm-extra-args: --timeout 800s
-excluded-charts:
- - osdfir-infrastructure
