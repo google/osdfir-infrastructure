@@ -14,13 +14,6 @@ global:
     ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
     ##
     servicePort:
-  turbinia:
-    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
-    ##
-    enabled: false
-    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
-    ##
-    servicePort:
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -73,7 +66,6 @@ frontend:
     ##    memory: 1Gi
     requests: {}
   ## @param frontend.nodeSelector Node labels for Yeti frontend pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## @section Yeti api configuration
@@ -106,7 +98,6 @@ api:
     ##    memory: 1Gi
     requests: {}
   ## @param api.nodeSelector Node labels for Yeti API pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## @section Yeti Tasks configuration
@@ -139,7 +130,6 @@ tasks:
     ##    memory: 1Gi
     requests: {}
   ## @param tasks.nodeSelector Node labels for Yeti tasks pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
 ## @section Yeti Configuration Parameters
@@ -193,12 +183,9 @@ ingress:
     ##
     staticIPV6Name: ""
 ## @section Third Party Configuration
-## This section contains all the main configuration for third party dependencies
-## Yeti requires to run
+## This section contains all the main configuration for third party dependencies Yeti needs to run
 ##
 ## @section Redis Configuration Parameters
-## IMPORTANT: Redis is deployed with Auth enabled by default
-## To see a full list of available values, run helm show values charts/redis*
 ##
 redis:
   ## Redis image configuration
@@ -213,7 +200,7 @@ redis:
   ## Redis persistence configuration
   ##
   persistence:
-    ## @param redis.persistence.size Redis master Persistent Volume size
+    ## @param redis.persistence.size Redis Persistent Volume size
     ##
     size: 2Gi
   ## Redis resource requests and limits
@@ -241,7 +228,6 @@ arangodb:
     ##
     repository: arangodb
     ## @param arangodb.image.pullPolicy Yeti image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     ##
     pullPolicy: IfNotPresent
     ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
@@ -269,6 +255,5 @@ arangodb:
     ##    memory: 1Gi
     requests: {}
   ## @param arangodb.nodeSelector Node labels for Yeti arangodb pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
