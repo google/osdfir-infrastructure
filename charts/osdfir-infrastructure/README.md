@@ -1,15 +1,14 @@
 <!--- app-name: OSDFIR Infrastructure -->
 # OSDFIR Infrastructure Helm Chart
 
-OSDFIR Infrastructure helps setup Open Source
-Digital Forensics tools to Kubernetes clusters using Helm.
+OSDFIR Infrastructure helps setup Open Source Digital Forensics tools to
+Kubernetes clusters using Helm.
 
 Currently, OSDFIR Infrastructure supports the deployment and integration of the
 following tools:
 
 * [dfTimewolf](https://github.com/log2timeline/dftimewolf)
 * [Timesketch](https://github.com/google/timesketch)
-* [Turbinia](https://github.com/google/turbinia)
 * [Yeti](https://github.com/yeti-platform/yeti)
 
 ## TL;DR
@@ -19,7 +18,8 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
-> **Tip**: To quickly get started with a local cluster, see [minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
+> **Note**: By default, OSDFIR Infrastructure is not externally accessible and
+applications can be reached via `kubectl port-forward` within the cluster.
 
 ## Introduction
 
@@ -27,12 +27,12 @@ This chart bootstraps a OSDFIR Infrastructure deployment on a [Kubernetes](https
 
 ## Prerequisites
 
-* Kubernetes 1.19+
+* Kubernetes 1.23+
 * Helm 3.2.0+
 * PV provisioner support in the underlying infrastructure
 
-> **Note**: For cloud deployments, Turbinia currently only supports attaching disks from GCP environments. Manual disk attachment or utilizing other evidence types is necessary
-for other cloud providers.
+> **Tip**: To quickly get started with a local cluster, see
+[minikube install docs](https://minikube.sigs.k8s.io/docs/start/).
 
 ## Installing the Chart
 
@@ -49,56 +49,234 @@ To install the chart, specify any release name of your choice. For example, usin
 helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
-The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured
-during installation or see [Installating for Production](#installing-for-production)
-for a recommended production installation.
+The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the
+default configuration. The [Parameters](#parameters) section lists the parameters
+that can be configured during installation.
 
-## Installing for Production
+## Configuration and installation details
 
-Pull the chart locally then cd into `/osdfir-infrastructure` and review the `values-production.yaml` file for a list of values that will be used for production.
+OSDFIR Infrastructure actively monitors for new versions of the main containers
+and releases updated charts accordingly. However, if you'd like to introduce a
+custom image or tag, please refer to the steps below.
 
-```console
-helm pull osdfir-charts/osdfir-infrastructure --untar
-```
+### Managing Timesketch images
 
-### Enabling GCP Disk processing for Turbinia
+The Timesketch container images are managed using the following values,
+`timesketch.image.tag` and `timesketch.image.repository`.
 
-Follow this section for enabling GCP disk processing for Turbinia.
-
-Create a Turbinia GCP account using the helper script in `osdfir-infrastructure/charts/turbinia/tools/create-gcp-sa.sh` prior to installing the chart.
-
-Install the chart with the base values in `values.yaml`, the production values in `values-production.yaml`, and set appropriate values to enable GCP for Turbinia. Using the release name `my-release`, run:
+To view all configurable values of the Yeti subchart, including the default
+image tags and repositories, run the following command:
 
 ```console
-helm install my-release ../osdfir-infrastructure \
-    -f values.yaml \ 
-    -f values-production.yaml \
-    --set turbinia.gcp.enabled=true \
-    --set turbinia.gcp.projectID=<GCP_PROJECT_ID> \
-    --set turbinia.gcp.projectRegion=<GKE_CLUSTER_REGION> \
-    --set turbinia.gcp.projectZone=<GKE_ClUSTER_ZONE>
+helm show values osdfir-infrastructure/charts/timesketch
 ```
+
+Specify the desired image tags and repositories when deploying or upgrading the
+OSDFIR Infrastructure chart.
+
+> **Note**: The `helm show values osdfir-infrastructure/charts/timesketch`
+command displays parameters as `image.tag` and `image.repository`. However,
+because Timesketch is a subchart of OSDFIR Infrastructure, you must prefix these
+parameters with `timesketch` when setting them in your `values.yaml` file or using
+`--set`. This convention applies to all subcharts within the OSDFIR Infrastructure chart.
+
+### Managing Yeti images
+
+The Yeti container images are managed using the following values,
+`yeti.<component>.image.repository` and `yeti.<component>.image.tag`, where
+`<component>` is replaced with `frontend`, `api`, or `tasks`.
+
+To view all configurable values of the Yeti subchart, including the default
+image tags and repositories, run the following command:
+
+```console
+helm show values osdfir-infrastructure/charts/yeti
+```
+
+Specify the desired image tags and repositories when deploying or upgrading the
+OSDFIR Infrastructure chart.
+
+### Upgrading the Helm chart
+
+Helm chart updates can be retrieved by running `helm repo update`.
+
+To explore available versions, use `helm search repo osdfir-charts/osdfir-infrastructure`.
+Install a specific chart version with `helm install my-release osdfir-charts/osdfir-infrastructure --version <version>`.
+
+A major Helm chart version change (like v1.0.0 -> v2.0.0) indicates that there
+is an incompatible breaking change needing manual actions.
+
+### Managing the Yeti config
+
+Yeti's configuration is managed through environment variables. To customize
+Yeti's configuration, you can:
+
+1. **Modify the `_env.tpl` template:** For advanced customization, you can
+directly edit the `_env.tpl` template file: [link to _env.tpl](https://github.com/google/osdfir-infrastructure/blob/main/charts/yeti/templates/_env.tpl). Be aware that changes to this file will be overwritten when
+upgrading the chart to a new version unless you manage the template separately.
+
+2. **Request a new environment variable:** If you need to configure a setting
+that isn't currently exposed as an environment variable, please submit a
+PR to the repository. This is the preferred method for most configuration changes,
+as it ensures the changes are maintained across chart upgrades.
+
+### Managing the Timesketch config
+
+If you don't provide your own config files during deployment,
+the Timesketch deployment will automatically retrieve the latest default configs
+from the Timesketch Github repository. This method requires no further action
+from you.
+
+> **NOTE:**  When using the default method, you cannot update the Timesketch
+config files directly.
+
+#### Managing Timesketch configs externally
+
+For more advanced configuration management, you can manage Timesketch config
+files independently of the Helm chart:
+
+1. Prepare your Config Files:
+
+    Organize all the Timesketch configuration files in a directory with your
+    desired customizations.
+
+2. Create a ConfigMap:
+
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./timesketch-configs/
+    ```
+
+    Replace `./timesketch-configs/` with the actual path to your configuration files.
+
+3. Install or Upgrade the Helm Chart:
+
+    ```console
+    helm install my-release osdfir-charts/timesketch --set config.existingConfigMap="timesketch-configs"
+    ```
+
+    This command instructs the Helm chart to use the `timesketch-configs` ConfigMap for
+    Timesketch's config files.
+
+To update the config changes using this method:
+
+1. Update the ConfigMap:
+
+    ```console
+    kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
+    ```
+
+2. Restart the Timesketch deployment to apply the new configs
+
+    ```console
+    kubectl rollout restart deployment -l app.kubernetes.io/name=timesketch
+    ```
+
+#### Upgrading the Timesketch Database Schema
+
+From time to time, a Timesketch release requires a manual database upgrade if
+the schema has changed.
+The [Timesketch release page](https://github.com/google/timesketch/releases)
+will indicate if a database upgrade is required.
+
+Follow these steps to upgrade the database on your Kubernetes deployment:
+
+1. **Upgrade Timesketch (if not already done):**
+   * Upgrade your Timesketch deployment to the desired release version:
+
+     ```bash
+     helm upgrade my-release osdfir-charts/timesketch --set image.tag=<VERSION> --set image.pullPolicy=Always
+     ```
+
+2. **Connect to Timesketch Pod:**
+   * Once the upgraded pods are ready, shell into the Timesketch pod:
+
+     ```bash
+     kubectl exec -it my-release-timesketch-<RANDOM> -- /bin/bash
+     ```
+
+     * Find your pod name using `kubectl get pods`.
+
+3. **Perform Database Upgrade:**
+   * Follow the detailed steps in the [Timesketch documentation to upgrade your database](https://timesketch.org/guides/admin/upgrade/#upgrade-the-database-schema).
+
+4. **Restart Timesketch (Recommended):**
+   * After a successful database upgrade, it is recommended to restart your
+   Timesketch deployment for the changes to take full effect:
+
+      ```bash
+      kubectl rollout restart deployment my-release-timesketch-web
+      ```
+
+### Resource requests and limits
+
+OSDFIR Infrastructure charts allow setting resource requests and limits for all
+containers inside the chart deployment. These are inside the `resources` value
+(check parameter table). Setting requests is essential for production workloads
+and these should be adapted to your specific use case.
+
+To maximize deployment success across different environments, resources are
+minimally defined by default.
+
+### Persistence
+
+The following sections cover how persistent volumes are provisioned for each of
+the applications in OSDFIR Infrastructure.
+
+#### Persistence in Timesketch
+
+By default, the chart mounts a Persistent Volume at the
+`/mnt/timesketchvolume` path to store uploaded timelines for Timesketch to process.
+The volume is created using dynamic volume provisioning.
+
+Configuration files can be found at the `/etc/timesketch` path of the container.
+
+For clusters running more than one nodes or machines, the Timesketch volume will
+need to have the ability to be mounted by multiple machines, such as NFS, GCP
+Filestore, AWS EFS, and other shared file storage equivalents.
+
+Additionally, persistent volumes are created for Opensearch, Postgres, and Redis
+which Timesketch utilizes to store timeline and other configuration data.
+
+#### Persistence in Yeti
+
+Yeti's data persistence relies on two services: ArangoDB and Redis.
+
+* **ArangoDB:** All Yeti Indicators of Compromise (IoCs) and other persistent
+data are stored in ArangoDB. The volume automatically gets created during deployment
+through dynamic provisioning.
+* **Redis:** Redis is used for Yeti's task scheduling.
+
+The volumes for ArangoDB and Redis automatically get created during deployment
+through dynamic provisioning.
 
 ### Enabling GKE Ingress and OIDC Authentication
 
-This section guides you in exposing Turbinia, Timesketch, and Yeti externally.
-Additionally, you will enable OpenID Connect for Turbinia and Timesketch user
-access. Yeti, currently unsupported by OpenID Connect, will be deployed with
-local authentication.
+For Google Kubernetes Engine (GKE) on Google Cloud Platform (GCP), follow these
+steps to expose Timesketch and Yeti externally and enable Google Cloud OpenID
+Connect (OIDC) authentication to control user access.
 
-1. Create a global static IP address:
+1. Reserve a global static IP address:
 
     ```console
     gcloud compute addresses create timesketch-webapps --global
     ```
 
-2. Register a new domain or use an existing one, ensuring a DNS entry
-points to the IP created earlier.
+2. Register DNS Records
 
-3. Create OAuth web client credentials following the [Google Support guide](https://support.google.com/cloud/answer/6158849). If using the CLI client, also create a Desktop/Native
-OAuth client.
-   * Fill in Authorized JavaScript origins with your domain as `https://<turbinia.DOMAIN_NAME>.com` and `https://<timesketch.DOMAIN_NAME>.com`
-   * Fill in Authorized redirect URIs with `https://<timesketch.DOMAIN_NAME>.com/google_openid_connect/` and `https://<turbinia.DOMAIN_NAME>.com/oauth2/callback`
+    Register a new domain or use an existing one.  Create DNS "A" records that point
+    your desired subdomains (e.g., timesketch.example.com, yeti.example.com) to the
+    static IP address you reserved in the previous step.
+
+3. Create OAuth web client credentials
+
+    Follow the [Google Support guide](https://support.google.com/cloud/answer/6158849)
+    to create OAuth 2.0 Web Client credentials. You will also need a Desktop/Native OAuth client if you intend to use the client.
+    * Add the following authorized JavaScript origins:
+      * `https://<timesketch.DOMAIN_NAME>.com`
+      * `https://<yeti.DOMAIN_NAME>.com`
+    * Add the following authorized redirect URIs:
+      * `https://<timesketch.DOMAIN_NAME>.com/google_openid_connect/`
+      * `https://<yeti.DOMAIN_NAME>.com//login/google_openid_connect/`
 
 4. Store your new OAuth credentials in a K8s secret:
 
@@ -122,27 +300,23 @@ OAuth client.
     kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
     ```
 
-7. Then to upgrade an existing release with production values, externally expose
-   Timesketch, Turbinia, and Yeti through a loadbalancer, add SSL through
-   GCP managed certificates, and enable Turbinia and Timesketch
-   OIDC for authentication, run:
+7. To externally expose Yeti and Timesketch, enable OIDC and provision GCP managed certificates, set the following values during a `helm install` or `helm upgrade`:
 
     ```console
-    helm upgrade my-release ../osdfir-infrastructure \
-        -f values-production.yaml \
-        --set global.ingress.enabled=true \
-        --set global.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
-        --set global.ingress.gcp.managedCertificates=true \
-        --set timesketch.ingress.host=<timesketch.DOMAIN_NAME.com> \
-        --set turbinia.ingress.host=<turbinia.<DOMAIN_NAME.com> \
-        --set yeti.ingress.host=<yeti.<DOMAIN_NAME.com> \
-        --set timesketch.config.oidc.enabled=true \
-        --set timesketch.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
-        --set timesketch.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
-        --set turbinia.oauth2proxy.enabled=true \
-        --set turbinia.oauth2proxy.configuration.existingSecret=<OAUTH_SECRET_NAME> \
-        --set turbinia.oauth2proxy.configuration.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    --set global.ingress.enabled=true \
+    --set global.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
+    --set global.ingress.gcp.managedCertificates=true \
+    --set global.ingress.timesketchHost=<timesketch.DOMAIN_NAME.com> \
+    --set global.ingress.yetiHost=<yeti.<DOMAIN_NAME.com> \
+    --set timesketch.config.oidc.enabled=true \
+    --set timesketch.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+    --set timesketch.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    --set yeti.config.oidc=true \
+    --set yeti.config.oidc.existingSecret=<OAUTH_SECRET_NAME>
     ```
+
+> **Note**: Yeti user access is managed separately by creating and removing users
+through the `yeticli` command-line tool.
 
 ## Uninstalling the Chart
 
@@ -152,9 +326,11 @@ To uninstall/delete a Helm deployment with a release name of `my-release`:
 helm uninstall my-release
 ```
 
-> **Tip**: Please update based on the release name chosen. You can list all releases using `helm list`
+> **Tip**: Please update based on the release name chosen. You can list all
+releases using `helm list`
 
-The command removes all the Kubernetes components but Persistent Volumes (PVC) associated with the chart and deletes the release.
+The command removes all the Kubernetes components but Persistent Volumes (PVC)
+associated with the chart and deletes the release.
 
 To delete the PVC's associated with a release name of `my-release`:
 
@@ -162,7 +338,8 @@ To delete the PVC's associated with a release name of `my-release`:
 kubectl delete pvc -l release=my-release
 ```
 
-> **Note**: Deleting the PVC's will delete OSDFIR Infrastructure data as well. Please be cautious before doing it.
+> **Note**: Deleting the PVC's will delete OSDFIR Infrastructure data as well.
+Please be cautious before doing it.
 
 ## Parameters
 
@@ -368,15 +545,15 @@ kubectl delete pvc -l release=my-release
 | `yeti.arangodb.resources.limits`        | Resource limits for the arangodb container                                                   | `{}`        |
 | `yeti.arangodb.resources.requests`      | Requested resources for the arangodb container                                               | `{}`        |
 
-Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
+Specify each parameter using the --set key=value[,key=value] argument to `helm install`. For example,
 
 ```console
-helm install my-release osdfir-charts/osdfir-infrastructure --set turbinia.enabled=false
+helm install my-release osdfir-charts/osdfir-infrastructure --set global.yeti.enabled=false
 ```
 
-The above command installs OSDFIR Infrastructure without Turbinia deployed.
+The above command installs OSDFIR Infrastructure without Yeti deployed.
 
-Alternatively, the `values.yaml` and `values-production.yaml` file can be
+Alternatively, the `values.yaml` file can be
 directly updated if the Helm chart was pulled locally. For example,
 
 ```console
@@ -390,35 +567,12 @@ chart with the updated values.
 helm install my-release ../osdfir-infrastructure
 ```
 
-## Persistence
-
-The OSDFIR Infrastructure deployment stores data at the `/mnt/osdfir` path of the container.
-
-Persistent Volume Claims are used to keep the data across deployments. This is
-known to work in GCP and Minikube. See the [Parameters](#parameters) section to
-configure the PVC or to disable persistence.
-
-## Upgrading
-
-If you need to upgrade an existing release to update a value, such as
-persistent volume size or upgrading to a new release, you can run
-[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/). For example, to set a
-new release and upgrade storage capacity, run:
-
-```console
-helm upgrade my-release osdfir-charts/osdfir-infrastructure \
-    --set turbinia.server.image.tag=latest \
-    --set timesketch.image.tag=latest \
-    --set persistence.size=10T
-```
-
-The above command upgrades an existing release named `my-release` updating the Turbinia server and Timesketch
-image tag to `latest` and increasing persistent volume size of the existing volume to 10 Terabytes. Note that existing data will not be deleted and instead triggers an expansion
-of the volume that backs the underlying PersistentVolume. See [here](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
+It is recommended to use this approach when you
+need to track changes in version control (recommended for production environments).
 
 ## License
 
-Copyright &copy; 2023 OSDFIR Infrastructure
+Copyright &copy; 2025 OSDFIR Infrastructure
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
