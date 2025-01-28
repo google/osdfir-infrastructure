@@ -61,7 +61,7 @@ global:
 ## To see the full list of configurable values, run helm show values charts/timesketch/
 ##
 timesketch:
-  ## @section Timesketch Configuration Parameters
+  ## Timesketch Configuration Parameters
   ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
   ##
   config:
@@ -120,7 +120,7 @@ timesketch:
     ## @param timesketch.frontend.nodeSelector Node labels for Timesketch frontend pods assignment
     ##
     nodeSelector: {}
-  ## @section Timesketch Worker Configuration
+  ## Timesketch Worker Configuration
   ##
   worker:
     ## Timesketch Worker resource requests and limits
@@ -252,7 +252,7 @@ timesketch:
     ## @param timesketch.redis.nodeSelector Node labels for Timesketch Redis pods assignment
     ##
     nodeSelector: {}
-  ## @section Postgresql Configuration Parameters
+  ## Postgresql Configuration Parameters
   ##
   postgresql:
     ## PostgreSQL persistence configuration
@@ -282,6 +282,8 @@ timesketch:
     ## @param timesketch.postgresql.nodeSelector Node labels for Timesketch postgresql pods assignment
     ##
     nodeSelector: {}
+## @section Yeti configuration
+##
 yeti:
   ## Yeti frontend configuration
   ##
@@ -304,7 +306,7 @@ yeti:
     ## @param yeti.frontend.nodeSelector Node labels for Yeti frontend pods assignment
     ##
     nodeSelector: {}
-  ## @section Yeti api configuration
+  ## Yeti api configuration
   ##
   api:
     ## Yeti api resource requests and limits
