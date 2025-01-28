@@ -13,11 +13,11 @@ home: "https://github.com/google/osdfir-infrastructure"
 dependencies:
 - condition: global.timesketch.enabled
   name: timesketch
-  repository: https://google.github.io/osdfir-infrastructure/
+  repository: file://charts/timesketch
   version: 2.0.0
 - condition: global.yeti.enabled
   name: yeti
-  repository: https://google.github.io/osdfir-infrastructure/
+  repository: file://charts/yeti
   version: 2.0.0
 maintainers:
   - name: Open Source DFIR
