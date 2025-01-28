@@ -361,67 +361,54 @@ Please be cautious before doing it.
 
 ### Timesketch configuration
 
+| Name                                                            | Description                                                                                                 | Value               |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------- |
+| `timesketch.config.existingConfigMap`                           | Use an existing ConfigMap as the default Timesketch config.                                                 | `""`                |
+| `timesketch.config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment                  | `true`              |
+| `timesketch.config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)                                | `false`             |
+| `timesketch.config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                                                | `""`                |
+| `timesketch.config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                                                | `true`              |
+| `timesketch.config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                                       | `""`                |
+| `timesketch.config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                                    | `""`                |
+| `timesketch.frontend.resources.limits`                          | The resources limits for the frontend container                                                             | `{}`                |
+| `timesketch.frontend.resources.requests`                        | The requested resources for the frontend container                                                          | `{}`                |
+| `timesketch.frontend.nodeSelector`                              | Node labels for Timesketch frontend pods assignment                                                         | `{}`                |
+| `timesketch.worker.resources.limits`                            | The resources limits for the worker container                                                               | `{}`                |
+| `timesketch.worker.resources.requests.cpu`                      | The requested cpu for the worker container                                                                  | `250m`              |
+| `timesketch.worker.resources.requests.memory`                   | The requested memory for the worker container                                                               | `256Mi`             |
+| `timesketch.worker.nodeSelector`                                | Node labels for Timesketch worker pods assignment                                                           | `{}`                |
+| `timesketch.nginx.resources.limits`                             | The resources limits for the nginx container                                                                | `{}`                |
+| `timesketch.nginx.resources.requests.cpu`                       | The requested cpu for the nginx container                                                                   | `250m`              |
+| `timesketch.nginx.resources.requests.memory`                    | The requested memory for the nginx container                                                                | `256Mi`             |
+| `timesketch.nginx.nodeSelector`                                 | Node labels for Timesketch nginx pods assignment                                                            | `{}`                |
+| `timesketch.persistence.size`                                   | Timesketch persistent volume size                                                                           | `2Gi`               |
+| `timesketch.persistence.storageClass`                           | PVC Storage Class for Timesketch volume                                                                     | `""`                |
+| `timesketch.persistence.accessModes`                            | PVC Access Mode for Timesketch volume                                                                       | `["ReadWriteOnce"]` |
+| `timesketch.securityContext.enabled`                            | Enable SecurityContext for Timesketch pods                                                                  | `true`              |
+| `timesketch.opensearch.replicas`                                | Number of Opensearch instances to deploy                                                                    | `1`                 |
+| `timesketch.opensearch.sysctlInit.enabled`                      | Sets optimal sysctl's through privileged initContainer                                                      | `true`              |
+| `timesketch.opensearch.opensearchJavaOpts`                      | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M` |
+| `timesketch.opensearch.persistence.size`                        | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`               |
+| `timesketch.opensearch.resources.requests.cpu`                  | The requested cpu for the Opensearch container                                                              | `250m`              |
+| `timesketch.opensearch.resources.requests.memory`               | The requested memory for the Opensearch container                                                           | `512Mi`             |
+| `timesketch.opensearch.nodeSelector`                            | Node labels for Opensearch pods assignment                                                                  | `{}`                |
+| `timesketch.redis.persistence.size`                             | Redis Persistent Volume size                                                                                | `2Gi`               |
+| `timesketch.redis.resources.limits`                             | The resources limits for the Redis containers                                                               | `{}`                |
+| `timesketch.redis.resources.requests`                           | The requested resources for the Redis containers                                                            | `{}`                |
+| `timesketch.redis.nodeSelector`                                 | Node labels for Timesketch Redis pods assignment                                                            | `{}`                |
+| `timesketch.postgresql.persistence.size`                        | PostgreSQL Persistent Volume size                                                                           | `2Gi`               |
+| `timesketch.postgresql.resources.limits`                        | The resources limits for the PostgreSQL primary containers                                                  | `{}`                |
+| `timesketch.postgresql.resources.requests.cpu`                  | The requested cpu for the PostgreSQL primary containers                                                     | `250m`              |
+| `timesketch.postgresql.resources.requests.memory`               | The requested memory for the PostgreSQL primary containers                                                  | `256Mi`             |
+| `timesketch.postgresql.nodeSelector`                            | Node labels for Timesketch postgresql pods assignment                                                       | `{}`                |
 
-### Timesketch Configuration Parameters
-
-| Name                                                            | Description                                                                                | Value   |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------- |
-| `timesketch.config.existingConfigMap`                           | Use an existing ConfigMap as the default Timesketch config.                                | `""`    |
-| `timesketch.config.createUser`                                  | Creates a default Timesketch user that can be used to login to Timesketch after deployment | `true`  |
-| `timesketch.config.oidc.enabled`                                | Enables Timesketch OIDC authentication (currently only supports Google OIDC)               | `false` |
-| `timesketch.config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                               | `""`    |
-| `timesketch.config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                               | `true`  |
-| `timesketch.config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                                      | `""`    |
-| `timesketch.config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                                   | `""`    |
-| `timesketch.frontend.resources.limits`                          | The resources limits for the frontend container                                            | `{}`    |
-| `timesketch.frontend.resources.requests`                        | The requested resources for the frontend container                                         | `{}`    |
-| `timesketch.frontend.nodeSelector`                              | Node labels for Timesketch frontend pods assignment                                        | `{}`    |
-
-### Timesketch Worker Configuration
-
-| Name                                              | Description                                                                                                 | Value               |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------- |
-| `timesketch.worker.resources.limits`              | The resources limits for the worker container                                                               | `{}`                |
-| `timesketch.worker.resources.requests.cpu`        | The requested cpu for the worker container                                                                  | `250m`              |
-| `timesketch.worker.resources.requests.memory`     | The requested memory for the worker container                                                               | `256Mi`             |
-| `timesketch.worker.nodeSelector`                  | Node labels for Timesketch worker pods assignment                                                           | `{}`                |
-| `timesketch.nginx.resources.limits`               | The resources limits for the nginx container                                                                | `{}`                |
-| `timesketch.nginx.resources.requests.cpu`         | The requested cpu for the nginx container                                                                   | `250m`              |
-| `timesketch.nginx.resources.requests.memory`      | The requested memory for the nginx container                                                                | `256Mi`             |
-| `timesketch.nginx.nodeSelector`                   | Node labels for Timesketch nginx pods assignment                                                            | `{}`                |
-| `timesketch.persistence.size`                     | Timesketch persistent volume size                                                                           | `2Gi`               |
-| `timesketch.persistence.storageClass`             | PVC Storage Class for Timesketch volume                                                                     | `""`                |
-| `timesketch.persistence.accessModes`              | PVC Access Mode for Timesketch volume                                                                       | `["ReadWriteOnce"]` |
-| `timesketch.securityContext.enabled`              | Enable SecurityContext for Timesketch pods                                                                  | `true`              |
-| `timesketch.opensearch.replicas`                  | Number of Opensearch instances to deploy                                                                    | `1`                 |
-| `timesketch.opensearch.sysctlInit.enabled`        | Sets optimal sysctl's through privileged initContainer                                                      | `true`              |
-| `timesketch.opensearch.opensearchJavaOpts`        | Sets the size of the Opensearch Java heap                                                                   | `-Xmx512M -Xms512M` |
-| `timesketch.opensearch.persistence.size`          | Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running | `2Gi`               |
-| `timesketch.opensearch.resources.requests.cpu`    | The requested cpu for the Opensearch container                                                              | `250m`              |
-| `timesketch.opensearch.resources.requests.memory` | The requested memory for the Opensearch container                                                           | `512Mi`             |
-| `timesketch.opensearch.nodeSelector`              | Node labels for Opensearch pods assignment                                                                  | `{}`                |
-| `timesketch.redis.persistence.size`               | Redis Persistent Volume size                                                                                | `2Gi`               |
-| `timesketch.redis.resources.limits`               | The resources limits for the Redis containers                                                               | `{}`                |
-| `timesketch.redis.resources.requests`             | The requested resources for the Redis containers                                                            | `{}`                |
-| `timesketch.redis.nodeSelector`                   | Node labels for Timesketch Redis pods assignment                                                            | `{}`                |
-
-### Postgresql Configuration Parameters
-
-| Name                                              | Description                                                | Value   |
-| ------------------------------------------------- | ---------------------------------------------------------- | ------- |
-| `timesketch.postgresql.persistence.size`          | PostgreSQL Persistent Volume size                          | `2Gi`   |
-| `timesketch.postgresql.resources.limits`          | The resources limits for the PostgreSQL primary containers | `{}`    |
-| `timesketch.postgresql.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers    | `250m`  |
-| `timesketch.postgresql.resources.requests.memory` | The requested memory for the PostgreSQL primary containers | `256Mi` |
-| `timesketch.postgresql.nodeSelector`              | Node labels for Timesketch postgresql pods assignment      | `{}`    |
-| `yeti.frontend.resources.limits`                  | Resource limits for the frontend container                 | `{}`    |
-| `yeti.frontend.resources.requests`                | Requested resources for the frontend container             | `{}`    |
-| `yeti.frontend.nodeSelector`                      | Node labels for Yeti frontend pods assignment              | `{}`    |
-
-### Yeti api configuration
+### Yeti configuration
 
 | Name                               | Description                                                            | Value   |
 | ---------------------------------- | ---------------------------------------------------------------------- | ------- |
+| `yeti.frontend.resources.limits`   | Resource limits for the frontend container                             | `{}`    |
+| `yeti.frontend.resources.requests` | Requested resources for the frontend container                         | `{}`    |
+| `yeti.frontend.nodeSelector`       | Node labels for Yeti frontend pods assignment                          | `{}`    |
 | `yeti.api.resources.limits`        | Resource limits for the API container                                  | `{}`    |
 | `yeti.api.resources.requests`      | Requested resources for the API container                              | `{}`    |
 | `yeti.api.nodeSelector`            | Node labels for Yeti API pods assignment                               | `{}`    |
