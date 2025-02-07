@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-opensearch-cluster
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # Create endpoints also if the related pod isn't ready
+  publishNotReadyAddresses: true
+  ports:
+  - name: http
+    port: 9200
+    targetPort: 9200
+  - name: transport
+    port: 9300
+    targetPort: 9300
+  - name: metrics
+    port: 9600
+    targetPort: 9600
+  selector:
+    app.kubernetes.io/component: opensearch

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-yeti-arangodb
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: arangodb
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: arangodb
+      {{- include "yeti.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: arangodb
+        {{- include "yeti.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: arangodb
+          image: "{{ .Values.arangodb.image.repository }}:{{ .Values.arangodb.image.tag }}"
+          imagePullPolicy: {{ .Values.arangodb.image.pullPolicy }}
+          env:
+            - name: ARANGO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-yeti-secret 
+                  key: yeti-arangodb
+          volumeMounts:
+            - mountPath: /var/lib/arangodb3
+              name: data
+          ports:
+            - containerPort: 8529 
+          resources:
+            {{- toYaml .Values.arangodb.resources | nindent 12 }}
+      {{- with .Values.arangodb.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.arangodb.persistence.size | quote }}

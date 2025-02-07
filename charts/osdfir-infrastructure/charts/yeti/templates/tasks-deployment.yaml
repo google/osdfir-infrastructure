@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-yeti-tasks
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: tasks
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: tasks
+      {{- include "yeti.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: tasks
+        {{- include "yeti.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: tasks
+          image: "{{ .Values.tasks.image.repository }}:{{ .Values.tasks.image.tag }}"
+          imagePullPolicy: {{ .Values.tasks.image.pullPolicy }}
+          command: ["sh", "-c", "/docker-entrypoint.sh tasks"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+          {{- include "yeti.envs" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.tasks.resources | nindent 12 }}
+      {{- with .Values.tasks.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-yeti-redis-networkpolicy
+  labels:
+    app.kubernetes.io/component: redis
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  egress:
+  - {}
+  ingress:
+  - ports:
+    - port: 6379
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: redis
+  policyTypes:
+  - Ingress
+  - Egress

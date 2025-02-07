@@ -1,0 +1,24 @@
+Thank you for installing {{ .Chart.Name }}:{{ .Chart.Version }}
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+  $ kubectl get pods
+
+To connect to the Timesketch URL:
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-timesketch 5000:5000
+  $ echo "Visit http://127.0.0.1:5000 to access Timesketch through port-forwarding"
+
+{{ if .Values.config.createUser -}}
+Login to Timesketch with the User `timesketch`. To get your password run:
+  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d; echo ""
+{{- end }}
+
+Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:
+  $ git clone https://github.com/log2timeline/dftimewolf && cd dftimewolf
+  $ pip3 install poetry
+  $ poetry install && poetry shell
+  $ dftimewolf -h
+  $ To configure with Timesketch, use the credentials provided in this chart when prompted

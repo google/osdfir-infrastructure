@@ -1,0 +1,68 @@
+{{- if (.Values.global.ingress.enabled) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-timesketch-nginx
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: nginx
+    {{- include "timesketch.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: nginx
+      {{- include "timesketch.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: nginx
+        {{- include "timesketch.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        fsGroup: 101
+        fsGroupChangePolicy: Always
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: nginx
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 101
+            runAsNonRoot: true
+            runAsUser: 101
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              name: nginx-config
+              readOnly: true
+            - mountPath: /var/cache/nginx
+              name: tmp
+            - mountPath: /var/run/
+              name: tmp
+          ports:
+            - containerPort: 8080
+          resources:
+            {{- toYaml .Values.nginx.resources | nindent 12 }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: {{ .Release.Name }}-timesketch-nginx-configmap
+      {{- with .Values.nginx.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

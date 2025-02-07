@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-timesketch
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "timesketch.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app.kubernetes.io/component: frontend
+    {{- include "timesketch.selectorLabels" . | nindent 4 }}

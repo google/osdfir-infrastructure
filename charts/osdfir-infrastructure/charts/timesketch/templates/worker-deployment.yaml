@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-timesketch-worker
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: worker
+    {{- include "timesketch.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: worker
+      {{- include "timesketch.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Restart pod if values.yaml parameters that affect the config were changed
+        checksum/config: {{  include (print $.Template.BasePath "/init-configmap.yaml") . | sha256sum }}
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/component: worker
+        {{- include "timesketch.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      initContainers:
+      {{- include "timesketch.initContainer" . | nindent 8 }}
+      containers:
+        - name: worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh", "-c", "celery -A timesketch.lib.tasks worker --loglevel=DEBUG"]
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            seccompProfile:
+              type: RuntimeDefault
+          {{- end }}
+          volumeMounts:
+            - mountPath: /mnt/timesketchvolume
+              name: timesketchvolume
+            - mountPath: /etc/timesketch
+              name: timesketch-configs
+          ports:
+            - containerPort: 8080
+            - containerPort: 5000
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+      volumes:
+        - name: timesketchvolume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-timesketchvolume-claim
+            readOnly: false
+        - name: init-timesketch
+          configMap:
+            name: {{ .Release.Name }}-timesketch-init-configmap
+            defaultMode: 0744
+        - name: timesketch-configs
+          emptyDir: {}
+        {{- if .Values.config.existingConfigMap }}
+        - name: uploaded-configs
+          configMap:
+            name: {{ .Values.config.existingConfigMap }}
+        {{- end }}
+        {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
+        - name: authenticated-emails
+          secret:
+            items:
+            - key: authenticated-emails-list
+              path: authenticated-emails-list
+            secretName: {{ include "timesketch.oidc.authenticatedemails" . }}
+        {{- end }}
+      {{- with .Values.worker.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

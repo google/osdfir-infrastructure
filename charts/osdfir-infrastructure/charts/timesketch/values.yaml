@@ -1,0 +1,292 @@
+## Timesketch Helm Chart
+## Please use this Helm chart for deploying Timesketch to a Kubernetes environment
+##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  ingress:
+    ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+## @section Timesketch image configuration
+##
+image:
+  ## @param image.repository Timesketch image repository
+  ##
+  repository: us-docker.pkg.dev/osdfir-registry/timesketch/timesketch
+  ## @param image.pullPolicy Timesketch image pull policy
+  ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+  ##
+  pullPolicy: IfNotPresent
+  ## @param image.tag Overrides the image tag whose default is the chart appVersion
+  ##
+  tag: "20240828"
+## @section Timesketch Configuration Parameters
+## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
+##
+config:
+  ## @param config.existingConfigMap Use an existing ConfigMap as the default Timesketch config.
+  ## Please ensure that the ConfigMap has been created prior to deployment
+  ## (e.g. kubectl create configmap timesketch-configs --from-file=timesketch-configs/)
+  ##
+  existingConfigMap: ""
+  ## @param config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
+  ##
+  createUser: true
+  ## Timesketch OIDC configuration
+  ##
+  oidc:
+    ## @param config.oidc.enabled Enables Timesketch OIDC authentication (currently only supports Google OIDC)
+    ##
+    enabled: false
+    ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
+    ##
+    existingSecret: ""
+    ## Allowed emails files for Timesketch OIDC
+    ##
+    authenticatedEmailsFile:
+      ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
+      ##
+      enabled: true
+      ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
+      ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
+      existingSecret: ""
+      ## @param config.oidc.authenticatedEmailsFile.content Allowed emails list (one email per line)
+      ##
+      content: ""
+      ## One email per line
+      ## e.g:
+      ## content: |-
+      ##   name1@domain
+      ##   name2@domain
+## @section Timesketch Frontend Configuration
+##
+frontend:
+  ## Timesketch Frontend resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param frontend.resources.limits The resources limits for the frontend container
+  ## @param frontend.resources.requests The requested resources for the frontend container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param frontend.nodeSelector Node labels for Timesketch frontend pods assignment
+  ##
+  nodeSelector: {}
+## @section Timesketch Worker Configuration
+##
+worker:
+  ## Timesketch Worker resource requests and limits
+  ## @param worker.resources.limits The resources limits for the worker container
+  ## @param worker.resources.requests.cpu The requested cpu for the worker container
+  ## @param worker.resources.requests.memory The requested memory for the worker container
+  ##
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  ## @param worker.nodeSelector Node labels for Timesketch worker pods assignment
+  ##
+  nodeSelector: {}
+## @section Timesketch Nginx Configuration
+##
+nginx:
+  ##  Nginx image configuration
+  ##
+  image:
+    ## @param nginx.image.repository Nginx image repository
+    ##
+    repository: nginx
+    ## @param nginx.image.tag Nginx image tag
+    ##
+    tag: 1.25.5-alpine-slim
+    ## @param nginx.image.pullPolicy Nginx image pull policy
+    ##
+    pullPolicy: IfNotPresent
+  ## Timesketch Nginx resource requests and limits
+  ## @param nginx.resources.limits The resources limits for the nginx container
+  ## @param nginx.resources.requests.cpu The requested cpu for the nginx container
+  ## @param nginx.resources.requests.memory The requested memory for the nginx container
+  ##
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  ## @param nginx.nodeSelector Node labels for Timesketch nginx pods assignment
+  ##
+  nodeSelector: {}
+## Persistence Storage Parameters
+##
+persistence:
+  ## @param persistence.size Timesketch persistent volume size
+  ##
+  size: 2Gi
+  ## @param persistence.storageClass PVC Storage Class for Timesketch volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ##
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for Timesketch volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ##
+  accessModes:
+    - ReadWriteOnce
+## Security Context Parameters
+##
+securityContext:
+  ## @param securityContext.enabled Enable SecurityContext for Timesketch pods
+  ##
+  enabled: true
+## @section Third Party Configuration
+## This section contains all the main configuration for third party dependencies Timesketch needs to run
+##
+## @section Opensearch Configuration Parameters
+## IMPORTANT: The Opensearch Security Plugin / TLS has not yet been configured by default
+## ref on steps required https://opensearch.org/docs/1.1/security-plugin/configuration/index/
+##
+opensearch:
+  ## Opensearch image configuration
+  ##
+  image:
+    ## @param opensearch.image.repository Opensearch image repository
+    ##
+    repository: opensearchproject/opensearch
+    ## @param opensearch.image.tag Opensearch image tag
+    ##
+    tag: "2.15.0"
+  ## @param opensearch.replicas Number of Opensearch instances to deploy
+  ##
+  replicas: 1
+  ## @param opensearch.sysctlInit.enabled Sets optimal sysctl's through privileged initContainer
+  ##
+  sysctlInit:
+    enabled: true
+  ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
+  ## It is recommended to use at least half the system's available ram
+  ##
+  opensearchJavaOpts: "-Xmx512M -Xms512M"
+  ## Opensearch persistence configuration
+  ##
+  persistence:
+    ## @param opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
+    ##
+    size: 2Gi
+  ## Opensearch resource requests
+  ## @param opensearch.resources.requests.cpu The requested cpu for the Opensearch container
+  ## @param opensearch.resources.requests.memory The requested memory for the Opensearch container
+  ##
+  resources:
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
+  ##
+  nodeSelector: {}
+## @section Redis Configuration Parameters
+##
+redis:
+  ## Redis image configuration
+  ##
+  image:
+    ## @param redis.image.repository Redis image repository
+    ##
+    repository: redis
+    ## @param redis.image.tag Redis image tag
+    ##
+    tag: "7.4.2-alpine"
+  ## Redis persistence configuration
+  ##
+  persistence:
+    ## @param redis.persistence.size Redis Persistent Volume size
+    ##
+    size: 2Gi
+  ## Redis resource requests and limits
+  ## @param redis.resources.limits The resources limits for the Redis containers
+  ## @param redis.resources.requests The requested resources for the Redis containers
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param redis.nodeSelector Node labels for Timesketch Redis pods assignment
+  ##
+  nodeSelector: {}
+## @section Postgresql Configuration Parameters
+##
+postgresql:
+  ## Postgresql image configuration
+  ##
+  image:
+    ## @param postgresql.image.repository Postgresql image repository
+    ##
+    repository: postgres
+    ## @param postgresql.image.tag Postgresql image tag
+    ##
+    tag: "17.2-alpine"
+  ## PostgreSQL persistence configuration
+  ##
+  persistence:
+    ## @param postgresql.persistence.size PostgreSQL Persistent Volume size
+    ##
+    size: 2Gi
+  ## PostgreSQL resource requests and limits
+  ## @param postgresql.resources.limits The resources limits for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.memory The requested memory for the PostgreSQL primary containers
+  ##
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  ## @param postgresql.nodeSelector Node labels for Timesketch postgresql pods assignment
+  ##
+  nodeSelector: {}

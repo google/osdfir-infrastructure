@@ -1,0 +1,15 @@
+Thank you for installing {{ .Chart.Name }}:{{ .Chart.Version }}
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+  $ kubectl get pods
+
+To connect to the Yeti URL, run:
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-yeti 9000:9000
+  $ echo "Visit http://127.0.0.1:9000 to access Yeti through port-forwarding"
+
+Login to Yeti with the User `yeti`. To get your password run:
+  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ .Release.Name }}-yeti-secret -o jsonpath="{.data.yeti-user}" | base64 -d; echo ""

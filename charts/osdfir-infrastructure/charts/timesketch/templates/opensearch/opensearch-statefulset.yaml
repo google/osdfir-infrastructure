@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-opensearch-cluster
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: opensearch
+    {{- include "timesketch.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.opensearch.replicas }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: opensearch
+      {{- include "timesketch.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: opensearch
+        {{- include "timesketch.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.opensearch.sysctlInit.enabled }}
+      initContainers:
+      - name: sysctl
+        image: "busybox:latest"
+        imagePullPolicy: "IfNotPresent"
+        command:
+        - sh
+        - -c
+        - |
+          set -xe
+          DESIRED="262144"
+          CURRENT=$(sysctl -n vm.max_map_count)
+          if [ "$DESIRED" -gt "$CURRENT" ]; then
+            sysctl -w vm.max_map_count=$DESIRED
+          fi
+        securityContext:
+          runAsUser: 0
+          privileged: true
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        fsGroupChangePolicy: Always
+      {{- end }}
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: opensearch
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          image: "{{ .Values.opensearch.image.repository }}:{{ .Values.opensearch.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: cluster.initial_master_nodes
+              value: "{{ include "timesketch.opensearch.endpoints" . }}"
+            - name: discovery.seed_hosts
+              value:  "{{ .Release.Name }}-opensearch-cluster"
+            - name: cluster.name
+              value: "opensearch-cluster"
+            - name: network.host
+              value: "0.0.0.0"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: {{ .Values.opensearch.opensearchJavaOpts | quote }}
+            - name: node.roles
+              value: "master,ingest,data,remote_cluster_client"
+            - name: DISABLE_INSTALL_DEMO_CONFIG
+              value: "true"
+            - name: DISABLE_SECURITY_PLUGIN
+              value: "true"
+          volumeMounts:
+            - mountPath: /usr/share/opensearch/data
+              name: data
+          ports:
+            - containerPort: 9200
+              name: http
+            - containerPort: 9300
+              name: transport
+            - containerPort: 9600
+              name: metrics
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            tcpSocket:
+              port: 9200
+            timeoutSeconds: 3
+          startupProbe:
+            failureThreshold: 30
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            tcpSocket:
+              port: 9200
+            timeoutSeconds: 3
+          resources:
+            {{- toYaml .Values.opensearch.resources | nindent 12 }}
+      {{- with .Values.opensearch.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.opensearch.persistence.size }}

@@ -2,7 +2,7 @@
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
 metadata:
-  name: {{ include "osdfir.fullname" . }}-frontend-config
+  name: {{ .Release.Name }}-osdfir-frontend-config
   namespace: {{ .Release.Namespace | quote }}
 spec:
   redirectToHttps:

@@ -1,0 +1,206 @@
+## Yeti Helm Chart
+## Please use this Helm chart for deploying Yeti to a Kubernetes environment
+##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  ingress:
+    ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+## @section Yeti configuration
+## The following section covers configuration parameters for Yeti
+##
+## @section Yeti frontend configuration
+##
+frontend:
+  image:
+    ## @param frontend.image.repository Yeti frontend image repository
+    ##
+    repository: yetiplatform/yeti-frontend
+    ## @param frontend.image.pullPolicy Yeti image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: latest
+  ## Yeti frontend resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param frontend.resources.limits Resource limits for the frontend container
+  ## @param frontend.resources.requests Requested resources for the frontend container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param frontend.nodeSelector Node labels for Yeti frontend pods assignment
+  ##
+  nodeSelector: {}
+## @section Yeti api configuration
+##
+api:
+  image:
+    ## @param api.image.repository Yeti API image repository
+    ##
+    repository: yetiplatform/yeti
+    ## @param api.image.pullPolicy Yeti image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: latest
+  ## Yeti api resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param api.resources.limits Resource limits for the API container
+  ## @param api.resources.requests Requested resources for the API container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param api.nodeSelector Node labels for Yeti API pods assignment
+  ##
+  nodeSelector: {}
+## @section Yeti Tasks configuration
+##
+tasks:
+  image:
+    ## @param tasks.image.repository Yeti tasks image repository
+    ##
+    repository: yetiplatform/yeti
+    ## @param tasks.image.pullPolicy Yeti image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param tasks.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: latest
+  ## Yeti tasks resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param tasks.resources.limits Resource limits for the tasks container
+  ## @param tasks.resources.requests Requested resources for the tasks container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param tasks.nodeSelector Node labels for Yeti tasks pods assignment
+  ##
+  nodeSelector: {}
+## @section Yeti Configuration Parameters
+## ref: https://github.com/yeti-platform/yeti/blob/main/yeti.conf.sample
+##
+config:
+  ## Yeti OIDC configuration
+  ##
+  oidc:
+    ## @param config.oidc.enabled Enables Yeti OIDC authentication (currently only supports Google OIDC)
+    ##
+    enabled: false
+    ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
+    ##
+    existingSecret: ""
+## @section Third Party Configuration
+## This section contains all the main configuration for third party dependencies Yeti needs to run
+##
+## @section Redis Configuration Parameters
+##
+redis:
+  ## Redis image configuration
+  ##
+  image:
+    ## @param redis.image.repository Redis image repository
+    ##
+    repository: redis
+    ## @param redis.image.tag Redis image tag
+    ##
+    tag: "7.4.2-alpine"
+  ## Redis persistence configuration
+  ##
+  persistence:
+    ## @param redis.persistence.size Redis Persistent Volume size
+    ##
+    size: 2Gi
+  ## Redis resource requests and limits
+  ## @param redis.resources.limits The resources limits for the Redis containers
+  ## @param redis.resources.requests The requested resources for the Redis containers
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param redis.nodeSelector Node labels for Yeti redis pods assignment
+  ##
+  nodeSelector: {}
+## @section Yeti Arangodb configuration
+##
+arangodb:
+  image:
+    ## @param arangodb.image.repository Yeti arangodb image repository
+    ##
+    repository: arangodb
+    ## @param arangodb.image.pullPolicy Yeti image pull policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: 3.11.8
+  ## Persistence Storage Parameters for Yeti ArangoDB storage
+  ##
+  persistence:
+    ## @param arangodb.persistence.size Yeti ArangoDB persistent volume size
+    ##
+    size: 2Gi
+  ## Yeti arangodb resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param arangodb.resources.limits Resource limits for the arangodb container
+  ## @param arangodb.resources.requests Requested resources for the arangodb container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param arangodb.nodeSelector Node labels for Yeti arangodb pods assignment
+  ##
+  nodeSelector: {}
