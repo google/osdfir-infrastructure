@@ -176,6 +176,42 @@ entries:
       category: Security
       licenses: Apache-2.0
     apiVersion: v2
+    created: "2025-02-07T18:57:49.022334426Z"
+    dependencies:
+    - condition: global.timesketch.enabled
+      name: timesketch
+      repository: file://charts/timesketch
+      version: 2.0.0
+    - condition: global.yeti.enabled
+      name: yeti
+      repository: file://charts/yeti
+      version: 2.0.0
+    description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
+    digest: 026ec0bc9ac9d69b319ba8a6364c7e049cb4fa570d654b395e6a28566741dd8c
+    home: https://github.com/google/osdfir-infrastructure
+    keywords:
+    - timesketch
+    - yeti
+    - dfir
+    - analysis
+    - processing
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: osdfir-infrastructure
+    sources:
+    - https://github.com/google/osdfir-infrastructure
+    - https://github.com/google/timesketch
+    - https://github.com/yeti-platform/yeti
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-2.0.0/osdfir-infrastructure-2.0.0.tgz
+    version: 2.0.0
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
     created: "2024-07-15T20:59:19.924607404Z"
     dependencies:
     - condition: global.timesketch.enabled
@@ -2263,4 +2299,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-17T22:06:07.97231772Z"
+generated: "2025-02-07T18:57:49.022512619Z"
