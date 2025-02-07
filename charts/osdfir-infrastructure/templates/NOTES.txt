@@ -26,11 +26,11 @@ To connect to the Yeti URL, run:
   {{- if and (.Values.global.ingress.enabled) (.Values.global.ingress.yetiHost) }}
   $ echo "Visit https://{{ .Values.global.ingress.yetiHost }} to access Yeti externally"
   {{- end }}
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }} 9000:9000
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-yeti 9000:9000
   $ echo "Visit http://127.0.0.1:9000 to access Yeti through port-forwarding"
 
 Login to Yeti with the User `yeti`. To get your password run:
-  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ .Release.Name }}-yeti-secret -o jsonpath="{.data.yeti-user}" | base64 -d
+  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ .Release.Name }}-yeti-secret -o jsonpath="{.data.yeti-user}" | base64 -d; echo "" 
 {{- end }}
 
 Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:

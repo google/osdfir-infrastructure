@@ -13,7 +13,7 @@ To connect to the Timesketch URL:
 
 {{ if .Values.config.createUser -}}
 Login to Timesketch with the User `timesketch`. To get your password run:
-  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d
+  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d; echo ""
 {{- end }}
 
 Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:
