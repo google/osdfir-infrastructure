@@ -17,7 +17,7 @@ To connect to the Timesketch UI, run:
 
 {{ if .Values.timesketch.config.createUser -}}
 Login to Timesketch with the User `timesketch`. To get your password run:
-  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d
+  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-timesketch-secret -o jsonpath="{.data.timesketch-user}" | base64 -d; echo ""
 {{- end }}
 {{- end }}
 
