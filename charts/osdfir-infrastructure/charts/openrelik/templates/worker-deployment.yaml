@@ -1,0 +1,43 @@
+{{- range .Values.workers }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ .name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: worker
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: worker
+          image: {{ .image | quote }}
+          imagePullPolicy: "IfNotPresent"
+          command: ["/bin/sh", "-c", "{{ .command }}"]
+          env:
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ $.Release.Name }}-openrelik-secret 
+                    key: redis-url
+          volumeMounts:
+            - mountPath: /mnt/openrelikvolume
+              name: openrelikvolume
+          {{- if .resources }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: openrelikvolume
+          persistentVolumeClaim:
+            claimName: {{ $.Release.Name }}-openrelikvolume-claim
+            readOnly: false
+{{- end }}

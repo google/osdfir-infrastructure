@@ -19,6 +19,10 @@ dependencies:
   name: yeti
   repository: file://charts/yeti
   version: 2.0.0
+- condition: global.openrelik.enabled
+  name: openrelik
+  repository: file://charts/openrelik
+  version: 2.0.0
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com
@@ -27,6 +31,7 @@ sources:
 - https://github.com/google/osdfir-infrastructure
 - https://github.com/google/timesketch
 - https://github.com/yeti-platform/yeti
+- https://openrelik.org/
 annotations:
   category: Security
   licenses: Apache-2.0

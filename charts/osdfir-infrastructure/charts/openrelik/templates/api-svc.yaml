@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-openrelik-api
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8710
+      protocol: TCP
+      targetPort: 8710
+  selector:
+    app.kubernetes.io/component: api
+    {{- include "openrelik.selectorLabels" . | nindent 4 }}

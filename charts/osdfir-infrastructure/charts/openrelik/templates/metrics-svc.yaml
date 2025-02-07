@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-openrelik-metrics
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/component: metrics
+    {{- include "openrelik.selectorLabels" . | nindent 4 }}

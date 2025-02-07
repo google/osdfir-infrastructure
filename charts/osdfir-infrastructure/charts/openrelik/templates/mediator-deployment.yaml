@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-openrelik-mediator
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: mediator
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mediator
+      {{- include "openrelik.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: mediator
+        {{- include "openrelik.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: mediator
+          image: "{{ .Values.mediator.image.repository }}:{{ .Values.mediator.image.tag }}"
+          imagePullPolicy: {{ .Values.mediator.image.pullPolicy }}
+          command: ["/bin/sh", "-c", "python mediator.py"]
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .Release.Name }}-openrelik-secret 
+                    key: redis-url
+            - name: SQLALCHEMY_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .Release.Name }}-openrelik-secret 
+                    key: postgres-url
+            - name: OPENRELIK_SERVER_SETTINGS
+              value: /mediator/settings.toml 
+          volumeMounts:
+            - mountPath: /mnt/openrelikvolume
+              name: openrelikvolume
+            - mountPath: /mediator/settings.toml
+              subPath: settings.toml
+              name: settings-config
+          ports:
+            - containerPort: 8710
+          resources:
+            {{- toYaml .Values.mediator.resources | nindent 12 }}
+      volumes:
+        - name: openrelikvolume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-openrelikvolume-claim
+            readOnly: false
+        - name: settings-config
+          configMap:
+            name: {{ .Release.Name }}-openrelik-configmap

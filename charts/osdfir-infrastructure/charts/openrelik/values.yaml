@@ -1,0 +1,309 @@
+## OpenRelik Helm Chart
+## Please use this Helm chart for deploying OpenRelik to a Kubernetes environment
+##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  openrelik:
+    ## @param global.openrelik.enabled Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  ingress:
+    ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+## @section OpenRelik configuration
+## The following section covers configuration parameters for OpenRelik
+##
+## OpenRelik frontend configuration
+##
+frontend:
+  image:
+    ## @param frontend.image.repository OpenRelik frontend image repository
+    ##
+    repository: ghcr.io/openrelik/openrelik-ui
+    ## @param frontend.image.pullPolicy OpenRelik image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: "2024.12.12"
+  ## OpenRelik frontend resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param frontend.resources.limits Resource limits for the frontend container
+  ## @param frontend.resources.requests Requested resources for the frontend container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+## @section OpenRelik API configuration
+##
+api:
+  image:
+    ## @param api.image.repository OpenRelik API image repository
+    ##
+    repository: ghcr.io/openrelik/openrelik-server
+    ## @param api.image.pullPolicy OpenRelik image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: "2024.12.12"
+  ## OpenRelik api resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param api.resources.limits Resource limits for the API container
+  ## @param api.resources.requests Requested resources for the API container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+## @section OpenRelik Mediator configuration
+##
+mediator:
+  image:
+    ## @param mediator.image.repository OpenRelik Mediator image repository
+    ##
+    repository: ghcr.io/openrelik/openrelik-mediator
+    ## @param mediator.image.pullPolicy OpenRelik image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param mediator.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: "2024.12.12"
+  ## OpenRelik mediator resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param mediator.resources.limits Resource limits for the Mediator container
+  ## @param mediator.resources.requests Requested resources for the Mediator container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+## @section OpenRelik Metrics configuration
+##
+metrics:
+  image:
+    ## @param metrics.image.repository OpenRelik Metrics image repository
+    ##
+    repository: ghcr.io/openrelik/openrelik-metrics
+    ## @param metrics.image.pullPolicy OpenRelik image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param metrics.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: "2024.12.12"
+  ## OpenRelik metrics resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param metrics.resources.limits Resource limits for the Metrics container
+  ## @param metrics.resources.requests Requested resources for the Metrics container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+## @section OpenRelik Worker Configurations
+##
+workers:
+- name: openrelik-worker-strings
+  image: ghcr.io/openrelik/openrelik-worker-strings:2024.11.27
+  command: celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-strings
+- name: openrelik-worker-plaso
+  image: ghcr.io/openrelik/openrelik-worker-plaso:2024.11.27
+  command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-plaso"
+- name: openrelik-worker-extraction
+  image: ghcr.io/openrelik/openrelik-worker-extraction:2024.11.27
+  command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-extraction"
+- name: openrelik-worker-analyzer-config
+  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27
+  command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-analyzer-config"
+- name: openrelik-worker-hayabusa
+  image: ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27
+  command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-hayabusa"
+## @section OpenRelik Configuration Parameters
+##
+config:
+  ## OpenRelik OIDC configuration
+  ##
+  oidc:
+    ## @param config.oidc.enabled Enables OpenRelik OIDC authentication (currently only supports Google OIDC)
+    ##
+    enabled: false
+    ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
+    ##
+    existingSecret: ""
+    ## Allowed emails files for OpenRelik OIDC
+    ##
+    authenticatedEmailsFile:
+      ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
+      ##
+      enabled: true
+      ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
+      ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
+      existingSecret: ""
+      ## @param config.oidc.authenticatedEmailsFile.content Allowed emails list (one email per line)
+      ##
+      content: ""
+      ## One email per line
+      ## e.g:
+      ## content: |-
+      ##   name1@domain
+      ##   name2@domain
+## Persistence Storage Parameters
+##
+persistence:
+  ## @param persistence.size OpenRelik persistent volume size
+  ##
+  size: 2Gi
+  ## @param persistence.storageClass PVC Storage Class for OpenRelik volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ##
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for OpenRelik volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ##
+  accessModes:
+    - ReadWriteOnce
+## @section Redis Configuration Parameters
+##
+redis:
+  ## Redis image configuration
+  ##
+  image:
+    ## @param redis.image.repository Redis image repository
+    ##
+    repository: redis
+    ## @param redis.image.tag Redis image tag
+    ##
+    tag: "7.4.2-alpine"
+  ## Redis persistence configuration
+  ##
+  persistence:
+    ## @param redis.persistence.size Redis Persistent Volume size
+    ##
+    size: 2Gi
+  ## Redis resource requests and limits
+  ## @param redis.resources.limits The resources limits for the Redis containers
+  ## @param redis.resources.requests The requested resources for the Redis containers
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+## @section Postgresql Configuration Parameters
+##
+postgresql:
+  ## Postgresql image configuration
+  ##
+  image:
+    ## @param postgresql.image.repository Postgresql image repository
+    ##
+    repository: postgres
+    ## @param postgresql.image.tag Postgresql image tag
+    ##
+    tag: "17.2-alpine"
+  ## PostgreSQL persistence configuration
+  ##
+  persistence:
+    ## @param postgresql.persistence.size PostgreSQL Persistent Volume size
+    ##
+    size: 2Gi
+  ## PostgreSQL resource requests and limits
+  ## @param postgresql.resources.limits The resources limits for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.memory The requested memory for the PostgreSQL primary containers
+  ##
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+## @section Prometheus Configuration Parameters
+##
+prometheus:
+  ## Prometheus image configuration
+  ##
+  image:
+    ## @param prometheus.image.repository Prometheus image repository
+    ##
+    repository: "prom/prometheus"
+    ## @param prometheus.image.tag Prometheus image tag
+    ##
+    tag: "v3.0.1"
+  ## Prometheus persistence configuration
+  ##
+  persistence:
+    ## @param prometheus.persistence.size Prometheus Persistent Volume size
+    ##
+    size: 2Gi
+  ## Prometheus resource requests and limits
+  ## @param prometheus.resources.limits The resources limits for the Prometheus containers
+  ## @param prometheus.resources.requests The requested resources for the Prometheus containers
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
