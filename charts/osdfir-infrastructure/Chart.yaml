@@ -18,7 +18,7 @@ dependencies:
 - condition: global.yeti.enabled
   name: yeti
   repository: file://charts/yeti
-  version: 2.0.0
+  version: 2.0.1
 - condition: global.openrelik.enabled
   name: openrelik
   repository: file://charts/openrelik
