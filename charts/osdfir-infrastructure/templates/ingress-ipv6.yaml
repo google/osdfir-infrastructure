@@ -33,6 +33,12 @@ spec:
         {{- if .Values.global.ingress.yetiHost }}
         - {{ .Values.global.ingress.yetiHost | quote }}
         {{- end }}
+        {{- if .Values.global.ingress.openRelikFrontendHost }}
+        - {{ .Values.global.ingress.openRelikFrontendHost | quote }}
+        {{- end }}
+        {{- if .Values.global.ingress.openRelikAPIHost }}
+        - {{ .Values.global.ingress.openRelikAPIHost | quote }}
+        {{- end }}
       secretName: {{ .Release.Name }}-osdfir-tls
   {{- end }}
   rules:
@@ -59,5 +65,29 @@ spec:
                 name: {{ .Release.Name }}-yeti
                 port:
                   number: 9000
+    {{- end }}
+    {{- if .Values.global.ingress.openRelikFrontendHost }}
+    - host: {{.Values.global.ingress.openRelikFrontendHost }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-openrelik
+                port:
+                  number: 8711
+    {{- end }}
+    {{- if .Values.global.ingress.openRelikAPIHost }}
+    - host: {{.Values.global.ingress.openRelikAPIHost }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-openrelik-api
+                port:
+                  number: 8710
     {{- end }}
 {{- end }}

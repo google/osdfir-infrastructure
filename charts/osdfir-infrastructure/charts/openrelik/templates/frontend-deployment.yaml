@@ -27,11 +27,19 @@ spec:
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           env:
             - name: OPENRELIK_SERVER_URL
+              {{- if .Values.global.ingress.openRelikAPIHost }}
+              value: https://{{ .Values.global.ingress.openRelikAPIHost }}
+              {{- else }}
               value: http://localhost:8710
+              {{- end }}
             - name: OPENRELIK_API_VERSION
               value: v1
             - name: OPENRELIK_AUTH_METHODS
+              {{- if .Values.config.oidc.enabled }}
+              value: local,google
+              {{- else }}
               value: local
+              {{- end }}
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume

@@ -4,6 +4,7 @@
 ## The following tools are supported in this deployment:
 ## - Timesketch; ref https://github.com/google/timesketch
 ## - Yeti; ref https://github.com/yeti-platform/yeti
+## - OpenRelik; ref https://github.com/openrelik
 ##
 ## @section Global parameters
 ## Please, note that this will override the parameters configured to use the global value
@@ -19,6 +20,10 @@ global:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: true
+  openrelik:
+    ## @param global.openrelik.enabled Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: true
   ## Global ingress parameters used to configure Timesketch, Yeti under a loadbalancer
   ##
   ingress:
@@ -31,6 +36,12 @@ global:
     ## @param global.ingress.yetiHost Domain name Yeti will be hosted under
     ##
     yetiHost: ""
+    ## @param global.ingress.openRelikFrontendHost Domain name the OpenRelik UI will be hosted under
+    ##
+    openRelikFrontendHost: ""
+    ## @param global.ingress.openRelikAPIHost Domain name the OpenRelik API host will be hosted under
+    ##
+    openRelikAPIHost: ""
     ## @param global.ingress.className IngressClass that will be be used to implement the Ingress
     ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
     ##

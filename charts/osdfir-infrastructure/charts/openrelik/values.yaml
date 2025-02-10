@@ -158,6 +158,9 @@ workers:
 - name: openrelik-worker-hayabusa
   image: ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-hayabusa"
+- name: openrelik-worker-timesketch
+  image: ghcr.io/openrelik/openrelik-worker-timesketch:2024.11.27
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
 ## @section OpenRelik Configuration Parameters
 ##
 config:

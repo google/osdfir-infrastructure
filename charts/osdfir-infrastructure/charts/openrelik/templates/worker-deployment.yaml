@@ -23,6 +23,17 @@ spec:
           imagePullPolicy: "IfNotPresent"
           command: ["/bin/sh", "-c", "{{ .command }}"]
           env:
+          {{- if and (eq .name "openrelik-worker-timesketch") $.Values.global.timesketch.enabled }}
+            - name: TIMESKETCH_SERVER_URL
+              value: {{ printf "http://%s-timesketch:5000" $.Release.Name | quote }}
+            - name: TIMESKETCH_USERNAME
+              value: timesketch
+            - name: TIMESKETCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-timesketch-secret" $.Release.Name | quote }}
+                  key: timesketch-user
+          {{- end }}
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:

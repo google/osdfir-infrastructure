@@ -9,7 +9,13 @@ spec:
     {{- if and .Values.global.timesketch.enabled .Values.global.ingress.timesketchHost }}
     - {{ .Values.global.ingress.timesketchHost }}
     {{- end }}
-     {{- if and .Values.global.yeti.enabled .Values.global.ingress.yetiHost }}
+    {{- if and .Values.global.yeti.enabled .Values.global.ingress.yetiHost }}
     - {{ .Values.global.ingress.yetiHost }}
+    {{- end }}
+    {{- if and .Values.global.openrelik.enabled .Values.global.ingress.openRelikFrontendHost }}
+    - {{ .Values.global.ingress.openRelikFrontendHost }}
+    {{- end }}
+    {{- if and .Values.global.openrelik.enabled .Values.global.ingress.openRelikAPIHost }}
+    - {{ .Values.global.ingress.openRelikAPIHost }}
     {{- end }}
 {{- end }}

@@ -7,10 +7,11 @@ metadata:
 spec:
   timeoutSec: 300
   healthCheck:
-    checkIntervalSec: 5
+    checkIntervalSec: 300
     timeoutSec: 5
     healthyThreshold: 2
     unhealthyThreshold: 2
     type: HTTP
+    requestPath: /openapi.json
     port: 8710
 {{- end }}
