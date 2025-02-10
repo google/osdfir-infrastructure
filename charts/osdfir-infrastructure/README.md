@@ -477,6 +477,52 @@ Please be cautious before doing it.
 | `yeti.arangodb.resources.requests` | Requested resources for the arangodb container                         | `{}`    |
 | `yeti.arangodb.nodeSelector`       | Node labels for Yeti arangodb pods assignment                          | `{}`    |
 
+### OpenRelik configuration
+
+| Name                                                           | Description                                                                 | Value               |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------- |
+| `openrelik.frontend.resources.limits`                          | Resource limits for the frontend container                                  | `{}`                |
+| `openrelik.frontend.resources.requests`                        | Requested resources for the frontend container                              | `{}`                |
+| `openrelik.api.resources.limits`                               | Resource limits for the API container                                       | `{}`                |
+| `openrelik.api.resources.requests`                             | Requested resources for the API container                                   | `{}`                |
+| `openrelik.mediator.resources.limits`                          | Resource limits for the Mediator container                                  | `{}`                |
+| `openrelik.mediator.resources.requests`                        | Requested resources for the Mediator container                              | `{}`                |
+| `openrelik.metrics.resources.limits`                           | Resource limits for the Metrics container                                   | `{}`                |
+| `openrelik.metrics.resources.requests`                         | Requested resources for the Metrics container                               | `{}`                |
+| `openrelik.config.oidc.enabled`                                | Enables OpenRelik OIDC authentication (currently only supports Google OIDC) | `false`             |
+| `openrelik.config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                | `""`                |
+| `openrelik.config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                | `true`              |
+| `openrelik.config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                       | `""`                |
+| `openrelik.config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                    | `""`                |
+| `openrelik.persistence.size`                                   | OpenRelik persistent volume size                                            | `2Gi`               |
+| `openrelik.persistence.storageClass`                           | PVC Storage Class for OpenRelik volume                                      | `""`                |
+| `openrelik.persistence.accessModes`                            | PVC Access Mode for OpenRelik volume                                        | `["ReadWriteOnce"]` |
+
+### Redis Configuration Parameters
+
+| Name                                 | Description                                      | Value |
+| ------------------------------------ | ------------------------------------------------ | ----- |
+| `openrelik.redis.persistence.size`   | Redis Persistent Volume size                     | `2Gi` |
+| `openrelik.redis.resources.limits`   | The resources limits for the Redis containers    | `{}`  |
+| `openrelik.redis.resources.requests` | The requested resources for the Redis containers | `{}`  |
+
+### Postgresql Configuration Parameters
+
+| Name                                             | Description                                                | Value   |
+| ------------------------------------------------ | ---------------------------------------------------------- | ------- |
+| `openrelik.postgresql.persistence.size`          | PostgreSQL Persistent Volume size                          | `2Gi`   |
+| `openrelik.postgresql.resources.limits`          | The resources limits for the PostgreSQL primary containers | `{}`    |
+| `openrelik.postgresql.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers    | `250m`  |
+| `openrelik.postgresql.resources.requests.memory` | The requested memory for the PostgreSQL primary containers | `256Mi` |
+
+### Prometheus Configuration Parameters
+
+| Name                                      | Description                                           | Value |
+| ----------------------------------------- | ----------------------------------------------------- | ----- |
+| `openrelik.prometheus.persistence.size`   | Prometheus Persistent Volume size                     | `2Gi` |
+| `openrelik.prometheus.resources.limits`   | The resources limits for the Prometheus containers    | `{}`  |
+| `openrelik.prometheus.resources.requests` | The requested resources for the Prometheus containers | `{}`  |
+
 Specify each parameter using the --set key=value[,key=value] argument to `helm install`. For example,
 
 ```console
