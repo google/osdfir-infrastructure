@@ -497,31 +497,16 @@ Please be cautious before doing it.
 | `openrelik.persistence.size`                                   | OpenRelik persistent volume size                                            | `2Gi`               |
 | `openrelik.persistence.storageClass`                           | PVC Storage Class for OpenRelik volume                                      | `""`                |
 | `openrelik.persistence.accessModes`                            | PVC Access Mode for OpenRelik volume                                        | `["ReadWriteOnce"]` |
-
-### Redis Configuration Parameters
-
-| Name                                 | Description                                      | Value |
-| ------------------------------------ | ------------------------------------------------ | ----- |
-| `openrelik.redis.persistence.size`   | Redis Persistent Volume size                     | `2Gi` |
-| `openrelik.redis.resources.limits`   | The resources limits for the Redis containers    | `{}`  |
-| `openrelik.redis.resources.requests` | The requested resources for the Redis containers | `{}`  |
-
-### Postgresql Configuration Parameters
-
-| Name                                             | Description                                                | Value   |
-| ------------------------------------------------ | ---------------------------------------------------------- | ------- |
-| `openrelik.postgresql.persistence.size`          | PostgreSQL Persistent Volume size                          | `2Gi`   |
-| `openrelik.postgresql.resources.limits`          | The resources limits for the PostgreSQL primary containers | `{}`    |
-| `openrelik.postgresql.resources.requests.cpu`    | The requested cpu for the PostgreSQL primary containers    | `250m`  |
-| `openrelik.postgresql.resources.requests.memory` | The requested memory for the PostgreSQL primary containers | `256Mi` |
-
-### Prometheus Configuration Parameters
-
-| Name                                      | Description                                           | Value |
-| ----------------------------------------- | ----------------------------------------------------- | ----- |
-| `openrelik.prometheus.persistence.size`   | Prometheus Persistent Volume size                     | `2Gi` |
-| `openrelik.prometheus.resources.limits`   | The resources limits for the Prometheus containers    | `{}`  |
-| `openrelik.prometheus.resources.requests` | The requested resources for the Prometheus containers | `{}`  |
+| `openrelik.redis.persistence.size`                             | Redis Persistent Volume size                                                | `2Gi`               |
+| `openrelik.redis.resources.limits`                             | The resources limits for the Redis containers                               | `{}`                |
+| `openrelik.redis.resources.requests`                           | The requested resources for the Redis containers                            | `{}`                |
+| `openrelik.postgresql.persistence.size`                        | PostgreSQL Persistent Volume size                                           | `2Gi`               |
+| `openrelik.postgresql.resources.limits`                        | The resources limits for the PostgreSQL primary containers                  | `{}`                |
+| `openrelik.postgresql.resources.requests.cpu`                  | The requested cpu for the PostgreSQL primary containers                     | `250m`              |
+| `openrelik.postgresql.resources.requests.memory`               | The requested memory for the PostgreSQL primary containers                  | `256Mi`             |
+| `openrelik.prometheus.persistence.size`                        | Prometheus Persistent Volume size                                           | `2Gi`               |
+| `openrelik.prometheus.resources.limits`                        | The resources limits for the Prometheus containers                          | `{}`                |
+| `openrelik.prometheus.resources.requests`                      | The requested resources for the Prometheus containers                       | `{}`                |
 
 Specify each parameter using the --set key=value[,key=value] argument to `helm install`. For example,
 
