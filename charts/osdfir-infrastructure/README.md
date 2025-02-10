@@ -10,6 +10,7 @@ following tools:
 * [dfTimewolf](https://github.com/log2timeline/dftimewolf)
 * [Timesketch](https://github.com/google/timesketch)
 * [Yeti](https://github.com/yeti-platform/yeti)
+* [OpenRelik](https://github.com/openrelik/)
 
 ## TL;DR
 
@@ -96,6 +97,27 @@ helm show values osdfir-infrastructure/charts/yeti
 Specify the desired image tags and repositories when deploying or upgrading the
 OSDFIR Infrastructure chart.
 
+### Managing OpenRelik images
+
+The OpenRelik container images are managed using the following values,
+`openrelik.<component>.image.repository` and `openrelik.<component>.image.tag`, where
+`<component>` is replaced with `frontend`, `api`, `mediator`, or `metrics`.
+
+OpenRelik worker container images are managed through the `openrelik.workers` value.
+Each worker definition requires a full image name (including repository and tag)
+and a command.  Resource allocation for individual workers can be optionally
+configured using the resources setting.
+
+To view all configurable values of the OpenRelik subchart, including the default
+image tags and repositories, run the following command:
+
+```console
+helm show values osdfir-infrastructure/charts/openrelik
+```
+
+Specify the desired image tags and repositories when deploying or upgrading the
+OSDFIR Infrastructure chart.
+
 ### Upgrading the Helm chart
 
 Helm chart updates can be retrieved by running `helm repo update`.
@@ -119,6 +141,17 @@ upgrading the chart to a new version unless you manage the template separately.
 that isn't currently exposed as an environment variable, please submit a
 PR to the repository. This is the preferred method for most configuration changes,
 as it ensures the changes are maintained across chart upgrades.
+
+### Managing the OpenRelik config
+
+OpenRelik's configuration is managed using environment variables and the `settings.toml`
+configuration file.  These environment variables are generally expected to remain
+consistent for proper Helm chart operation and will not change often.
+
+For settings not currently exposed as environment variables, the recommended approach
+is to submit a Pull Request (PR) to the repository. This practice ensures that
+configuration changes are preserved across chart upgrades and maintained within
+the project.
 
 ### Managing the Timesketch config
 
@@ -249,23 +282,33 @@ through dynamic provisioning.
 The volumes for ArangoDB and Redis automatically get created during deployment
 through dynamic provisioning.
 
+#### Persistence in OpenRelik
+
+By default, OpenRelik mounts a Persistent Volume at the
+`/mnt/openrelik` path to store uploaded output for OpenRelik to process.
+The volume is created using dynamic volume provisioning.
+
+OpenRelik also depends on Redis for task scheduling, PostgreSQL for storing output
+metadata, and Prometheus for collecting task processing metrics.  Persistent Volumes
+for these services are also dynamically provisioned during deployment.
+
 ### Enabling GKE Ingress and OIDC Authentication
 
 For Google Kubernetes Engine (GKE) on Google Cloud Platform (GCP), follow these
-steps to expose Timesketch and Yeti externally and enable Google Cloud OpenID
-Connect (OIDC) authentication to control user access.
+steps to expose Timesketch, Yeti, and OpenRelik externally and enable Google Cloud
+OpenID Connect (OIDC) authentication to control user access.
 
 1. Reserve a global static IP address:
 
     ```console
-    gcloud compute addresses create timesketch-webapps --global
+    gcloud compute addresses create osdfir-webapps --global
     ```
 
 2. Register DNS Records
 
     Register a new domain or use an existing one.  Create DNS "A" records that point
-    your desired subdomains (e.g., timesketch.example.com, yeti.example.com) to the
-    static IP address you reserved in the previous step.
+    your desired subdomains (e.g., timesketch.example.com, yeti.example.com, openrelik.example.com)
+    to the static IP address you reserved in the previous step.
 
 3. Create OAuth web client credentials
 
@@ -274,9 +317,11 @@ Connect (OIDC) authentication to control user access.
     * Add the following authorized JavaScript origins:
       * `https://<timesketch.DOMAIN_NAME>.com`
       * `https://<yeti.DOMAIN_NAME>.com`
+      * `https://<openrelik.DOMAIN_NAME>.com`
     * Add the following authorized redirect URIs:
       * `https://<timesketch.DOMAIN_NAME>.com/google_openid_connect/`
-      * `https://<yeti.DOMAIN_NAME>.com//login/google_openid_connect/`
+      * `https://<yeti.DOMAIN_NAME>.com/login/google_openid_connect/`
+      * `https://<openrelik.DOMAIN_NAME>.com/auth/google`
 
 4. Store your new OAuth credentials in a K8s secret:
 
@@ -312,7 +357,10 @@ Connect (OIDC) authentication to control user access.
     --set timesketch.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
     --set timesketch.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
     --set yeti.config.oidc=true \
-    --set yeti.config.oidc.existingSecret=<OAUTH_SECRET_NAME>
+    --set yeti.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+    --set openrelik.config.oidc=true \
+    --set openrelik.config.oidc.existingSecret=<OAUTH_SECRET_NAME>
+    --set openrelik.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
     ```
 
 > **Note**: Yeti user access is managed separately by creating and removing users
