@@ -548,7 +548,7 @@ openrelik:
     ##
     accessModes:
       - ReadWriteOnce
-  ## @section Redis Configuration Parameters
+  ## Redis Configuration Parameters
   ##
   redis:
     ## Redis persistence configuration
@@ -571,7 +571,7 @@ openrelik:
       ##    cpu: 500m
       ##    memory: 1Gi
       requests: {}
-  ## @section Postgresql Configuration Parameters
+  ## Postgresql Configuration Parameters
   ##
   postgresql:
     ## PostgreSQL persistence configuration
@@ -598,7 +598,7 @@ openrelik:
       requests:
         cpu: 250m
         memory: 256Mi
-  ## @section Prometheus Configuration Parameters
+  ## Prometheus Configuration Parameters
   ##
   prometheus:
     ## Prometheus persistence configuration
