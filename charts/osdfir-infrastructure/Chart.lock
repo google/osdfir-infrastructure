@@ -4,9 +4,9 @@ dependencies:
   version: 2.0.0
 - name: yeti
   repository: file://charts/yeti
-  version: 2.0.0
+  version: 2.0.1
 - name: openrelik
   repository: file://charts/openrelik
   version: 2.0.0
-digest: sha256:1f5182e44a5e690d06b5ef3d7382687b4f377e2b91f651e41b75c44d817f19c6
-generated: "2025-02-07T11:54:41.568284-08:00"
+digest: sha256:49457af91c360353222e0d3ca9af71f92c0b22dac128f82c0780b1d743b495cd
+generated: "2025-02-10T10:59:57.997332-08:00"
