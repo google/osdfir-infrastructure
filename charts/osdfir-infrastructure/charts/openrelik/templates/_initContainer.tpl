@@ -1,6 +1,6 @@
 {{/*
 Init Container for when a OpenRelik server starts. Required for setting up
-OIDC when enabled due to the changing needing to be in settings.toml
+OIDC when enabled due to the changes having to be in settings.toml
 */}}
 {{- define "openrelik.initContainer" -}}
 - name: init-openrelik

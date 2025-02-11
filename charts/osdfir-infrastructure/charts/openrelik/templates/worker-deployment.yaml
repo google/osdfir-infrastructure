@@ -33,6 +33,8 @@ spec:
                 secretKeyRef:
                   name: {{ printf "%s-timesketch-secret" $.Release.Name | quote }}
                   key: timesketch-user
+          {{- else if .env }}
+            {{- toYaml .env | nindent 12 }} 
           {{- end }}
             - name: REDIS_URL
               valueFrom:

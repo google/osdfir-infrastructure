@@ -36,10 +36,10 @@ global:
     ## @param global.ingress.yetiHost Domain name Yeti will be hosted under
     ##
     yetiHost: ""
-    ## @param global.ingress.openRelikFrontendHost Domain name the OpenRelik UI will be hosted under
+    ## @param global.ingress.openRelikFrontendHost FQDN of the OpenRelik UI will be hosted under (defaults to localhost)
     ##
     openRelikFrontendHost: ""
-    ## @param global.ingress.openRelikAPIHost Domain name the OpenRelik API host will be hosted under
+    ## @param global.ingress.openRelikAPIHost FQDN of the OpenRelik API host will be hosted under (defaults to localhost)
     ##
     openRelikAPIHost: ""
     ## @param global.ingress.className IngressClass that will be be used to implement the Ingress

@@ -12,5 +12,6 @@ spec:
     healthyThreshold: 2
     unhealthyThreshold: 2
     type: HTTP
+    requestPath: /
     port: 8711
 {{- end }}

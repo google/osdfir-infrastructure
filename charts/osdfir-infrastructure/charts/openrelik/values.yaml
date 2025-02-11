@@ -141,26 +141,55 @@ metrics:
     ##    memory: 1Gi
     requests: {}
 ## @section OpenRelik Worker Configurations
+## By default, resources are not set to allow the Helm chart to remain flexible in various deployments.
+## To set resources, remove {} and replace with the provided resources
+## Example
+## requests:
+##    cpu: 500m
+##    memory: 1Gi
+## limits:
+##    cpu: 500m
+##    memory: 1Gi
+## To set environment variables, remove {} and replace with provided environment variables
+## Example
+## env:
+##   - name: example-name
+##   - value: example-value
 ##
 workers:
 - name: openrelik-worker-strings
   image: ghcr.io/openrelik/openrelik-worker-strings:2024.11.27
   command: celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-strings
+  env: {}
+  resources: {}
 - name: openrelik-worker-plaso
   image: ghcr.io/openrelik/openrelik-worker-plaso:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-plaso"
+  env: {}
+  resources: {}
 - name: openrelik-worker-extraction
   image: ghcr.io/openrelik/openrelik-worker-extraction:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-extraction"
+  env: {}
+  resources: {}
 - name: openrelik-worker-analyzer-config
   image: ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27
+  env: {}
+  resources: {}
   command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-analyzer-config"
 - name: openrelik-worker-hayabusa
   image: ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-hayabusa"
+  env: {}
+  resources: {}
+## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment 
+## variables through Helm.
+##
 - name: openrelik-worker-timesketch
   image: ghcr.io/openrelik/openrelik-worker-timesketch:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
+  env: {}
+  resources: {}
 ## @section OpenRelik Configuration Parameters
 ##
 config:

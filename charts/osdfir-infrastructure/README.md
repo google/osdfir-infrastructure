@@ -10,7 +10,7 @@ following tools:
 * [dfTimewolf](https://github.com/log2timeline/dftimewolf)
 * [Timesketch](https://github.com/google/timesketch)
 * [Yeti](https://github.com/yeti-platform/yeti)
-* [OpenRelik](https://github.com/openrelik/)
+* [OpenRelik](https://openrelik.org)
 
 ## TL;DR
 
@@ -285,7 +285,7 @@ through dynamic provisioning.
 #### Persistence in OpenRelik
 
 By default, OpenRelik mounts a Persistent Volume at the
-`/mnt/openrelik` path to store uploaded output for OpenRelik to process.
+`/mnt/openrelikvolume` path to store uploaded output for OpenRelik to process.
 The volume is created using dynamic volume provisioning.
 
 OpenRelik also depends on Redis for task scheduling, PostgreSQL for storing output
