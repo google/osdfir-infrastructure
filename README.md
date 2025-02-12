@@ -20,15 +20,16 @@ for Plaso, JSONL, or CSV file imports, and built-in integrations to tools such a
 * [Yeti](https://github.com/yeti-platform/yeti) for DFIR and threat intelligence
 tracking, enabling responders to store and analyze CTI (observables, TTPs, campaigns, etc.)
 from internal and external systems and integrates with Timesketch.
+* [OpenRelik](https://openrelik.org/) is a platform that streamlines
+collaborative digital forensic investigations. It provides modular workflows,
+an intuitive interface, real-time collaboration, a centralized artifact repository,
+and can easily be extended to support new workers.
 
 Additionally, OSDFIR Infrastructure also offers standalone charts. These charts
 are not directly integrated with OSDFIR Infrastructure, but can be used independently.
 
 * [Turbinia](https://github.com/google/turbinia) for automating processing of
-forensic evidence helping find prevelant badness and includes built-in
-integrations to many tools such as [Container Explorer](https://github.com/google/container-explorer)
-and [Plaso](https://github.com/log2timeline/plaso) (and related projects such as
-dfVFS, libyal).
+forensic evidence helping find prevelant badness.
 * [Hashr](https://github.com/google/hashr) to build your own hash sets based on
 your data sources.
 * [GRR](https://github.com/google/grr) for incident response and remote live forensics.

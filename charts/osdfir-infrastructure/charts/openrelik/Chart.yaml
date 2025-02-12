@@ -1,21 +1,21 @@
 apiVersion: v2
-name: yeti
-version: 2.0.1
-description: A Helm chart for Yeti Kubernetes deployments.
+name: openrelik
+version: 2.0.0
+description: A Helm chart for Openrelik Kubernetes deployments.
 keywords:
-- yeti
+- openrelik
 - dfir
-- threatintel
-- threat-hunting
-- security
-home: "https://yeti-platform.io/"
+- analysis
+- forensics
+home: "https://openrelik.org/"
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com
     url: https://github.com/google/osdfir-infrastructure
 sources:
-- https://github.com/yeti-platform/yeti
+- https://github.com/openrelik
 - https://github.com/google/osdfir-infrastructure
+icon: https://openrelik.org/favicon.ico
 appVersion: "latest"
 annotations:
   category: Security

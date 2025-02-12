@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-openrelik-init-oidc
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "openrelik.labels" . | nindent 4 }}
+data:
+  init-openrelik.sh: |
+    #!/bin/sh
+    set -e
+
+    # Create openrelik config directory
+    mkdir -p /etc/openrelik
+    cd /etc/openrelik
+
+    if [ $(ls /tmp/openrelik/ | wc -l) -gt 0 ]; then
+      echo "Using existing configuration files provided."
+      cp /tmp/openrelik/* /etc/openrelik/
+    fi
+
+    # OIDC integration
+    {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
+    sed -i 's#^client_id =.*#client_id = "'$OIDC_CLIENT_ID'"#' settings.toml
+    sed -i 's#^client_secret =.*#client_secret = "'$OIDC_CLIENT_SECRET'"#' settings.toml
+
+    {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
+    export EMAILS=$(awk '{printf "\"%s\", ", $0}' /init/authenticated-emails/authenticated-emails-list | sed 's/, $//; s/^/[/; s/$/]/')
+    echo $EMAILS
+    sed -i 's#^allowlist =.*#allowlist = '"$EMAILS"'#' settings.toml
+    {{- end }}
+    {{- end }}

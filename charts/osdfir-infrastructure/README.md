@@ -10,6 +10,7 @@ following tools:
 * [dfTimewolf](https://github.com/log2timeline/dftimewolf)
 * [Timesketch](https://github.com/google/timesketch)
 * [Yeti](https://github.com/yeti-platform/yeti)
+* [OpenRelik](https://openrelik.org)
 
 ## TL;DR
 
@@ -96,6 +97,27 @@ helm show values osdfir-infrastructure/charts/yeti
 Specify the desired image tags and repositories when deploying or upgrading the
 OSDFIR Infrastructure chart.
 
+### Managing OpenRelik images
+
+The OpenRelik container images are managed using the following values,
+`openrelik.<component>.image.repository` and `openrelik.<component>.image.tag`, where
+`<component>` is replaced with `frontend`, `api`, `mediator`, or `metrics`.
+
+OpenRelik worker container images are managed through the `openrelik.workers` value.
+Each worker definition requires a full image name (including repository and tag)
+and a command.  Resource allocation for individual workers can be optionally
+configured using the resources setting.
+
+To view all configurable values of the OpenRelik subchart, including the default
+image tags and repositories, run the following command:
+
+```console
+helm show values osdfir-infrastructure/charts/openrelik
+```
+
+Specify the desired image tags and repositories when deploying or upgrading the
+OSDFIR Infrastructure chart.
+
 ### Upgrading the Helm chart
 
 Helm chart updates can be retrieved by running `helm repo update`.
@@ -119,6 +141,17 @@ upgrading the chart to a new version unless you manage the template separately.
 that isn't currently exposed as an environment variable, please submit a
 PR to the repository. This is the preferred method for most configuration changes,
 as it ensures the changes are maintained across chart upgrades.
+
+### Managing the OpenRelik config
+
+OpenRelik's configuration is managed using environment variables and the `settings.toml`
+configuration file.  These environment variables are generally expected to remain
+consistent for proper Helm chart operation and will not change often.
+
+For settings not currently exposed as environment variables, the recommended approach
+is to submit a Pull Request (PR) to the repository. This practice ensures that
+configuration changes are preserved across chart upgrades and maintained within
+the project.
 
 ### Managing the Timesketch config
 
@@ -249,23 +282,33 @@ through dynamic provisioning.
 The volumes for ArangoDB and Redis automatically get created during deployment
 through dynamic provisioning.
 
+#### Persistence in OpenRelik
+
+By default, OpenRelik mounts a Persistent Volume at the
+`/mnt/openrelikvolume` path to store uploaded output for OpenRelik to process.
+The volume is created using dynamic volume provisioning.
+
+OpenRelik also depends on Redis for task scheduling, PostgreSQL for storing output
+metadata, and Prometheus for collecting task processing metrics.  Persistent Volumes
+for these services are also dynamically provisioned during deployment.
+
 ### Enabling GKE Ingress and OIDC Authentication
 
 For Google Kubernetes Engine (GKE) on Google Cloud Platform (GCP), follow these
-steps to expose Timesketch and Yeti externally and enable Google Cloud OpenID
-Connect (OIDC) authentication to control user access.
+steps to expose Timesketch, Yeti, and OpenRelik externally and enable Google Cloud
+OpenID Connect (OIDC) authentication to control user access.
 
 1. Reserve a global static IP address:
 
     ```console
-    gcloud compute addresses create timesketch-webapps --global
+    gcloud compute addresses create osdfir-webapps --global
     ```
 
 2. Register DNS Records
 
     Register a new domain or use an existing one.  Create DNS "A" records that point
-    your desired subdomains (e.g., timesketch.example.com, yeti.example.com) to the
-    static IP address you reserved in the previous step.
+    your desired subdomains (e.g., timesketch.example.com, yeti.example.com, openrelik.example.com)
+    to the static IP address you reserved in the previous step.
 
 3. Create OAuth web client credentials
 
@@ -274,9 +317,11 @@ Connect (OIDC) authentication to control user access.
     * Add the following authorized JavaScript origins:
       * `https://<timesketch.DOMAIN_NAME>.com`
       * `https://<yeti.DOMAIN_NAME>.com`
+      * `https://<openrelik.DOMAIN_NAME>.com`
     * Add the following authorized redirect URIs:
       * `https://<timesketch.DOMAIN_NAME>.com/google_openid_connect/`
-      * `https://<yeti.DOMAIN_NAME>.com//login/google_openid_connect/`
+      * `https://<yeti.DOMAIN_NAME>.com/login/google_openid_connect/`
+      * `https://<openrelik.DOMAIN_NAME>.com/auth/google`
 
 4. Store your new OAuth credentials in a K8s secret:
 
@@ -312,7 +357,10 @@ Connect (OIDC) authentication to control user access.
     --set timesketch.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
     --set timesketch.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
     --set yeti.config.oidc=true \
-    --set yeti.config.oidc.existingSecret=<OAUTH_SECRET_NAME>
+    --set yeti.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+    --set openrelik.config.oidc=true \
+    --set openrelik.config.oidc.existingSecret=<OAUTH_SECRET_NAME>
+    --set openrelik.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
     ```
 
 > **Note**: Yeti user access is managed separately by creating and removing users
@@ -349,9 +397,12 @@ Please be cautious before doing it.
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | `global.timesketch.enabled`              | Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)                                         | `true`  |
 | `global.yeti.enabled`                    | Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)                                               | `true`  |
+| `global.openrelik.enabled`               | Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)                                          | `true`  |
 | `global.ingress.enabled`                 | Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)                        | `false` |
 | `global.ingress.timesketchHost`          | Domain name Timesketch will be hosted under                                                                                        | `""`    |
 | `global.ingress.yetiHost`                | Domain name Yeti will be hosted under                                                                                              | `""`    |
+| `global.ingress.openRelikFrontendHost`   | FQDN of the OpenRelik UI will be hosted under (defaults to localhost)                                                              | `""`    |
+| `global.ingress.openRelikAPIHost`        | FQDN of the OpenRelik API host will be hosted under (defaults to localhost)                                                        | `""`    |
 | `global.ingress.className`               | IngressClass that will be be used to implement the Ingress                                                                         | `""`    |
 | `global.ingress.selfSigned`              | Create a TLS secret for this ingress record using self-signed certificates generated by Helm                                       | `false` |
 | `global.ingress.certManager`             | Add the corresponding annotations for cert-manager integration                                                                     | `false` |
@@ -425,6 +476,37 @@ Please be cautious before doing it.
 | `yeti.arangodb.resources.limits`   | Resource limits for the arangodb container                             | `{}`    |
 | `yeti.arangodb.resources.requests` | Requested resources for the arangodb container                         | `{}`    |
 | `yeti.arangodb.nodeSelector`       | Node labels for Yeti arangodb pods assignment                          | `{}`    |
+
+### OpenRelik configuration
+
+| Name                                                           | Description                                                                 | Value               |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------- |
+| `openrelik.frontend.resources.limits`                          | Resource limits for the frontend container                                  | `{}`                |
+| `openrelik.frontend.resources.requests`                        | Requested resources for the frontend container                              | `{}`                |
+| `openrelik.api.resources.limits`                               | Resource limits for the API container                                       | `{}`                |
+| `openrelik.api.resources.requests`                             | Requested resources for the API container                                   | `{}`                |
+| `openrelik.mediator.resources.limits`                          | Resource limits for the Mediator container                                  | `{}`                |
+| `openrelik.mediator.resources.requests`                        | Requested resources for the Mediator container                              | `{}`                |
+| `openrelik.metrics.resources.limits`                           | Resource limits for the Metrics container                                   | `{}`                |
+| `openrelik.metrics.resources.requests`                         | Requested resources for the Metrics container                               | `{}`                |
+| `openrelik.config.oidc.enabled`                                | Enables OpenRelik OIDC authentication (currently only supports Google OIDC) | `false`             |
+| `openrelik.config.oidc.existingSecret`                         | Existing secret with the client ID, secret and cookie secret                | `""`                |
+| `openrelik.config.oidc.authenticatedEmailsFile.enabled`        | Enables email authentication                                                | `true`              |
+| `openrelik.config.oidc.authenticatedEmailsFile.existingSecret` | Existing secret with a list of emails                                       | `""`                |
+| `openrelik.config.oidc.authenticatedEmailsFile.content`        | Allowed emails list (one email per line)                                    | `""`                |
+| `openrelik.persistence.size`                                   | OpenRelik persistent volume size                                            | `2Gi`               |
+| `openrelik.persistence.storageClass`                           | PVC Storage Class for OpenRelik volume                                      | `""`                |
+| `openrelik.persistence.accessModes`                            | PVC Access Mode for OpenRelik volume                                        | `["ReadWriteOnce"]` |
+| `openrelik.redis.persistence.size`                             | Redis Persistent Volume size                                                | `2Gi`               |
+| `openrelik.redis.resources.limits`                             | The resources limits for the Redis containers                               | `{}`                |
+| `openrelik.redis.resources.requests`                           | The requested resources for the Redis containers                            | `{}`                |
+| `openrelik.postgresql.persistence.size`                        | PostgreSQL Persistent Volume size                                           | `2Gi`               |
+| `openrelik.postgresql.resources.limits`                        | The resources limits for the PostgreSQL primary containers                  | `{}`                |
+| `openrelik.postgresql.resources.requests.cpu`                  | The requested cpu for the PostgreSQL primary containers                     | `250m`              |
+| `openrelik.postgresql.resources.requests.memory`               | The requested memory for the PostgreSQL primary containers                  | `256Mi`             |
+| `openrelik.prometheus.persistence.size`                        | Prometheus Persistent Volume size                                           | `2Gi`               |
+| `openrelik.prometheus.resources.limits`                        | The resources limits for the Prometheus containers                          | `{}`                |
+| `openrelik.prometheus.resources.requests`                      | The requested resources for the Prometheus containers                       | `{}`                |
 
 Specify each parameter using the --set key=value[,key=value] argument to `helm install`. For example,
 

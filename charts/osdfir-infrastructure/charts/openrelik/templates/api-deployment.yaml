@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-openrelik-api
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: api
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api
+      {{- include "openrelik.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: api
+        {{- include "openrelik.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      initContainers:
+      {{- include "openrelik.initContainer" . | nindent 8 }}
+      containers:
+        - name: api
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          command: ["/bin/sh", "-c", "uvicorn main:app --proxy-headers --forwarded-allow-ips '*' --workers 1 --host 0.0.0.0 --port 8710"]
+          {{- if not .Release.IsUpgrade }}
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "cd /app/openrelik/datastores/sql && alembic upgrade head; cd /app/openrelik && python admin.py create-user openrelik --password $OPENRELIK_USER --admin"]
+          {{- end }}
+          env:
+            - name: OPENRELIK_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-openrelik-secret 
+                  key: openrelik-user
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .Release.Name }}-openrelik-secret 
+                    key: redis-url
+            - name: SQLALCHEMY_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .Release.Name }}-openrelik-secret 
+                    key: postgres-url
+            - name: PROMETHEUS_SERVER_URL
+              value: http://{{ .Release.Name }}-openrelik-prometheus:9090
+          volumeMounts:
+            - mountPath: /mnt/openrelikvolume
+              name: openrelikvolume
+            - mountPath: /app/settings.toml
+              subPath: settings.toml
+              name: openrelik-configs-dir
+          ports:
+            - containerPort: 8710
+          resources:
+            {{- toYaml .Values.api.resources | nindent 12 }}
+      volumes:
+        - name: openrelikvolume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-openrelikvolume-claim
+            readOnly: false
+        - name: settings-config
+          configMap:
+            name: {{ .Release.Name }}-openrelik-configmap
+        - name: openrelik-configs-dir
+          emptyDir: {}
+        - name: init-oidc
+          configMap:
+            name: {{ .Release.Name }}-openrelik-init-oidc
+            defaultMode: 0744
+        {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
+        - name: authenticated-emails
+          secret:
+            items:
+            - key: authenticated-emails-list
+              path: authenticated-emails-list
+            secretName: {{ include "openrelik.oidc.authenticatedemails" . }}
+        {{- end }}

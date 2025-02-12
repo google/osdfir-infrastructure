@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-openrelik-frontend
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: frontend
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: frontend
+      {{- include "openrelik.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: frontend
+        {{- include "openrelik.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          env:
+            - name: OPENRELIK_SERVER_URL
+              {{- if .Values.global.ingress.openRelikAPIHost }}
+              value: https://{{ .Values.global.ingress.openRelikAPIHost }}
+              {{- else }}
+              value: http://localhost:8710
+              {{- end }}
+            - name: OPENRELIK_API_VERSION
+              value: v1
+            - name: OPENRELIK_AUTH_METHODS
+              {{- if .Values.config.oidc.enabled }}
+              value: local,google
+              {{- else }}
+              value: local
+              {{- end }}
+          volumeMounts:
+            - mountPath: /mnt/openrelikvolume
+              name: openrelikvolume
+          ports:
+            - containerPort: 8711
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+      volumes:
+        - name: openrelikvolume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-openrelikvolume-claim
+            readOnly: false

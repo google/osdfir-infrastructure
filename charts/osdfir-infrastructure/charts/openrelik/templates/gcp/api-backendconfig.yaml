@@ -1,0 +1,17 @@
+{{- if (and (.Values.global.ingress.enabled) (eq .Values.global.ingress.className "gce")) }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Release.Name }}-openrelik-api-backend-config
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  timeoutSec: 300
+  healthCheck:
+    checkIntervalSec: 300
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 2
+    type: HTTP
+    requestPath: /openapi.json
+    port: 8710
+{{- end }}

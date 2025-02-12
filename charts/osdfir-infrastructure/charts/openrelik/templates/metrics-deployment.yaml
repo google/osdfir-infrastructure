@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-openrelik-metrics
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: metrics
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: metrics
+      {{- include "openrelik.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/component: metrics
+        {{- include "openrelik.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: mediator
+          image: "{{ .Values.metrics.image.repository }}:{{ .Values.metrics.image.tag }}"
+          imagePullPolicy: {{ .Values.metrics.image.pullPolicy }}
+          command: ["/bin/sh", "-c", "python exporter.py"]
+          env:
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .Release.Name }}-openrelik-secret 
+                    key: redis-url
+          ports:
+            - containerPort: 8080
+          resources:
+            {{- toYaml .Values.metrics.resources | nindent 12 }}

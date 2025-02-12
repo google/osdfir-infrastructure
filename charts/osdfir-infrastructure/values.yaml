@@ -4,6 +4,7 @@
 ## The following tools are supported in this deployment:
 ## - Timesketch; ref https://github.com/google/timesketch
 ## - Yeti; ref https://github.com/yeti-platform/yeti
+## - OpenRelik; ref https://github.com/openrelik
 ##
 ## @section Global parameters
 ## Please, note that this will override the parameters configured to use the global value
@@ -19,6 +20,10 @@ global:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: true
+  openrelik:
+    ## @param global.openrelik.enabled Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: true
   ## Global ingress parameters used to configure Timesketch, Yeti under a loadbalancer
   ##
   ingress:
@@ -31,6 +36,12 @@ global:
     ## @param global.ingress.yetiHost Domain name Yeti will be hosted under
     ##
     yetiHost: ""
+    ## @param global.ingress.openRelikFrontendHost FQDN of the OpenRelik UI will be hosted under (defaults to localhost)
+    ##
+    openRelikFrontendHost: ""
+    ## @param global.ingress.openRelikAPIHost FQDN of the OpenRelik API host will be hosted under (defaults to localhost)
+    ##
+    openRelikAPIHost: ""
     ## @param global.ingress.className IngressClass that will be be used to implement the Ingress
     ## ref https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
     ##
@@ -417,3 +428,196 @@ yeti:
     ## @param yeti.arangodb.nodeSelector Node labels for Yeti arangodb pods assignment
     ##
     nodeSelector: {}
+## @section OpenRelik configuration
+## The following section covers configuration parameters for OpenRelik
+##
+openrelik:
+  ## OpenRelik Frontend configuration
+  ##
+  frontend:
+    ## @param openrelik.frontend.resources.limits Resource limits for the frontend container
+    ## @param openrelik.frontend.resources.requests Requested resources for the frontend container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## OpenRelik API configuration
+  ##
+  api:
+    ## OpenRelik api resource requests and limits
+    ## @param openrelik.api.resources.limits Resource limits for the API container
+    ## @param openrelik.api.resources.requests Requested resources for the API container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## OpenRelik Mediator configuration
+  ##
+  mediator:
+    ## OpenRelik mediator resource requests and limits
+    ## @param openrelik.mediator.resources.limits Resource limits for the Mediator container
+    ## @param openrelik.mediator.resources.requests Requested resources for the Mediator container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## OpenRelik Metrics configuration
+  ##
+  metrics:
+    ## OpenRelik metrics resource requests and limits
+    ## @param openrelik.metrics.resources.limits Resource limits for the Metrics container
+    ## @param openrelik.metrics.resources.requests Requested resources for the Metrics container
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## OpenRelik Configuration Parameters
+  ##
+  config:
+    ## OpenRelik OIDC configuration
+    ##
+    oidc:
+      ## @param openrelik.config.oidc.enabled Enables OpenRelik OIDC authentication (currently only supports Google OIDC)
+      ##
+      enabled: false
+      ## @param openrelik.config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
+      ##
+      existingSecret: ""
+      ## Allowed emails files for OpenRelik OIDC
+      ##
+      authenticatedEmailsFile:
+        ## @param openrelik.config.oidc.authenticatedEmailsFile.enabled Enables email authentication
+        ##
+        enabled: true
+        ## @param openrelik.config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
+        ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
+        existingSecret: ""
+        ## @param openrelik.config.oidc.authenticatedEmailsFile.content Allowed emails list (one email per line)
+        ##
+        content: ""
+        ## One email per line
+        ## e.g:
+        ## content: |-
+        ##   name1@domain
+        ##   name2@domain
+  ## Persistence Storage Parameters
+  ##
+  persistence:
+    ## @param openrelik.persistence.size OpenRelik persistent volume size
+    ##
+    size: 2Gi
+    ## @param openrelik.persistence.storageClass PVC Storage Class for OpenRelik volume
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+    ##
+    storageClass: ""
+    ## @param openrelik.persistence.accessModes PVC Access Mode for OpenRelik volume
+    ## Access mode may need to be updated based on the StorageClass
+    ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+    ##
+    accessModes:
+      - ReadWriteOnce
+  ## Redis Configuration Parameters
+  ##
+  redis:
+    ## Redis persistence configuration
+    ##
+    persistence:
+      ## @param openrelik.redis.persistence.size Redis Persistent Volume size
+      ##
+      size: 2Gi
+    ## Redis resource requests and limits
+    ## @param openrelik.redis.resources.limits The resources limits for the Redis containers
+    ## @param openrelik.redis.resources.requests The requested resources for the Redis containers
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
+  ## Postgresql Configuration Parameters
+  ##
+  postgresql:
+    ## PostgreSQL persistence configuration
+    ##
+    persistence:
+      ## @param openrelik.postgresql.persistence.size PostgreSQL Persistent Volume size
+      ##
+      size: 2Gi
+    ## PostgreSQL resource requests and limits
+    ## @param openrelik.postgresql.resources.limits The resources limits for the PostgreSQL primary containers
+    ## @param openrelik.postgresql.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+    ## @param openrelik.postgresql.resources.requests.memory The requested memory for the PostgreSQL primary containers
+    ##
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  ## Prometheus Configuration Parameters
+  ##
+  prometheus:
+    ## Prometheus persistence configuration
+    ##
+    persistence:
+      ## @param openrelik.prometheus.persistence.size Prometheus Persistent Volume size
+      ##
+      size: 2Gi
+    ## Prometheus resource requests and limits
+    ## @param openrelik.prometheus.resources.limits The resources limits for the Prometheus containers
+    ## @param openrelik.prometheus.resources.requests The requested resources for the Prometheus containers
+    resources:
+      ## Example:
+      ## limits:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      limits: {}
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests: {}
