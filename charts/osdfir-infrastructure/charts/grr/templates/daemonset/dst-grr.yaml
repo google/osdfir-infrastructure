@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: grr
+  {{- if .Values.grr.namespaceClient }}
+  namespace: {{ .Values.grr.namespaceClient }}
+  {{- end }}
+  labels:
+    app: grr
+spec:
+  selector:
+    matchLabels:
+      app: grr
+  template:
+    metadata:
+      labels:
+        app: grr
+    spec:
+      # Only deploying GRR to nodes with the label 'grrclient=installed'.
+      nodeSelector:
+        grrclient: installed
+      serviceAccountName: grr-client-sa
+      # Uses the host network rather than the container network. This way
+      # the hostname that shows up in GRR will contain the cluster name too.
+      hostNetwork: true
+      # Allows us to list all processes on the host rather than just those
+      # from the container.
+      hostPID: true
+      # Labeling volumes from the root file system so they can be exposed to
+      # our container.
+      volumes:
+      - name: root
+        hostPath:
+          path: /
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: grr
+        image: {{ .Values.grr.daemon.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "150m"
+        {{- end }}
+        imagePullPolicy: {{ .Values.grr.daemon.imagePullPolicy }}
+        # Making it a privileged container. This way the processes within
+        # the container get almost the same privileges as those outside the
+        # container (e.g. manipulating the network stack or accessing devices).
+        securityContext:
+          privileged: true
+        # Exposing the machine's file system to the container (read-only).
+        volumeMounts:
+        - mountPath: /hostroot
+          name: root
+          readOnly: true

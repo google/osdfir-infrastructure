@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-grr-client-builder
+  namespace: grr
+spec:
+  template:
+    spec:
+      serviceAccountName: grr-sa
+      initContainers:
+        - name: init-kaniko-env
+          image: bitnami/git
+          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/google/osdfir-infrastructure.git; cd osdfir-infrastructure; cp /grr/grr.server.yaml charts/grr/containers/grr-client/config/"]
+          volumeMounts:
+          - name: kaniko-volume
+            mountPath: /kaniko-build
+          - name: grr-server-config
+            mountPath: /grr/grr.server.yaml
+            subPath: server.local.yaml
+      containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:latest
+          args:
+            - "--dockerfile=Dockerfile.kaniko"
+            - "--context=dir:///kaniko-build/osdfir-infrastructure"
+            - "--context-sub-path=charts/grr/containers/grr-client/"
+            - "--destination=GRR_CLIENT_IMAGE"
+            - "--build-arg=FLEETSPEAK_FRONTEND=FRONTEND_ADDRESS"
+            - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"
+          volumeMounts:
+          - name: grr-exe-sign-keys
+            mountPath: /grr/exe/sign/keys
+          - name: kaniko-volume
+            mountPath: /kaniko-build
+      restartPolicy: Never
+      volumes:
+        - name: kaniko-volume
+          emptyDir:
+            sizeLimit: 25Mi
+        - name: grr-exe-sign-keys
+          secret:
+            secretName: sec-grr-executable-signing-keys
+        - name: grr-server-config
+          secret:
+            secretName: sec-grr-server-local
+            items:
+            - key: server.local.yaml
+              path: server.local.yaml

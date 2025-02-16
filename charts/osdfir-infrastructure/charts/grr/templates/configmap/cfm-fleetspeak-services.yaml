@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cfm-fleetspeak-services
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+data:
+  services.textproto: |
+    services {
+      name: "GRR"
+      {{- if (and .Values.grr.pubsub .Values.grr.pubsub.topic) }}
+      factory: "CPS"
+      config {
+        [type.googleapis.com/fleetspeak.cpsservice.Config] {
+          project: "{{ .Values.grr.pubsub.project }}"
+          topic: "{{ .Values.grr.pubsub.topic }}"
+        }
+      }
+      {{- else}}
+      factory: "GRPC"
+      config {
+        [type.googleapis.com/fleetspeak.grpcservice.Config] {
+          target: "svc-grr-frontend:{{ .Values.grr.frontend.listenPort }}"
+          insecure: true
+        }
+      }
+      {{- end }}
+    }
+    broadcast_poll_time {
+      seconds: 1
+    }

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl-grr-worker
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+  labels:
+    app: grr-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grr-worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grr-worker
+        prometheus: grr-worker
+    spec:
+      serviceAccountName: grr-sa
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: nodepool
+                operator: In
+                values:
+                - grr
+      containers:
+      - name: grr-worker
+        image: {{ .Values.grr.worker.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+        {{- end }}
+        ports:
+        - containerPort: {{ .Values.prometheus.metricsPort }}
+          name: metrics
+        args: ["-component", "worker", "-config", "/usr/src/grr/grr/core/install_data/etc/server.local.yaml", "--logtostderr"]
+        volumeMounts:
+        - name: grr-worker-config
+          mountPath: /usr/src/grr/grr/core/install_data/etc/server.local.yaml
+          subPath: server.local.yaml
+        - name: grr-exe-sign-keys
+          readOnly: true
+          mountPath: "/grr/exe/sign/keys"
+      volumes:
+      - name: grr-worker-config
+        secret:
+          secretName: sec-grr-server-local
+          items:
+          - key: server.local.yaml
+            path: server.local.yaml
+      - name: grr-exe-sign-keys
+        secret:
+          secretName: sec-grr-executable-signing-keys

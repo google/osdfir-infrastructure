@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-fleetspeak-frontend
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+  {{- if .Values.fleetspeak.frontend.neg }}
+  annotations:
+    cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.fleetspeak.frontend.listenPort }}":{"name": "k8s-fleetspeak-frontend-neg"}}}'
+  {{- end }}
+spec:
+  selector:
+    app.kubernetes.io/name: fleetspeak-frontend
+  ports:
+    - protocol: TCP
+      name: frontend
+      port: {{ .Values.fleetspeak.frontend.listenPort  }}
+      targetPort: {{ .Values.fleetspeak.frontend.listenPort }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: fleetspeak-frontend
+  {{- if .Values.grr.namespaceClient }}
+  namespace: {{ .Values.grr.namespaceClient }}
+  {{- end }}
+spec:
+  type: ExternalName
+  {{- if .Values.grr.namespace }}
+  externalName: svc-fleetspeak-frontend.{{ .Values.grr.namespace }}.svc.cluster.local
+  {{- else }}
+  externalName: svc-fleetspeak-frontend.default.svc.cluster.local
+  {{- end }}
+  ports:
+  - port: {{ .Values.fleetspeak.frontend.listenPort  }}

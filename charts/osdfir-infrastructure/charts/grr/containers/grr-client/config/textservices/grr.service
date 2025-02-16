@@ -1,0 +1,9 @@
+name: "GRR"
+factory: "Daemon"
+config {
+  [type.googleapis.com/fleetspeak.daemonservice.Config] {
+    argv: "/usr/sbin/grrd"
+    argv: "--config"
+    argv: "/etc/fleetspeak-client/grr.client.yaml"
+  }
+}

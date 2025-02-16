@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grr-sa
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}

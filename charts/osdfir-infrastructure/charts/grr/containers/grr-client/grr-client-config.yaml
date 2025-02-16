@@ -1,0 +1,12 @@
+Client.fleetspeak_enabled: true
+Client.foreman_check_frequency: 10
+Client.allowed_commands: /hostroot/usr/bin/crictl -r unix:///hostroot/run/containerd/containerd.sock images -o yaml, /hostroot/usr/bin/crictl -r unix:///hostroot/run/containerd/containerd.sock info -o yaml, /hostroot/usr/bin/crictl -r unix:///hostroot/run/containerd/containerd.sock pods -o yaml, /hostroot/usr/bin/crictl -r unix:///hostroot/run/containerd/containerd.sock ps -o yaml, /hostroot/usr/bin/crictl -r unix:///hostroot/run/containerd/containerd.sock stats -o yaml, /hostroot/usr/bin/crictl -r unix:///hostroot/run/containerd/containerd.sock statsp -o yaml
+Logging.verbose: true
+Logging.engines: file,stderr
+Logging.path: /var/log
+Logging.filename: '%(Logging.path)/%(Client.name).log'
+
+Config.directory: /etc/fleetspeak-client
+Config.writeback: /etc/fleetspeak-client/grr-client.local.yaml
+
+Client.executable_signing_public_key: "EXE_SIGN_PUBLIC_KEY"

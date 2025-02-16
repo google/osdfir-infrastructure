@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl-fleetspeak-admin
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+  labels:
+    app: fleetspeak-admin
+spec:
+  replicas: {{ .Values.fleetspeak.admin.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fleetspeak-admin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: fleetspeak-admin
+        prometheus: fleetspeak-admin
+    spec:
+      serviceAccountName: grr-sa
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: nodepool
+                operator: In
+                values:
+                - grr
+      containers:
+      - name: fleetspeak-admin
+        image: {{ .Values.fleetspeak.admin.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+        {{- end }}
+        ports:
+        - containerPort: {{ .Values.fleetspeak.admin.listenPort }}
+          name: admin
+        - containerPort: {{ .Values.prometheus.metricsPort }}
+          name: metrics
+        command: ["/fleetspeak/bin/server"]
+        args: ["-alsologtostderr"]
+        volumeMounts:
+        - name: fleetspeak-admin-components
+          mountPath: /etc/fleetspeak-server/server.components.config
+          subPath: server.components.config
+        - name: fleetspeak-services
+          mountPath: /etc/fleetspeak-server/server.services.config
+          subPath: server.services.config
+      volumes:
+      - name: fleetspeak-admin-components
+        secret:
+          secretName: sec-fleetspeak-admin-components
+          items:
+          - key: admin.components.textproto
+            path: server.components.config
+      - name: fleetspeak-services
+        configMap:
+          name: cfm-fleetspeak-services
+          items:
+          - key: services.textproto
+            path: server.services.config

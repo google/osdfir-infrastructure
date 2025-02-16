@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl-fleetspeak-frontend
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+  labels:
+    app: fleetspeak-frontend
+spec:
+  replicas: {{ .Values.fleetspeak.frontend.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fleetspeak-frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: fleetspeak-frontend
+        prometheus: fleetspeak-frontend
+    spec:
+      serviceAccountName: grr-sa
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: nodepool
+                operator: In
+                values:
+                - grr
+      initContainers:
+      - name: init-fleetspeak-frontend
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        image: busybox:1.36
+        command: ['sh', '-c', "cp /stage/fleetspeak-server/server.*.config /etc/fleetspeak-server/; sed -i \"s/FLEETSPEAK_FRONTEND_IP/$POD_IP/g\" /etc/fleetspeak-server/server.components.config"]
+        volumeMounts:
+        - name: fleetspeak-config-volume
+          mountPath: /etc/fleetspeak-server
+        - name: fleetspeak-frontend-components
+          mountPath: /stage/fleetspeak-server/server.components.config
+          subPath: server.components.config
+        - name: fleetspeak-services
+          mountPath: /stage/fleetspeak-server/server.services.config
+          subPath: server.services.config
+      containers:
+      - name: fleetspeak-frontend
+        image: {{ .Values.fleetspeak.frontend.image }}
+        {{- if .Values.global.useResourceRequests }}
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+        {{- end }}
+        ports:
+        - containerPort: {{ .Values.fleetspeak.frontend.listenPort }}
+          name: frontend
+        - containerPort: {{ .Values.fleetspeak.frontend.healthCheckPort }}
+          name: healthz
+        - containerPort: {{ .Values.fleetspeak.frontend.notificationPort }}
+          name: notification
+        - containerPort: {{ .Values.prometheus.metricsPort }}
+          name: metrics
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.fleetspeak.frontend.healthCheckPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        command: ["/fleetspeak/bin/server"]
+        args: ["-alsologtostderr"]
+        volumeMounts:
+        - name: fleetspeak-config-volume
+          mountPath: /etc/fleetspeak-server
+      volumes:
+      - name: fleetspeak-config-volume
+        emptyDir:
+          sizeLimit: 5Mi
+      - name: fleetspeak-frontend-components
+        secret:
+          secretName: sec-fleetspeak-frontend-components
+          items:
+          - key: frontend.components.textproto
+            path: server.components.config
+      - name: fleetspeak-services
+        configMap:
+          name: cfm-fleetspeak-services
+          items:
+          - key: services.textproto
+            path: server.services.config

@@ -1,0 +1,135 @@
+## GRR/Fleetspeak Helm Chart
+## Please use this Helm chart for deploying GRR/Fleetspeak to a minikube Kubernetes environment.
+##
+## @section Global parameters
+##
+global:
+  ## @param global.selfManagedMysql Enables a mySQL DB containter to be deployed into the cluster.
+  ##
+  selfManagedMysql: true
+  ## @param global.useResourceRequests Allocates resources to the pods.
+  ##
+  useResourceRequests: false
+
+## @section Fleetspeak parameters
+##
+fleetspeak:
+  ## @param fleetspeak.generateCert Enables the generation of self-signed Fleetspeak x509 certificate.
+  ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
+  ##
+  generateCert: true
+  ## @param fleetspeak.httpsHeaderChecksum Defines on whether to add a HTTPS header checksum
+  ## ref https://github.com/google/fleetspeak/tree/master/sandboxes/https-header-mode
+  ##
+  httpsHeaderChecksum: false
+  ## @param fleetspeak.subjectCommonName Sets the Fleetspeak x509 certificate subject common name.
+  ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
+  ##
+  subjectCommonName: "fleetspeak-frontend"
+
+  admin:
+    ## @param fleetspeak.admin.image Sets the Fleetspeak admin container image to use.
+    ##
+    image: "ghcr.io/google/fleetspeak:v0.1.17"
+    ## @param fleetspeak.admin.listenPort Sets the Fleetspeak admin listen port to use.
+    ##
+    listenPort: 4444
+    ## @param fleetspeak.admin.replicas Sets the amount of Fleetspeak admin pods to run.
+    ##
+    replicas: 1
+
+  frontend:
+    ## @param fleetspeak.frontend.healthCheckPort Sets the Fleetspeak frontend health check port to use.
+    ##
+    healthCheckPort: 8080
+    ## @param fleetspeak.frontend.image Sets the Fleetspeak fronend container image to use.
+    ##
+    image: "ghcr.io/google/fleetspeak:v0.1.17"
+    ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
+    ##
+    listenPort: 4443
+    ## @param fleetspeak.frontend.neg Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service.
+    ## ref https://cloud.google.com/kubernetes-engine/docs/how-to/standalone-neg
+    ##
+    neg: false
+    ## @param fleetspeak.frontend.notificationPort Sets the Fleetspeak frontend notificaton port to use.
+    ##
+    notificationPort: 12000
+    ## @param fleetspeak.frontend.replicas Sets the amount of Fleetspeak frontend pods to run.
+    ##
+    replicas: 1
+
+  mysqlDb:
+    ## @param fleetspeak.mysqlDb.address Sets the Fleetspeak DB address to use.
+    ##
+    address: "mysql"
+    ## @param fleetspeak.mysqlDb.name Sets the Fleetspeak DB name to use.
+    ##
+    name: "fleetspeak"
+    ## @param fleetspeak.mysqlDb.port Sets the Fleetspeak DB port to use.
+    ##
+    port: 3306
+    ## @param fleetspeak.mysqlDb.userName Sets the Fleetspeak DB user name to use.
+    ##
+    userName: "fleetspeak-user"
+    ## @param fleetspeak.mysqlDb.userPassword Sets the Fleetspeak DB password to use.
+    ##
+    userPassword: "fleetspeak-password"
+
+## @section GRR parameters
+##
+grr:
+  admin:
+    ## @param grr.admin.image Sets the GRR admin container image to use.
+    ##
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
+    ## @param grr.admin.listenPort Sets the GRR admin listen port to use.
+    ##
+    listenPort: 8000
+    ## @param grr.admin.replicas Sets the amount of GRR admin pods to run.
+    ##
+    replicas: 1
+  daemon:
+    ## @param grr.daemon.image Sets the GRR client container image to use.
+    ##
+    image: "grr-client:v0.1"
+    ## @param grr.daemon.imagePullPolicy Sets the GRR client container image pull policy to use.
+    ##
+    imagePullPolicy: "Never"
+  frontend:
+    ## @param grr.frontend.image Sets the GRR frontend container image to use.
+    ##
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
+    ## @param grr.frontend.listenPort Sets the GRR frontend listen port to use.
+    ##
+    listenPort: 11111
+    ## @param grr.frontend.replicas Sets the amount of GRR frontend pods to run.
+    ##
+    replicas: 1
+  mysqlDb:
+    ## @param grr.mysqlDb.address Sets the GRR DB address to use.
+    ##
+    address: "mysql"
+    ## @param grr.mysqlDb.name Sets the GRR DB name to use
+    ##
+    name: "grr"
+    ## @param grr.mysqlDb.port Sets the GRR DB port to use.
+    ##
+    port: 3306
+    ## @param grr.mysqlDb.userName Sets the GRR DB user name to use.
+    ##
+    userName: "grr-user"
+    ## @param grr.mysqlDb.userPassword Sets the GRR DB user password to use.
+    ##
+    userPassword: "grr-password"
+  worker:
+    ## @param grr.worker.image Sets the GRR worker container image to use.
+    ##
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
+
+## @section Prometheus parameters
+##
+prometheus:
+  ## @param prometheus.metricsPort Sets the port to expose Prometheus metrics.
+  ##
+  metricsPort: 19090
