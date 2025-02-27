@@ -5,7 +5,9 @@ on:
     branches:
       - main
 
-permissions: write-all
+permissions:
+  packages: write
+  pages: write
 
 jobs:
   release:
