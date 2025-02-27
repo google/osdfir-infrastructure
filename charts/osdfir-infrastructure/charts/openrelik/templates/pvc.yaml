@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-openrelikvolume-claim
   namespace: {{ .Release.Namespace | quote }}
 spec:
-  {{- if .Values.persistence.storageClass -}}
+  {{- if .Values.persistence.storageClass }}
   storageClassName: {{ .Values.persistence.storageClass }}
   {{- end }}
   accessModes:
