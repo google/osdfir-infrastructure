@@ -24,6 +24,10 @@ global:
     ## @param global.openrelik.enabled Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: true
+  grr:
+    ## @param global.grr.enabled Enables the GRR deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: true
   ## Global ingress parameters used to configure Timesketch, Yeti under a loadbalancer
   ##
   ingress:
