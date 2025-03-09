@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  packages: write
+  pages: write
+
 jobs:
   release:
     if: github.repository == 'google/osdfir-infrastructure'
