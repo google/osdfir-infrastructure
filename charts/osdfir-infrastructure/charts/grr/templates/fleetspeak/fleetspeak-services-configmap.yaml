@@ -21,7 +21,7 @@ data:
       factory: "GRPC"
       config {
         [type.googleapis.com/fleetspeak.grpcservice.Config] {
-          target: "svc-grr-frontend:{{ .Values.grr.frontend.listenPort }}"
+          target: "{{ .Release.Name }}-grr-frontend:{{ .Values.grr.frontend.listenPort }}"
           insecure: true
         }
       }

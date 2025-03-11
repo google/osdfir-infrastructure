@@ -21,16 +21,16 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: fleetspeak-frontend
+  name: {{ .Release.Name }}-fleetspeak-frontend
   {{- if .Values.grr.namespaceClient }}
   namespace: {{ .Values.grr.namespaceClient }}
   {{- end }}
 spec:
   type: ExternalName
   {{- if .Values.grr.namespace }}
-  externalName: svc-fleetspeak-frontend.{{ .Values.grr.namespace }}.svc.cluster.local
+  externalName: {{ .Release.Name }}-grr-fleetspeak-frontend.{{ .Values.grr.namespace }}.svc.cluster.local
   {{- else }}
-  externalName: svc-fleetspeak-frontend.default.svc.cluster.local
+  externalName: {{ .Release.Name }}-grr-fleetspeak-frontend.default.svc.cluster.local
   {{- end }}
   ports:
   - port: {{ .Values.fleetspeak.frontend.listenPort  }}
