@@ -55,13 +55,13 @@ spec:
       volumes:
       - name: fleetspeak-admin-components
         secret:
-          secretName: sec-fleetspeak-admin-components
+          secretName: {{ .Release.Name }}-grr-fleetspeak-admin-components
           items:
           - key: admin.components.textproto
             path: server.components.config
       - name: fleetspeak-services
         configMap:
-          name: cfm-fleetspeak-services
+          name: {{ .Release.Name }}-grr-fleetspeak-services
           items:
           - key: services.textproto
             path: server.services.config

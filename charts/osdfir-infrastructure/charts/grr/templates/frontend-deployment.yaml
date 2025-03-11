@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dpl-grr-frontend
+  name: {{ .Release.Name }}-grr-frontend
   {{- if .Values.grr.namespace }}
   namespace: {{ .Values.grr.namespace }}
   {{- end }}
@@ -54,10 +54,10 @@ spec:
       volumes:
       - name: grr-frontend-config
         secret:
-          secretName: sec-grr-server-local
+          secretName: {{ .Release.Name }}-grr-server-local
           items:
           - key: server.local.yaml
             path: server.local.yaml
       - name: grr-exe-sign-keys
         secret:
-          secretName: sec-grr-executable-signing-keys
+          secretName: {{ .Release.Name }}-grr-executable-signing-keys

@@ -82,13 +82,13 @@ spec:
           sizeLimit: 5Mi
       - name: fleetspeak-frontend-components
         secret:
-          secretName: sec-fleetspeak-frontend-components
+          secretName: {{ .Release.Name }}-grr-fleetspeak-frontend-components
           items:
           - key: frontend.components.textproto
             path: server.components.config
       - name: fleetspeak-services
         configMap:
-          name: cfm-fleetspeak-services
+          name: {{ .Release.Name }}-grr-fleetspeak-services
           items:
           - key: services.textproto
             path: server.services.config
