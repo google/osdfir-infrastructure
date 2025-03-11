@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: grr
+  name: {{ .Release.Name }}-grr-client
   {{- if .Values.grr.namespaceClient }}
   namespace: {{ .Values.grr.namespaceClient }}
   {{- end }}
@@ -19,7 +19,7 @@ spec:
       # Only deploying GRR to nodes with the label 'grrclient=installed'.
       nodeSelector:
         grrclient: installed
-      serviceAccountName: grr-client-sa
+      serviceAccountName: {{ .Release.Name }}-grr-client
       # Uses the host network rather than the container network. This way
       # the hostname that shows up in GRR will contain the cluster name too.
       hostNetwork: true

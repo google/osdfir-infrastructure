@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cfm-fleetspeak-services
+  name: {{ .Release.Name }}-grr-fleetspeak-services
   {{- if .Values.grr.namespace }}
   namespace: {{ .Values.grr.namespace }}
   {{- end }}

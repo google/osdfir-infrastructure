@@ -18,7 +18,7 @@ spec:
         app.kubernetes.io/name: grr-worker
         prometheus: grr-worker
     spec:
-      serviceAccountName: grr-sa
+      serviceAccountName: {{ .Release.Name }}-grr-sa
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

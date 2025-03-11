@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dpl-fleetspeak-frontend
+  name: {{ .Release.Name }}-grr-fleetspeak-frontend
   {{- if .Values.grr.namespace }}
   namespace: {{ .Values.grr.namespace }}
   {{- end }}
@@ -18,7 +18,7 @@ spec:
         app.kubernetes.io/name: fleetspeak-frontend
         prometheus: fleetspeak-frontend
     spec:
-      serviceAccountName: grr-sa
+      serviceAccountName: {{ .Release.Name }}-grr-sa
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dpl-fleetspeak-admin
+  name: {{ .Release.Name }}-grr-fleetspeak-admin
   {{- if .Values.grr.namespace }}
   namespace: {{ .Values.grr.namespace }}
   {{- end }}
@@ -18,7 +18,7 @@ spec:
         app.kubernetes.io/name: fleetspeak-admin
         prometheus: fleetspeak-admin
     spec:
-      serviceAccountName: grr-sa
+      serviceAccountName: {{ .Release.Name }}-grr-sa
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
