@@ -29,10 +29,18 @@ RUN export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect $F
     sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" /config/config.textproto && \
     echo 'client_certificate_header: "client-certificate"' >> /config/config.textproto
 
+RUN PRI_KEY=$(cat /grr/exe/sign/keys/exe-sign-private-key.pem | sed ':a;N;$!ba;s/\n/\\\\n/g') && \
+    PUB_KEY=$(cat /grr/exe/sign/keys/exe-sign-public-key.pem | sed ':a;N;$!ba;s/\n/\\\\n/g') && \
+    sed -i "s'EXE_SIGN_PUBLIC_KEY'$PUB_KEY'g" /config/grr.client.yaml && \
+    sed -i "s'EXE_SIGN_PRIVATE_KEY'$PRI_KEY'g" /config/grr.server.yaml && \
+    sed -i "s'EXE_SIGN_PUBLIC_KEY'$PUB_KEY'g" /config/grr.server.yaml
+
 RUN echo "---------------";
 RUN cat /config/config.textproto;
 RUN echo "---------------";
 RUN cat /config/grr.client.yaml;
+RUN echo "---------------";
+RUN cat /config/grr.server.yaml;
 RUN echo "---------------";
 RUN cat /config/communicator.txt;
 RUN echo "---------------";
