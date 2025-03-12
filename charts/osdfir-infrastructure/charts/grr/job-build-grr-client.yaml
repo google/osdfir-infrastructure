@@ -24,8 +24,8 @@ spec:
             - "--context=dir:///kaniko-build/osdfir-infrastructure"
             - "--context-sub-path=charts/osdfir-infrastructure/charts/grr/containers/grr-client/"
             - "--destination=grr-client:v0.1"
-            - "--build-arg=FLEETSPEAK_FRONTEND=10.132.0.7"
-            - "--build-arg=FLEETSPEAK_FRONTEND_PORT=4443"
+            - "--build-arg=FLEETSPEAK_FRONTEND=34-160-236-88.nip.io"
+            - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"
             - "--no-push"
             - "--no-push-cache"
           volumeMounts:

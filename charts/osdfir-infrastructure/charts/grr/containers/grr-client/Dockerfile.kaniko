@@ -29,6 +29,14 @@ RUN export FLEETSPEAK_CERT=$(openssl s_client -showcerts -nocommands -connect $F
     sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" /config/config.textproto && \
     echo 'client_certificate_header: "client-certificate"' >> /config/config.textproto
 
+RUN echo "---------------";
+RUN cat /config/config.textproto;
+RUN echo "---------------";
+RUN cat /config/grr.client.yaml;
+RUN echo "---------------";
+RUN cat /config/communicator.txt;
+RUN echo "---------------";
+
 RUN mkdir /client_installers && \
     grr_config_updater repack_clients \
       --secondary_configs /config/grr.server.yaml
