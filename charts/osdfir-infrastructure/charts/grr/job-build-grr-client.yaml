@@ -2,15 +2,14 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: job-grr-client-builder
-  namespace: grr
 spec:
   template:
     spec:
-      serviceAccountName: grr-sa
+      serviceAccountName: osdfir-grr-sa
       initContainers:
         - name: init-kaniko-env
           image: bitnami/git
-          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/google/osdfir-infrastructure.git; cd osdfir-infrastructure; cp /grr/grr.server.yaml charts/grr/containers/grr-client/config/"]
+          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/daschwanden/osdfir-infrastructure.git; cd osdfir-infrastructure; git checkout feature/grr; cp /grr/grr.server.yaml charts/osdfir-infrastructure/charts/grr/containers/grr-client/config/"]
           volumeMounts:
           - name: kaniko-volume
             mountPath: /kaniko-build
@@ -23,10 +22,12 @@ spec:
           args:
             - "--dockerfile=Dockerfile.kaniko"
             - "--context=dir:///kaniko-build/osdfir-infrastructure"
-            - "--context-sub-path=charts/grr/containers/grr-client/"
-            - "--destination=GRR_CLIENT_IMAGE"
-            - "--build-arg=FLEETSPEAK_FRONTEND=FRONTEND_ADDRESS"
-            - "--build-arg=FLEETSPEAK_FRONTEND_PORT=443"
+            - "--context-sub-path=charts/osdfir-infrastructure/charts/grr/containers/grr-client/"
+            - "--destination=grr-client:v0.1"
+            - "--build-arg=FLEETSPEAK_FRONTEND=10.132.0.7"
+            - "--build-arg=FLEETSPEAK_FRONTEND_PORT=4443"
+            - "--no-push"
+            - "--no-push-cache"
           volumeMounts:
           - name: grr-exe-sign-keys
             mountPath: /grr/exe/sign/keys
@@ -39,10 +40,10 @@ spec:
             sizeLimit: 25Mi
         - name: grr-exe-sign-keys
           secret:
-            secretName: sec-grr-executable-signing-keys
+            secretName: osdfir-grr-executable-signing-keys
         - name: grr-server-config
           secret:
-            secretName: sec-grr-server-local
+            secretName: osdfir-grr-server-local
             items:
             - key: server.local.yaml
               path: server.local.yaml
