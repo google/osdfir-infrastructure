@@ -58,4 +58,5 @@ COPY --from=grr /config/grr.client.yaml /etc/fleetspeak-client/grr.client.yaml
 
 COPY --from=grr /client_installers/grr_*_amd64.deb .
 RUN dpkg -i grr_*_amd64.deb && rm grr_*_amd64.deb
+RUN cat /etc/fleetspeak-client/grr.client.yaml >> /usr/lib/grr/grr_3.4.7.5_amd64/grrd.yaml
 ENTRYPOINT ["fleetspeak-client", "-config" , "/etc/fleetspeak-client/client.config", "-alsologtostderr"]
