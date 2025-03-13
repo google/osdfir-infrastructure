@@ -23,9 +23,9 @@ spec:
             - "--dockerfile=Dockerfile.kaniko"
             - "--context=dir:///kaniko-build/osdfir-infrastructure"
             - "--context-sub-path=charts/osdfir-infrastructure/charts/grr/containers/grr-client/"
-            - "--destination=europe-west1-docker.pkg.dev/osdfir-grr/containers/grr-client:v0.3"
-            - "--build-arg=FLEETSPEAK_FRONTEND=10.132.0.7"
-            - "--build-arg=FLEETSPEAK_FRONTEND_PORT=4443"
+            - "--destination={{ .Values.grr.daemon.image }}"
+            - "--build-arg=FLEETSPEAK_FRONTEND={{ .Values.fleetspeak.frontend.address }}"
+            - "--build-arg=FLEETSPEAK_FRONTEND_PORT={{ .Values.fleetspeak.frontend.listenPort }}"
           volumeMounts:
           - name: grr-exe-sign-keys
             mountPath: /grr/exe/sign/keys
