@@ -35,16 +35,6 @@ RUN PRI_KEY=$(cat /grr/exe/sign/keys/exe-sign-private-key.pem | sed ':a;N;$!ba;s
     sed -i "s'EXE_SIGN_PRIVATE_KEY'$PRI_KEY'g" /config/grr.server.yaml && \
     sed -i "s'EXE_SIGN_PUBLIC_KEY'$PUB_KEY'g" /config/grr.server.yaml
 
-RUN echo "---------------";
-RUN cat /config/config.textproto;
-RUN echo "---------------";
-RUN cat /config/grr.client.yaml;
-RUN echo "---------------";
-RUN cat /config/grr.server.yaml;
-RUN echo "---------------";
-RUN cat /config/communicator.txt;
-RUN echo "---------------";
-
 RUN mkdir /client_installers && \
     grr_config_updater repack_clients \
       --secondary_configs /config/grr.server.yaml
@@ -58,5 +48,5 @@ COPY --from=grr /config/grr.client.yaml /etc/fleetspeak-client/grr.client.yaml
 
 COPY --from=grr /client_installers/grr_*_amd64.deb .
 RUN dpkg -i grr_*_amd64.deb && rm grr_*_amd64.deb
-RUN cat /etc/fleetspeak-client/grr.client.yaml >> /usr/lib/grr/grr_3.4.7.5_amd64/grrd.yaml
+RUN cat /etc/fleetspeak-client/grr.client.yaml >> /usr/lib/grr/grr_3.4.9.0_amd64/grrd.yaml
 ENTRYPOINT ["fleetspeak-client", "-config" , "/etc/fleetspeak-client/client.config", "-alsologtostderr"]
