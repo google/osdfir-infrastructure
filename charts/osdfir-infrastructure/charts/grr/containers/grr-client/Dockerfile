@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM ghcr.io/google/grr:v3.4.9.0-release AS grr
+FROM ghcr.io/google/grr:v3.4.7.5-release AS grr
 COPY config /config
 COPY grr-client-config.yaml /config/grr.client.yaml
 
