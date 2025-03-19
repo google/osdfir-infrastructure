@@ -85,7 +85,7 @@ grr:
   admin:
     ## @param grr.admin.image Sets the GRR admin container image to use.
     ##
-    image: "ghcr.io/google/grr:v3.4.9.0-release"
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
     ## @param grr.admin.listenPort Sets the GRR admin listen port to use.
     ##
     listenPort: 8000
@@ -102,7 +102,7 @@ grr:
   frontend:
     ## @param grr.frontend.image Sets the GRR frontend container image to use.
     ##
-    image: "ghcr.io/google/grr:v3.4.9.0-release"
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
     ## @param grr.frontend.listenPort Sets the GRR frontend listen port to use.
     ##
     listenPort: 11111
@@ -128,7 +128,7 @@ grr:
   worker:
     ## @param grr.worker.image Sets the GRR worker container image to use.
     ##
-    image: "ghcr.io/google/grr:v3.4.9.0-release"
+    image: "ghcr.io/google/grr:v3.4.7.5-release"
 
 ## @section Prometheus parameters
 ##
