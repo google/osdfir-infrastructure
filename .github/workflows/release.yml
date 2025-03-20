@@ -8,6 +8,7 @@ on:
 permissions:
   packages: write
   pages: write
+  contents: write
 
 jobs:
   release:
