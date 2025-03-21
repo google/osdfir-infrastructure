@@ -10,7 +10,7 @@ To learn more about the release, try:
 To connect to the OpenRelik URL:
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik 8711:8711
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik-api 8710:8710
-  $ echo "Visit http://127.0.0.1:8711 to access OpenRelik UI through port-forwarding"
+  $ echo "Visit http://localhost:8711 to access OpenRelik UI through port-forwarding"
 
 Login to OpenRelik with the User `openrelik`. To get your password run:
   $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-openrelik-secret -o jsonpath="{.data.openrelik-user}" | base64 -d
