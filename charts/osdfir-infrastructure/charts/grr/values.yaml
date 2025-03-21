@@ -10,6 +10,9 @@ global:
   ## @param global.useResourceRequests Allocates resources to the pods.
   ##
   useResourceRequests: false
+  ## @param global.internal Enables the internal load balancer and avoids exposing the GRR/Fleetspeak to the internet..
+  ##
+  internal: true
 
 ## @section Fleetspeak parameters
 ##
@@ -82,6 +85,9 @@ fleetspeak:
 ## @section GRR parameters
 ##
 grr:
+  ## @param grr.version Sets the GRR release.
+  ##
+  version: "3.4.7.5"
   admin:
     ## @param grr.admin.image Sets the GRR admin container image to use.
     ##

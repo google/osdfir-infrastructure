@@ -11,6 +11,7 @@ following tools:
 * [Timesketch](https://github.com/google/timesketch)
 * [Yeti](https://github.com/yeti-platform/yeti)
 * [OpenRelik](https://openrelik.org)
+* [GRR](https://github.com/google/grr)
 
 ## TL;DR
 

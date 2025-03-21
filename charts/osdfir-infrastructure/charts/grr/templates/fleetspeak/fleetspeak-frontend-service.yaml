@@ -1,3 +1,4 @@
+{{- if .Values.fleetspeak.frontend.address }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,7 +7,11 @@ metadata:
   namespace: {{ .Values.grr.namespaceClient }}
   {{- end }}
   annotations:
+    {{- if .Values.global.internal }}
     networking.gke.io/load-balancer-type: "Internal"
+    {{- else }}
+    cloud.google.com/l4-rbs: "enabled"
+    {{- end }}
 spec:
   {{- if .Values.fleetspeak.frontend.address }}
   type: LoadBalancer
@@ -19,3 +24,21 @@ spec:
     protocol: TCP
     port: {{ .Values.fleetspeak.frontend.listenPort  }}
     targetPort: {{ .Values.fleetspeak.frontend.listenPort  }}
+---
+{{- end }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: fleetspeak-frontend
+  {{- if .Values.grr.namespaceClient }}
+  namespace: {{ .Values.grr.namespaceClient }}
+  {{- end }}
+spec:
+  type: ExternalName
+  {{- if .Values.grr.namespace }}
+  externalName: {{ .Release.Name }}-fleetspeak-frontend.{{ .Values.grr.namespace }}.svc.cluster.local
+  {{- else }}
+  externalName: {{ .Release.Name }}-fleetspeak-frontend.default.svc.cluster.local
+  {{- end }}
+  ports:
+  - port: {{ .Values.fleetspeak.frontend.listenPort  }}
