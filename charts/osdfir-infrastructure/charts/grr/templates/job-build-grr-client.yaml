@@ -5,7 +5,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: osdfir-grr-sa
+      serviceAccountName: {{ .Release.Name }}-grr-sa
       initContainers:
         - name: init-kaniko-env
           image: bitnami/git
@@ -38,10 +38,10 @@ spec:
             sizeLimit: 25Mi
         - name: grr-exe-sign-keys
           secret:
-            secretName: osdfir-grr-executable-signing-keys
+            secretName: {{ .Release.Name }}-grr-executable-signing-keys
         - name: grr-server-config
           secret:
-            secretName: osdfir-grr-server-local
+            secretName: {{ .Release.Name }}-grr-server-local
             items:
             - key: server.local.yaml
               path: server.local.yaml
