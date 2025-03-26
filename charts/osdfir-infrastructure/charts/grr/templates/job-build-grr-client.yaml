@@ -9,8 +9,26 @@ spec:
       initContainers:
         - name: init-kaniko-env
           image: bitnami/git
-          command: ['sh', '-c', "cd /kaniko-build; git clone https://github.com/daschwanden/osdfir-infrastructure.git; cd osdfir-infrastructure; git checkout feature/grr; cp /grr/grr.server.yaml charts/osdfir-infrastructure/charts/grr/containers/grr-client/config/"]
+          command: ["/bin/sh", "-c"]
+          args:
+          - |
+            set -e
+            cp /sign/keys/*.pem /grr/exe/sign/keys/
+            if [ -e /sign/keys/exe-sign.crt ]
+            then
+              echo "Extracting public key from certificate..."
+              openssl x509 -in /grr/exe/sign/keys/exe-sign.crt -pubkey -noout > /grr/exe/sign/keys/exe-sign-public-key.pem
+            fi
+            cd /kaniko-build; 
+            git clone https://github.com/daschwanden/osdfir-infrastructure.git
+            cd osdfir-infrastructure
+            git checkout feature/grr
+            cp /grr/grr.server.yaml charts/osdfir-infrastructure/charts/grr/containers/grr-client/config/
           volumeMounts:
+          - name: grr-exe-sign-keys-volume
+            mountPath: /grr/exe/sign/keys
+          - name: grr-exe-sign-keys-secret
+            mountPath: /sign/keys
           - name: kaniko-volume
             mountPath: /kaniko-build
           - name: grr-server-config
@@ -27,7 +45,7 @@ spec:
             - "--build-arg=FLEETSPEAK_FRONTEND={{ .Values.fleetspeak.frontend.address }}"
             - "--build-arg=FLEETSPEAK_FRONTEND_PORT={{ .Values.fleetspeak.frontend.listenPort }}"
           volumeMounts:
-          - name: grr-exe-sign-keys
+          - name: grr-exe-sign-keys-volume
             mountPath: /grr/exe/sign/keys
           - name: kaniko-volume
             mountPath: /kaniko-build
@@ -36,7 +54,10 @@ spec:
         - name: kaniko-volume
           emptyDir:
             sizeLimit: 25Mi
-        - name: grr-exe-sign-keys
+        - name: grr-exe-sign-keys-volume
+          emptyDir:
+            sizeLimit: 5Mi
+        - name: grr-exe-sign-keys-secret
           secret:
             secretName: {{ .Release.Name }}-grr-executable-signing-keys
         - name: grr-server-config
