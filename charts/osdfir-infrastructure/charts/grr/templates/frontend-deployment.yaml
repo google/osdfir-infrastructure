@@ -29,6 +29,24 @@ spec:
                 operator: In
                 values:
                 - grr
+      initContainers:
+      - name: init-exe-sign
+        image: bitnami/git
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          set -e
+          cp /sign/keys/*.pem /grr/exe/sign/keys/
+          if [ -e /sign/keys/exe-sign.crt ]
+          then
+            echo "Extracting public key from certificate..."
+            openssl x509 -in /sign/keys/exe-sign.crt -pubkey -noout > /grr/exe/sign/keys/exe-sign-public-key.pem
+          fi
+        volumeMounts:
+        - name: grr-exe-sign-keys-volume
+          mountPath: /grr/exe/sign/keys
+        - name: grr-exe-sign-keys-secret
+          mountPath: /sign/keys
       containers:
       - name: grr-frontend
         image: {{ .Values.grr.frontend.image }}
@@ -48,7 +66,7 @@ spec:
         - name: grr-frontend-config
           mountPath: /usr/src/grr/grr/core/install_data/etc/server.local.yaml
           subPath: server.local.yaml
-        - name: grr-exe-sign-keys
+        - name: grr-exe-sign-keys-volume
           readOnly: true
           mountPath: "/grr/exe/sign/keys"
       volumes:
@@ -58,6 +76,9 @@ spec:
           items:
           - key: server.local.yaml
             path: server.local.yaml
-      - name: grr-exe-sign-keys
+      - name: grr-exe-sign-keys-secret
         secret:
           secretName: {{ .Release.Name }}-grr-executable-signing-keys
+      - name: grr-exe-sign-keys-volume
+        emptyDir:
+          sizeLimit: 5Mi

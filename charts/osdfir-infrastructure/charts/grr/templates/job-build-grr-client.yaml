@@ -17,7 +17,7 @@ spec:
             if [ -e /sign/keys/exe-sign.crt ]
             then
               echo "Extracting public key from certificate..."
-              openssl x509 -in /grr/exe/sign/keys/exe-sign.crt -pubkey -noout > /grr/exe/sign/keys/exe-sign-public-key.pem
+              openssl x509 -in /sign/keys/exe-sign.crt -pubkey -noout > /grr/exe/sign/keys/exe-sign-public-key.pem
             fi
             cd /kaniko-build; 
             git clone https://github.com/daschwanden/osdfir-infrastructure.git

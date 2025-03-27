@@ -13,6 +13,10 @@ global:
   ## @param global.internal Enables the internal load balancer and avoids exposing the GRR/Fleetspeak to the internet..
   ##
   internal: true
+  ## @param global.generateExeSignCert Enables the generation of self-signed x509 certificate for executable signing.
+  ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
+  ##
+  generateExeSignCert: true
 
 ## @section Fleetspeak parameters
 ##
