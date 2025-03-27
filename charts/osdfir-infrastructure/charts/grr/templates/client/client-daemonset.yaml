@@ -1,3 +1,4 @@
+{{- if .Values.grr.daemon.image }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -53,3 +54,4 @@ spec:
         - mountPath: /hostroot
           name: root
           readOnly: true
+{{- end }}
