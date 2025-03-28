@@ -309,7 +309,7 @@ The Fleetspeak frontend for GRR can be exposed in three different modes:
      ```
 
    * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
- binaries on your clients in the same Google Cloud VPC as the node is running in.
+ binaries on your clients anywhere where they have access to the Internet.
 
 ### Resource requests and limits
 
@@ -368,8 +368,8 @@ for these services are also dynamically provisioned during deployment.
 By default, GRR and Fleetspeak will write into their datastores created on a MySQL
 ```pod``` running in the cluster.
 
-For a productionised installation we recommend to externalise the GRR and Fleetspeak
- datastores to their respective instances on either CloudSQL or Spanner.
+For a production grade installation we recommend to operate the GRR and Fleetspeak
+ datastores on either managed CloudSQL or Spanner instances.
 
 ### Enabling GKE Ingress and OIDC Authentication
 
