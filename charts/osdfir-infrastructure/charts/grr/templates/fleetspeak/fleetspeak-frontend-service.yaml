@@ -7,23 +7,28 @@ metadata:
   namespace: {{ .Values.grr.namespaceClient }}
   {{- end }}
   annotations:
-    {{- if .Values.global.internal }}
+    {{- if eq .Values.fleetspeak.frontend.expose "internal" }}
     networking.gke.io/load-balancer-type: "Internal"
-    {{- else }}
+    {{- else if eq .Values.fleetspeak.frontend.expose "external" }}
     cloud.google.com/l4-rbs: "enabled"
     {{- end }}
 spec:
-  {{- if .Values.fleetspeak.frontend.address }}
+  {{- if or (eq .Values.fleetspeak.frontend.expose "internal") (eq .Values.fleetspeak.frontend.expose "external") }}
   type: LoadBalancer
   loadBalancerIP: {{ .Values.fleetspeak.frontend.address }}
+  {{- else }}
+  type: NodePort
+  {{- end }}
   selector:
     app.kubernetes.io/name: fleetspeak-frontend
-  {{- end }}
   ports:
   - name: fleetspeak-frontend
     protocol: TCP
-    port: {{ .Values.fleetspeak.frontend.listenPort  }}
-    targetPort: {{ .Values.fleetspeak.frontend.listenPort  }}
+    port: {{ .Values.fleetspeak.frontend.listenPort }}
+    targetPort: {{ .Values.fleetspeak.frontend.listenPort }}
+    {{- if eq .Values.fleetspeak.frontend.expose "node" }}
+    nodePort: {{ .Values.fleetspeak.frontend.listenPort }}
+    {{- end }}
 ---
 {{- end }}
 kind: Service

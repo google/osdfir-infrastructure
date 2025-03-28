@@ -10,9 +10,6 @@ global:
   ## @param global.useResourceRequests Allocates resources to the pods.
   ##
   useResourceRequests: false
-  ## @param global.internal Enables the internal load balancer and avoids exposing the GRR/Fleetspeak to the internet..
-  ##
-  internal: true
   ## @param global.generateExeSignCert Enables the generation of self-signed x509 certificate for executable signing.
   ## ref https://helm.sh/docs/chart_template_guide/function_list/#genselfsignedcert
   ##
@@ -54,10 +51,13 @@ fleetspeak:
     image: "ghcr.io/google/fleetspeak:v0.1.17"
     ## @param fleetspeak.frontend.address Sets the Fleetspeak frontend listen to use in a load balancer.
     ##
-    address: "10.132.0.7"
+    address: "10.132.0.10"
     ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
     ##
-    listenPort: 4443
+    listenPort: 30443
+    ## @param fleetspeak.frontend.expose Defines how to expose the frontend [nodeport|internal|external]
+    ##
+    expose: "node"
     ## @param fleetspeak.frontend.neg Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service.
     ## ref https://cloud.google.com/kubernetes-engine/docs/how-to/standalone-neg
     ##
