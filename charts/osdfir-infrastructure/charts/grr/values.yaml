@@ -55,7 +55,7 @@ fleetspeak:
     ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
     ##
     listenPort: 30443
-    ## @param fleetspeak.frontend.expose Defines how to expose the frontend [nodeport|internal|external]
+    ## @param fleetspeak.frontend.expose Defines how to expose the fleetspeak frontend [node|internal|external]
     ##
     expose: "node"
     ## @param fleetspeak.frontend.neg Enables the creation of a istandalone Network Endpoint Group for the Fleetspeak frontend service.

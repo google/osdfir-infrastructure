@@ -24,6 +24,7 @@ from internal and external systems and integrates with Timesketch.
 collaborative digital forensic investigations. It provides modular workflows,
 an intuitive interface, real-time collaboration, a centralized artifact repository,
 and can easily be extended to support new workers.
+* [GRR](https://github.com/google/grr) for incident response and remote live forensics.
 
 Additionally, OSDFIR Infrastructure also offers standalone charts. These charts
 are not directly integrated with OSDFIR Infrastructure, but can be used independently.
@@ -32,7 +33,6 @@ are not directly integrated with OSDFIR Infrastructure, but can be used independ
 forensic evidence helping find prevelant badness.
 * [Hashr](https://github.com/google/hashr) to build your own hash sets based on
 your data sources.
-* [GRR](https://github.com/google/grr) for incident response and remote live forensics.
 
 ## Installing the Charts
 

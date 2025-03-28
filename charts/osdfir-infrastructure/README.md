@@ -119,6 +119,18 @@ helm show values osdfir-infrastructure/charts/openrelik
 Specify the desired image tags and repositories when deploying or upgrading the
 OSDFIR Infrastructure chart.
 
+### Managing GRR and Fleetspeak images
+
+The GRR and Fleetspeak container images are managed using the following values,
+`grr:<tag>` and `fleetspeak:<tag>`, where `<tag>` is replaced with the version.
+
+To view all configurable values of the Yeti subchart, including the default
+image tags and repositories, run the following command:
+
+```console
+helm show values osdfir-infrastructure/charts/grr
+```
+
 ### Upgrading the Helm chart
 
 Helm chart updates can be retrieved by running `helm repo update`.
@@ -241,6 +253,64 @@ Follow these steps to upgrade the database on your Kubernetes deployment:
       kubectl rollout restart deployment my-release-timesketch-web
       ```
 
+### Managing the GRR and Fleetspeak config
+
+The Fleetspeak frontend for GRR can be exposed in three different modes:
+
+1. ```node``` exposes the Fleetspeak frontend as a ```NodePort``` service.
+   * This is the simplest mode and only suitable for demo purposes.
+   * Find the IP for one of your cluster nodes and install the chart as following:
+
+     ```bash
+     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="node" --set fleetspeak.frontend.address="$NODE_IP"
+     ```
+
+   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients in the same network as the node is running in.
+
+2. ```internal``` exposes the Fleetspeak frontend as an internal Google Cloud L4 LoadBalancer
+   * This allows you to keep your Fleetspeak/GRR cluster on your private VPC.
+   * You will have to reserve a static internal IP address in your Google Cloud Project first.
+
+     ```console
+     gcloud compute addresses create fleetspeak-frontend-internal \
+       --region REGION --subnet SUBNETWORK \
+       --addresses IP_ADDRESS
+     ```
+
+     * Choose the values for the ```REGION```, ```SUBNETWORK``` and ```IP_ADDRESS```
+ so they match the location where you run your GKE cluster.
+
+     ```bash
+     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="internal" --set fleetspeak.frontend.address="$IP_ADDRESS"
+     ```
+
+   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients in the same Google Cloud VPC as the node is running in.
+
+3. ```external``` exposes the Fleetspeak frontend as an external Google Cloud L4 LoadBalancer
+   * This allows you to run your Fleetspeak/GRR cluster so it is available from
+ anywhere on the Internet. Use this with caution as it exposes your cluster externally!
+   * You will have to reserve a static external IP address in your Google Cloud Project first.
+
+     ```console
+     gcloud compute addresses create fleetspeak-frontend-external \
+       --region=REGION
+     
+     # Find the IP address that you have been allocated.
+     gcloud compute addresses describe fleetspeak-frontend-external
+     ```
+
+     * Choose the value for the ```REGION``` so it matches the location where 
+ you run your GKE cluster.
+
+     ```bash
+     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="external" --set fleetspeak.frontend.address="$IP_ADDRESS"
+     ```
+
+   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients in the same Google Cloud VPC as the node is running in.
+
 ### Resource requests and limits
 
 OSDFIR Infrastructure charts allow setting resource requests and limits for all
@@ -292,6 +362,14 @@ The volume is created using dynamic volume provisioning.
 OpenRelik also depends on Redis for task scheduling, PostgreSQL for storing output
 metadata, and Prometheus for collecting task processing metrics.  Persistent Volumes
 for these services are also dynamically provisioned during deployment.
+
+#### Persistence in GRR and Fleetspeak
+
+By default, GRR and Fleetspeak will write into their datastores created on a MySQL
+```pod``` running in the cluster.
+
+For a productionised installation we recommend to externalise the GRR and Fleetspeak
+ datastores to their respective instances on either CloudSQL or Spanner.
 
 ### Enabling GKE Ingress and OIDC Authentication
 
@@ -508,6 +586,12 @@ Please be cautious before doing it.
 | `openrelik.prometheus.persistence.size`                        | Prometheus Persistent Volume size                                           | `2Gi`               |
 | `openrelik.prometheus.resources.limits`                        | The resources limits for the Prometheus containers                          | `{}`                |
 | `openrelik.prometheus.resources.requests`                      | The requested resources for the Prometheus containers                       | `{}`                |
+
+### Fleetspeak configuration
+
+
+### GRR configuration
+
 
 Specify each parameter using the --set key=value[,key=value] argument to `helm install`. For example,
 
