@@ -150,8 +150,6 @@ Now check that you can connect to the cluster:
 kubectl get nodes -o wide
 ```
 
-Take note of the ```INTERNAL-IP``` value as we will use it in step 5 below as ```$NODE_IP```
-
 ## Step 4: Create the Turbinia GCP Service Account
 
 To process virtual machine disks in Google Cloud Platform (GCP) with Turbinia,
@@ -201,7 +199,6 @@ helm install my-release osdfir-charts/osdfir-infrastructure \
     --set turbinia.gcp.projectZone=$ZONE \
     --set turbinia.serviceaccount.name=$KSA_NAME \
     --set persistence.size=10Gi
-    --set fleetspeak.frontend.address="$NODE_IP"
 ```
 
 The command deploys OSDFIR Infrastructure on the Kubernetes cluster while enabling

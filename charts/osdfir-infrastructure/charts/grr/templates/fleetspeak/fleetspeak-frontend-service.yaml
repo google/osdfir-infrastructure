@@ -1,4 +1,3 @@
-{{- if .Values.fleetspeak.frontend.address }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -30,7 +29,6 @@ spec:
     nodePort: {{ .Values.fleetspeak.frontend.listenPort }}
     {{- end }}
 ---
-{{- end }}
 kind: Service
 apiVersion: v1
 metadata:

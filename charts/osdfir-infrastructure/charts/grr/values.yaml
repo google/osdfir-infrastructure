@@ -51,7 +51,7 @@ fleetspeak:
     image: "ghcr.io/google/fleetspeak:v0.1.17"
     ## @param fleetspeak.frontend.address Sets the Fleetspeak frontend listen to use in a load balancer.
     ##
-    address: "10.132.0.10"
+    address: ""
     ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
     ##
     listenPort: 30443

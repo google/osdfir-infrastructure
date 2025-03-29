@@ -1,3 +1,20 @@
+{{- /* Step 1: Perform lookup, store result */}}
+{{- $lookupResult := lookup "v1" "Node" "" "" | default dict -}}
+{{- /* Step 2: Get values, store result */}}
+{{- $nodeList := $lookupResult.items -}}
+{{- /* Step 3: Get first node data, store result */}}
+{{- $nodeData := first $nodeList -}}
+{{- /* Step 4: Get the status */}}
+{{- $statusValue := $nodeData.status -}}
+{{- /* Step 5: Get the addresses */}}
+{{- $addressesList := $statusValue.addresses -}}
+{{- /* Step 6: Get the InternalIP address */}}
+{{- $internalIP := "" -}}
+{{- range $address := $addressesList -}}
+    {{- if and (not $internalIP) (eq $address.type "InternalIP") -}}
+        {{- $internalIP = $address.address -}}
+    {{- end -}}
+{{- end -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -41,7 +58,11 @@ spec:
             - "--dockerfile=Dockerfile.kaniko"
             - "--context=dir:///kaniko-build/osdfir-infrastructure"
             - "--context-sub-path=charts/osdfir-infrastructure/charts/grr/containers/grr-client/"
+            {{- if or (eq .Values.fleetspeak.frontend.expose "internal") (eq .Values.fleetspeak.frontend.expose "external") -}}
             - "--build-arg=FLEETSPEAK_FRONTEND={{ .Values.fleetspeak.frontend.address }}"
+            {{- else }}
+            - "--build-arg=FLEETSPEAK_FRONTEND={{ $internalIP }}"
+            {{- end }}
             - "--build-arg=FLEETSPEAK_FRONTEND_PORT={{ .Values.fleetspeak.frontend.listenPort }}"
             {{- if .Values.grr.daemon.image }}
             - "--destination={{ .Values.grr.daemon.image }}"
