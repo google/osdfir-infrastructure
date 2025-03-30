@@ -274,11 +274,13 @@ The Fleetspeak frontend for GRR can be exposed in three different modes:
 
      ```console
      gcloud compute addresses create fleetspeak-frontend-internal \
-       --region REGION --subnet SUBNETWORK \
-       --addresses IP_ADDRESS
+       --region REGION --subnet SUBNETWORK
+
+     # Find the IP address that you have been allocated.
+     gcloud compute addresses describe fleetspeak-frontend-external --region=REGION
      ```
 
-     * Choose the values for the ```REGION```, ```SUBNETWORK``` and ```IP_ADDRESS```
+     * Choose the values for the ```REGION``` and ```SUBNETWORK```
  so they match the location where you run your GKE cluster.
 
      ```bash
@@ -294,11 +296,10 @@ The Fleetspeak frontend for GRR can be exposed in three different modes:
    * You will have to reserve a static external IP address in your Google Cloud Project first.
 
      ```console
-     gcloud compute addresses create fleetspeak-frontend-external \
-       --region=REGION
+     gcloud compute addresses create fleetspeak-frontend-external --region=REGION
      
      # Find the IP address that you have been allocated.
-     gcloud compute addresses describe fleetspeak-frontend-external
+     gcloud compute addresses describe fleetspeak-frontend-external --region=REGION
      ```
 
      * Choose the value for the ```REGION``` so it matches the location where 
