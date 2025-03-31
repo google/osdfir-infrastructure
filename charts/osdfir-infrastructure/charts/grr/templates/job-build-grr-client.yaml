@@ -6,16 +6,18 @@
   {{- $lookupResult := lookup "v1" "Node" "" "" | default dict -}}
   {{- /* Step 2: Get values, store result */}}
   {{- $nodeList := $lookupResult.items -}}
-  {{- /* Step 3: Get first node data, store result */}}
-  {{- $nodeData := first $nodeList -}}
-  {{- /* Step 4: Get the status */}}
-  {{- $statusValue := $nodeData.status -}}
-  {{- /* Step 5: Get the addresses */}}
-  {{- $addressesList := $statusValue.addresses -}}
-  {{- /* Step 6: Get the InternalIP address */}}
-  {{- range $address := $addressesList -}}
-    {{- if and (not $frontend) (eq $address.type "InternalIP") -}}
-      {{- $frontend = $address.address -}}
+  {{- if $nodeList -}}
+    {{- /* Step 3: Get first node data, store result */}}
+    {{- $nodeData := first $nodeList -}}
+    {{- /* Step 4: Get the status */}}
+    {{- $statusValue := $nodeData.status -}}
+    {{- /* Step 5: Get the addresses */}}
+    {{- $addressesList := $statusValue.addresses -}}
+    {{- /* Step 6: Get the InternalIP address */}}
+    {{- range $address := $addressesList -}}
+      {{- if and (not $frontend) (eq $address.type "InternalIP") -}}
+        {{- $frontend = $address.address -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
