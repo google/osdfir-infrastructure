@@ -302,7 +302,7 @@ The Fleetspeak frontend for GRR can be exposed in three different modes:
      gcloud compute addresses describe fleetspeak-frontend-external --region=REGION
      ```
 
-     * Choose the value for the ```REGION``` so it matches the location where 
+     * Choose the value for the ```REGION``` so it matches the location where
  you run your GKE cluster.
 
      ```bash
