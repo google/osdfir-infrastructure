@@ -108,7 +108,8 @@ gcloud container clusters create $CLUSTER \
     --machine-type "e2-standard-8" \
     --zone $ZONE \
     --workload-pool=$PROJECT_ID.svc.id.goog \
-    --addons=[GcpFilestoreCsiDriver,GcsFuseCsiDriver,HttpLoadBalancing]
+    --enable-l4-ilb-subsetting \
+    --addons=GcpFilestoreCsiDriver,GcsFuseCsiDriver,HttpLoadBalancing
 ```
 
 > *Note*: It will take 4-5 minutes to create the cluster.
