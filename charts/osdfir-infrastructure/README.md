@@ -274,10 +274,10 @@ The Fleetspeak frontend for GRR can be exposed in three different modes:
 
      ```console
      gcloud compute addresses create fleetspeak-frontend-internal \
-       --region REGION --subnet SUBNETWORK
+       --region=us-central1 --subnet=default
 
      # Find the IP address that you have been allocated.
-     gcloud compute addresses describe fleetspeak-frontend-external --region=REGION
+     gcloud compute addresses describe fleetspeak-frontend-internal --region=us-central1
      ```
 
      * Choose the values for the ```REGION``` and ```SUBNETWORK```
@@ -296,10 +296,10 @@ The Fleetspeak frontend for GRR can be exposed in three different modes:
    * You will have to reserve a static external IP address in your Google Cloud Project first.
 
      ```console
-     gcloud compute addresses create fleetspeak-frontend-external --region=REGION
+     gcloud compute addresses create fleetspeak-frontend-external --region=us-central1
      
      # Find the IP address that you have been allocated.
-     gcloud compute addresses describe fleetspeak-frontend-external --region=REGION
+     gcloud compute addresses describe fleetspeak-frontend-external --region=us-central1
      ```
 
      * Choose the value for the ```REGION``` so it matches the location where
