@@ -24,7 +24,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: job-grr-client-builder
+  name: {{ .Release.Name }}-grr-job-client-builder
 spec:
   template:
     spec:
