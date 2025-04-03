@@ -10,9 +10,5 @@ Before we get started make sure you clone the repo onto your machine.
 git clone https://github.com/google/osdfir-infrastructure.git
 cd osdfir-infrastructure
 export REPO=$(pwd)
-
-cd charts/osdfir-infrastructure/charts/grr
-./createSigningKeys.sh
-cd -
 ```
 
