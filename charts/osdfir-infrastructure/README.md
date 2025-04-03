@@ -124,7 +124,7 @@ OSDFIR Infrastructure chart.
 The GRR and Fleetspeak container images are managed using the following values,
 `grr:<tag>` and `fleetspeak:<tag>`, where `<tag>` is replaced with the version.
 
-To view all configurable values of the Yeti subchart, including the default
+To view all configurable values of the GRR subchart, including the default
 image tags and repositories, run the following command:
 
 ```console
