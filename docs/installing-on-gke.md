@@ -250,6 +250,7 @@ The default way that the Fleetspeak frontend for GRR is exposed is through a ```
 ### Use an Internal L4 LoadBalancer
 
 ```internal``` exposes the Fleetspeak frontend as an [internal Google Cloud L4 LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing)
+
    * This allows you to keep your Fleetspeak/GRR cluster on your private VPC.
    * You will have to reserve a static internal IP address in your Google Cloud Project first.
 
@@ -274,6 +275,7 @@ The default way that the Fleetspeak frontend for GRR is exposed is through a ```
 ### Use an External L4 loadbalancer
 
 ```external``` exposes the Fleetspeak frontend as an [external Google Cloud L4 LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/how-to/backend-service-based-external-load-balancer)
+
    * This allows you to run your Fleetspeak/GRR cluster so it is available from
  anywhere on the Internet. Use this with caution as it exposes your cluster externally!
    * You will have to reserve a static external IP address in your Google Cloud Project first.
