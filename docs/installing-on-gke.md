@@ -230,7 +230,72 @@ This configures OSDFIR Infrastructure to provision a GCP Filestore instance with
 `ReadWriteMany` access mode, which is suitable for multi-node clusters where
 shared storage is required.
 
-## Step 6: Setup dfTimewolf and CLI configs
+## Step 6: Expose Fleetspeak/GRR on L4 LoadBalancer
+
+The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443) on the node IP.
+   * This is the simplest mode and only suitable for demo purposes.
+   * For a production grade deployments use either an interal or external L4 LoadBalancer a described below.
+
+```node``` exposes the Fleetspeak frontend as a ```NodePort``` service.
+
+   * Find the IP for one of your cluster nodes and install the chart as following:
+
+     ```bash
+     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="node" --set fleetspeak.frontend.address="$NODE_IP"
+     ```
+
+   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients in the same network as the node is running in.
+
+### Use an Internal L4 LoadBalancer
+
+```internal``` exposes the Fleetspeak frontend as an internal Google Cloud L4 LoadBalancer
+   * This allows you to keep your Fleetspeak/GRR cluster on your private VPC.
+   * You will have to reserve a static internal IP address in your Google Cloud Project first.
+
+     ```console
+     gcloud compute addresses create fleetspeak-frontend-internal \
+       --region=us-central1 --subnet=default
+
+     # Find the IP address that you have been allocated.
+     gcloud compute addresses describe fleetspeak-frontend-internal --region=us-central1
+     ```
+
+     * Choose the values for the ```REGION``` and ```SUBNETWORK```
+ so they match the location where you run your GKE cluster.
+
+     ```bash
+     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="internal" --set fleetspeak.frontend.address="$IP_ADDRESS"
+     ```
+
+   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients in the same Google Cloud VPC as the node is running in.
+
+### Use an External L4 loadbalancer
+
+```external``` exposes the Fleetspeak frontend as an external Google Cloud L4 LoadBalancer
+   * This allows you to run your Fleetspeak/GRR cluster so it is available from
+ anywhere on the Internet. Use this with caution as it exposes your cluster externally!
+   * You will have to reserve a static external IP address in your Google Cloud Project first.
+
+     ```console
+     gcloud compute addresses create fleetspeak-frontend-external --region=us-central1
+     
+     # Find the IP address that you have been allocated.
+     gcloud compute addresses describe fleetspeak-frontend-external --region=us-central1
+     ```
+
+     * Choose the value for the ```REGION``` so it matches the location where
+ you run your GKE cluster.
+
+     ```bash
+     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="external" --set fleetspeak.frontend.address="$IP_ADDRESS"
+     ```
+
+   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients anywhere where they have access to the Internet.
+
+## Step 7: Setup dfTimewolf and CLI configs
 
 OSDFIR Infrastructure utilizes dfTimewolf for orchestrating forensic collection
 and processing. dfTimewolf allows you to define "recipes" that specify how data
@@ -288,7 +353,7 @@ EOF
 Now you have dfTimewolf installed and configured to interact with your OSDFIR
 Infrastructure deployment.
 
-## Step 7: Process a Google Cloud Disk
+## Step 8: Process a Google Cloud Disk
 
 With OSDFIR Infrastructure deployed and dfTimewolf installed and configured,
 you're ready to process a GCP disk.
