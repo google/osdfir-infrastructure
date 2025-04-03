@@ -50,7 +50,7 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: {{ .Release-Name }}-grr-mysql
   {{- if .Values.grr.namespace }}
   namespace: {{ .Values.grr.namespace }}
   {{- end }}
