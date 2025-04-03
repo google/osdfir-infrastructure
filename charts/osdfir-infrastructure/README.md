@@ -255,62 +255,13 @@ Follow these steps to upgrade the database on your Kubernetes deployment:
 
 ### Managing the GRR and Fleetspeak config
 
-The Fleetspeak frontend for GRR can be exposed in three different modes:
+The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443)
+on the ```node IP```.
 
-1. ```node``` exposes the Fleetspeak frontend as a ```NodePort``` service.
-   * This is the simplest mode and only suitable for demo purposes.
-   * Find the IP for one of your cluster nodes and install the chart as following:
+For example, in case you run on minikube you could retrieve the ```node IP``` by running ```minikube ip```.
+The Fleetspeak/GRR clients (a.k.a. agents) will then use that IP address and the port 30443 to connect to the server.
 
-     ```bash
-     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="node" --set fleetspeak.frontend.address="$NODE_IP"
-     ```
-
-   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
- binaries on your clients in the same network as the node is running in.
-
-2. ```internal``` exposes the Fleetspeak frontend as an internal Google Cloud L4 LoadBalancer
-   * This allows you to keep your Fleetspeak/GRR cluster on your private VPC.
-   * You will have to reserve a static internal IP address in your Google Cloud Project first.
-
-     ```console
-     gcloud compute addresses create fleetspeak-frontend-internal \
-       --region=us-central1 --subnet=default
-
-     # Find the IP address that you have been allocated.
-     gcloud compute addresses describe fleetspeak-frontend-internal --region=us-central1
-     ```
-
-     * Choose the values for the ```REGION``` and ```SUBNETWORK```
- so they match the location where you run your GKE cluster.
-
-     ```bash
-     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="internal" --set fleetspeak.frontend.address="$IP_ADDRESS"
-     ```
-
-   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
- binaries on your clients in the same Google Cloud VPC as the node is running in.
-
-3. ```external``` exposes the Fleetspeak frontend as an external Google Cloud L4 LoadBalancer
-   * This allows you to run your Fleetspeak/GRR cluster so it is available from
- anywhere on the Internet. Use this with caution as it exposes your cluster externally!
-   * You will have to reserve a static external IP address in your Google Cloud Project first.
-
-     ```console
-     gcloud compute addresses create fleetspeak-frontend-external --region=us-central1
-     
-     # Find the IP address that you have been allocated.
-     gcloud compute addresses describe fleetspeak-frontend-external --region=us-central1
-     ```
-
-     * Choose the value for the ```REGION``` so it matches the location where
- you run your GKE cluster.
-
-     ```bash
-     helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="external" --set fleetspeak.frontend.address="$IP_ADDRESS"
-     ```
-
-   * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
- binaries on your clients anywhere where they have access to the Internet.
+For learning about other ways to expose Fleetspeak/GRR on layer 4 loadbalancers within GCP, see the [installing-on-gke.md](..docs/installing-on-gke.md) guide.
 
 ### Resource requests and limits
 
