@@ -11,6 +11,7 @@ following tools:
 * [Timesketch](https://github.com/google/timesketch)
 * [Yeti](https://github.com/yeti-platform/yeti)
 * [OpenRelik](https://openrelik.org)
+* [GRR](https://github.com/google/grr)
 
 ## TL;DR
 
@@ -117,6 +118,18 @@ helm show values osdfir-infrastructure/charts/openrelik
 
 Specify the desired image tags and repositories when deploying or upgrading the
 OSDFIR Infrastructure chart.
+
+### Managing GRR and Fleetspeak images
+
+The GRR and Fleetspeak container images are managed using the following values,
+`grr:<tag>` and `fleetspeak:<tag>`, where `<tag>` is replaced with the version.
+
+To view all configurable values of the GRR subchart, including the default
+image tags and repositories, run the following command:
+
+```console
+helm show values osdfir-infrastructure/charts/grr
+```
 
 ### Upgrading the Helm chart
 
@@ -240,6 +253,16 @@ Follow these steps to upgrade the database on your Kubernetes deployment:
       kubectl rollout restart deployment my-release-timesketch-web
       ```
 
+### Managing the GRR and Fleetspeak config
+
+The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443)
+on the ```node IP```.
+
+For example, in case you run on minikube you could retrieve the ```node IP``` by running ```minikube ip```.
+The Fleetspeak/GRR clients (a.k.a. agents) will then use that IP address and the port 30443 to connect to the server.
+
+For learning about other ways to expose Fleetspeak/GRR on layer 4 loadbalancers within GCP, see the [installing-on-gke.md](..docs/installing-on-gke.md) guide.
+
 ### Resource requests and limits
 
 OSDFIR Infrastructure charts allow setting resource requests and limits for all
@@ -291,6 +314,14 @@ The volume is created using dynamic volume provisioning.
 OpenRelik also depends on Redis for task scheduling, PostgreSQL for storing output
 metadata, and Prometheus for collecting task processing metrics.  Persistent Volumes
 for these services are also dynamically provisioned during deployment.
+
+#### Persistence in GRR and Fleetspeak
+
+By default, GRR and Fleetspeak will write into their datastores created on a MySQL
+```pod``` running in the cluster.
+
+For a production grade installation we recommend to operate the GRR and Fleetspeak
+ datastores on either managed CloudSQL or Spanner instances.
 
 ### Enabling GKE Ingress and OIDC Authentication
 
@@ -507,6 +538,12 @@ Please be cautious before doing it.
 | `openrelik.prometheus.persistence.size`                        | Prometheus Persistent Volume size                                           | `2Gi`               |
 | `openrelik.prometheus.resources.limits`                        | The resources limits for the Prometheus containers                          | `{}`                |
 | `openrelik.prometheus.resources.requests`                      | The requested resources for the Prometheus containers                       | `{}`                |
+
+### Fleetspeak configuration
+
+
+### GRR configuration
+
 
 Specify each parameter using the --set key=value[,key=value] argument to `helm install`. For example,
 

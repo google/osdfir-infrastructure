@@ -10,3 +10,5 @@
 # Exclude config files
 charts/timesketch/configs
 turbinia.conf
+
+charts/osdfir-infrastructure/charts/grr/certs
