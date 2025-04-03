@@ -1,5 +1,6 @@
 #!/bin/sh
 # This script can be used to create the executable signing keys for the GRR clients.
+# Note: This is optional and just intended as an example for how keys could be created manually.
 set -e
 
 mkdir certs
