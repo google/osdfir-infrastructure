@@ -5,6 +5,7 @@
 ## - Timesketch; ref https://github.com/google/timesketch
 ## - Yeti; ref https://github.com/yeti-platform/yeti
 ## - OpenRelik; ref https://github.com/openrelik
+## - GRR; ref https://github.com/google/grr
 ##
 ## @section Global parameters
 ## Please, note that this will override the parameters configured to use the global value
