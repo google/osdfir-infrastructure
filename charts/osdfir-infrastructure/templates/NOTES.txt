@@ -36,19 +36,20 @@ Login to Yeti with the User `yeti`. To get your password run:
 {{ if .Values.global.openrelik.enabled -}}
 To connect to the OpenRelik URL, run:
   {{- if and (.Values.global.ingress.enabled) (.Values.global.ingress.openRelikFrontendHost) }}
-  $ echo "Visit https://{{ .Values.global.ingress.openRelikFrontendHost }} to access Yeti UI externally"
-  {{- end }}
-  {{- if and (.Values.global.ingress.enabled) (.Values.global.ingress.openRelikAPIHost) }}
+  $ echo "Visit https://{{ .Values.global.ingress.openRelikFrontendHost }} to access OpenRelik UI externally"
   $ echo "Visit https://{{ .Values.global.ingress.openRelikAPIHost }} to access OpenRelik API externally"
   {{- end }}
-
-To connect to OpenRelik locally:
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik 8711:8711
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik-api 8710:8710
   $ echo "Visit http://127.0.0.1:8711 to access the OpenRelik UI"
 
 Login to OpenRelik with the User `openrelik`. To get your password run:
-  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-openrelik-secret -o jsonpath="{.data.openrelik-user}" | base64 -d
+  $ kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }}-openrelik-secret -o jsonpath="{.data.openrelik-user}" | base64 -d; echo ""
+{{- end }}
+
+{{ if .Values.global.grr.enabled -}}
+To connect to the GRR URL, run:
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-grr-admin 8000:8000
 {{- end }}
 
 Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:
