@@ -45,7 +45,7 @@ spec:
             cd /kaniko-build; 
             git clone https://github.com/daschwanden/osdfir-infrastructure.git
             cd osdfir-infrastructure
-            git checkout feature/grr
+            git checkout grr-v3.4.9.1
             cp /grr/grr.server.yaml charts/osdfir-infrastructure/charts/grr/containers/grr-client/config/
           volumeMounts:
           - name: grr-exe-sign-keys-volume
