@@ -41,6 +41,8 @@ spec:
         ports:
         - containerPort: {{ .Values.fleetspeak.admin.listenPort }}
           name: admin
+        - containerPort: {{ .Values.fleetspeak.admin.healthCheckPort }}
+          name: healthz
         - containerPort: {{ .Values.prometheus.metricsPort }}
           name: metrics
         command: ["/fleetspeak/bin/server"]

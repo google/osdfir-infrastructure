@@ -30,6 +30,18 @@ spec:
                 values:
                 - grr
       initContainers:
+      - name: init-fleetspeak-health-check
+        image: bitnami/git
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          set -e
+          until [ "$(curl -s -w '%{http_code}' -o /dev/null http://{{ .Release.Name }}-grr-fleetspeak-admin:{{ .Values.fleetspeak.admin.healthCheckPort }})" -eq 200 ]
+          do
+            echo "Waiting for Fleetspeak Admin to be ready";
+            sleep 5;
+          done
+          echo "Fleetspeak Admin health check is ready"
       - name: init-exe-sign
         image: bitnami/git
         command: ["/bin/sh", "-c"]

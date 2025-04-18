@@ -32,6 +32,9 @@ fleetspeak:
   subjectCommonName: "fleetspeak-frontend"
 
   admin:
+    ## @param fleetspeak.admin.healthCheckPort Sets the Fleetspeak admin health check port to use.
+    ##
+    healthCheckPort: 8080
     ## @param fleetspeak.admin.image Sets the Fleetspeak admin container image to use.
     ##
     image: "ghcr.io/google/fleetspeak:v0.1.17"
