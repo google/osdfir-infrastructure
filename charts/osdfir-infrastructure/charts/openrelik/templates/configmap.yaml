@@ -60,6 +60,9 @@ data:
     client_id = ""
     client_secret = ""
 
+    # Extra client_ids for apps that authenticate with OpenRelik using Google OAuth.
+    extra_audiences = []
+
     # Restrict logins from a Google Workspace domain.
     # Empty value = any domain, including gmail.com
     workspace_domain = ""
