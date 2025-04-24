@@ -140,40 +140,6 @@ The HashR container images are managed using the following values,
 Specify the desired image tags and repositories when deploying or upgrading the
 OSDFIR Infrastructure chart.
 
-### Managing HashR Deployment
-
-HashR allows you to build your own hash sets based on your data sources. It's a
-tool that extracts files and hashes out of input sources (e.g. raw disk image,
-GCE disk image, ISO file, Windows update package, .tar.gz file, etc.).
-
-#### Configure the HashR importers
-
-HashR provides different importers. Each importer has its own CronJob and can be
-configured separately. Enable and configure all importers you want to use in the
-`config.importers` section of the [values.yaml file](./charts/hashr/values.yaml).
-
-Ensure that you have setup all requirements for the importers defined in the
-HashR project. See [HashR importers](https://github.com/google/hashr?tab=readme-ov-file#setting-up-importers)
-for more details.
-
-#### Add data for HashR to process
-
-The HashR CronJob has access to the Persistent Volume (PVC) at `/mnt/hashrvolume`.
-See the [Persistence](#persistence) section for more details.
-
-Each importer that needs local files to procress (e.g. deb, zip, iso9660, etc)
-will look in a subfolder of `/mnt/hashrvolume/data/<importer>` for files to
-process. E.g. `/mnt/hashrvolume/data/deb/`for the deb importer.
-
-To add data for processing use the `kubectl cp` command and the
-`hashr-data-manager` pod.
-
-Example:
-
-```console
-kubectl cp <local PATH>/deb my-release-hashr-data-manager:/mnt/hashrvolume/data/
-```
-
 ### Upgrading the Helm chart
 
 Helm chart updates can be retrieved by running `helm repo update`.
@@ -315,6 +281,40 @@ For example, in case you run on minikube you could retrieve the ```node IP``` by
 The Fleetspeak/GRR clients (a.k.a. agents) will then use that IP address and the port 30443 to connect to the server.
 
 For learning about other ways to expose Fleetspeak/GRR on layer 4 loadbalancers within GCP, see the [installing-on-gke.md](..docs/installing-on-gke.md) guide.
+
+### Managing HashR Deployment
+
+HashR allows you to build your own hash sets based on your data sources. It's a
+tool that extracts files and hashes out of input sources (e.g. raw disk image,
+GCE disk image, ISO file, Windows update package, .tar.gz file, etc.).
+
+#### Configure the HashR importers
+
+HashR provides different importers. Each importer has its own CronJob and can be
+configured separately. Enable and configure all importers you want to use in the
+`config.importers` section of the [values.yaml file](./charts/hashr/values.yaml).
+
+Ensure that you have setup all requirements for the importers defined in the
+HashR project. See [HashR importers](https://github.com/google/hashr?tab=readme-ov-file#setting-up-importers)
+for more details.
+
+#### Add data for HashR to process
+
+The HashR CronJob has access to the Persistent Volume (PVC) at `/mnt/hashrvolume`.
+See the [Persistence](#persistence) section for more details.
+
+Each importer that needs local files to procress (e.g. deb, zip, iso9660, etc)
+will look in a subfolder of `/mnt/hashrvolume/data/<importer>` for files to
+process. E.g. `/mnt/hashrvolume/data/deb/`for the deb importer.
+
+To add data for processing use the `kubectl cp` command and the
+`hashr-data-manager` pod.
+
+Example:
+
+```console
+kubectl cp <local PATH>/deb my-release-hashr-data-manager:/mnt/hashrvolume/data/
+```
 
 ### Resource requests and limits
 
