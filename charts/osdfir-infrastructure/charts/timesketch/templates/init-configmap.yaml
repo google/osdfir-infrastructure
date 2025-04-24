@@ -14,17 +14,34 @@ data:
     mkdir -p /etc/timesketch
     cd /etc/timesketch
 
-    if [ $(ls /tmp/timesketch/ | wc -l) -gt 0 ]; then
-      echo "Using existing configuration files provided."
-      ls /tmp/timesketch
+    # Check if a base64 encoded config tarball is provided
+    if [ -f /tmp/timesketch/ts-configs.tgz.b64 ]; then
+      echo "Using existing configuration provided via base64 encoded tarball (ts-configs.tgz.b64)."
+      ls /tmp/timesketch/
+      base64 -d /tmp/timesketch/ts-configs.tgz.b64 | tar --no-same-owner -xzf - -C /etc/timesketch/
+      echo "Extracted configuration to /etc/timesketch/ - confirmation:"
+      ls -lah /etc/timesketch/
+    elif [ $(ls /tmp/timesketch/ | wc -l) -gt 0 ]; then
+      echo "Using existing configuration files provided directly in /tmp/timesketch/."
       cp /tmp/timesketch/* /etc/timesketch/
+      ls -lah /etc/timesketch/
+      echo "Copied configuration files."
     else
-      echo -n "* Fetching configuration files.." 
-      GITHUB_BASE_URL="https://raw.githubusercontent.com/google/timesketch/master"
-      # Fetch default Timesketch config files
-      git clone https://github.com/google/timesketch.git
-      cp -r timesketch/data/* /etc/timesketch/
-      rm -rf timesketch
+      echo "No existing configuration found. Fetching default configuration files from GitHub.."
+      # Using a temporary directory for cloning
+      TMP_CLONE_DIR=$(mktemp -d)
+      # Try cloning the specific tag/branch first, fallback to master if it fails
+      echo "Attempting to clone branch/tag: {{ .Values.image.tag }}"
+      if ! git clone --depth 1 --branch {{ .Values.image.tag }} https://github.com/google/timesketch.git "$TMP_CLONE_DIR"; then
+        echo "Failed to clone branch/tag '{{ .Values.image.tag }}', falling back to 'master' branch."
+        # Clean up potentially partially cloned directory before retrying
+        rm -rf "$TMP_CLONE_DIR" && mkdir -p "$TMP_CLONE_DIR"
+        git clone --depth 1 --branch master https://github.com/google/timesketch.git "$TMP_CLONE_DIR"
+      fi
+      # Copy only the necessary data directory contents
+      cp -a "$TMP_CLONE_DIR"/data/* /etc/timesketch/
+      # Clean up the temporary clone directory
+      rm -rf "$TMP_CLONE_DIR"
       echo "OK"
     fi
 

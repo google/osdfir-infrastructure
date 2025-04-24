@@ -186,10 +186,18 @@ files independently of the Helm chart:
     Organize all the Timesketch configuration files in a directory with your
     desired customizations.
 
+    To download the default configuration folder and apply your changes locally
+    you can use the [download-timesketch-configs.sh script](./charts/timesketch/tools/download-timesketch-configs.sh).
+
+    ```console
+    bash download-timesketch-configs.sh --release 20250408
+    ```
+
 2. Create a ConfigMap:
 
     ```console
-    kubectl create configmap timesketch-configs --from-file=./timesketch-configs/
+    kubectl create configmap timesketch-configs \
+      --from-file=ts-configs.tgz.b64=<(tar czf - -C ./timesketch-configs/ . | base64)
     ```
 
     Replace `./timesketch-configs/` with the actual path to your configuration files.
@@ -208,7 +216,9 @@ To update the config changes using this method:
 1. Update the ConfigMap:
 
     ```console
-    kubectl create configmap timesketch-configs --from-file=./my-configs/ --dry-run -o yaml | kubectl replace -f -
+    kubectl create configmap timesketch-configs \
+      --from-file=ts-configs.tgz.b64=<(tar czf - -C ./timesketch-configs/ . | base64) \
+      --dry-run -o yaml | kubectl replace -f -
     ```
 
 2. Restart the Timesketch deployment to apply the new configs

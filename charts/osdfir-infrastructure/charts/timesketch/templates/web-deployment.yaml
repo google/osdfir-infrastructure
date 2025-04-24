@@ -23,11 +23,6 @@ spec:
         app.kubernetes.io/component: frontend
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
     spec:
-      {{- if .Values.securityContext.enabled }}
-      securityContext:
-        fsGroup: 2
-        fsGroupChangePolicy: Always
-      {{- end }}
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
@@ -38,20 +33,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/sh", "-c", "gunicorn --bind 0.0.0.0:5000 --capture-output --timeout 600 --workers 4 timesketch.wsgi:application"]
-          {{- if .Values.securityContext.enabled }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
-            privileged: false
-            readOnlyRootFilesystem: true
-            runAsGroup: 2
-            runAsNonRoot: true
-            runAsUser: 2
-            seccompProfile:
-              type: RuntimeDefault
-          {{- end }}
           {{- if .Values.config.createUser }}
           lifecycle:
             postStart:
@@ -63,7 +44,7 @@ spec:
             - name: TIMESKETCH_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-timesketch-secret 
+                  name: {{ .Release.Name }}-timesketch-secret
                   key: timesketch-user
             {{- end }}
           volumeMounts:
