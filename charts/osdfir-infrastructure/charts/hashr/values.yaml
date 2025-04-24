@@ -22,7 +22,7 @@ global:
     ##
     enabled: false
   hashr:
-    ## @param global.grr.enabled Enables the GRR deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ## @param global.hashr.enabled Enables the HashR deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
 ## @section HashR image configuration
