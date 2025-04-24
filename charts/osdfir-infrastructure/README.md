@@ -132,19 +132,19 @@ image tags and repositories, run the following command:
 helm show values osdfir-infrastructure/charts/grr
 ```
 
-### Managing HashR Deployment
-
-HashR allows you to build your own hash sets based on your data sources. It's a
-tool that extracts files and hashes out of input sources (e.g. raw disk image,
-GCE disk image, ISO file, Windows update package, .tar.gz file, etc.).
-
-#### Managing HashR images
+### Managing HashR images
 
 The HashR container images are managed using the following values,
 `hashr.image.repository` and `hashr.image.tag`.
 
 Specify the desired image tags and repositories when deploying or upgrading the
 OSDFIR Infrastructure chart.
+
+### Managing HashR Deployment
+
+HashR allows you to build your own hash sets based on your data sources. It's a
+tool that extracts files and hashes out of input sources (e.g. raw disk image,
+GCE disk image, ISO file, Windows update package, .tar.gz file, etc.).
 
 #### Configure the HashR importers
 
@@ -173,15 +173,6 @@ Example:
 ```console
 kubectl cp <local PATH>/deb my-release-hashr-data-manager:/mnt/hashrvolume/data/
 ```
-
-#### Persistence
-
-The HashR deployment stores data at the `/mnt/hashrvolume` path of the
-container.
-
-Persistent Volume Claims are used to keep the data across deployments. This is
-known to work in GCP and Minikube. See the Parameters section to configure the
-PVC or to disable persistence.
 
 ### Upgrading the Helm chart
 
@@ -384,6 +375,14 @@ By default, GRR and Fleetspeak will write into their datastores created on a MyS
 
 For a production grade installation we recommend to operate the GRR and Fleetspeak
  datastores on either managed CloudSQL or Spanner instances.
+
+#### Persistence in HashR
+
+The HashR deployment stores data at the `/mnt/hashrvolume` path of the
+container.
+
+Persistent Volume Claims are used to keep the data across deployments. See the
+Parameters section to configure the PVC or to disable persistence.
 
 ### Enabling GKE Ingress and OIDC Authentication
 
