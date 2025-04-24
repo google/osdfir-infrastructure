@@ -62,7 +62,11 @@ spec:
       volumes:
         - name: timesketchvolume
           persistentVolumeClaim:
+            {{- if .Values.persistence.existingPVC }}
+            claimName: {{ .Values.persistence.existingPVC }}
+            {{- else }}
             claimName: {{ .Release.Name }}-timesketchvolume-claim
+            {{- end }}
             readOnly: false
         - name: init-timesketch
           configMap:

@@ -65,7 +65,11 @@ spec:
       volumes:
         - name: openrelikvolume
           persistentVolumeClaim:
+            {{- if .Values.persistence.existingPVC }}
+            claimName: {{ .Values.persistence.existingPVC }}
+            {{- else }}
             claimName: {{ .Release.Name }}-openrelikvolume-claim
+            {{- end }}
             readOnly: false
         - name: settings-config
           configMap:
