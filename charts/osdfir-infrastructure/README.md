@@ -12,6 +12,7 @@ following tools:
 * [Yeti](https://github.com/yeti-platform/yeti)
 * [OpenRelik](https://openrelik.org)
 * [GRR](https://github.com/google/grr)
+* [HashR](https://github.com/google/hashr)
 
 ## TL;DR
 
@@ -129,6 +130,40 @@ image tags and repositories, run the following command:
 
 ```console
 helm show values osdfir-infrastructure/charts/grr
+```
+
+### Managing HashR Deployment
+
+HashR allows you to build your own hash sets based on your data sources. It's a
+tool that extracts files and hashes out of input sources (e.g. raw disk image,
+GCE disk image, ISO file, Windows update package, .tar.gz file, etc.).
+
+#### Configure the HashR importers
+
+HashR provides different importers. Each importer has its own CronJob and can be
+configured separately. Enable and configure all importers you want to use in the
+`config.importers` section of the [values.yaml file](./charts/hashr/values.yaml).
+
+Ensure that you have setup all requirements for the importers defined in the
+HashR project. See [HashR importers](https://github.com/google/hashr?tab=readme-ov-file#setting-up-importers)
+for more details.
+
+#### Add data for HashR to process
+
+The HashR CronJob has access to the Persistent Volume (PVC) at `/mnt/hashrvolume`.
+See the [Persistence](#persistence) section for more details.
+
+Each importer that needs local files to procress (e.g. deb, zip, iso9660, etc)
+will look in a subfolder of `/mnt/hashrvolume/data/<importer>` for files to
+process. E.g. `/mnt/hashrvolume/data/deb/`for the deb importer.
+
+To add data for processing use the `kubectl cp` command and the
+`hashr-data-manager` pod.
+
+Example:
+
+```console
+kubectl cp <local PATH>/deb my-release-hashr-data-manager:/mnt/hashrvolume/data/
 ```
 
 ### Upgrading the Helm chart
