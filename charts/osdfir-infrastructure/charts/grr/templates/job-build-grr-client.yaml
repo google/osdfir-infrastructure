@@ -30,6 +30,18 @@ spec:
     spec:
       serviceAccountName: {{ .Release.Name }}-grr-sa
       initContainers:
+        - name: init-fleetspeak-health-check
+          image: bitnami/git
+          command: ["/bin/sh", "-c"]
+          args:
+          - |
+            set -e
+            until [ "$(curl -s -w '%{http_code}' -o /dev/null http://{{ .Release.Name }}-grr-fleetspeak-frontend:{{ .Values.fleetspeak.frontend.healthCheckPort }})" -eq 200 ]
+            do
+              echo "Waiting for Fleetspeak Frontend to be ready";
+              sleep 5;
+            done
+            echo "Fleetspeak Frontend health check is ready"
         - name: init-kaniko-env
           image: bitnami/git
           command: ["/bin/sh", "-c"]
@@ -45,7 +57,7 @@ spec:
             cd /kaniko-build; 
             git clone https://github.com/daschwanden/osdfir-infrastructure.git
             cd osdfir-infrastructure
-            git checkout feature/grr
+            git checkout grr-v3.4.9.1
             cp /grr/grr.server.yaml charts/osdfir-infrastructure/charts/grr/containers/grr-client/config/
           volumeMounts:
           - name: grr-exe-sign-keys-volume
