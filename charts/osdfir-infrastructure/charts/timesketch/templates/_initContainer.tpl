@@ -30,6 +30,13 @@ Worker pod upon startup.
           name: {{ printf "%s-yeti-secret" .Release.Name }}
           key: "yeti-api"
     {{- end }}
+    {{- if .Values.global.hashr.enabled }}
+    - name: HASHR_POSTGRES_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ printf "%s-hashr-secret" .Release.Name }}
+          key: "postgres-user"
+    {{- end }}
     {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
     - name: OIDC_CLIENT_ID
       valueFrom:

@@ -87,3 +87,14 @@ data:
     sed -i 's#^YETI_API_KEY =.*#YETI_API_KEY = "'$YETI_API_KEY'"#' timesketch.conf
     sed -i 's#^YETI_API_ROOT =.*#YETI_API_ROOT =  {{ printf "http://%s-yeti:9000/api/v2" .Release.Name | quote }}#' timesketch.conf
     {{- end }}
+
+    # Enable Hashr integration if the secret key is provided
+    {{- if .Values.global.hashr.enabled }}
+    sed -i -e "s/^# HASHR_DB_USER =.*/HASHR_DB_USER = 'postgres'/g" timesketch.conf
+    sed -i -e "s/^# HASHR_DB_PW =.*/HASHR_DB_PW = '$HASHR_POSTGRES_KEY'/g" timesketch.conf
+    sed -i -e "s/^# HASHR_DB_ADDR =.*/HASHR_DB_ADDR = '{{ printf "%s-hashr-postgres" .Release.Name | quote }}'/g" timesketch.conf
+    sed -i -e "s/^# HASHR_DB_PORT =.*/HASHR_DB_PORT = '5432'/g" timesketch.conf
+    sed -i -e "s/^# HASHR_DB_NAME =.*/HASHR_DB_NAME = 'hashr'/g" timesketch.conf
+    sed -i -e "s/^# HASHR_QUERY_BATCH_SIZE =.*/HASHR_QUERY_BATCH_SIZE = '50000'/g" timesketch.conf
+    sed -i -e "s/^# HASHR_ADD_SOURCE_ATTRIBUTE =.*/HASHR_ADD_SOURCE_ATTRIBUTE = True/g" timesketch.conf
+    {{- end }}
