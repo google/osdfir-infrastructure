@@ -49,10 +49,10 @@ config:
     aws:
       # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#aws
-      ## @param hashr.importers.aws.enabled Enables the AWS importer
+      ## @param config.importers.aws.enabled Enables the AWS importer
       ##
       enabled: false
-      ## @param hashr.importers.aws.schedule sets the CronJob schedule times
+      ## @param config.importers.aws.schedule sets the CronJob schedule times
       ##
       # At 09:00 on Monday
       schedule: "0 9 * * 1"
@@ -61,94 +61,94 @@ config:
       # https://github.com/google/hashr?tab=readme-ov-file#gcp-google-cloud-platform
       # IMPORTANT: Store your SA key in the hashrvolume via kubectl cp!
       # e.g. kubectl cp ~/hashr-sa-private-key.json hashr-data-manager:/mnt/hashrvolume/data/creds/hashr-sa-private-key.json
-      ## @param hashr.importers.gcp.enabled Enables the GCP importer
+      ## @param config.importers.gcp.enabled Enables the GCP importer
       ##
       enabled: false
-      ## @param hashr.importers.gcp.schedule sets the CronJob schedule times
+      ## @param config.importers.gcp.schedule sets the CronJob schedule times
       ##
       # At 03:00 on Monday
       schedule: "0 3 * * 1"
-      ## @param hashr.importers.gcp.gcp_projects sets a comma separated list of cloud projects containing disk images
+      ## @param config.importers.gcp.gcp_projects sets a comma separated list of cloud projects containing disk images
       ##
       gcp_projects: ""
-      ## @param hashr.importers.gcp.hashr_gcp_project sets GCP project that will be used to store copy of disk images for processing and also run Cloud Build
+      ## @param config.importers.gcp.hashr_gcp_project sets GCP project that will be used to store copy of disk images for processing and also run Cloud Build
       ##
       hashr_gcp_project: ""
-      ## @param hashr.importers.gcp.hashr_gcs_bucket sets GCS bucket that will be used to store output of Cloud Build (disk images in .tar.gz format)
+      ## @param config.importers.gcp.hashr_gcs_bucket sets GCS bucket that will be used to store output of Cloud Build (disk images in .tar.gz format)
       ##
       hashr_gcs_bucket: ""
     targz:
       # https://github.com/google/hashr?tab=readme-ov-file#targz
-      ## @param hashr.importers.targz.enabled Enables the tar.gz importer
+      ## @param config.importers.targz.enabled Enables the tar.gz importer
       ##
       enabled: false
-      ## @param hashr.importers.targz.schedule sets the CronJob schedule times
+      ## @param config.importers.targz.schedule sets the CronJob schedule times
       ##
       # At 03:00 on Tuesday
       schedule: "0 3 * * 2"
     windows:
       # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#windows
-      ## @param hashr.importers.windows.enabled Enables the Windows importer
+      ## @param config.importers.windows.enabled Enables the Windows importer
       ##
       enabled: false
-      ## @param hashr.importers.windows.schedule sets the CronJob schedule times
+      ## @param config.importers.windows.schedule sets the CronJob schedule times
       ##
       # At 03:00 on Wednesday
       schedule: "0 3 * * 3"
     wsus:
       # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#wsus
-      ## @param hashr.importers.wsus.enabled Enables the WSUS importer
+      ## @param config.importers.wsus.enabled Enables the WSUS importer
       ##
       enabled: false
-      ## @param hashr.importers.wsus.schedule sets the CronJob schedule times
+      ## @param config.importers.wsus.schedule sets the CronJob schedule times
       ##
       # At 03:00 on Thursday
       schedule: "0 3 * * 4"
     rpm:
       # https://github.com/google/hashr?tab=readme-ov-file#rpm
-      ## @param hashr.importers.rpm.enabled Enables the RPM importer
+      ## @param config.importers.rpm.enabled Enables the RPM importer
       ##
       enabled: false
-      ## @param hashr.importers.rpm.schedule sets the CronJob schedule times
+      ## @param config.importers.rpm.schedule sets the CronJob schedule times
       ##
       # At 03:00 on Friday
       schedule: "0 3 * * 5"
     zip:
       # https://github.com/google/hashr?tab=readme-ov-file#zip-and-other-zip-like-formats
-      ## @param hashr.importers.zip.enabled Enables the ZIP importer
+      ## @param config.importers.zip.enabled Enables the ZIP importer
       ##
       enabled: false
-      ## @param hashr.importers.zip.schedule sets the CronJob schedule times
+      ## @param config.importers.zip.schedule sets the CronJob schedule times
       ##
       # At 03:00 on Saturday
       schedule: "0 3 * * 6"
     gcr:
       # TODO: Add cronjob file!
       # https://github.com/google/hashr?tab=readme-ov-file#gcr-google-container-registry
-      ## @param hashr.importers.gcr.enabled Enables the GCR importer
+      ## @param config.importers.gcr.enabled Enables the GCR importer
       ##
       enabled: false
-      ## @param hashr.importers.gcr.schedule sets the CronJob schedule times
+      ## @param config.importers.gcr.schedule sets the CronJob schedule times
       ##
       # At 03:00 on Sunday
       schedule: "0 3 * * 7"
     iso9660:
       # https://github.com/google/hashr?tab=readme-ov-file#iso-9660
-      ## @param hashr.importers.iso9660.enabled Enables the iso9660 importer
+      ## @param config.importers.iso9660.enabled Enables the iso9660 importer
       ##
       enabled: false
-      ## @param hashr.importers.iso9660.schedule sets the CronJob schedule times
+      ## @param config.importers.iso9660.schedule sets the CronJob schedule times
       ##
       # At 15:00 on Monday
       schedule: "0 15 * * 1"
     deb:
       # https://github.com/google/hashr?tab=readme-ov-file#deb
-      ## @param hashr.importers.deb.enabled Enables the DEB importer
+      ## @param config.importers.deb.enabled Enables the DEB importer
       ##
       enabled: false
-      ## @param hashr.importers.deb.schedule sets the CronJob schedule times
+      ## @param config.importers.deb.schedule sets the CronJob schedule times
       ##
       # At 15:00 on Tuesday
       schedule: "0 15 * * 2"
