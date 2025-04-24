@@ -1,7 +1,7 @@
 apiVersion: v2
 name: hashr
 description: A Helm chart for HashR Kubernetes deployments.
-version: 0.1.1
+version: 2.0.0
 type: application
 keywords:
 - hashr

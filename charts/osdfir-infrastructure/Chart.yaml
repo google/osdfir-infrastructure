@@ -30,7 +30,7 @@ dependencies:
 - condition: global.hashr.enabled
   name: hashr
   repository: file://charts/hashr
-  version: 0.1.1
+  version: 2.0.0
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com

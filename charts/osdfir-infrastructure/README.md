@@ -138,6 +138,14 @@ HashR allows you to build your own hash sets based on your data sources. It's a
 tool that extracts files and hashes out of input sources (e.g. raw disk image,
 GCE disk image, ISO file, Windows update package, .tar.gz file, etc.).
 
+#### Managing HashR images
+
+The HashR container images are managed using the following values,
+`hashr.image.repository` and `hashr.image.tag`.
+
+Specify the desired image tags and repositories when deploying or upgrading the
+OSDFIR Infrastructure chart.
+
 #### Configure the HashR importers
 
 HashR provides different importers. Each importer has its own CronJob and can be
@@ -165,6 +173,15 @@ Example:
 ```console
 kubectl cp <local PATH>/deb my-release-hashr-data-manager:/mnt/hashrvolume/data/
 ```
+
+#### Persistence
+
+The HashR deployment stores data at the `/mnt/hashrvolume` path of the
+container.
+
+Persistent Volume Claims are used to keep the data across deployments. This is
+known to work in GCP and Minikube. See the Parameters section to configure the
+PVC or to disable persistence.
 
 ### Upgrading the Helm chart
 

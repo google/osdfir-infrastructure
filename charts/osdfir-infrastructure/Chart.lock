@@ -13,6 +13,6 @@ dependencies:
   version: 2.2.0
 - name: hashr
   repository: file://charts/hashr
-  version: 0.1.1
-digest: sha256:18886fc3c012d06de200aff8db4ed19898b8a4a0cfc68c8962249bdec9df988f
-generated: "2025-04-24T21:44:10.547763572Z"
+  version: 2.0.0
+digest: sha256:d53ca2f2084ea1ed5b8fffd319499721a696228b4618c8300738085722f54521
+generated: "2025-04-24T22:33:26.611718536Z"
