@@ -45,15 +45,10 @@ spec:
             volumeMounts:
             - name: hashrvolume
               mountPath: /mnt/hashrvolume/data
-            - name: dockerenv
-              mountPath: /.dockerenv
           restartPolicy: Never
           volumes:
           - name: hashrvolume
             persistentVolumeClaim:
               claimName: {{ .Release.Name }}-hashrvolume-claim
               readOnly: false
-          - name: dockerenv
-            emptyDir:
-              sizeLimit: 1Mi
 {{- end }}
