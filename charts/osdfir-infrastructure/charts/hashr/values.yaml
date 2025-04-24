@@ -5,35 +5,26 @@
 ## Please, note that this will override the parameters configured to use the global value
 ##
 global:
-  ## Global Persistence Configuration
-  ##
   timesketch:
     ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
-    ## @param global.timesketch.servicePort Timesketch service port (overrides `timesketch.service.port`)
-    ##
-    servicePort:
-  turbinia:
-    ## @param global.turbinia.enabled Enables the Turbinia deployment (only used within the main OSDFIR Infrastructure Helm chart)
-    ##
-    enabled: false
-    ## @param global.turbinia.servicePort Turbinia API service port (overrides `turbinia.service.port`)
-    ##
-    servicePort:
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
-    ## @param global.yeti.servicePort Yeti API service port (overrides `yeti.api.service.port`)
+  openrelik:
+    ## @param global.openrelik.enabled Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    servicePort:
-  ## @param global.existingPVC Existing claim for HashR persistent volume (overrides `persistent.name`)
-  ##
-  existingPVC: ""
-  ## @param global.storageClass StorageClass for the HashR persistent volume (overrides `persistent.storageClass`)
-  ##
-  storageClass: ""
+    enabled: false
+  grr:
+    ## @param global.grr.enabled Enables the GRR deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  hashr:
+    ## @param global.grr.enabled Enables the GRR deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
 ## @section HashR image configuration
 ##
 image:
@@ -46,17 +37,10 @@ image:
   pullPolicy: IfNotPresent
   ## @param image.tag Overrides the image tag whose default is the chart appVersion
   ##
-  tag: latest
-  ## @param image.imagePullSecrets Specify secrets if pulling from a private repository
-  ## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ## e.g.
-  ## imagePullSecrets:
-  ##   - myRegistryKeySecretName
-  ##
-  imagePullSecrets: []
+  tag: v1.8.2
 ## @section HashR Configuration Paramters
 ##
-hashr:
+config:
   ## @section Enable/Disable HashR importers
   ##
   importers:
@@ -171,12 +155,9 @@ hashr:
 ## Persistence Storage Parameters
 ##
 persistence:
-  ## @param persistence.name HashR persistent volume name
-  ##
-  name: hashrvolume
   ## @param persistence.size HashR persistent volume size
   ##
-  size: 50Gi
+  size: 2Gi
   ## @param persistence.storageClass PVC Storage Class for HashR volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
@@ -192,59 +173,41 @@ persistence:
   accessModes:
     - ReadWriteOnce
 ## @section Postgresql Configuration Parameters
-## IMPORTANT: Postgresql is deployed with Auth enabled by default
-## To see a full list of available values, run helm show values charts/postgresql*
 ##
 postgresql:
-  ## @param postgresql.enabled Enables the Postgresql deployment
+  ## Postgresql image configuration
   ##
-  enabled: true
-  ## @param postgresql.architecture PostgreSQL architecture (`standalone` or `replication`)
+  image:
+    ## @param postgresql.image.repository Postgresql image repository
+    ##
+    repository: postgres
+    ## @param postgresql.image.tag Postgresql image tag
+    ##
+    tag: "17.2-alpine"
+  ## PostgreSQL persistence configuration
   ##
-  architecture: standalone
-  ## PostgreSQL Authentication parameters
+  persistence:
+    ## @param postgresql.persistence.size PostgreSQL Persistent Volume size
+    ##
+    size: 2Gi
+  ## PostgreSQL resource requests and limits
+  ## @param postgresql.resources.limits The resources limits for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.memory The requested memory for the PostgreSQL primary containers
   ##
-  auth:
-    ## @param postgresql.auth.username Name for a custom PostgreSQL user to create
-    ##
-    username: "postgres"
-    ## @param postgresql.auth.database Name for a custom PostgreSQL database to create (overrides `auth.database`)
-    ##
-    database: "hashr"
-  ## PostgreSQL Primary configuration parameters
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  ## @param postgresql.nodeSelector Node labels for Timesketch postgresql pods assignment
   ##
-  primary:
-    ## PostgreSQL Primary service configuration parameters
-    ##
-    service:
-      ## @param postgresql.primary.service.type PostgreSQL primary service type
-      ##
-      type: ClusterIP
-      ## @param postgresql.primary.service.ports.postgresql PostgreSQL primary service port
-      ##
-      ports:
-        postgresql: 5432
-    ## PostgreSQL Primary persistence configuration
-    ##
-    persistence:
-      ## @param postgresql.primary.persistence.size PostgreSQL Persistent Volume size
-      ##
-      size: 10Gi
-    ## PostgreSQL primary resource requests and limits
-    ## @param postgresql.primary.resources.limits The resources limits for the PostgreSQL primary containers
-    ## @param postgresql.primary.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
-    ## @param postgresql.primary.resources.requests.memory The requested memory for the PostgreSQL primary containers
-    ##
-    resources:
-      ## Example:
-      ## limits:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      limits: {}
-      ## Example:
-      ## requests:
-      ##    cpu: 500m
-      ##    memory: 1Gi
-      requests:
-        cpu: 250m
-        memory: 256Mi
+  nodeSelector: {}

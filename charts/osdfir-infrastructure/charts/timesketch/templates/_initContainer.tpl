@@ -11,26 +11,26 @@ Worker pod upon startup.
     - name: TIMESKETCH_SECRET
       valueFrom:
         secretKeyRef:
-          name: {{ .Release.Name }}-timesketch-secret 
+          name: {{ .Release.Name }}-timesketch-secret
           key: timesketch-secret
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: {{ .Release.Name }}-timesketch-secret 
+          name: {{ .Release.Name }}-timesketch-secret
           key: redis-user
     - name: POSTGRES_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: {{ .Release.Name }}-timesketch-secret 
+          name: {{ .Release.Name }}-timesketch-secret
           key: postgres-user
-    {{- if .Values.global.yeti.enabled }} 
+    {{- if .Values.global.yeti.enabled }}
     - name: YETI_API_KEY
       valueFrom:
         secretKeyRef:
           name: {{ printf "%s-yeti-secret" .Release.Name }}
           key: "yeti-api"
     {{- end }}
-    {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }} 
+    {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
     - name: OIDC_CLIENT_ID
       valueFrom:
         secretKeyRef:

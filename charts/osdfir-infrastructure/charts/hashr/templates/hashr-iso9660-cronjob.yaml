@@ -1,10 +1,10 @@
-{{- if .Values.hashr.importers.targz.enabled -}}
+{{- if .Values.config.importers.iso9660.enabled -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ .Release.Name }}-hashr-targz
+  name: {{ .Release.Name }}-hashr-iso9660
 spec:
-  schedule: {{ .Values.hashr.importers.targz.schedule | quote }}
+  schedule: {{ .Values.config.importers.iso9660.schedule | quote }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
@@ -13,7 +13,7 @@ spec:
       template:
         spec:
           containers:
-          - name: hashr-targz
+          - name: hashr-iso9660
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             imagePullPolicy: {{ .Values.image.pullPolicy }}
             args:
@@ -23,32 +23,37 @@ spec:
               - -exporters
               - postgres
               - -postgres_host
-              - {{ include "common.names.fullname" (dict "Chart" (dict "Name" "postgresql") "Release" .Release "Values" .Values.postgresql) }}
+              - {{ printf "%s-hashr-postgres" (.Release.Name) }}
               - -postgres_port
-              - {{ .Values.postgresql.primary.service.ports.postgresql | quote }}
+              - '5432'
               - -postgres_user
-              - {{ .Values.postgresql.auth.username | quote }}
+              - postgres
               - -postgres_password
               - "$(POSTGRES_PASSWORD)"
               - -postgres_db
-              - {{ .Values.postgresql.auth.database | quote }}
+              - hashr
               - -importers
-              - targz
-              - -targz_repo_path
-              - {{ (include "hashr.dataPath" .) }}/targz/
+              - iso9660
+              - -iso_repo_path
+              - /mnt/hashrvolume/data/iso9660/
             env:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "postgresql.v1.secretName" .Subcharts.postgresql }}
-                  key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
+                  name: {{ .Release.Name }}-hashr-secret
+                  key: postgres-user
             volumeMounts:
             - name: hashrvolume
-              mountPath: {{ (include "hashr.dataPath" .) | quote }}
+              mountPath: /mnt/hashrvolume/data
+            - name: dockerenv
+              mountPath: /.dockerenv
           restartPolicy: Never
           volumes:
           - name: hashrvolume
             persistentVolumeClaim:
-              claimName: {{ include "hashr.pvc.name"  . }}
+              claimName: {{ .Release.Name }}-hashrvolume-claim
               readOnly: false
+          - name: dockerenv
+            emptyDir:
+              sizeLimit: 1Mi
 {{- end }}

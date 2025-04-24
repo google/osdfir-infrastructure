@@ -1,10 +1,10 @@
-{{- if .Values.hashr.importers.gcp.enabled -}}
+{{- if .Values.config.importers.gcp.enabled -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ .Release.Name }}-hashr-gcp
 spec:
-  schedule: {{ .Values.hashr.importers.gcp.schedule | quote }}
+  schedule: {{ .Values.config.importers.gcp.schedule | quote }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
@@ -23,23 +23,23 @@ spec:
               - -exporters
               - postgres
               - -postgres_host
-              - {{ include "common.names.fullname" (dict "Chart" (dict "Name" "postgresql") "Release" .Release "Values" .Values.postgresql) }}
+              - {{ printf "%s-hashr-postgres" (.Release.Name) }}
               - -postgres_port
-              - {{ .Values.postgresql.primary.service.ports.postgresql | quote }}
+              - '5432'
               - -postgres_user
-              - {{ .Values.postgresql.auth.username | quote }}
+              - postgres
               - -postgres_password
               - "$(POSTGRES_PASSWORD)"
               - -postgres_db
-              - {{ .Values.postgresql.auth.database | quote }}
+              - hashr
               - -importers
               - GCP
               - -gcp_projects
-              - {{ .Values.hashr.importers.gcp.gcp_projects | quote }}
+              - {{ .Values.config.importers.gcp.gcp_projects | quote }}
               - -hashr_gcp_project
-              - {{ .Values.hashr.importers.gcp.hashr_gcp_project | quote }}
+              - {{ .Values.config.importers.gcp.hashr_gcp_project | quote }}
               - -hashr_gcs_bucket
-              - {{ .Values.hashr.importers.gcp.hashr_gcs_bucket | quote }}
+              - {{ .Values.config.importers.gcp.hashr_gcs_bucket | quote }}
             env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               # Store your SA key in the hashrvolume/creds/ folder via "kubectl cp"!
@@ -52,11 +52,16 @@ spec:
                   key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
             volumeMounts:
             - name: hashrvolume
-              mountPath: {{ (include "hashr.dataPath" .) | quote }}
+              mountPath: /mnt/hashrvolume/data
+            - name: dockerenv
+              mountPath: /.dockerenv
           restartPolicy: Never
           volumes:
           - name: hashrvolume
             persistentVolumeClaim:
               claimName: {{ include "hashr.pvc.name"  . }}
               readOnly: false
+          - name: dockerenv
+            emptyDir:
+              sizeLimit: 1Mi
 {{- end }}

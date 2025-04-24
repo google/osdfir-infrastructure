@@ -10,10 +10,10 @@ spec:
     command: ["sh", "-c", "while true; do sleep 1800; done;"]
     volumeMounts:
     - name: hashrvolume
-      mountPath: {{ (include "hashr.dataPath" .) | quote }}
+      mountPath: /mnt/hashrvolume/data
   restartPolicy: Always
   volumes:
   - name: hashrvolume
     persistentVolumeClaim:
-      claimName: {{ include "hashr.pvc.name"  . }}
+      claimName: {{ .Release.Name }}-hashrvolume-claim
       readOnly: false
