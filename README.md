@@ -6,16 +6,11 @@ Digital Forensics tools to Kubernetes clusters (local or cloud) using Helm.
 Currently, OSDFIR Infrastructure supports the deployment and integration of the
 following tools:
 
-* [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating
-forensic collection, processing and data export, helping pass data between tools
-using recipes (e.g. importing processed Plaso files Timesketch)
 * [Timesketch](https://github.com/google/timesketch) for collaborative forensic
 timeline analysis featuring analyzers to help identitify patterns in data, support
 for Plaso, JSONL, or CSV file imports, and built-in integrations to tools such as:
   * [DFIQ](https://dfiq.org/) for digital forensics investigative questions and
   the approaches to answering them
-  * [Sigma](https://github.com/SigmaHQ/sigma) for detection and hunting rules to
-  run across timelines
   * [Unfurl](https://github.com/obsidianforensics/unfurl) for graph analysis of URLs
 * [Yeti](https://github.com/yeti-platform/yeti) for DFIR and threat intelligence
 tracking, enabling responders to store and analyze CTI (observables, TTPs, campaigns, etc.)
@@ -25,14 +20,11 @@ collaborative digital forensic investigations. It provides modular workflows,
 an intuitive interface, real-time collaboration, a centralized artifact repository,
 and can easily be extended to support new workers.
 * [GRR](https://github.com/google/grr) for incident response and remote live forensics.
-
-Additionally, OSDFIR Infrastructure also offers standalone charts. These charts
-are not directly integrated with OSDFIR Infrastructure, but can be used independently.
-
-* [Turbinia](https://github.com/google/turbinia) for automating processing of
-forensic evidence helping find prevelant badness.
 * [Hashr](https://github.com/google/hashr) to build your own hash sets based on
 your data sources.
+* [dfTimewolf](https://github.com/log2timeline/dftimewolf) for orchestrating
+forensic collection, processing and data export, helping pass data between tools
+using recipes (e.g. importing processed Plaso files Timesketch)
 
 ## Installing the Charts
 
