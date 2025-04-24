@@ -144,6 +144,9 @@ nginx:
 ## Persistence Storage Parameters
 ##
 persistence:
+  ## @param persistence.existingPVC Specify an existing PVC to use for the Timesketch volume
+  ##
+  existingPVC: ""
   ## @param persistence.size Timesketch persistent volume size
   ##
   size: 2Gi

@@ -222,6 +222,9 @@ config:
 ## Persistence Storage Parameters
 ##
 persistence:
+  ## @param persistence.existingPVC Specify an existing PVC to use for the OpenRelik volume
+  ##
+  existingPVC: "" 
   ## @param persistence.size OpenRelik persistent volume size
   ##
   size: 2Gi
