@@ -14,7 +14,7 @@ dependencies:
 - condition: global.timesketch.enabled
   name: timesketch
   repository: file://charts/timesketch
-  version: 2.1.1
+  version: 2.1.2
 - condition: global.yeti.enabled
   name: yeti
   repository: file://charts/yeti
@@ -22,7 +22,7 @@ dependencies:
 - condition: global.openrelik.enabled
   name: openrelik
   repository: file://charts/openrelik
-  version: 2.1.1
+  version: 2.1.2
 - condition: global.grr.enabled
   name: grr
   repository: file://charts/grr
