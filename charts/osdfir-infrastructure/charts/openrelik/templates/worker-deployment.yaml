@@ -56,4 +56,5 @@ spec:
             {{- else }}
             claimName: {{ $.Release.Name }}-openrelikvolume-claim
             {{- end }}
+            readOnly: false
 {{- end }}

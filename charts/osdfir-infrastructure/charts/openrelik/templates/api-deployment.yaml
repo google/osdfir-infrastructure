@@ -70,6 +70,7 @@ spec:
             {{- else }}
             claimName: {{ .Release.Name }}-openrelikvolume-claim
             {{- end }}
+            readOnly: false
         - name: settings-config
           configMap:
             name: {{ .Release.Name }}-openrelik-configmap
