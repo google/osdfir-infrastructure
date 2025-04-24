@@ -242,7 +242,7 @@ The default way that the Fleetspeak frontend for GRR is exposed is through a ```
 > If you are running on minikube this could be done by running ```minikube ip```
 
 ```bash
-helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="node" --set fleetspeak.frontend.address="$NODE_IP"
+helm install my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak.frontend.expose="node" --set grr.fleetspeak.frontend.address="$NODE_IP"
 ```
 
 * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
@@ -269,7 +269,7 @@ gcloud compute addresses describe fleetspeak-frontend-internal --region=us-centr
  so they match the location where you run your GKE cluster.
 
 ```bash
-helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="internal" --set fleetspeak.frontend.address="$IP_ADDRESS"
+helm install my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak.frontend.expose="internal" --set grr.fleetspeak.frontend.address="$IP_ADDRESS"
 ```
 
 * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
@@ -294,7 +294,7 @@ gcloud compute addresses describe fleetspeak-frontend-external --region=us-centr
  you run your GKE cluster.
 
 ```bash
-helm install my-release osdfir-charts/osdfir-infrastructure --set fleetspeak.frontend.expose="external" --set fleetspeak.frontend.address="$IP_ADDRESS"
+helm install my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak.frontend.expose="external" --set grr.fleetspeak.frontend.address="$IP_ADDRESS"
 ```
 
 * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent

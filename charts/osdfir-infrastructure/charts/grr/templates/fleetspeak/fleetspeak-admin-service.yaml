@@ -13,3 +13,7 @@ spec:
       name: admin
       port: {{ .Values.fleetspeak.admin.listenPort }}
       targetPort: {{ .Values.fleetspeak.admin.listenPort }}
+    - protocol: TCP
+      name: healthz
+      port: {{ .Values.fleetspeak.admin.healthCheckPort }}
+      targetPort: {{ .Values.fleetspeak.admin.healthCheckPort }}

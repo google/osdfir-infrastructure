@@ -10,6 +10,6 @@ dependencies:
   version: 2.1.1
 - name: grr
   repository: file://charts/grr
-  version: 2.1.0
-digest: sha256:6a07cd286937f10101b9a9aba84b89108f80f65c0b1e1bce7549a56667dfcc03
-generated: "2025-04-22T17:13:18.257396321Z"
+  version: 2.2.0
+digest: sha256:ec8e28d2424517207b2dbc05738e3639881048df749e4df7b69f3108e6f6a690
+generated: "2025-04-24T04:58:29.787048958Z"
