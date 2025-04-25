@@ -1,7 +1,7 @@
 apiVersion: v2
 name: hashr
 description: A Helm chart for HashR Kubernetes deployments.
-version: 0.1.0
+version: 2.0.0
 type: application
 keywords:
 - hashr
@@ -9,11 +9,6 @@ keywords:
 - analysis
 - security
 home: "https://github.com/google/hashr"
-dependencies:
-- condition: postgresql.enabled
-  name: postgresql
-  version: 14.3.3
-  repository: https://charts.bitnami.com/bitnami
 maintainers:
   - name: Open Source DFIR
     email: osdfir-maintainers@googlegroups.com

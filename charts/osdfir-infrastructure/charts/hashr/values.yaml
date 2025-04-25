@@ -1,0 +1,213 @@
+## HashR Helm Chart
+## Please use this Helm chart for deploying HashR to a Kubernetes environment
+##
+## @section Global parameters
+## Please, note that this will override the parameters configured to use the global value
+##
+global:
+  timesketch:
+    ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  yeti:
+    ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  openrelik:
+    ## @param global.openrelik.enabled Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  grr:
+    ## @param global.grr.enabled Enables the GRR deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+  hashr:
+    ## @param global.hashr.enabled Enables the HashR deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
+## @section HashR image configuration
+##
+image:
+  ## @param image.repository HashR image repository
+  ##
+  repository: us-docker.pkg.dev/osdfir-registry/hashr/release/hashr
+  ## @param image.pullPolicy HashR image pull policy
+  ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+  ##
+  pullPolicy: IfNotPresent
+  ## @param image.tag Overrides the image tag whose default is the chart appVersion
+  ##
+  tag: v1.8.2
+## @section HashR Configuration Paramters
+##
+config:
+  ## @section Enable/Disable HashR importers
+  ##
+  importers:
+    ## List of HashR importers and their settings
+    ##
+    aws:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#aws
+      ## @param config.importers.aws.enabled Enables the AWS importer
+      ##
+      enabled: false
+      ## @param config.importers.aws.schedule sets the CronJob schedule times
+      ##
+      # At 09:00 on Monday
+      schedule: "0 9 * * 1"
+    gcp:
+      # Ensure you have the correct setup before enabling this importer:
+      # https://github.com/google/hashr?tab=readme-ov-file#gcp-google-cloud-platform
+      # IMPORTANT: Store your SA key in the hashrvolume via kubectl cp!
+      # e.g. kubectl cp ~/hashr-sa-private-key.json hashr-data-manager:/mnt/hashrvolume/data/creds/hashr-sa-private-key.json
+      ## @param config.importers.gcp.enabled Enables the GCP importer
+      ##
+      enabled: false
+      ## @param config.importers.gcp.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Monday
+      schedule: "0 3 * * 1"
+      ## @param config.importers.gcp.gcp_projects sets a comma separated list of cloud projects containing disk images
+      ##
+      gcp_projects: ""
+      ## @param config.importers.gcp.hashr_gcp_project sets GCP project that will be used to store copy of disk images for processing and also run Cloud Build
+      ##
+      hashr_gcp_project: ""
+      ## @param config.importers.gcp.hashr_gcs_bucket sets GCS bucket that will be used to store output of Cloud Build (disk images in .tar.gz format)
+      ##
+      hashr_gcs_bucket: ""
+    targz:
+      # https://github.com/google/hashr?tab=readme-ov-file#targz
+      ## @param config.importers.targz.enabled Enables the tar.gz importer
+      ##
+      enabled: false
+      ## @param config.importers.targz.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Tuesday
+      schedule: "0 3 * * 2"
+    windows:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#windows
+      ## @param config.importers.windows.enabled Enables the Windows importer
+      ##
+      enabled: false
+      ## @param config.importers.windows.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Wednesday
+      schedule: "0 3 * * 3"
+    wsus:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#wsus
+      ## @param config.importers.wsus.enabled Enables the WSUS importer
+      ##
+      enabled: false
+      ## @param config.importers.wsus.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Thursday
+      schedule: "0 3 * * 4"
+    rpm:
+      # https://github.com/google/hashr?tab=readme-ov-file#rpm
+      ## @param config.importers.rpm.enabled Enables the RPM importer
+      ##
+      enabled: false
+      ## @param config.importers.rpm.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Friday
+      schedule: "0 3 * * 5"
+    zip:
+      # https://github.com/google/hashr?tab=readme-ov-file#zip-and-other-zip-like-formats
+      ## @param config.importers.zip.enabled Enables the ZIP importer
+      ##
+      enabled: false
+      ## @param config.importers.zip.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Saturday
+      schedule: "0 3 * * 6"
+    gcr:
+      # TODO: Add cronjob file!
+      # https://github.com/google/hashr?tab=readme-ov-file#gcr-google-container-registry
+      ## @param config.importers.gcr.enabled Enables the GCR importer
+      ##
+      enabled: false
+      ## @param config.importers.gcr.schedule sets the CronJob schedule times
+      ##
+      # At 03:00 on Sunday
+      schedule: "0 3 * * 7"
+    iso9660:
+      # https://github.com/google/hashr?tab=readme-ov-file#iso-9660
+      ## @param config.importers.iso9660.enabled Enables the iso9660 importer
+      ##
+      enabled: false
+      ## @param config.importers.iso9660.schedule sets the CronJob schedule times
+      ##
+      # At 15:00 on Monday
+      schedule: "0 15 * * 1"
+    deb:
+      # https://github.com/google/hashr?tab=readme-ov-file#deb
+      ## @param config.importers.deb.enabled Enables the DEB importer
+      ##
+      enabled: false
+      ## @param config.importers.deb.schedule sets the CronJob schedule times
+      ##
+      # At 15:00 on Tuesday
+      schedule: "0 15 * * 2"
+## Persistence Storage Parameters
+##
+persistence:
+  ## @param persistence.size HashR persistent volume size
+  ##
+  size: 2Gi
+  ## @param persistence.storageClass PVC Storage Class for HashR volume
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
+  ##
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for HashR volume
+  ## Access mode may need to be updated based on the StorageClass
+  ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  ##
+  accessModes:
+    - ReadWriteOnce
+## @section Postgresql Configuration Parameters
+##
+postgresql:
+  ## Postgresql image configuration
+  ##
+  image:
+    ## @param postgresql.image.repository Postgresql image repository
+    ##
+    repository: postgres
+    ## @param postgresql.image.tag Postgresql image tag
+    ##
+    tag: "17.2-alpine"
+  ## PostgreSQL persistence configuration
+  ##
+  persistence:
+    ## @param postgresql.persistence.size PostgreSQL Persistent Volume size
+    ##
+    size: 2Gi
+  ## PostgreSQL resource requests and limits
+  ## @param postgresql.resources.limits The resources limits for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.cpu The requested cpu for the PostgreSQL primary containers
+  ## @param postgresql.resources.requests.memory The requested memory for the PostgreSQL primary containers
+  ##
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  ## @param postgresql.nodeSelector Node labels for Timesketch postgresql pods assignment
+  ##
+  nodeSelector: {}

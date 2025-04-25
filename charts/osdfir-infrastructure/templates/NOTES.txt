@@ -30,7 +30,7 @@ To connect to the Yeti URL, run:
   $ echo "Visit http://127.0.0.1:9000 to access Yeti through port-forwarding"
 
 Login to Yeti with the User `yeti`. To get your password run:
-  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ .Release.Name }}-yeti-secret -o jsonpath="{.data.yeti-user}" | base64 -d; echo "" 
+  $ kubectl get secret --namespace {{ .Release.Namespace }}  {{ .Release.Name }}-yeti-secret -o jsonpath="{.data.yeti-user}" | base64 -d; echo ""
 {{- end }}
 
 {{ if .Values.global.openrelik.enabled -}}
@@ -50,6 +50,11 @@ Login to OpenRelik with the User `openrelik`. To get your password run:
 {{ if .Values.global.grr.enabled -}}
 To connect to the GRR URL, run:
   $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-grr-admin 8000:8000
+{{- end }}
+
+{{ if .Values.global.hashr.enabled -}}
+To copy data for HashR to index, run:
+  $ kubectl --namespace {{ .Release.Namespace }} cp <local PATH>/<importer> {{ .Release.Name }}-hashr-data-manager:/mnt/hashrvolume/data/
 {{- end }}
 
 Run the following commands on your workstation to orchestrate collection and processing of forensic data with dfTimewolf:
