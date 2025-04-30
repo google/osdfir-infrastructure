@@ -45,15 +45,15 @@ helm repo add osdfir-charts https://google.github.io/osdfir-infrastructure/
 helm repo update
 ```
 
-To install the chart, specify any release name of your choice. For example, using `my-release` as the release name, run:
+To install the chart, specify any release name of your choice. For example,
+using `my-release` as the release name, run:
 
 ```console
 helm install my-release osdfir-charts/osdfir-infrastructure
 ```
 
 The command deploys OSDFIR Infrastructure on the Kubernetes cluster in the
-default configuration. The [Parameters](#parameters) section lists the parameters
-that can be configured during installation.
+default configuration.
 
 ## Configuration and installation details
 
