@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-hashr-postgres-networkpolicy
+  labels:
+    app.kubernetes.io/component: postgres
+    {{- include "hashr.labels" . | nindent 4 }}
+spec:
+  egress:
+  - {}
+  ingress:
+  - ports:
+    - port: 5432
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: postgres
+  policyTypes:
+  - Ingress
+  - Egress
