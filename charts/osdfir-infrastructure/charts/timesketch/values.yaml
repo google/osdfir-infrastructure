@@ -39,6 +39,10 @@ config:
   ## (e.g. kubectl create configmap timesketch-configs --from-file=timesketch-configs/)
   ##
   existingConfigMap: ""
+  ## @param config.existingSecret Use an existing secret as the Timesketch secret.
+  ## Secret name must follow the naming convention of {{ .Release.Name }}-timesketch-secret
+  ##
+  existingSecret: false
   ## @param config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
   ##
   createUser: true
@@ -56,7 +60,7 @@ config:
     authenticatedEmailsFile:
       ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
       ##
-      enabled: true
+      enabled: false
       ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
       ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
       existingSecret: ""

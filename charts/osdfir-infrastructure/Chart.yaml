@@ -14,15 +14,15 @@ dependencies:
 - condition: global.timesketch.enabled
   name: timesketch
   repository: file://charts/timesketch
-  version: 2.1.3
+  version: 2.1.4
 - condition: global.yeti.enabled
   name: yeti
   repository: file://charts/yeti
-  version: 2.1.0
+  version: 2.1.1
 - condition: global.openrelik.enabled
   name: openrelik
   repository: file://charts/openrelik
-  version: 2.1.2
+  version: 2.1.3
 - condition: global.grr.enabled
   name: grr
   repository: file://charts/grr

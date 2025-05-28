@@ -193,6 +193,10 @@ workers:
 ## @section OpenRelik Configuration Parameters
 ##
 config:
+  ## @param config.existingSecret Use an existing secret as the OpenRelik secret.
+  ## Secret name must follow the naming convention of {{ .Release.Name }}-openrelik-secret
+  ##
+  existingSecret: false
   ## OpenRelik OIDC configuration
   ##
   oidc:
@@ -202,12 +206,15 @@ config:
     ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
     ##
     existingSecret: ""
+    ## @param config.oidc.workspaceDomain Restricts logins from a Google Workspace domain.
+    ##
+    workspaceDomain: ""
     ## Allowed emails files for OpenRelik OIDC
     ##
     authenticatedEmailsFile:
       ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
       ##
-      enabled: true
+      enabled: false
       ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
       ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
       existingSecret: ""
