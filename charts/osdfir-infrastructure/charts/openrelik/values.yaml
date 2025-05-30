@@ -197,6 +197,9 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-openrelik-secret
   ##
   existingSecret: false
+  ## @param config.createUser Create a default `openrelik` user.
+  ##
+  createUser: true
   ## OpenRelik OIDC configuration
   ##
   oidc:

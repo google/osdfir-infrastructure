@@ -28,7 +28,7 @@ spec:
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
           command: ["/bin/sh", "-c", "uvicorn main:app --proxy-headers --forwarded-allow-ips '*' --workers 1 --host 0.0.0.0 --port 8710"]
-          {{- if not .Release.IsUpgrade }}
+          {{- if and (not .Release.IsUpgrade) (.Values.config.createUser) }}
           lifecycle:
             postStart:
               exec:
