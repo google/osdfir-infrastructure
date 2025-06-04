@@ -39,6 +39,9 @@ global:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+    ## @param global.ingress.overrideIngressName Override the default loadbalancer name in case of multiple deployments
+    ##
+    overrideIngressName: ""
     ## @param global.ingress.timesketchHost Domain name Timesketch will be hosted under
     ##
     timesketchHost: ""

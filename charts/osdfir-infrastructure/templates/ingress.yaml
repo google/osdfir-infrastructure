@@ -2,7 +2,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  {{- if .Values.global.ingress.overrideIngressName }}
+  name: {{ .Values.global.ingress.overrideIngressName }}
+  {{- else }}
   name: {{ .Release.Name }}-osdfir-ingress
+  {{- end }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "osdfir.labels" . | nindent 4 }}
