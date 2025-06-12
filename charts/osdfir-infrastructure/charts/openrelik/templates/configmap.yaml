@@ -25,7 +25,7 @@ data:
     
     # This should be set to the URL of your frontend server.
     {{- if .Values.global.ingress.openRelikFrontendHost }}
-    allowed_origins = ["https://{{ .Values.global.ingress.openRelikFrontendHost }}", "https://{{ .Values.global.ingress.openRelikFrontendHost }}/"] 
+    allowed_origins = ["https://{{ .Values.global.ingress.openRelikFrontendHost }}"] 
     {{- else }}
     allowed_origins = ["http://localhost:8711"]
     {{- end }}
