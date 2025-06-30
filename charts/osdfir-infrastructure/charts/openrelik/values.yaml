@@ -171,31 +171,36 @@ metrics:
 workers:
 - name: openrelik-worker-strings
   image: ghcr.io/openrelik/openrelik-worker-strings:2024.11.27
-  command: celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-strings
+  command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
+  replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-plaso
   image: ghcr.io/openrelik/openrelik-worker-plaso:2024.11.27
-  command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-plaso"
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
+  replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-extraction
   image: ghcr.io/openrelik/openrelik-worker-extraction:2024.11.27
-  command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-extraction"
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-extraction"
+  replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-analyzer-config
   image: ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
+  replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
-  command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-analyzer-config"
 - name: openrelik-worker-hayabusa
   image: ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27
-  command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-hayabusa"
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-hayabusa"
+  replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
@@ -205,6 +210,7 @@ workers:
 - name: openrelik-worker-timesketch
   image: ghcr.io/openrelik/openrelik-worker-timesketch:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
+  replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}

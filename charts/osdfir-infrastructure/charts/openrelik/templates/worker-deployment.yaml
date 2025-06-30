@@ -5,7 +5,7 @@ kind: Deployment
 metadata:
   name: {{ $.Release.Name }}-{{ .name }}
 spec:
-  replicas: 1
+  replicas: {{ .replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/component: worker
