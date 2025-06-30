@@ -38,3 +38,7 @@ spec:
           configMap:
             name: {{ .Release.Name }}-openrelik-prometheus-configmap
             defaultMode: 420
+      {{- with .Values.prometheus.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

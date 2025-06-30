@@ -53,6 +53,9 @@ frontend:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param frontend.nodeSelector Node labels for Frontend pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik API configuration
 ##
 api:
@@ -82,6 +85,9 @@ api:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param api.nodeSelector Node labels for API pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik Mediator configuration
 ##
 mediator:
@@ -111,6 +117,9 @@ mediator:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param mediator.nodeSelector Node labels for Mediator pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik Metrics configuration
 ##
 metrics:
@@ -140,6 +149,9 @@ metrics:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param metrics.nodeSelector Node labels for Metrics pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik Worker Configurations
 ## By default, resources are not set to allow the Helm chart to remain flexible in various deployments.
 ## To set resources, remove {} and replace with the provided resources
@@ -162,26 +174,31 @@ workers:
   command: celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-strings
   env: {}
   resources: {}
+  nodeSelector: {}
 - name: openrelik-worker-plaso
   image: ghcr.io/openrelik/openrelik-worker-plaso:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-plaso"
   env: {}
   resources: {}
+  nodeSelector: {}
 - name: openrelik-worker-extraction
   image: ghcr.io/openrelik/openrelik-worker-extraction:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-extraction"
   env: {}
   resources: {}
+  nodeSelector: {}
 - name: openrelik-worker-analyzer-config
   image: ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27
   env: {}
   resources: {}
+  nodeSelector: {}
   command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-analyzer-config"
 - name: openrelik-worker-hayabusa
   image: ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27
   command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-hayabusa"
   env: {}
   resources: {}
+  nodeSelector: {}
 ## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment 
 ## variables through Helm.
 ##
@@ -190,6 +207,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
   env: {}
   resources: {}
+  nodeSelector: {}
 ## @section OpenRelik Configuration Parameters
 ##
 config:
@@ -284,6 +302,9 @@ redis:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param redis.nodeSelector Node labels for Redis pods assignment
+  ##
+  nodeSelector: {}
 ## @section Postgresql Configuration Parameters
 ##
 postgresql:
@@ -320,6 +341,9 @@ postgresql:
     requests:
       cpu: 250m
       memory: 256Mi
+  ## @param postgresql.nodeSelector Node labels for Postgresql pods assignment
+  ##
+  nodeSelector: {}
 ## @section Prometheus Configuration Parameters
 ##
 prometheus:
@@ -352,3 +376,6 @@ prometheus:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param prometheus.nodeSelector Node labels for Prometheus pods assignment
+  ##
+  nodeSelector: {}

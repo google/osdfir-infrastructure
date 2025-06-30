@@ -5,7 +5,7 @@ Worker pod upon startup.
 */}}
 {{- define "timesketch.initContainer" -}}
 - name: init-timesketch
-  image: alpine/git
+  image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
   command: ['sh', '-c', '/init/init-timesketch.sh']
   env:
     - name: TIMESKETCH_SECRET

@@ -56,3 +56,7 @@ spec:
             claimName: {{ .Release.Name }}-openrelikvolume-claim
             {{- end }}
             readOnly: false
+      {{- with .Values.frontend.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
