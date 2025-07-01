@@ -73,11 +73,7 @@ data:
     # Allow anyone (who is authenitcated) to access the server.
     # Note: If a workspace_domain is set then the public_access is limited to that domain.
     # WARNING: This allows anyone to login to your server!
-    {{ if .Values.config.oidc.workspaceDomain -}}
-    public_access = true
-    {{ else -}}
     public_access = false
-    {{ end -}}
 
     [ui]
     # data_types that will be rendered using unescaped HTML in a sandboxed iframe in the
