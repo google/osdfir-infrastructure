@@ -37,7 +37,7 @@ frontend:
     pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -69,7 +69,7 @@ api:
     pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -101,7 +101,7 @@ mediator:
     pullPolicy: IfNotPresent
     ## @param mediator.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik mediator resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param mediator.resources.limits Resource limits for the Mediator container
@@ -133,7 +133,7 @@ metrics:
     pullPolicy: IfNotPresent
     ## @param metrics.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik metrics resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param metrics.resources.limits Resource limits for the Metrics container
@@ -170,36 +170,46 @@ metrics:
 ##
 workers:
 - name: openrelik-worker-strings
-  image: ghcr.io/openrelik/openrelik-worker-strings:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-strings:0.2.1
   command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
+  privileged: false
+  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-plaso
-  image: ghcr.io/openrelik/openrelik-worker-plaso:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-plaso:0.4.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
+  privileged: false
+  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-extraction
-  image: ghcr.io/openrelik/openrelik-worker-extraction:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-extraction:0.4.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-extraction"
+  privileged: false
+  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-analyzer-config
-  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:0.2.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
+  privileged: false
+  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-hayabusa
-  image: ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-hayabusa:0.3.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-hayabusa"
+  privileged: false
+  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
@@ -208,8 +218,10 @@ workers:
 ## variables through Helm.
 ##
 - name: openrelik-worker-timesketch
-  image: ghcr.io/openrelik/openrelik-worker-timesketch:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-timesketch:0.3.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
+  privileged: false
+  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}

@@ -22,6 +22,8 @@ spec:
           image: {{ .image | quote }}
           imagePullPolicy: "IfNotPresent"
           command: ["/bin/sh", "-c", "{{ .command }}"]
+          securityContext:
+            privileged: {{ .privileged }}
           env:
           {{- if and (eq .name "openrelik-worker-timesketch") $.Values.global.timesketch.enabled }}
             - name: TIMESKETCH_SERVER_URL
@@ -44,6 +46,11 @@ spec:
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
+            {{- if .mountHostDevices }}
+            - mountPath: /dev
+              name: dev
+              readOnly: true
+            {{- end }}
           {{- if .resources }}
           resources:
             {{- toYaml .resources | nindent 12 }}
@@ -57,6 +64,11 @@ spec:
             claimName: {{ $.Release.Name }}-openrelikvolume-claim
             {{- end }}
             readOnly: false
+        {{- if .mountHostDevices }}
+        - name: dev
+          hostPath:
+            path: /dev
+        {{- end }}
       {{- with .nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
