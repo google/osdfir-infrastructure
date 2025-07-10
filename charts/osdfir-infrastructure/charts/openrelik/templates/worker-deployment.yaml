@@ -14,6 +14,10 @@ spec:
       labels:
         app.kubernetes.io/component: worker
     spec:
+      {{- if and .privileged $.Values.config.initWorkerNbd.enabled }}
+      initContainers:
+      {{- include "openrelik.initContainerWorker" $ | nindent 8 }}
+      {{- end }}
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
@@ -46,7 +50,7 @@ spec:
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
-            {{- if .mountHostDevices }}
+            {{- if and .privileged .mountHostDevices }}
             - mountPath: /dev
               name: dev
               readOnly: true
@@ -64,10 +68,15 @@ spec:
             claimName: {{ $.Release.Name }}-openrelikvolume-claim
             {{- end }}
             readOnly: false
-        {{- if .mountHostDevices }}
+        {{- if and .privileged .mountHostDevices }}
         - name: dev
           hostPath:
             path: /dev
+        {{- if $.Values.config.initWorkerNbd.enabled }}
+        - name: modules
+          hostPath:
+            path: /lib/modules
+        {{- end }}
         {{- end }}
       {{- with .nodeSelector }}
       nodeSelector:
