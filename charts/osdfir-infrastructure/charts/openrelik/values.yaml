@@ -173,7 +173,6 @@ workers:
   image: ghcr.io/openrelik/openrelik-worker-strings:0.2.1
   command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
   privileged: false
-  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
@@ -182,7 +181,6 @@ workers:
   image: ghcr.io/openrelik/openrelik-worker-plaso:0.4.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
   privileged: false
-  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
@@ -191,7 +189,6 @@ workers:
   image: ghcr.io/openrelik/openrelik-worker-extraction:0.4.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-extraction"
   privileged: false
-  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
@@ -200,7 +197,6 @@ workers:
   image: ghcr.io/openrelik/openrelik-worker-analyzer-config:0.2.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
   privileged: false
-  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
@@ -209,7 +205,6 @@ workers:
   image: ghcr.io/openrelik/openrelik-worker-hayabusa:0.3.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-hayabusa"
   privileged: false
-  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}
@@ -217,10 +212,11 @@ workers:
 - name: openrelik-worker-yara
   image: ghcr.io/openrelik/openrelik-worker-yara:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-yara"
-  privileged: false
-  mountHostDevices: false
+  privileged: true
   replicas: 1
   env: {}
+  resources: {}
+  nodeSelector: {}
 ## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment 
 ## variables through Helm.
 ##
@@ -228,7 +224,6 @@ workers:
   image: ghcr.io/openrelik/openrelik-worker-timesketch:0.3.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
   privileged: false
-  mountHostDevices: false
   replicas: 1
   env: {}
   resources: {}

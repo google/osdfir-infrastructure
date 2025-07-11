@@ -50,7 +50,7 @@ spec:
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
-            {{- if and .privileged .mountHostDevices }}
+            {{- if .privileged }}
             - mountPath: /dev
               name: dev
               readOnly: true
@@ -68,7 +68,7 @@ spec:
             claimName: {{ $.Release.Name }}-openrelikvolume-claim
             {{- end }}
             readOnly: false
-        {{- if and .privileged .mountHostDevices }}
+        {{- if .privileged }}
         - name: dev
           hostPath:
             path: /dev
