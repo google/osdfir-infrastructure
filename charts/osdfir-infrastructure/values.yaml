@@ -39,6 +39,9 @@ global:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+    ## @param global.ingress.overrideIngressName Override the default loadbalancer name in case of multiple deployments
+    ##
+    overrideIngressName: ""
     ## @param global.ingress.timesketchHost Domain name Timesketch will be hosted under
     ##
     timesketchHost: ""
@@ -64,10 +67,13 @@ global:
     ## GCP ingress configuration
     ##
     gcp:
-      ## @param global.ingress.gcp.managedCertificates Enabled GCP managed certificates for your domain
+      ## @param global.ingress.gcp.managedCertificates Enable automatic creation of GCP managed certificates for your domain
       ## ref https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs
       ##
       managedCertificates: false
+      ## @param global.ingress.gcp.existingManagedCertificates Specify an existing GCP certificate name
+      ##
+      existingManagedCertificates: ""
       ## @param global.ingress.gcp.staticIPName Name of the static IP address you reserved in GCP
       ## This is required when using "gce" in ingress.className
       ## ref https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address

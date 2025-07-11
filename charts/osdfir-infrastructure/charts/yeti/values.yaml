@@ -120,6 +120,10 @@ tasks:
 ## ref: https://github.com/yeti-platform/yeti/blob/main/yeti.conf.sample
 ##
 config:
+  ## @param config.existingSecret Use an existing secret as the Yeti secret.
+  ## Secret name must follow the naming convention of {{ .Release.Name }}-yeti-secret
+  ##
+  existingSecret: false
   ## Yeti OIDC configuration
   ##
   oidc:

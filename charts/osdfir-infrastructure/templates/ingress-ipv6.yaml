@@ -2,7 +2,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  {{- if .Values.global.ingress.overrideIngressName }}
+  name: {{ .Values.global.ingress.overrideIngressName }}-ipv6
+  {{- else }}
   name: {{ .Release.Name }}-osdfir-ingress-ipv6
+  {{- end }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "osdfir.labels" . | nindent 4 }}
@@ -10,6 +14,8 @@ metadata:
     kubernetes.io/ingressClassName: {{ .Values.global.ingress.className }}
     {{- if .Values.global.ingress.gcp.managedCertificates }}
     networking.gke.io/managed-certificates: {{ .Release.Name }}-osdfir-managed-ssl
+    {{- else if .Values.global.ingress.gcp.existingManagedCertificates }}
+    networking.gke.io/managed-certificates: {{ .Values.global.ingress.gcp.existingManagedCertificates }} 
     {{- end }}
     {{- if .Values.global.ingress.certManager }}
     kubernetes.io/tls-acme: "true"

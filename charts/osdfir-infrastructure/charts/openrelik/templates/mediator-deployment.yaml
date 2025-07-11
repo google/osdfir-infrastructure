@@ -63,3 +63,7 @@ spec:
         - name: settings-config
           configMap:
             name: {{ .Release.Name }}-openrelik-configmap
+      {{- with .Values.mediator.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

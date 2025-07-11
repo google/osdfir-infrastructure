@@ -28,6 +28,8 @@ data:
       echo "Copied configuration files."
     else
       echo "No existing configuration found. Fetching default configuration files from GitHub.."
+      echo "Installing git for cloning repo"
+      apt-get update && apt-get install git -y
       # Using a temporary directory for cloning
       TMP_CLONE_DIR=$(mktemp -d)
       # Try cloning the specific tag/branch first, fallback to master if it fails
