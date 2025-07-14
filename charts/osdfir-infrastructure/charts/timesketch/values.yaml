@@ -13,6 +13,11 @@ global:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+    ## @param global.yeti.apiKeySecret Existing secret containing Yeti API Key.
+    ## Please ensure that the Secret has been created then re-deploy the Helm chart when integrating Yeti with Timesketch
+    ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
+    ##
+    apiKeySecret: ""
   ingress:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -29,7 +34,7 @@ image:
   pullPolicy: IfNotPresent
   ## @param image.tag Overrides the image tag whose default is the chart appVersion
   ##
-  tag: "20250408"
+  tag: "20250708"
 ## @section Timesketch Configuration Parameters
 ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
 ##
