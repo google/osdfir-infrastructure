@@ -78,8 +78,8 @@ spec:
             path: /lib/modules
         {{- end }}
         {{- end }}
-      {{- with .nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- range $key, $value := .nodeSelector }}
+        {{ $key }}: "{{ $value }}"
+        {{- end }}
 {{- end }}
