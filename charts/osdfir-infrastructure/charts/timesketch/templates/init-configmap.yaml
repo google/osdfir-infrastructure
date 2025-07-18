@@ -85,7 +85,7 @@ data:
     {{- end }}
 
     # Yeti integration
-    {{- if .Values.global.yeti.enabled }}
+    {{- if and .Values.global.yeti.enabled .Values.global.yeti.apiKeySecret }}
     sed -i 's#^YETI_API_KEY =.*#YETI_API_KEY = "'$YETI_API_KEY'"#' timesketch.conf
     sed -i 's#^YETI_API_ROOT =.*#YETI_API_ROOT =  {{ printf "http://%s-yeti:9000/api/v2" .Release.Name | quote }}#' timesketch.conf
     {{- end }}
