@@ -5,32 +5,39 @@ Worker pod upon startup.
 */}}
 {{- define "timesketch.initContainer" -}}
 - name: init-timesketch
-  image: alpine/git
+  image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
   command: ['sh', '-c', '/init/init-timesketch.sh']
   env:
     - name: TIMESKETCH_SECRET
       valueFrom:
         secretKeyRef:
-          name: {{ .Release.Name }}-timesketch-secret 
+          name: {{ .Release.Name }}-timesketch-secret
           key: timesketch-secret
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: {{ .Release.Name }}-timesketch-secret 
+          name: {{ .Release.Name }}-timesketch-secret
           key: redis-user
     - name: POSTGRES_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: {{ .Release.Name }}-timesketch-secret 
+          name: {{ .Release.Name }}-timesketch-secret
           key: postgres-user
-    {{- if .Values.global.yeti.enabled }} 
+    {{- if and .Values.global.yeti.enabled .Values.global.yeti.apiKeySecret }}
     - name: YETI_API_KEY
       valueFrom:
         secretKeyRef:
-          name: {{ printf "%s-yeti-secret" .Release.Name }}
+          name: {{ .Values.global.yeti.apiKeySecret | quote }}
           key: "yeti-api"
     {{- end }}
-    {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }} 
+    {{- if .Values.global.hashr.enabled }}
+    - name: HASHR_POSTGRES_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ printf "%s-hashr-secret" .Release.Name }}
+          key: "postgres-user"
+    {{- end }}
+    {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
     - name: OIDC_CLIENT_ID
       valueFrom:
         secretKeyRef:

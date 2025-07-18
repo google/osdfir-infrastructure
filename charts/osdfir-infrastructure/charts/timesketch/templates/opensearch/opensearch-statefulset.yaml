@@ -22,7 +22,7 @@ spec:
       {{- if .Values.opensearch.sysctlInit.enabled }}
       initContainers:
       - name: sysctl
-        image: "busybox:latest"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: "IfNotPresent"
         command:
         - sh
@@ -37,11 +37,10 @@ spec:
         securityContext:
           runAsUser: 0
           privileged: true
+      {{- end }}
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
-        fsGroupChangePolicy: Always
-      {{- end }}
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false

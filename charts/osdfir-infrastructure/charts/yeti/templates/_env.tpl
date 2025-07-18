@@ -19,7 +19,10 @@ Worker pod upon startup.
 - name: YETI_ARANGODB_USERNAME
   value: root
 - name: YETI_AUTH_SECRET_KEY
-  value: {{ randAlphaNum 32 | quote }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}-yeti-secret 
+      key: yeti-secret
 - name: YETI_AUTH_ALGORITHM
   value: HS256
 - name: YETI_AUTH_ACCESS_TOKEN_EXPIRE_MINUTES
@@ -58,11 +61,6 @@ Worker pod upon startup.
     secretKeyRef:
       name: {{ .Release.Name }}-yeti-secret 
       key: yeti-arangodb
-- name: YETI_API_KEY
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}-yeti-secret 
-      key: yeti-api
 {{- if .Values.global.timesketch.enabled }}
 - name: YETI_TIMESKETCH_ENDPOINT
   value: {{ printf "http://%s-timesketch:5000" .Release.Name | quote }}

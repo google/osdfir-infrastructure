@@ -1,10 +1,10 @@
-{{- if .Values.hashr.importers.zip.enabled -}}
+{{- if .Values.config.importers.zip.enabled -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ .Release.Name }}-hashr-zip
 spec:
-  schedule: {{ .Values.hashr.importers.zip.schedule | quote }}
+  schedule: {{ .Values.config.importers.zip.schedule | quote }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
@@ -23,32 +23,32 @@ spec:
               - -exporters
               - postgres
               - -postgres_host
-              - {{ include "common.names.fullname" (dict "Chart" (dict "Name" "postgresql") "Release" .Release "Values" .Values.postgresql) }}
+              - {{ printf "%s-hashr-postgres" (.Release.Name) }}
               - -postgres_port
-              - {{ .Values.postgresql.primary.service.ports.postgresql | quote }}
+              - '5432'
               - -postgres_user
-              - {{ .Values.postgresql.auth.username | quote }}
+              - postgres
               - -postgres_password
               - "$(POSTGRES_PASSWORD)"
               - -postgres_db
-              - {{ .Values.postgresql.auth.database | quote }}
+              - hashr
               - -importers
               - zip
               - -zip_repo_path
-              - {{ (include "hashr.dataPath" .) }}/zip/
+              - /mnt/hashrvolume/data/zip/
             env:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "postgresql.v1.secretName" .Subcharts.postgresql }}
-                  key: {{ include "postgresql.v1.adminPasswordKey" .Subcharts.postgresql }}
+                  name: {{ .Release.Name }}-hashr-secret
+                  key: postgres-user
             volumeMounts:
             - name: hashrvolume
-              mountPath: {{ (include "hashr.dataPath" .) | quote }}
+              mountPath: /mnt/hashrvolume/data
           restartPolicy: Never
           volumes:
           - name: hashrvolume
             persistentVolumeClaim:
-              claimName: {{ include "hashr.pvc.name"  . }}
+              claimName: {{ .Release.Name }}-hashrvolume-claim
               readOnly: false
 {{- end }}

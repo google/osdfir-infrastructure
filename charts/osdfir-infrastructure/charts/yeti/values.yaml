@@ -13,6 +13,11 @@ global:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+    ## @param global.yeti.apiKeySecret Existing secret containing Yeti API Key.
+    ## Please ensure that the Secret has been created then re-deploy the Helm chart when integrating Yeti with Timesketch
+    ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
+    ##
+    apiKeySecret: ""
   ingress:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -33,7 +38,7 @@ frontend:
     pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.2.2
+    tag: 2.4.2
   ## Yeti frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -65,7 +70,7 @@ api:
     pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.2.2
+    tag: 2.4.2
   ## Yeti api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -97,7 +102,7 @@ tasks:
     pullPolicy: IfNotPresent
     ## @param tasks.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.2.2
+    tag: 2.4.2
   ## Yeti tasks resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param tasks.resources.limits Resource limits for the tasks container
@@ -116,10 +121,91 @@ tasks:
   ## @param tasks.nodeSelector Node labels for Yeti tasks pods assignment
   ##
   nodeSelector: {}
+## @section Yeti Task events configuration
+##
+events:
+  ## Yeti tasks resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param tasks.resources.limits Resource limits for the tasks container
+  ## @param tasks.resources.requests Requested resources for the tasks container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param tasks.nodeSelector Node labels for Yeti tasks pods assignment
+  ##
+  nodeSelector: {}
+## @section Yeti Tasks beat configuration
+##
+beats:
+  ## Yeti tasks resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param tasks.resources.limits Resource limits for the tasks container
+  ## @param tasks.resources.requests Requested resources for the tasks container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param tasks.nodeSelector Node labels for Yeti tasks pods assignment
+  ##
+  nodeSelector: {}
+## @section Yeti Bloomcheck configuration
+##
+bloomcheck:
+  image:
+    ## @param bloomcheck.image.repository Yeti tasks image repository
+    ##
+    repository: yetiplatform/bloomcheck
+    ## @param tasks.image.pullPolicy Yeti image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param bloomcheck.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: dev
+  ## Yeti bloomcheck resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param bloomcheck.resources.limits Resource limits for the tasks container
+  ## @param bloomcheck.resources.requests Requested resources for the tasks container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param tasks.nodeSelector Node labels for Yeti tasks pods assignment
+  ##
+  nodeSelector: {}
 ## @section Yeti Configuration Parameters
 ## ref: https://github.com/yeti-platform/yeti/blob/main/yeti.conf.sample
 ##
 config:
+  ## @param config.existingSecret Use an existing secret as the Yeti secret.
+  ## Secret name must follow the naming convention of {{ .Release.Name }}-yeti-secret
+  ##
+  existingSecret: false
+  ## @param config.createUser Creates a default Yeti user that can be used to login to Yeti after deployment
+  ##
+  createUser: true
   ## Yeti OIDC configuration
   ##
   oidc:

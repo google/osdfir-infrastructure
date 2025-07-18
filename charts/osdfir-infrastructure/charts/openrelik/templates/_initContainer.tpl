@@ -4,7 +4,7 @@ OIDC when enabled due to the changes having to be in settings.toml
 */}}
 {{- define "openrelik.initContainer" -}}
 - name: init-openrelik
-  image: ubuntu
+  image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
   command: ['sh', '-c', '/init/init-openrelik.sh']
   {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }} 
   env:

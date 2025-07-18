@@ -65,7 +65,7 @@ data:
 
     # Restrict logins from a Google Workspace domain.
     # Empty value = any domain, including gmail.com
-    workspace_domain = ""
+    workspace_domain = "{{ .Values.config.oidc.workspaceDomain }}"
 
     # Allow only these users (email address) to access the server.
     allowlist = ["<REPLACE_WITH_USERNAME>@gmail.com"]
@@ -73,7 +73,11 @@ data:
     # Allow anyone (who is authenitcated) to access the server.
     # Note: If a workspace_domain is set then the public_access is limited to that domain.
     # WARNING: This allows anyone to login to your server!
+    {{ if .Values.config.oidc.workspaceDomain -}}
+    public_access = true
+    {{ else -}}
     public_access = false
+    {{ end -}}
 
     [ui]
     # data_types that will be rendered using unescaped HTML in a sandboxed iframe in the
@@ -81,12 +85,3 @@ data:
     allowed_data_types_preview = [
         "openrelik:hayabusa:html_report"
     ]
-
-    # Enable cloud features such as adding cloud disks.
-    # This requires your OpenRelik installation to run on cloud VMs.
-    [cloud.gcp]
-    name = "gcp"
-    display_name = "Google Cloud Platform"
-    project_name = ""
-    zone = ""
-    enabled = false

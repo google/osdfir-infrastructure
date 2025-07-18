@@ -13,6 +13,11 @@ global:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+    ## @param global.yeti.apiKeySecret Existing secret containing Yeti API Key.
+    ## Please ensure that the Secret has been created then re-deploy the Helm chart when integrating Yeti with Timesketch
+    ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
+    ##
+    apiKeySecret: ""
   ingress:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -29,7 +34,7 @@ image:
   pullPolicy: IfNotPresent
   ## @param image.tag Overrides the image tag whose default is the chart appVersion
   ##
-  tag: "20250408"
+  tag: "20250708"
 ## @section Timesketch Configuration Parameters
 ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
 ##
@@ -39,6 +44,10 @@ config:
   ## (e.g. kubectl create configmap timesketch-configs --from-file=timesketch-configs/)
   ##
   existingConfigMap: ""
+  ## @param config.existingSecret Use an existing secret as the Timesketch secret.
+  ## Secret name must follow the naming convention of {{ .Release.Name }}-timesketch-secret
+  ##
+  existingSecret: false
   ## @param config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
   ##
   createUser: true
@@ -56,7 +65,7 @@ config:
     authenticatedEmailsFile:
       ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
       ##
-      enabled: true
+      enabled: false
       ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
       ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
       existingSecret: ""

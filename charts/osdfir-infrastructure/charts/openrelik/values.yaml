@@ -37,7 +37,7 @@ frontend:
     pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -53,6 +53,9 @@ frontend:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param frontend.nodeSelector Node labels for Frontend pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik API configuration
 ##
 api:
@@ -66,7 +69,7 @@ api:
     pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -82,6 +85,9 @@ api:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param api.nodeSelector Node labels for API pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik Mediator configuration
 ##
 mediator:
@@ -95,7 +101,7 @@ mediator:
     pullPolicy: IfNotPresent
     ## @param mediator.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik mediator resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param mediator.resources.limits Resource limits for the Mediator container
@@ -111,6 +117,9 @@ mediator:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param mediator.nodeSelector Node labels for Mediator pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik Metrics configuration
 ##
 metrics:
@@ -124,7 +133,7 @@ metrics:
     pullPolicy: IfNotPresent
     ## @param metrics.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "2024.12.12"
+    tag: "0.6.0"
   ## OpenRelik metrics resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param metrics.resources.limits Resource limits for the Metrics container
@@ -140,6 +149,9 @@ metrics:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param metrics.nodeSelector Node labels for Metrics pods assignment
+  ##
+  nodeSelector: {}
 ## @section OpenRelik Worker Configurations
 ## By default, resources are not set to allow the Helm chart to remain flexible in various deployments.
 ## To set resources, remove {} and replace with the provided resources
@@ -158,41 +170,85 @@ metrics:
 ##
 workers:
 - name: openrelik-worker-strings
-  image: ghcr.io/openrelik/openrelik-worker-strings:2024.11.27
-  command: celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-strings
+  image: ghcr.io/openrelik/openrelik-worker-strings:0.2.1
+  command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
+  privileged: false
+  replicas: 1
   env: {}
   resources: {}
+  nodeSelector: {}
 - name: openrelik-worker-plaso
-  image: ghcr.io/openrelik/openrelik-worker-plaso:2024.11.27
-  command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-plaso"
+  image: ghcr.io/openrelik/openrelik-worker-plaso:0.4.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
+  privileged: false
+  replicas: 1
   env: {}
   resources: {}
+  nodeSelector: {}
 - name: openrelik-worker-extraction
-  image: ghcr.io/openrelik/openrelik-worker-extraction:2024.11.27
-  command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-extraction"
+  image: ghcr.io/openrelik/openrelik-worker-extraction:0.4.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-extraction"
+  privileged: false
+  replicas: 1
   env: {}
   resources: {}
+  nodeSelector: {}
 - name: openrelik-worker-analyzer-config
-  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:0.2.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
+  privileged: false
+  replicas: 1
   env: {}
   resources: {}
-  command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-analyzer-config"
+  nodeSelector: {}
 - name: openrelik-worker-hayabusa
-  image: ghcr.io/openrelik/openrelik-worker-hayabusa:2024.11.27
-  command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-hayabusa"
+  image: ghcr.io/openrelik/openrelik-worker-hayabusa:0.3.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-hayabusa"
+  privileged: false
+  replicas: 1
   env: {}
   resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-yara
+  image: ghcr.io/openrelik/openrelik-worker-yara:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-yara"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
 ## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment 
 ## variables through Helm.
 ##
 - name: openrelik-worker-timesketch
-  image: ghcr.io/openrelik/openrelik-worker-timesketch:2024.11.27
+  image: ghcr.io/openrelik/openrelik-worker-timesketch:0.3.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
+  privileged: false
+  replicas: 1
   env: {}
   resources: {}
+  nodeSelector: {}
 ## @section OpenRelik Configuration Parameters
 ##
 config:
+  ## @param config.existingSecret Use an existing secret as the OpenRelik secret.
+  ## Secret name must follow the naming convention of {{ .Release.Name }}-openrelik-secret
+  ##
+  existingSecret: false
+  ## OpenRelik nbd init container configuration for OpenRelik containers that require the nbd module.
+  ## Only enable this container when you need to load the nbd kernel module to the underlying node.
+  ##
+  initWorkerNbd:
+    ## @param config.initWorkerNbd.enabled Whether to enable the nbd init container
+    ##
+    enabled: false
+    ## @param config.initWorkerNbd.image Container image with modprobe installed necessary
+    ## for loading the nbd module
+    ##
+    image: "us-central1-docker.pkg.dev/osdfir-registry/openrelik/openrelik-nbd:0.1.0"
+  ## @param config.createUser Create a default `openrelik` user.
+  ##
+  createUser: true
   ## OpenRelik OIDC configuration
   ##
   oidc:
@@ -202,12 +258,15 @@ config:
     ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
     ##
     existingSecret: ""
+    ## @param config.oidc.workspaceDomain Restricts logins from a Google Workspace domain.
+    ##
+    workspaceDomain: ""
     ## Allowed emails files for OpenRelik OIDC
     ##
     authenticatedEmailsFile:
       ## @param config.oidc.authenticatedEmailsFile.enabled Enables email authentication
       ##
-      enabled: true
+      enabled: false
       ## @param config.oidc.authenticatedEmailsFile.existingSecret Existing secret with a list of emails
       ## e.g. kubectl create secret generic allowed-emails --from-file=authenticated-emails-list=allowed-emails.txt
       existingSecret: ""
@@ -274,6 +333,9 @@ redis:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param redis.nodeSelector Node labels for Redis pods assignment
+  ##
+  nodeSelector: {}
 ## @section Postgresql Configuration Parameters
 ##
 postgresql:
@@ -310,6 +372,9 @@ postgresql:
     requests:
       cpu: 250m
       memory: 256Mi
+  ## @param postgresql.nodeSelector Node labels for Postgresql pods assignment
+  ##
+  nodeSelector: {}
 ## @section Prometheus Configuration Parameters
 ##
 prometheus:
@@ -342,3 +407,6 @@ prometheus:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
+  ## @param prometheus.nodeSelector Node labels for Prometheus pods assignment
+  ##
+  nodeSelector: {}
