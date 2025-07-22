@@ -17,6 +17,9 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: opensearch
+        {{- range $key, $value := .Values.opensearch.extraLabels }}
+        {{ $key }}: "{{ $value }}"
+        {{- end }}
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
     spec:
       {{- if .Values.opensearch.sysctlInit.enabled }}
