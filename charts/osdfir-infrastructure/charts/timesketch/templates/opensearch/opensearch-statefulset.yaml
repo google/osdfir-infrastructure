@@ -17,8 +17,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: opensearch
-        {{- range $key, $value := .Values.opensearch.extraLabels }}
-        {{ $key }}: "{{ $value }}"
+        {{- if .Values.opensearch.gkeAllowList }}
+        cloud.google.com/matching-allowlist: {{ .Values.opensearch.gkeAllowList }}
         {{- end }}
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
     spec:

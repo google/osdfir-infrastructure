@@ -199,9 +199,9 @@ opensearch:
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
   replicas: 1
-  ## @param opensearch.extraLabels Sets additional labels for the Opensearch deployment
+  ## @param opensearch.gkeAllowList Specify a GKE Autopilot allowlist
   ##
-  extraLabels: {}
+  gkeAllowList: ""
   ## @param opensearch.sysctlInit.enabled Sets optimal sysctl's through privileged initContainer
   ##
   sysctlInit:
