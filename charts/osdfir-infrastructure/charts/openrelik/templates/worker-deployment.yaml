@@ -13,6 +13,9 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: worker
+        {{- if and .privileged $.Values.config.gkeAllowList }}
+        cloud.google.com/matching-allowlist: {{ $.Values.config.gkeAllowList }}
+        {{- end }}
     spec:
       {{- if and .privileged $.Values.config.initWorkerNbd.enabled }}
       initContainers:
