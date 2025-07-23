@@ -195,10 +195,13 @@ opensearch:
     repository: opensearchproject/opensearch
     ## @param opensearch.image.tag Opensearch image tag
     ##
-    tag: "2.15.0"
+    tag: "3.1.0"
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
   replicas: 1
+  ## @param opensearch.gkeAllowList Specify a GKE Autopilot allowlist
+  ##
+  gkeAllowList: ""
   ## @param opensearch.sysctlInit.enabled Sets optimal sysctl's through privileged initContainer
   ##
   sysctlInit:
@@ -274,7 +277,7 @@ postgresql:
     repository: postgres
     ## @param postgresql.image.tag Postgresql image tag
     ##
-    tag: "17.2-alpine"
+    tag: "17.5-alpine"
   ## PostgreSQL persistence configuration
   ##
   persistence:
