@@ -350,7 +350,7 @@ postgresql:
     repository: postgres
     ## @param postgresql.image.tag Postgresql image tag
     ##
-    tag: "17.2-alpine"
+    tag: "17.5-alpine"
   ## PostgreSQL persistence configuration
   ##
   persistence:
