@@ -25,7 +25,8 @@ spec:
         - name: worker
           image: {{ .image | quote }}
           imagePullPolicy: "IfNotPresent"
-          command: ["/bin/sh", "-c", "{{ .command }}"]
+          command: ["/bin/sh", "-c"]
+          args: ["{{ .command }}"]
           securityContext:
             privileged: {{ .privileged }}
           env:
