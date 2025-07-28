@@ -17,26 +17,14 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: opensearch
-        {{- if .Values.opensearch.gkeAllowList }}
-        cloud.google.com/matching-allowlist: {{ .Values.opensearch.gkeAllowList }}
-        {{- end }}
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
     spec:
-      {{- if .Values.opensearch.sysctlInit.enabled }}
+      {{- if .Values.opensearch.sysctlInit.enableInitContainer }}
       initContainers:
       - name: sysctl
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: {{ .Values.opensearch.sysctlInit.image | quote }}
         imagePullPolicy: "IfNotPresent"
-        command:
-        - sh
-        - -c
-        - |
-          set -xe
-          DESIRED="262144"
-          CURRENT=$(sysctl -n vm.max_map_count)
-          if [ "$DESIRED" -gt "$CURRENT" ]; then
-            sysctl -w vm.max_map_count=$DESIRED
-          fi
+        command: ['/bin/bash', '-e', '-c', 'echo 262144 > /proc/sys/vm/max_map_count']
         securityContext:
           runAsUser: 0
           privileged: true
