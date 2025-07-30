@@ -205,18 +205,13 @@ opensearch:
     ## @param opensearch.sysctlInit.enableInitContainer Set the optimal sysctl max map value through an initContainer
     ## This requires the ability to run a privileged container within your cluster
     ##
-    enableInitContainer: false
-    ## @param opensearch.sysctlInit.enableInitContainer Set the optimal sysctl max map value through a DaemonSet
-    ## This requires the ability to run a privileged DaemonSet within your cluster. Using the DaemonSet with the default
-    ## image provided is allowed to run within GKE Autopilot.
-    ##
-    enableDaemonSet: true
+    enabled: true
     ## @param opensearch.sysctlInit.image Specify an image to use to set sysctl max map value with
     ##
     image: "gke.gcr.io/gke-distroless/bash:gke_distroless_20250707.00_p0"
-    ## @param opensearch.sysctlInit.image Enforce the DaemonSet to only run on nodes running Opensearch.
+    ## @param opensearch.sysctlInit.gkeAllowList Specify a GKE Autopilot allowlist for Opensearch use of a privileged initContainer
     ##
-    podAffinity: false
+    gkeAllowList: ""
   ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
   ## It is recommended to use at least half the system's available ram
   ##

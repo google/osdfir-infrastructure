@@ -248,7 +248,7 @@ config:
     ## @param config.initWorkerNbd.image Container image with modprobe installed necessary
     ## for loading the nbd module
     ##
-    image: "us-central1-docker.pkg.dev/osdfir-registry/openrelik/openrelik-nbd:0.1.0"
+    image: "us-central1-docker.pkg.dev/osdfir-registry/openrelik/openrelik-nbd-init:0.1.0"
   ## @param config.createUser Create a default `openrelik` user.
   ##
   createUser: true
