@@ -235,6 +235,9 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-openrelik-secret
   ##
   existingSecret: false
+  ## @param config.gkeAllowList Specify a GKE Autopilot allowlist for OpenRelik privileged workers to use
+  ##
+  gkeAllowList: ""
   ## OpenRelik nbd init container configuration for OpenRelik containers that require the nbd module.
   ## Only enable this container when you need to load the nbd kernel module to the underlying node.
   ##
@@ -245,7 +248,7 @@ config:
     ## @param config.initWorkerNbd.image Container image with modprobe installed necessary
     ## for loading the nbd module
     ##
-    image: "us-central1-docker.pkg.dev/osdfir-registry/openrelik/openrelik-nbd:0.1.0"
+    image: "us-central1-docker.pkg.dev/osdfir-registry/openrelik/openrelik-nbd-init:0.1.0"
   ## @param config.createUser Create a default `openrelik` user.
   ##
   createUser: true
@@ -347,7 +350,7 @@ postgresql:
     repository: postgres
     ## @param postgresql.image.tag Postgresql image tag
     ##
-    tag: "17.2-alpine"
+    tag: "17.5-alpine"
   ## PostgreSQL persistence configuration
   ##
   persistence:

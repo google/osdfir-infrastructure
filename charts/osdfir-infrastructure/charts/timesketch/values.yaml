@@ -195,14 +195,24 @@ opensearch:
     repository: opensearchproject/opensearch
     ## @param opensearch.image.tag Opensearch image tag
     ##
-    tag: "2.15.0"
+    tag: "3.1.0"
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
   replicas: 1
-  ## @param opensearch.sysctlInit.enabled Sets optimal sysctl's through privileged initContainer
+  ## Sysctl init for updating vm.max_map_count to the required minimum value needed for OpenSearch
   ##
   sysctlInit:
-    enabled: true
+    ## @param opensearch.sysctlInit.enableInitContainer Set the optimal sysctl max map value through an initContainer
+    ## This requires the ability to run a privileged container within your cluster
+    ##
+    enableInitContainer: true
+    ## @param opensearch.sysctlInit.enableInitContainer Set the optimal sysctl max map value through a DaemonSet
+    ## This requires the ability to run a privileged container within your cluster
+    ##
+    enableDaemonSet: false
+    ## @param opensearch.sysctlInit.image Specify an image to use to set sysctl max map value with
+    ##
+    image: "docker.io/bash:5.2.21"
   ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
   ## It is recommended to use at least half the system's available ram
   ##
@@ -274,7 +284,7 @@ postgresql:
     repository: postgres
     ## @param postgresql.image.tag Postgresql image tag
     ##
-    tag: "17.2-alpine"
+    tag: "17.5-alpine"
   ## PostgreSQL persistence configuration
   ##
   persistence:
