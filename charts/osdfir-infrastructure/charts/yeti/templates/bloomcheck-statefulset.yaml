@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-yeti-bloomcheck
   namespace: {{ .Release.Namespace | quote }}
@@ -28,7 +28,6 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p /opt/yeti/bloomfilters && \
               /app/bloomcheck -serve /opt/yeti/bloomfilters
           securityContext:
             allowPrivilegeEscalation: false
@@ -40,9 +39,23 @@ spec:
               type: RuntimeDefault
           env:
           {{- include "yeti.envs" . | nindent 12 }}
+          volumeMounts:
+            - mountPath: /opt/yeti/bloomfilters
+              name: data
+          ports:
+            - containerPort: 8100
+              name: http
           resources:
             {{- toYaml .Values.bloomcheck.resources | nindent 12 }}
       {{- with .Values.bloomcheck.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.arangodb.persistence.size }}
