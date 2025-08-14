@@ -107,6 +107,9 @@ spec:
   - metadata:
       name: data
     spec:
+      {{- if .Values.opensearch.persistence.storageClass }}
+      storageClassName: {{ .Values.opensearch.persistence.storageClass }}
+      {{- end }}
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
