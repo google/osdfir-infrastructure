@@ -34,7 +34,7 @@ image:
   pullPolicy: IfNotPresent
   ## @param image.tag Overrides the image tag whose default is the chart appVersion
   ##
-  tag: "20250708"
+  tag: "20250807"
 ## @section Timesketch Configuration Parameters
 ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
 ##
@@ -223,6 +223,9 @@ opensearch:
     ## @param opensearch.persistence.size Opensearch Persistent Volume size. A persistent volume would be created for each Opensearch replica running
     ##
     size: 2Gi
+    ## @param persistence.storageClass PVC Storage Class for Opensearch volume
+    ## 
+    storageClass: ""
   ## Opensearch resource requests
   ## @param opensearch.resources.requests.cpu The requested cpu for the Opensearch container
   ## @param opensearch.resources.requests.memory The requested memory for the Opensearch container
