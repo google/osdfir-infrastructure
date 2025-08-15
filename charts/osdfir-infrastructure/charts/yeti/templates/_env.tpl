@@ -1,9 +1,14 @@
 {{/*
-Init Container for when a Timesketch pod starts. To prevent duplicate code,
-this file has been created which then applies to both the Timesketch Web and
-Worker pod upon startup.
+List of environment variables for when a Yeti pod starts. Passed to all Yeti
+containers. Please update this file when adding a new environment variable.
 */}}
 {{- define "yeti.envs" -}}
+- name: YETI_SYSTEM_PLUGINS_PATH
+  value: "./plugins"
+- name: YETI_BLOOM_BLOOMCHECK_ENDPOINT
+  value: "{{ .Release.Name }}-yeti-bloomcheck"
+- name: YETI_BLOOM_FILTERS_DIR
+  value: "/opt/yeti/bloomfilters"
 - name: YETI_REDIS_HOST
   value: "{{ .Release.Name }}-yeti-redis"
 - name: YETI_REDIS_PORT
@@ -18,6 +23,11 @@ Worker pod upon startup.
   value: yeti
 - name: YETI_ARANGODB_USERNAME
   value: root
+- name: YETI_ARANGODB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}-yeti-secret 
+      key: yeti-arangodb
 - name: YETI_AUTH_SECRET_KEY
   valueFrom:
     secretKeyRef:
@@ -27,8 +37,15 @@ Worker pod upon startup.
   value: HS256
 - name: YETI_AUTH_ACCESS_TOKEN_EXPIRE_MINUTES
   value: "10000"
+- name: YETI_AUTH_BROWSER_TOKEN_EXPIRE_MINUTES
+  value: "43200"
 - name: YETI_AUTH_ENABLED
   value: "True"
+- name: YETI_USER_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}-yeti-secret 
+      key: yeti-user
 {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
 - name: YETI_AUTH_MODULE
   value: "oidc"
@@ -49,18 +66,6 @@ Worker pod upon startup.
   value: {{ printf "https://%s" .Values.global.ingress.yetiHost | quote }}
 {{- end }}
 {{- end }}
-- name: YETI_SYSTEM_PLUGINS_PATH
-  value: "./plugins"
-- name: YETI_USER_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}-yeti-secret 
-      key: yeti-user
-- name: YETI_ARANGODB_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}-yeti-secret 
-      key: yeti-arangodb
 {{- if .Values.global.timesketch.enabled }}
 - name: YETI_TIMESKETCH_ENDPOINT
   value: {{ printf "http://%s-timesketch:5000" .Release.Name | quote }}

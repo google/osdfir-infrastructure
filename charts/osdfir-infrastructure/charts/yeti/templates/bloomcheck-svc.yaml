@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-yeti-bloomcheck
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8100
+      protocol: TCP
+      targetPort: 8100
+  selector:
+    app.kubernetes.io/component: bloomcheck
+    {{- include "yeti.selectorLabels" . | nindent 4 }}
