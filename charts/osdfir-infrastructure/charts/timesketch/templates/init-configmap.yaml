@@ -55,7 +55,7 @@ data:
     sed -i 's#postgresql://<USERNAME>:<PASSWORD>@localhost/timesketch#{{ include "timesketch.postgresql.url" . }}#' timesketch.conf
 
     # Set up the Opensearch connection
-    sed -i 's#^OPENSEARCH_HOST =.*#OPENSEARCH_HOST = {{ (include "timesketch.opensearch.host" .) | quote }}#' timesketch.conf
+    sed -i 's#^OPENSEARCH_HOSTS =.*#OPENSEARCH_HOSTS = {{ (include "timesketch.opensearch.host" .) }}#' timesketch.conf
 
     # Set up secret
     sed -i 's#^SECRET_KEY =.*#SECRET_KEY = "'$TIMESKETCH_SECRET'"#' timesketch.conf

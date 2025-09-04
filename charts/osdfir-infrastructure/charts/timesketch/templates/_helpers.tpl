@@ -36,7 +36,7 @@ Postgresql connection url
 Opensearch host name
 */}}
 {{- define "timesketch.opensearch.host" -}}
-{{- printf "%s-opensearch-cluster" .Release.Name -}}
+{{- printf "[{ \"host\": \"%s-opensearch-cluster\", \"port\": 9200}]" .Release.Name -}}
 {{- end -}}
 
 {{/*
