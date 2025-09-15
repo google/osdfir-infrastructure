@@ -199,6 +199,10 @@ opensearch:
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
   replicas: 1
+   ## @param opensearch.selfSigned Specify whether to create self signed Opensearch certificates
+   ## and enable the Opensearch Security Plugin.
+   ##
+  selfSigned: false
   ## Sysctl init for updating vm.max_map_count to the required minimum value needed for OpenSearch
   ##
   sysctlInit:
@@ -241,6 +245,30 @@ opensearch:
   ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
   ##
   nodeSelector: {}
+  ## Opensearch Dashboard configuration paramaters 
+  ##
+  dashboard:
+    ## @param opensearch.dashboard.enabled Whether to enable the Opensearch Dashboard.
+    ##
+    enabled: true
+    ## @param opensearch.dashboard.image Specify which image to use with the Opensearch dashboard
+    ##
+    image: "opensearchproject/opensearch-dashboards:3.1.0"
+    ## Opensearch resource requests
+    ## @param opensearch.dashboard.resources.requests.cpu The requested cpu for the Opensearch dashboard container
+    ## @param opensearch.resources.requests.memory The requested memory for the Opensearch dashboard container
+    ##
+    resources:
+      ## Example:
+      ## requests:
+      ##    cpu: 500m
+      ##    memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+    ## @param opensearch.dashboard.nodeSelector Node labels for Opensearch dashboard pods assignment
+    ##
+    nodeSelector: {}
 ## @section Redis Configuration Parameters
 ##
 redis:

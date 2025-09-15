@@ -1,0 +1,55 @@
+{{- if and .Values.opensearch.dashboard.enabled .Values.opensearch.selfSigned }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-opensearch-dashboard
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: opensearch-dashboard
+    {{- include "timesketch.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: opensearch-dashboard
+      {{- include "timesketch.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      labels:
+        app.kubernetes.io/component: opensearch-dashboard
+        {{- include "timesketch.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: opensearch-dashboard
+          env:
+            - name: OPENSEARCH_HOSTS
+              value: '["https://{{ .Release.Name }}-opensearch-cluster:9200"]'
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          image: {{ .Values.opensearch.dashboard.image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5601
+              name: http
+          resources:
+            {{- toYaml .Values.opensearch.dashboard.resources | nindent 12 }}
+      {{- with .Values.opensearch.dashboard.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

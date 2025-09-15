@@ -72,11 +72,40 @@ spec:
               value: "master,ingest,data,remote_cluster_client"
             - name: DISABLE_INSTALL_DEMO_CONFIG
               value: "true"
+            {{- if .Values.opensearch.selfSigned }}
+            - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+              value: "admin"
+            - name: plugins.security.ssl.transport.pemcert_filepath
+              value: "certs/tls.crt"
+            - name: plugins.security.ssl.transport.pemkey_filepath
+              value: "certs/tls.key"
+            - name: plugins.security.ssl.transport.pemtrustedcas_filepath
+              value: "certs/ca.crt"
+            - name: plugins.security.ssl.transport.enforce_hostname_verification
+              value: "false"
+            - name: plugins.security.ssl.http.enabled
+              value: "true"
+            - name: plugins.security.ssl.http.pemcert_filepath
+              value: "certs/tls.crt"
+            - name: plugins.security.ssl.http.pemkey_filepath
+              value: "certs/tls.key"
+            - name: plugins.security.ssl.http.pemtrustedcas_filepath
+              value: "certs/ca.crt"
+            - name: plugins.security.allow_default_init_securityindex
+              value: "true"
+            - name: plugins.security.nodes_dn
+              value: "CN=opensearch-apps"
+            {{- else }}
             - name: DISABLE_SECURITY_PLUGIN
               value: "true"
+            {{- end }}
           volumeMounts:
             - mountPath: /usr/share/opensearch/data
               name: data
+            {{- if .Values.opensearch.selfSigned }}
+            - mountPath: /usr/share/opensearch/config/certs
+              name: tls
+            {{- end }}
           ports:
             - containerPort: 9200
               name: http
@@ -102,6 +131,13 @@ spec:
       {{- with .Values.opensearch.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.opensearch.selfSigned }}
+      volumes:
+        - name: tls
+          secret:
+            secretName: {{ .Release.Name }}-opensearch-tls
+            defaultMode: 0600
       {{- end }}
   volumeClaimTemplates:
   - metadata:
