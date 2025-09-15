@@ -227,7 +227,7 @@ workers:
   nodeSelector: {}
 - name: openrelik-worker-dfindexeddb
   image: ghcr.io/openrelik/openrelik-worker-dfindexeddb:0.1.0
-  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-bulkextractor"
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-dfindexeddb"
   privileged: false
   replicas: 1
   env: {}
