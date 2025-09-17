@@ -22,8 +22,8 @@ credits to explore and evaluate Google Cloud.
 and manage Google Cloud resources.
 2. [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl): The Kubernetes
 command-line tool that allows you to configure Kubernetes clusters.
-3. [Helm](https://helm.sh/): The package manager for Kubernetes to which we will
-be installing OSDFIR Infrastructure with.
+3. [Helm](https://helm.sh/): The package manager for Kubernetes, which we will
+use to install OSDFIR Infrastructure with.
 
 ℹ️ We recommend using [Google Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell)
 when following this tutorial. It already has the required software installed by default.
@@ -127,7 +127,12 @@ Now check that you can connect to the cluster:
 kubectl get nodes -o wide
 ```
 
-## Step 4: Create the OpenRelik GCS Bucket
+## Step 4: Configuring OpenRelik
+
+To configure OpenRelik in GCP, follow these steps to create the required GCP
+resources.
+
+### Create the GCS Bucket
 
 First, we need to create a Google Cloud Storage (GCS) bucket. This bucket will
 serve as the ingestion point for OpenRelik. It's where you will upload the disk
@@ -141,7 +146,7 @@ for simplifying permissions management on the bucket.
 gcloud storage buckets create gs://$GCS_BUCKET --uniform-bucket-level-access
 ```
 
-## Step 5: Create the OpenRelik GCS Bucket Notification
+### Create the GCS Bucket Notification
 
 Next, we need a way for OpenRelik to be notified automatically when a new disk is uploaded. This command creates a Pub/Sub notification on the bucket.
 
@@ -153,7 +158,7 @@ OpenRelik gcp importer to pull down the artifact from GCS.
 gcloud storage buckets notifications create gs://$GCS_BUCKET --topic=$PUBSUB_TOPIC
 ```
 
-## Step 6: Create the OpenRelik PubSub Subscription
+### Create the PubSub Subscription
 
 In the last step, we told the bucket to send messages to a topic. Now, we need
 to create the "mailbox" or subscription that OpenRelik will listen to.
@@ -167,21 +172,21 @@ and begin its work to pull down the file into the OpenRelik shared file storage.
 gcloud pubsub subscriptions create $PUBSUB_SUBSCRIPTION --topic=projects/$PROJECT_ID/topics/$PUBSUB_TOPIC
 ```
 
-## Step 7: Create the OpenRelik GCP Service Account
+### Create the GCP Service Account
 
-To process virtual machine disks in Google Cloud Platform (GCP) with OpenRelik,
-you need a dedicated GCP service account with the necessary permissions to
-subscribe to the PubSub queue and read GCS bucket objects.
+To pull artifacts from Google Cloud Storage with OpenRelik, you need a dedicated
+ GCP service account with the necessary permissions to subscribe to the PubSub
+ topic and read GCS bucket objects.
 
 ```bash
-# Grant the PubSub subscriber role for attaching and detaching disks
+# Grant the PubSub subscriber role for subscribing to GCS bucket notifications
 gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
     --role=roles/pubsub.subscriber \
     --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/openrelik
 ```
 
 ```bash
-# Grant the PubSub subscriber role for attaching and detaching disks
+# Grant the Storage Object User role for reading and downloading artifacts from GCS
 gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
     --role=roles/storage.objectUser \
     --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/openrelik
@@ -202,7 +207,7 @@ bucket.
 * Service Account User: Allows the OpenRelik service account to act as this newly
 created service account.
 
-## Step 8: Deploy the OSDFIR Infrastructure Helm Chart
+## Step 5: Deploy the OSDFIR Infrastructure Helm Chart
 
 Now it is time to deploy the OSDFIR Infrastructure Helm chart.
 
@@ -242,7 +247,7 @@ kubectl get pods
 You should see pods for Timesketch, OpenRelik, GRR, and Yeti in a Running state.
 It may take a few minutes for all the Pods to show a `Running` state.
 
-## Step 9: Expose Fleetspeak/GRR on L4 LoadBalancer
+## Step 6: Expose Fleetspeak/GRR on L4 LoadBalancer
 
 The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443) on the node IP.
 
@@ -312,7 +317,7 @@ helm upgrade my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak
 * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
  binaries on your clients anywhere where they have access to the Internet.
 
-## Step 10: Process a Google Cloud Disk
+## Step 7: Process a Google Cloud Disk
 
 With OSDFIR Infrastructure deployed, you're ready to process a GCP disk.
 
