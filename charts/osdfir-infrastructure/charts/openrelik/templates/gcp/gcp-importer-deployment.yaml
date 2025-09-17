@@ -1,0 +1,75 @@
+{{- if .Values.gcp.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-openrelik-gcp-importer
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: gcp
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: gcp
+      {{- include "openrelik.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: gcp
+        {{- include "openrelik.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      serviceAccountName: openrelik
+      containers:
+        - name: gcp
+          image: "{{ .Values.gcp.image.repository }}:{{ .Values.gcp.image.tag }}"
+          imagePullPolicy: {{ .Values.gcp.image.pullPolicy }}
+          command: ["/bin/sh", "-c", "python importer.py"]
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .Release.Name }}-openrelik-secret 
+                    key: redis-url
+            - name: SQLALCHEMY_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .Release.Name }}-openrelik-secret 
+                    key: postgres-url
+            - name: OPENRELIK_SERVER_SETTINGS
+              value: /app/settings.toml
+            - name: ROBOT_ACCOUNT_USER_ID
+              value: "1"
+            - name: GOOGLE_CLOUD_PROJECT
+              value: {{ .Values.gcp.projectID | quote}}
+            - name: GOOGLE_CLOUD_SUBSCRIPTION_ID
+              value: {{ .Values.gcp.subscriptionID | quote }}
+          volumeMounts:
+            - mountPath: /mnt/openrelikvolume
+              name: openrelikvolume
+            - mountPath: /app/settings.toml
+              subPath: settings.toml
+              name: settings-config
+          resources:
+            {{- toYaml .Values.gcp.resources | nindent 12 }}
+      volumes:
+        - name: openrelikvolume
+          persistentVolumeClaim:
+            {{- if .Values.persistence.existingPVC }}
+            claimName: {{ .Values.persistence.existingPVC }}
+            {{- else }}
+            claimName: {{ .Release.Name }}-openrelikvolume-claim
+            {{- end }}
+            readOnly: false
+        - name: settings-config
+          configMap:
+            name: {{ .Release.Name }}-openrelik-configmap
+      {{- with .Values.gcp.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

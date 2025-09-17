@@ -1,0 +1,15 @@
+{{- if and .Values.gcp.enabled .Values.config.initWorkerNbd.enabled }}
+apiVersion: auto.gke.io/v1
+kind: AllowlistSynchronizer
+metadata:
+  name: openrelik-privileged-workers-v1.0.0
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "openrelik.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-delete-policy: "before-hook-creation"
+spec:
+  allowlistPaths:
+  - OpenRelik/privileged-workers/openrelik-privileged-workers-v1.0.0.yaml
+{{- end }}

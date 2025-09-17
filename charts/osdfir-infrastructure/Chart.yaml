@@ -22,7 +22,7 @@ dependencies:
 - condition: global.openrelik.enabled
   name: openrelik
   repository: file://charts/openrelik
-  version: 2.1.6
+  version: 2.2.0
 - condition: global.grr.enabled
   name: grr
   repository: file://charts/grr
