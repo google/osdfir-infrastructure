@@ -209,18 +209,18 @@ opensearch:
     ## @param opensearch.sysctlInit.enableInitContainer Set the optimal sysctl max map value through an initContainer
     ## This requires the ability to run a privileged container within your cluster
     ##
-    enableInitContainer: true
+    enableInitContainer: false
     ## @param opensearch.sysctlInit.enableInitContainer Set the optimal sysctl max map value through a DaemonSet
     ## This requires the ability to run a privileged container within your cluster
     ##
-    enableDaemonSet: false
+    enableDaemonSet: true
     ## @param opensearch.sysctlInit.image Specify an image to use to set sysctl max map value with
     ##
     image: "docker.io/bash:5.2.21"
   ## @param opensearch.opensearchJavaOpts Sets the size of the Opensearch Java heap
   ## It is recommended to use at least half the system's available ram
   ##
-  opensearchJavaOpts: "-Xmx512M -Xms512M"
+  opensearchJavaOpts: "-Xmx256M -Xms256M"
   ## Opensearch persistence configuration
   ##
   persistence:
