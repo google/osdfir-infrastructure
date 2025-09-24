@@ -169,17 +169,65 @@ metrics:
 ##   - value: example-value
 ##
 workers:
-- name: openrelik-worker-strings
-  image: ghcr.io/openrelik/openrelik-worker-strings:0.2.1
-  command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
+- name: openrelik-worker-analyzer-config
+  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:0.2.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
   privileged: false
   replicas: 1
   env: {}
   resources: {}
   nodeSelector: {}
-- name: openrelik-worker-plaso
-  image: ghcr.io/openrelik/openrelik-worker-plaso:0.4.0
-  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
+- name: openrelik-worker-analyzer-logs
+  image: ghcr.io/openrelik/openrelik-worker-analyzer-logs:0.1.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-logs"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-bulkextractor
+  image: ghcr.io/openrelik/openrelik-worker-bulkextractor:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-bulkextractor"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-capa
+  image: ghcr.io/openrelik/openrelik-worker-capa:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-capa"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-chromecreds
+  image: ghcr.io/openrelik/openrelik-worker-chromecreds:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-chromecreds"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-cloud-logs
+  image: ghcr.io/openrelik/openrelik-worker-cloud-logs:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-cloud-logs"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-containers
+  image: ghcr.io/openrelik/openrelik-worker-containers:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-containers"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-dfindexeddb
+  image: ghcr.io/openrelik/openrelik-worker-dfindexeddb:0.1.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-dfindexeddb"
   privileged: false
   replicas: 1
   env: {}
@@ -193,9 +241,17 @@ workers:
   env: {}
   resources: {}
   nodeSelector: {}
-- name: openrelik-worker-analyzer-config
-  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:0.2.0
-  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
+- name: openrelik-worker-floss
+  image: ghcr.io/openrelik/openrelik-worker-floss:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-floss"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-grep
+  image: ghcr.io/openrelik/openrelik-worker-grep:0.1.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-grep"
   privileged: false
   replicas: 1
   env: {}
@@ -209,9 +265,25 @@ workers:
   env: {}
   resources: {}
   nodeSelector: {}
-- name: openrelik-worker-yara
-  image: ghcr.io/openrelik/openrelik-worker-yara:latest
-  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-yara"
+- name: openrelik-worker-plaso
+  image: ghcr.io/openrelik/openrelik-worker-plaso:0.4.0
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-os-creds
+  image: ghcr.io/openrelik/openrelik-worker-os-creds:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-os-creds"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-strings
+  image: ghcr.io/openrelik/openrelik-worker-strings:0.2.1
+  command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
   privileged: false
   replicas: 1
   env: {}
@@ -223,6 +295,14 @@ workers:
 - name: openrelik-worker-timesketch
   image: ghcr.io/openrelik/openrelik-worker-timesketch:0.3.0
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
+  privileged: false
+  replicas: 1
+  env: {}
+  resources: {}
+  nodeSelector: {}
+- name: openrelik-worker-yara
+  image: ghcr.io/openrelik/openrelik-worker-yara:latest
+  command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-yara"
   privileged: false
   replicas: 1
   env: {}
