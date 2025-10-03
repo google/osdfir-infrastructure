@@ -48,6 +48,13 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-timesketch-secret
   ##
   existingSecret: false
+  ## Timesketch dependency checker init container.
+  ## Waits for required services including Redis, Opensearch, and Postgres to be ready before the main container starts.
+  ##
+  initDependencyCheck:
+    ## @param config.initDependencyCheck.image Container image with nslookup, necessary for the checks
+    ##
+    image: "registry.k8s.io/e2e-test-images/agnhost:2.40"
   ## @param config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
   ##
   createUser: true
@@ -158,7 +165,7 @@ persistence:
   existingPVC: ""
   ## @param persistence.size Timesketch persistent volume size
   ##
-  size: 2Gi
+  size: 100Gi
   ## @param persistence.storageClass PVC Storage Class for Timesketch volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is

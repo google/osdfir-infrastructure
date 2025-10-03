@@ -24,8 +24,10 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      initContainers:
+      {{- include "openrelik.initContainer" . | nindent 8 }}
       containers:
-        - name: mediator
+        - name: metrics
           image: "{{ .Values.metrics.image.repository }}:{{ .Values.metrics.image.tag }}"
           imagePullPolicy: {{ .Values.metrics.image.pullPolicy }}
           command: ["/bin/sh", "-c", "python exporter.py"]

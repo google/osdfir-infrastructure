@@ -69,4 +69,20 @@ Worker pod upon startup.
       mountPath: /init/authenticated-emails
       readOnly: true
     {{- end }}
+- name: wait-for-deps
+  image: "{{ .Values.config.initDependencyCheck.image }}"
+  command: ['sh', '-c']
+  args: 
+    - |
+      # Wait for Postgres
+      until nslookup {{ .Release.Name }}-timesketch-postgres.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for Postgres; sleep 2; done
+      echo "Postgres service is discoverable."
+
+      # Wait for Redis
+      until nslookup {{ .Release.Name }}-timesketch-redis.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for Redis; sleep 2; done
+      echo "Redis service is discoverable."
+
+      # Wait for Opensearch
+      until nslookup {{ .Release.Name }}-opensearch-cluster.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for Opensearch; sleep 2; done
+      echo "Opensearch service is discoverable."
 {{- end }}

@@ -1,35 +1,18 @@
 {{/*
-Init Container for when a OpenRelik server starts. Required for setting up
-OIDC when enabled due to the changes having to be in settings.toml
+Init Container for checking for the Postgres and Redis service prior to starting
+the OpenRelik API, Mediator, and Metrics Pods.
 */}}
 {{- define "openrelik.initContainer" -}}
-- name: init-openrelik
-  image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-  command: ['sh', '-c', '/init/init-openrelik.sh']
-  {{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }} 
-  env:
-    - name: OIDC_CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: {{ .Values.config.oidc.existingSecret | quote }}
-          key: "client-id"
-    - name: OIDC_CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: {{ .Values.config.oidc.existingSecret | quote }}
-          key: "client-secret"
-  {{- end }}
-  volumeMounts:
-    - mountPath: /tmp/openrelik/settings.toml
-      subPath: settings.toml
-      name: settings-config
-    - mountPath: /init/
-      name: init-oidc
-    - mountPath: /etc/openrelik
-      name: openrelik-configs-dir
-    {{- if .Values.config.oidc.authenticatedEmailsFile.enabled }}
-    - name: authenticated-emails
-      mountPath: /init/authenticated-emails
-      readOnly: true
-    {{- end }}
+- name: wait-for-deps
+  image: "{{ .Values.config.initDependencyCheck.image }}"
+  command: ['sh', '-c']
+  args: 
+    - |
+      # Wait for Postgres
+      until nslookup {{ .Release.Name }}-openrelik-postgres.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for Postgres; sleep 2; done
+      echo "Postgres service is discoverable."
+
+      # Wait for Redis
+      until nslookup {{ .Release.Name }}-openrelik-redis.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for Redis; sleep 2; done
+      echo "Redis service is discoverable."
 {{- end }}

@@ -22,6 +22,7 @@ spec:
       hostIPC: false
       automountServiceAccountToken: false
       initContainers:
+      {{- include "openrelik.initContainerApi" . | nindent 8 }}
       {{- include "openrelik.initContainer" . | nindent 8 }}
       containers:
         - name: api

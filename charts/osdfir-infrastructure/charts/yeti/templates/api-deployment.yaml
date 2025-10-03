@@ -21,6 +21,8 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      initContainers:
+      {{- include "yeti.initContainer" . | nindent 8 }}
       containers:
         - name: api
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
@@ -30,7 +32,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["sh", "-c", "uv run python yetictl/cli.py create-user yeti $YETI_USER_PASSWORD --admin"]
+                command: ["sh", "-c", "if ! uv run python yetictl/cli.py list-users | grep -q 'Username: yeti'; then uv run python yetictl/cli.py create-user yeti $YETI_USER_PASSWORD --admin; fi"]
           {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
