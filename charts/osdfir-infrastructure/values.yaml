@@ -37,7 +37,7 @@ global:
   hashr:
     ## @param global.hashr.enabled Enables the HashR deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    enabled: false
+    enabled: true
   ## Global ingress parameters used to configure Timesketch, Yeti under a loadbalancer
   ##
   ingress:
