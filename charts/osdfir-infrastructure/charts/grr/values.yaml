@@ -123,6 +123,9 @@ grr:
     ##
     replicas: 1
   mysqlDb:
+    ## @param grr.mysqlDb.image Sets the GRR DB image to use
+    ##
+    image: "mariadb:11.3.2"
     ## @param grr.mysqlDb.address Sets the GRR DB address to use.
     ##
     address: "mysql"
@@ -149,3 +152,14 @@ prometheus:
   ## @param prometheus.metricsPort Sets the port to expose Prometheus metrics.
   ##
   metricsPort: 19090
+
+## @section initContainer parameters
+##
+initContainer:
+  ## @param initContainer.image Init container image necessary for creating certificates, ensuring services
+  ## are online prior to the main Pod.
+  ##
+  image: "alpine:latest"
+  ## @param initContainer.kanikoImage Init container image necessary for the GRR client kaniko build job.
+  ##
+  kanikoImage: "gcr.io/kaniko-project/executor:latest"
