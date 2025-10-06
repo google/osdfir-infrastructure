@@ -159,7 +159,7 @@ initContainer:
   ## @param initContainer.image Init container image necessary for creating certificates, ensuring services
   ## are online prior to the main Pod.
   ##
-  image: "alpine:latest"
+  image: "bitnamilegacy/git:latest"
   ## @param initContainer.kanikoImage Init container image necessary for the GRR client kaniko build job.
   ##
   kanikoImage: "gcr.io/kaniko-project/executor:latest"
