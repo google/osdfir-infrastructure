@@ -16,11 +16,11 @@ global:
   timesketch:
     ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    enabled: false
+    enabled: true
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    enabled: false
+    enabled: true
     ## @param global.yeti.apiKeySecret Existing secret containing Yeti API Key.
     ## Please ensure that the Secret has been created then re-deploy the Helm chart when integrating Yeti with Timesketch
     ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
@@ -29,7 +29,7 @@ global:
   openrelik:
     ## @param global.openrelik.enabled Enables the OpenRelik deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    enabled: false
+    enabled: true
   grr:
     ## @param global.grr.enabled Enables the GRR deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -37,7 +37,7 @@ global:
   hashr:
     ## @param global.hashr.enabled Enables the HashR deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    enabled: false
+    enabled: true
   ## Global ingress parameters used to configure Timesketch, Yeti under a loadbalancer
   ##
   ingress:
