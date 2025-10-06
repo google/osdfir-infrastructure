@@ -9,10 +9,10 @@ the OpenRelik API, Mediator, and Metrics Pods.
   args: 
     - |
       # Wait for Postgres
-      until nslookup {{ .Release.Name }}-openrelik-postgres.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for Postgres; sleep 2; done
+      until nslookup {{ .Release.Name }}-openrelik-postgres; do echo waiting for Postgres; sleep 5; done
       echo "Postgres service is discoverable."
 
       # Wait for Redis
-      until nslookup {{ .Release.Name }}-openrelik-redis.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for Redis; sleep 2; done
+      until nslookup {{ .Release.Name }}-openrelik-redis; do echo waiting for Redis; sleep 5; done
       echo "Redis service is discoverable."
 {{- end }}
