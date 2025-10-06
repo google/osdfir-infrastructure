@@ -16,7 +16,7 @@ global:
   timesketch:
     ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
-    enabled: false
+    enabled: true
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
