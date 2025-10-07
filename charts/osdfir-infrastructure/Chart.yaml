@@ -1,6 +1,6 @@
 apiVersion: v2
 name: osdfir-infrastructure
-version: 2.5.2
+version: 2.5.3
 description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
 keywords:
 - timesketch
