@@ -5,7 +5,6 @@ Common labels
 {{ include "yeti.selectorLabels" . }}
 helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version }} 
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-date: "{{ now | htmlDate }}"
 {{- end }}
 
 {{/*
