@@ -21,8 +21,10 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
-      # initContainers:
-      # {{- include "openrelik.initContainer" . | nindent 8 }}
+      {{/*
+      initContainers:
+        {{- include "openrelik.initContainer" . | nindent 8 }}
+      */}}
       containers:
         - name: mediator
           image: "{{ .Values.mediator.image.repository }}:{{ .Values.mediator.image.tag }}"
