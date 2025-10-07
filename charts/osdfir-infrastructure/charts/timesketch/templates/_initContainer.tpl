@@ -69,6 +69,7 @@ Worker pod upon startup.
       mountPath: /init/authenticated-emails
       readOnly: true
     {{- end }}
+{{/*
 - name: wait-for-deps
   image: "{{ .Values.config.initDependencyCheck.image }}"
   command: ['sh', '-c']
@@ -85,4 +86,5 @@ Worker pod upon startup.
       # Wait for Opensearch
       until nslookup {{ .Release.Name }}-opensearch-cluster; do sleep 60; done
       echo "Opensearch service is discoverable."
+*/}}
 {{- end }}
