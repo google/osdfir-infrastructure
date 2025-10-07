@@ -9,10 +9,10 @@ the Yeti Pods.
   args: 
     - |
       # Wait for Redis
-      until nslookup {{ .Release.Name }}-yeti-redis; do sleep 20; done
+      until nslookup {{ .Release.Name }}-yeti-redis; do sleep 60; done
       echo "Redis service is discoverable."
 
       # Wait for ArangoDB
-      until nslookup {{ .Release.Name }}-yeti-arangodb; do sleep 20; done
+      until nslookup {{ .Release.Name }}-yeti-arangodb; do sleep 60; done
       echo "ArangoDB service is discoverable."
 {{- end }}

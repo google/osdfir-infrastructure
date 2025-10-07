@@ -75,14 +75,14 @@ Worker pod upon startup.
   args: 
     - |
       # Wait for Postgres
-      until nslookup {{ .Release.Name }}-timesketch-postgres; do sleep 20; done
+      until nslookup {{ .Release.Name }}-timesketch-postgres; do sleep 60; done
       echo "Postgres service is discoverable."
 
       # Wait for Redis
-      until nslookup {{ .Release.Name }}-timesketch-redis; do sleep 20; done
+      until nslookup {{ .Release.Name }}-timesketch-redis; do sleep 60; done
       echo "Redis service is discoverable."
 
       # Wait for Opensearch
-      until nslookup {{ .Release.Name }}-opensearch-cluster; do sleep 20; done
+      until nslookup {{ .Release.Name }}-opensearch-cluster; do sleep 60; done
       echo "Opensearch service is discoverable."
 {{- end }}
