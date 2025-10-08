@@ -3,7 +3,7 @@ target-branch: main
 chart-repos:
   - osdfir-charts=https://google.github.io/osdfir-infrastructure/
 chart-dirs:
-  - charts
+  - charts/osdfir-infrastructure
 check-version-increment: true
 validate-maintainers: false
-helm-extra-args: "--set global.grr.enabled=false --set global.openrelik.enabled=false --timeout 1600s"
+helm-extra-args: "--timeout 1600s"
