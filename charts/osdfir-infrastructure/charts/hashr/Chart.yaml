@@ -1,7 +1,7 @@
 apiVersion: v2
 name: hashr
 description: A Helm chart for HashR Kubernetes deployments.
-version: 2.0.0
+version: 2.0.1
 type: application
 keywords:
 - hashr
@@ -16,7 +16,7 @@ maintainers:
 sources:
 - https://github.com/google/hashr
 - https://github.com/google/osdfir-infrastructure
-appVersion: "latest"
+appVersion: "latest2"
 annotations:
   category: Security
   licenses: Apache-2.0

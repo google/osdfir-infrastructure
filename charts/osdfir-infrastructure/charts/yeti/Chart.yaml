@@ -1,6 +1,6 @@
 apiVersion: v2
 name: yeti
-version: 2.2.1
+version: 2.2.2
 description: A Helm chart for Yeti Kubernetes deployments.
 keywords:
 - yeti
@@ -16,7 +16,7 @@ maintainers:
 sources:
 - https://github.com/yeti-platform/yeti
 - https://github.com/google/osdfir-infrastructure
-appVersion: "latest"
+appVersion: "latest2"
 annotations:
   category: Security
   licenses: Apache-2.0
