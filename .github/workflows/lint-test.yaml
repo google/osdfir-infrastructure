@@ -33,12 +33,10 @@ jobs:
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-      - name: Check disk space
-        run: |
-          df -h
-          sudo docker image prune --all --force
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
-          df -h
+    
+      - name: Run chart-testing (lint main)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --config .github/ct-main.yaml
 
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
@@ -47,6 +45,7 @@ jobs:
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
         uses: helm/kind-action@v1.7.0
-  
-      - name: Check disk space
-        run: df -h
+
+      - name: Run chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --config .github/ct.yaml
