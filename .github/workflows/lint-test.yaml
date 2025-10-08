@@ -47,3 +47,6 @@ jobs:
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --config .github/ct.yaml
+  
+      - name: Check disk space
+        run: df -h
