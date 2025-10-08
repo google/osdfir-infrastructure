@@ -24,10 +24,8 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
-      {{/*
       initContainers:
         {{- include "openrelik.initContainer" . | nindent 8 }}
-      */}}
       containers:
         - name: metrics
           image: "{{ .Values.metrics.image.repository }}:{{ .Values.metrics.image.tag }}"
