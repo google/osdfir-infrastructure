@@ -36,7 +36,7 @@ jobs:
       - name: Check disk space
         run: |
           df -h
-          rm -rf /tmp
+          sudo docker image prune --all --force
           df -h
 
       - name: Run chart-testing (lint)
