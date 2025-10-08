@@ -21,10 +21,8 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
-      {{/*
       initContainers:
         {{- include "yeti.initContainer" . | nindent 8 }}
-      */}}
       containers:
         - name: events
           image: "{{ .Values.tasks.image.repository }}:{{ .Values.tasks.image.tag }}"
