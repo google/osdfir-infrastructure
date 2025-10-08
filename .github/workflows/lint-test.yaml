@@ -37,7 +37,7 @@ jobs:
         run: |
           df -h
           sudo docker image prune --all --force
-          sudo docker builder prune -a
+          sudo docker builder prune -a -f
           df -h
 
       - name: Run chart-testing (lint)
