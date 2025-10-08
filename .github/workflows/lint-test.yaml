@@ -36,7 +36,7 @@ jobs:
       - name: Check disk space
         run: |
           df -h
-          du -sh / | sort -rh | head -n 10
+          ls -lh /dev/root
 
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
