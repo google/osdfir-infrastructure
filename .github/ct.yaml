@@ -5,7 +5,7 @@ chart-repos:
   - opensearch=https://opensearch-project.github.io/helm-charts
   - osdfir-charts=https://google.github.io/osdfir-infrastructure/
 chart-dirs:
-  - charts
+  - charts/osdfir-infrastructure/charts
 check-version-increment: true
 validate-maintainers: false
 helm-extra-args: --timeout 800s
