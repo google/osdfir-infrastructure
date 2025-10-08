@@ -235,7 +235,7 @@ opensearch:
     ##
     size: 2Gi
     ## @param persistence.storageClass PVC Storage Class for Opensearch volume
-    ## 
+    ##
     storageClass: ""
   ## Opensearch resource requests
   ## @param opensearch.resources.requests.cpu The requested cpu for the Opensearch container
@@ -252,7 +252,7 @@ opensearch:
   ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
   ##
   nodeSelector: {}
-  ## Opensearch Dashboard configuration paramaters 
+  ## Opensearch Dashboard configuration paramaters
   ##
   dashboard:
     ## @param opensearch.dashboard.enabled Whether to enable the Opensearch Dashboard.
