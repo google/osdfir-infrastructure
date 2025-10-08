@@ -36,7 +36,8 @@ jobs:
       - name: Check disk space
         run: |
           df -h
-          docker image ls
+          rm -rf /tmp
+          df -h
 
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
