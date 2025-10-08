@@ -1,0 +1,9 @@
+remote: origin
+target-branch: main
+chart-repos:
+  - osdfir-charts=https://google.github.io/osdfir-infrastructure/
+chart-dirs:
+  - charts
+check-version-increment: true
+validate-maintainers: false
+helm-extra-args: "--timeout 800s"
