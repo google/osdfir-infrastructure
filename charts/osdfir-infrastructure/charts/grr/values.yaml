@@ -108,7 +108,7 @@ grr:
   daemon:
     ## @param grr.daemon.image Sets the GRR client container image to use.
     ##
-    #image: "europe-west1-docker.pkg.dev/osdfir-grr/containers/grr-client:v0.1"
+    ## image: "europe-west1-docker.pkg.dev/osdfir-grr/containers/grr-client:v0.1"
     ## @param grr.daemon.imagePullPolicy Sets the GRR client container image pull policy to use.
     ##
     imagePullPolicy: "Always"

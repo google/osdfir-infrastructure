@@ -18,6 +18,10 @@ global:
     ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
     ##
     apiKeySecret: ""
+  hashr:
+    ## @param global.hashr.enabled Enables the Hashr deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
   ingress:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
