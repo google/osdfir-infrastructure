@@ -1,8 +1,6 @@
 remote: origin
 target-branch: main
 chart-repos:
-  - bitnami=https://charts.bitnami.com/bitnami
-  - opensearch=https://opensearch-project.github.io/helm-charts
   - osdfir-charts=https://google.github.io/osdfir-infrastructure/
 chart-dirs:
   - charts/osdfir-infrastructure/charts

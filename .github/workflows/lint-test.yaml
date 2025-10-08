@@ -34,7 +34,11 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Run chart-testing (lint)
+      - name: Run chart-testing (lint main osdfir chart)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --config .github/ct-main.yaml
+
+      - name: Run chart-testing (lint sub charts)
         if: steps.list-changed.outputs.changed == 'true'
         run: ct lint --config .github/ct.yaml
 
