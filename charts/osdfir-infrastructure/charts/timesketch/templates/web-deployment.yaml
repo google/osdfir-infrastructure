@@ -33,7 +33,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/sh", "-c", "gunicorn --bind 0.0.0.0:5000 --capture-output --timeout 600 --workers 4 timesketch.wsgi:application"]
-          {{- if .Values.config.createUser }}
+          {{- if and (not .Release.IsUpgrade) .Values.config.createUser }}
           lifecycle:
             postStart:
               exec:
@@ -54,6 +54,10 @@ spec:
               name: timesketch-configs
             - mountPath: /tmp
               name: tmp
+            {{- if .Values.opensearch.selfSigned }}
+            - mountPath: /etc/opensearch-tls
+              name: opensearch-tls
+            {{- end }}
           ports:
             - containerPort: 8080
             - containerPort: 5000
@@ -88,6 +92,12 @@ spec:
             - key: authenticated-emails-list
               path: authenticated-emails-list
             secretName: {{ include "timesketch.oidc.authenticatedemails" . }}
+        {{- end }}
+        {{- if .Values.opensearch.selfSigned }}
+        - name: opensearch-tls
+          secret:
+            secretName: {{ .Release.Name }}-opensearch-tls
+            defaultMode: 0600
         {{- end }}
       {{- with .Values.frontend.nodeSelector }}
       nodeSelector:

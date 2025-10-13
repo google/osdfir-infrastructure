@@ -1,0 +1,15 @@
+{{- if and .Values.opensearch.dashboard.enabled .Values.opensearch.selfSigned }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-opensearch-dashboard
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: http
+    port: 5601
+    targetPort: 5601
+  selector:
+    app.kubernetes.io/component: opensearch-dashboard
+{{- end }}

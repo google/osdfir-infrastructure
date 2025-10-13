@@ -31,7 +31,7 @@ spec:
                 - grr
       initContainers:
       - name: init-fleetspeak-health-check
-        image: bitnami/git
+        image: {{ .Values.initContainer.image }}
         command: ["/bin/sh", "-c"]
         args:
         - |
@@ -43,7 +43,7 @@ spec:
           done
           echo "Fleetspeak Admin health check is ready"
       - name: init-exe-sign
-        image: bitnami/git
+        image: {{ .Values.initContainer.image }}
         command: ["/bin/sh", "-c"]
         args:
         - |

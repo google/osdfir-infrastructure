@@ -31,7 +31,7 @@ spec:
       serviceAccountName: {{ .Release.Name }}-grr-sa
       initContainers:
         - name: init-fleetspeak-health-check
-          image: bitnami/git
+          image: {{ .Values.initContainer.image }}
           command: ["/bin/sh", "-c"]
           args:
           - |
@@ -43,7 +43,7 @@ spec:
             done
             echo "Fleetspeak Frontend health check is ready"
         - name: init-kaniko-env
-          image: bitnami/git
+          image: {{ .Values.initContainer.image }}
           command: ["/bin/sh", "-c"]
           args:
           - |
@@ -71,7 +71,7 @@ spec:
             subPath: server.local.yaml
       containers:
         - name: kaniko
-          image: gcr.io/kaniko-project/executor:latest
+          image: {{ .Values.initContainer.kanikoImage }}
           args:
             - "--dockerfile=Dockerfile.kaniko"
             - "--context=dir:///kaniko-build/osdfir-infrastructure"

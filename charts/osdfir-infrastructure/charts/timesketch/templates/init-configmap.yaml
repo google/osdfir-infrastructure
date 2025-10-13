@@ -56,6 +56,12 @@ data:
 
     # Set up the Opensearch connection
     sed -i 's#^OPENSEARCH_HOSTS =.*#OPENSEARCH_HOSTS = {{ (include "timesketch.opensearch.host" .) }}#' timesketch.conf
+    {{- if .Values.opensearch.selfSigned }}
+    sed -i 's#^OPENSEARCH_USER =.*#OPENSEARCH_USER = "admin"#' timesketch.conf
+    sed -i 's#^OPENSEARCH_PASSWORD =.*#OPENSEARCH_PASSWORD = "admin"#' timesketch.conf
+    sed -i 's#^OPENSEARCH_SSL =.*#OPENSEARCH_SSL = "True"#' timesketch.conf
+    sed -i 's#^OPENSEARCH_CA_CERTS =.*#OPENSEARCH_CA_CERTS = "/etc/opensearch-tls/ca.crt"#' timesketch.conf
+    {{- end }}
 
     # Set up secret
     sed -i 's#^SECRET_KEY =.*#SECRET_KEY = "'$TIMESKETCH_SECRET'"#' timesketch.conf

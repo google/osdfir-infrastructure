@@ -48,6 +48,10 @@ spec:
               name: timesketchvolume
             - mountPath: /etc/timesketch
               name: timesketch-configs
+            {{- if .Values.opensearch.selfSigned }}
+            - mountPath: /etc/opensearch-tls
+              name: opensearch-tls
+            {{- end }}
           ports:
             - containerPort: 8080
             - containerPort: 5000
@@ -80,6 +84,12 @@ spec:
             - key: authenticated-emails-list
               path: authenticated-emails-list
             secretName: {{ include "timesketch.oidc.authenticatedemails" . }}
+        {{- end }}
+        {{- if .Values.opensearch.selfSigned }}
+        - name: opensearch-tls
+          secret:
+            secretName: {{ .Release.Name }}-opensearch-tls
+            defaultMode: 0600
         {{- end }}
       {{- with .Values.worker.nodeSelector }}
       nodeSelector:

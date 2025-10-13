@@ -332,7 +332,7 @@ workers:
   env: {}
   resources: {}
   nodeSelector: {}
-## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment 
+## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment
 ## variables through Helm.
 ##
 - name: openrelik-worker-timesketch
@@ -372,6 +372,13 @@ config:
     ## for loading the nbd module
     ##
     image: "us-central1-docker.pkg.dev/osdfir-registry/openrelik/openrelik-nbd-init:0.1.0"
+  ## OpenRelik dependency checker init container.
+  ## Waits for required services like Redis and Postgres to be ready before the main container starts.
+  ##
+  initDependencyCheck:
+    ## @param config.initDependencyCheck.image Container image with nslookup, necessary for the checks
+    ##
+    image: "registry.k8s.io/e2e-test-images/agnhost:2.40"
   ## @param config.createUser Create a default `openrelik` user.
   ##
   createUser: true
@@ -409,7 +416,7 @@ config:
 persistence:
   ## @param persistence.existingPVC Specify an existing PVC to use for the OpenRelik volume
   ##
-  existingPVC: "" 
+  existingPVC: ""
   ## @param persistence.size OpenRelik persistent volume size
   ##
   size: 2Gi
