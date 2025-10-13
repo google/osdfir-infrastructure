@@ -1,6 +1,6 @@
 apiVersion: v2
 name: openrelik
-version: 2.1.6
+version: 2.1.7
 description: A Helm chart for Openrelik Kubernetes deployments.
 keywords:
 - openrelik
@@ -16,7 +16,7 @@ sources:
 - https://github.com/openrelik
 - https://github.com/google/osdfir-infrastructure
 icon: https://openrelik.org/favicon.ico
-appVersion: "latest"
+appVersion: "latest2"
 annotations:
   category: Security
   licenses: Apache-2.0
