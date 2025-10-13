@@ -152,6 +152,12 @@ config:
       ##
       # At 15:00 on Tuesday
       schedule: "0 15 * * 2"
+## Data Manager container parameters
+##
+dataManager:
+  ## @param dataManager.image Image used by the data manager
+  ##
+  image: "busybox:1.37.0"
 ## Persistence Storage Parameters
 ##
 persistence:

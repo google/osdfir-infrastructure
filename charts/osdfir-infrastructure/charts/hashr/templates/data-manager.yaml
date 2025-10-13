@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - name: hashr-data-manager
-    image: busybox:latest
+    image: {{ .Values.dataManager.image }} 
     imagePullPolicy: IfNotPresent
     command: ["sh", "-c", "while true; do sleep 1800; done;"]
     volumeMounts:

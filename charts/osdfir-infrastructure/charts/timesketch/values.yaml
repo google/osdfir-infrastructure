@@ -18,6 +18,10 @@ global:
     ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
     ##
     apiKeySecret: ""
+  hashr:
+    ## @param global.hashr.enabled Enables the Hashr deployment (only used in the main OSDFIR Infrastructure Helm chart)
+    ##
+    enabled: false
   ingress:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -48,6 +52,13 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-timesketch-secret
   ##
   existingSecret: false
+  ## Timesketch dependency checker init container.
+  ## Waits for required services including Redis, Opensearch, and Postgres to be ready before the main container starts.
+  ##
+  initDependencyCheck:
+    ## @param config.initDependencyCheck.image Container image with nslookup, necessary for the checks
+    ##
+    image: "registry.k8s.io/e2e-test-images/agnhost:2.40"
   ## @param config.createUser Creates a default Timesketch user that can be used to login to Timesketch after deployment
   ##
   createUser: true
@@ -228,7 +239,7 @@ opensearch:
     ##
     size: 2Gi
     ## @param persistence.storageClass PVC Storage Class for Opensearch volume
-    ## 
+    ##
     storageClass: ""
   ## Opensearch resource requests
   ## @param opensearch.resources.requests.cpu The requested cpu for the Opensearch container
@@ -245,7 +256,7 @@ opensearch:
   ## @param opensearch.nodeSelector Node labels for Opensearch pods assignment
   ##
   nodeSelector: {}
-  ## Opensearch Dashboard configuration paramaters 
+  ## Opensearch Dashboard configuration paramaters
   ##
   dashboard:
     ## @param opensearch.dashboard.enabled Whether to enable the Opensearch Dashboard.
