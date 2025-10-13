@@ -11,6 +11,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Clean up disk space
+      - run: df -h
+      - name: "node-cleanup"
+        run: |
+          sudo docker image prune --all --force
+          sudo docker builder prune -a
+      - run: df -h
+
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
