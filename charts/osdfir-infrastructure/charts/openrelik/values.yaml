@@ -289,7 +289,7 @@ workers:
   env: {}
   resources: {}
   nodeSelector: {}
-## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment 
+## When deployed via the OSDFIR Infrastructure chart, the Timesketch Worker automatically receives its required environment
 ## variables through Helm.
 ##
 - name: openrelik-worker-timesketch
@@ -366,7 +366,7 @@ config:
 persistence:
   ## @param persistence.existingPVC Specify an existing PVC to use for the OpenRelik volume
   ##
-  existingPVC: "" 
+  existingPVC: ""
   ## @param persistence.size OpenRelik persistent volume size
   ##
   size: 2Gi
