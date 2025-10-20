@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $.Release.Name }}-{{ .name }}
+  namespace: {{ $.Release.Namespace | quote }}
 spec:
   replicas: {{ .replicas }}
   selector:
@@ -16,6 +17,10 @@ spec:
         {{- if and .privileged $.Values.config.gkeAllowList }}
         cloud.google.com/matching-allowlist: {{ $.Values.config.gkeAllowList }}
         {{- end }}
+      {{- with $.Values.global.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       {{- if and .privileged $.Values.config.initWorkerNbd.enabled }}
       initContainers:
@@ -62,6 +67,10 @@ spec:
           {{- if .resources }}
           resources:
             {{- toYaml .resources | nindent 12 }}
+          {{- else }}
+          resources:
+            requests: {}
+            limits: {}
           {{- end }}
       volumes:
         - name: openrelikvolume
@@ -82,8 +91,8 @@ spec:
             path: /lib/modules
         {{- end }}
         {{- end }}
+      {{- with .nodeSelector }}
       nodeSelector:
-        {{- range $key, $value := .nodeSelector }}
-        {{ $key }}: "{{ $value }}"
-        {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 {{- end }}

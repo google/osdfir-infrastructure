@@ -21,6 +21,7 @@ global:
     ## @param global.ingress.enabled Enable the global loadbalancer for external access (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+  annotations: {}
 ## @section OpenRelik configuration
 ## The following section covers configuration parameters for OpenRelik
 ##

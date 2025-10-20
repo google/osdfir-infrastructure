@@ -17,6 +17,9 @@ spec:
       annotations:
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
+        {{- with .Values.global.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
         app.kubernetes.io/component: metrics
         {{- include "openrelik.selectorLabels" . | nindent 8 }}

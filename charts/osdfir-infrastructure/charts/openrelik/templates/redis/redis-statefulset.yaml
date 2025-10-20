@@ -17,6 +17,10 @@ spec:
       labels:
         app.kubernetes.io/component: redis
         {{- include "openrelik.selectorLabels" . | nindent 8 }}
+      {{- with .Values.global.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       securityContext:
         fsGroup: 1001
