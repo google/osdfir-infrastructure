@@ -229,6 +229,7 @@ helm install my-release osdfir-charts/osdfir-infrastructure \
     --set openrelik.persistence.storageClass="standard-rwx" \
     --set openrelik.persistence.accessModes={"ReadWriteMany"} \
     --set openrelik.persistence.size=10Gi \
+    --set openrelik.config.initWorkerNbd="True" \
     --set timesketch.persistence.storageClass="standard-rwx" \
     --set timesketch.persistence.accessModes={"ReadWriteMany"} \
     --set timesketch.persistence.size=10Gi
@@ -247,7 +248,7 @@ kubectl get pods
 You should see pods for Timesketch, OpenRelik, GRR, and Yeti in a Running state.
 It may take a few minutes for all the Pods to show a `Running` state.
 
-## Step 6: Expose Fleetspeak/GRR on L4 LoadBalancer
+## Step 6: Expose Fleetspeak/GRR on L4 LoadBalancer (Optional)
 
 The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443) on the node IP.
 
