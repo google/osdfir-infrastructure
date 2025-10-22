@@ -96,12 +96,17 @@ export OPENRELIK_FOLDER_ID=1 # Your OpenRelik Folder ID to store images into (de
 
 > *Note*: You can find the GCP project number by running `gcloud projects describe $PROJECT_ID`
 
-## Step 3: Create the GKE Autopilot Cluster
+## Step 3: Create the GKE Cluster
 
-Now, create the GKE Autopilot cluster with the following command:
+Now, create the GKE cluster with the following command:
 
 ```bash
-gcloud container clusters create-auto $CLUSTER 
+gcloud container clusters create $CLUSTER \
+  --image-type=UBUNTU_CONTAINERD \
+  --machine-type=e2-standard-8 \
+  --zone $ZONE \
+  --workload-pool=$PROJECT_ID.svc.id.goog \
+  --addons=GcpFilestoreCsiDriver
 ```
 
 Important Considerations:
