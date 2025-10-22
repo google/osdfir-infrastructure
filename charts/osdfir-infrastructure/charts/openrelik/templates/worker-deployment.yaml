@@ -54,7 +54,7 @@ spec:
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
-            {{- if .privileged }}
+            {{- if and .privileged $.Values.config.initWorkerNbd.enabled }}
             - mountPath: /dev
               name: dev
               readOnly: true
@@ -72,15 +72,13 @@ spec:
             claimName: {{ $.Release.Name }}-openrelikvolume-claim
             {{- end }}
             readOnly: false
-        {{- if .privileged }}
+        {{- if and .privileged $.Values.config.initWorkerNbd.enabled }}
         - name: dev
           hostPath:
             path: /dev
-        {{- if $.Values.config.initWorkerNbd.enabled }}
         - name: modules
           hostPath:
             path: /lib/modules
-        {{- end }}
         {{- end }}
       nodeSelector:
         {{- range $key, $value := .nodeSelector }}

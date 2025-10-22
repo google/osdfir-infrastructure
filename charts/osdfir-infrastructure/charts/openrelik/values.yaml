@@ -263,7 +263,7 @@ workers:
 - name: openrelik-worker-containers
   image: ghcr.io/openrelik/openrelik-worker-containers:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-containers"
-  privileged: false
+  privileged: true
   replicas: 1
   env: {}
   resources: {}
@@ -346,7 +346,7 @@ workers:
 - name: openrelik-worker-yara
   image: ghcr.io/openrelik/openrelik-worker-yara:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-yara"
-  privileged: false
+  privileged: true
   replicas: 1
   env: {}
   resources: {}
