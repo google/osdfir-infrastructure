@@ -253,7 +253,7 @@ kubectl get pods
 You should see pods for Timesketch, OpenRelik, GRR, and Yeti in a Running state.
 It may take a few minutes for all the Pods to show a `Running` state.
 
-## Step 6: Expose Fleetspeak/GRR on L4 LoadBalancer (Optional)
+## Step 6: Expose Fleetspeak/GRR on L4 LoadBalancer
 
 The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443) on the node IP.
 
