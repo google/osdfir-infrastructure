@@ -37,7 +37,7 @@ frontend:
     pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -69,7 +69,7 @@ api:
     pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -101,7 +101,7 @@ mediator:
     pullPolicy: IfNotPresent
     ## @param mediator.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik mediator resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param mediator.resources.limits Resource limits for the Mediator container
@@ -133,7 +133,7 @@ metrics:
     pullPolicy: IfNotPresent
     ## @param metrics.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik metrics resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param metrics.resources.limits Resource limits for the Metrics container

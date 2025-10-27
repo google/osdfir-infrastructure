@@ -86,7 +86,8 @@ Replace the placeholders with your actual values:
 export PROJECT_ID="your-gcp-project"  # Your Google Cloud project ID
 export PROJECT_NUMBER="your-gcp-number"  # Your Google Cloud project number
 export CLUSTER="osdfir-autopilot-cluster"  # The name you choose for your K8s cluster
-export ZONE="your-gcp-zone" # GCP Zone containing the disk you will process
+export REGION="your-gcp-region" # GCP Region of your K8s cluster
+export ZONE="your-gcp-zone" # GCP Zone of the test disk you will create and process
 export NAMESPACE="default"  # Your K8s namespace (can be left as 'default')
 export GCS_BUCKET="openrelik-my-unique-id-12345" # Your GCS bucket name (must be globally unique)
 export PUBSUB_TOPIC="openrelik-pubsub" # Your Google Cloud PubSub Topic
@@ -96,17 +97,15 @@ export OPENRELIK_FOLDER_ID=1 # Your OpenRelik Folder ID to store images into (de
 
 > *Note*: You can find the GCP project number by running `gcloud projects describe $PROJECT_ID`
 
-## Step 3: Create the GKE Cluster
+## Step 3: Create the GKE Autopilot Cluster
 
 Now, create the GKE cluster with the following command:
 
 ```bash
-gcloud container clusters create $CLUSTER \
-  --image-type=UBUNTU_CONTAINERD \
-  --machine-type=e2-standard-8 \
-  --zone $ZONE \
-  --workload-pool=$PROJECT_ID.svc.id.goog \
-  --addons=GcpFilestoreCsiDriver
+gcloud container clusters create-auto $CLUSTER \
+  --release-channel=rapid \
+  --cluster-version=1.34.1-gke.1829001 \
+  --region $REGION
 ```
 
 Important Considerations:
@@ -123,7 +122,7 @@ plugin for kubectl:
 ```bash
 sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-gcloud container clusters get-credentials $CLUSTER --zone $ZONE
+gcloud container clusters get-credentials $CLUSTER --region $REGION
 ```
 
 Now check that you can connect to the cluster:
@@ -234,7 +233,7 @@ helm install my-release osdfir-charts/osdfir-infrastructure \
     --set openrelik.persistence.storageClass="standard-rwx" \
     --set openrelik.persistence.accessModes={"ReadWriteMany"} \
     --set openrelik.persistence.size=10Gi \
-    --set openrelik.config.initWorkerNbd="True" \
+    --set openrelik.config.initWorkerNbd=true \
     --set timesketch.persistence.storageClass="standard-rwx" \
     --set timesketch.persistence.accessModes={"ReadWriteMany"} \
     --set timesketch.persistence.size=10Gi
@@ -265,7 +264,10 @@ The default way that the Fleetspeak frontend for GRR is exposed is through a ```
 > If you are running on minikube this could be done by running ```minikube ip```
 
 ```bash
-helm upgrade my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak.frontend.expose="node" --set grr.fleetspeak.frontend.address="$NODE_IP" --reuse-values
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
+  --set grr.fleetspeak.frontend.expose="node" \
+  --set grr.fleetspeak.frontend.address="$NODE_IP" \
+  --reuse-values
 ```
 
 * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
@@ -282,17 +284,20 @@ helm upgrade my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak
 
 ```bash
 gcloud compute addresses create fleetspeak-frontend-internal \
-  --region=us-central1 --subnet=default
+  --region=$REGION --subnet=default
 
 # Find the IP address that you have been allocated.
-gcloud compute addresses describe fleetspeak-frontend-internal --region=us-central1
+gcloud compute addresses describe fleetspeak-frontend-internal --region=$REGION
 ```
 
 * Choose the values for the ```REGION``` and ```SUBNETWORK```
  so they match the location where you run your GKE cluster.
 
 ```bash
-helm upgrade my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak.frontend.expose="internal" --set grr.fleetspeak.frontend.address="$IP_ADDRESS" --reuse-values
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
+  --set grr.fleetspeak.frontend.expose="internal" \
+  --set grr.fleetspeak.frontend.address="$IP_ADDRESS" \
+  --reuse-values
 ```
 
 * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
@@ -307,17 +312,20 @@ helm upgrade my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak
 * You will have to reserve a static external IP address in your Google Cloud Project first.
 
 ```bash
-gcloud compute addresses create fleetspeak-frontend-external --region=us-central1
+gcloud compute addresses create fleetspeak-frontend-external --region=$REGION
      
 # Find the IP address that you have been allocated.
-gcloud compute addresses describe fleetspeak-frontend-external --region=us-central1
+gcloud compute addresses describe fleetspeak-frontend-external --region=$REGION
 ```
 
 * Choose the value for the ```REGION``` so it matches the location where
  you run your GKE cluster.
 
 ```bash
-helm upgrade my-release osdfir-charts/osdfir-infrastructure --set grr.fleetspeak.frontend.expose="external" --set grr.fleetspeak.frontend.address="$IP_ADDRESS" --reuse-values
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
+  --set grr.fleetspeak.frontend.expose="external" \
+  --set grr.fleetspeak.frontend.address="$IP_ADDRESS" \
+  --reuse-values
 ```
 
 * Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
