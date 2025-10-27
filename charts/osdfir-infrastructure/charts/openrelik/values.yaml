@@ -177,7 +177,7 @@ gcp:
     ## @param gcp.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: "latest"
-  ## OpenRelik metrics resource requests and limits
+  ## OpenRelik GCP importer resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param gcp.resources.limits Resource limits for the GCP importer container
   ## @param gcp.resources.requests Requested resources for the GCP importer container
@@ -192,7 +192,7 @@ gcp:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
-  ## @param metrics.nodeSelector Node labels for GCP importer pods assignment
+  ## @param gcp.nodeSelector Node labels for GCP importer pods assignment
   ##
   nodeSelector: {}
 ## @section OpenRelik Worker Configurations
