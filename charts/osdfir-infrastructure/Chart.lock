@@ -7,12 +7,12 @@ dependencies:
   version: 2.2.2
 - name: openrelik
   repository: file://charts/openrelik
-  version: 2.1.8
+  version: 2.1.9
 - name: grr
   repository: file://charts/grr
-  version: 2.3.0
+  version: 2.3.1
 - name: hashr
   repository: file://charts/hashr
   version: 2.0.1
-digest: sha256:28c13d460c1c393ac7855e59e8f583e296b4e9d2d03c79abc7816da518bd2224
-generated: "2025-10-13T14:22:32.435334-07:00"
+digest: sha256:75389ee94cbd242cbc53396141c041383db190b517e8c6e8f3865b0e0b0e5bce
+generated: "2025-10-28T11:30:51.040068-07:00"
