@@ -90,6 +90,9 @@ spec:
             mountPath: /grr/exe/sign/keys
           - name: kaniko-volume
             mountPath: /kaniko-build
+          resources:
+            requests:
+              ephemeral-storage: 5Gi
       restartPolicy: Never
       volumes:
         - name: kaniko-volume
