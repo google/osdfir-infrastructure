@@ -260,8 +260,7 @@ The default way that the Fleetspeak frontend for GRR is exposed is through a ```
 
 * Find the IP for one of your cluster nodes and install the chart as following:
 
-> [!NOTE]
-> If you are running on minikube this could be done by running ```minikube ip```
+> **Note**: Run kubectl get nodes -o wide for a list of IPs to Nodes.
 
 ```bash
 helm upgrade my-release osdfir-charts/osdfir-infrastructure \
