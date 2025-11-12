@@ -37,7 +37,7 @@ frontend:
     pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -69,7 +69,7 @@ api:
     pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -101,7 +101,7 @@ mediator:
     pullPolicy: IfNotPresent
     ## @param mediator.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik mediator resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param mediator.resources.limits Resource limits for the Mediator container
@@ -133,7 +133,7 @@ metrics:
     pullPolicy: IfNotPresent
     ## @param metrics.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: "0.6.0"
+    tag: "latest"
   ## OpenRelik metrics resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param metrics.resources.limits Resource limits for the Metrics container
@@ -150,6 +150,49 @@ metrics:
     ##    memory: 1Gi
     requests: {}
   ## @param metrics.nodeSelector Node labels for Metrics pods assignment
+  ##
+  nodeSelector: {}
+## @section OpenRelik GCP Importer configuration
+##
+gcp:
+  ## @param gcp.enabled Whether to enable the OpenRelik GCP importer.
+  ##
+  enabled: false
+  ## @param gcp.projectID GCP Project ID where your cluster is deployed.
+  ##
+  projectID: ""
+  ## @param gcp.projectID GCP PubSub subscription that is listening to the GCS bucket.
+  ##
+  subscriptionID: ""
+  ## OpenRelik GCP importer image configuration
+  ##
+  image:
+    ## @param gcp.image.repository OpenRelik gcp importer image repository
+    ##
+    repository: ghcr.io/openrelik/openrelik-gcp-importer
+    ## @param gcp.image.pullPolicy OpenRelik image pull policy
+    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param gcp.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: "latest"
+  ## OpenRelik GCP importer resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param gcp.resources.limits Resource limits for the GCP importer container
+  ## @param gcp.resources.requests Requested resources for the GCP importer container
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    ## Example:
+    ## requests:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    requests: {}
+  ## @param gcp.nodeSelector Node labels for GCP importer pods assignment
   ##
   nodeSelector: {}
 ## @section OpenRelik Worker Configurations
@@ -220,7 +263,7 @@ workers:
 - name: openrelik-worker-containers
   image: ghcr.io/openrelik/openrelik-worker-containers:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-containers"
-  privileged: false
+  privileged: true
   replicas: 1
   env: {}
   resources: {}
@@ -303,7 +346,7 @@ workers:
 - name: openrelik-worker-yara
   image: ghcr.io/openrelik/openrelik-worker-yara:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-yara"
-  privileged: false
+  privileged: true
   replicas: 1
   env: {}
   resources: {}
@@ -317,7 +360,7 @@ config:
   existingSecret: false
   ## @param config.gkeAllowList Specify a GKE Autopilot allowlist for OpenRelik privileged workers to use
   ##
-  gkeAllowList: ""
+  gkeAllowList: "openrelik-privileged-workers-v1.0.0"
   ## OpenRelik nbd init container configuration for OpenRelik containers that require the nbd module.
   ## Only enable this container when you need to load the nbd kernel module to the underlying node.
   ##
