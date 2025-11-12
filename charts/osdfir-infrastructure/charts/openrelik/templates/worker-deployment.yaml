@@ -72,13 +72,15 @@ spec:
             claimName: {{ $.Release.Name }}-openrelikvolume-claim
             {{- end }}
             readOnly: false
-        {{- if and .privileged $.Values.config.initWorkerNbd.enabled }}
+        {{- if .privileged }}
         - name: dev
           hostPath:
             path: /dev
+        {{- if $.Values.config.initWorkerNbd.enabled }}
         - name: modules
           hostPath:
             path: /lib/modules
+        {{- end }}
         {{- end }}
       nodeSelector:
         {{- range $key, $value := .nodeSelector }}
