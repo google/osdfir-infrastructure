@@ -54,7 +54,7 @@ spec:
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
-            {{- if and .privileged $.Values.config.initWorkerNbd.enabled }}
+            {{- if .privileged }}
             - mountPath: /dev
               name: dev
               readOnly: true
