@@ -30,6 +30,7 @@ spec:
           imagePullPolicy: "IfNotPresent"
           command: ["/bin/sh", "-c"]
           args: ["{{ .command }}"]
+          terminationMessagePath: /tmp/termination-log
           securityContext:
             privileged: {{ .privileged }}
           env:
