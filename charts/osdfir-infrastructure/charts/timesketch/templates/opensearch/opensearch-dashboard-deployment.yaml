@@ -28,6 +28,12 @@ spec:
           env:
             - name: OPENSEARCH_HOSTS
               value: '["https://{{ .Release.Name }}-opensearch-cluster:9200"]'
+            {{- if .Values.opensearch.dashboard.ingress }}
+            - name: SERVER_BASEPATH
+              value: "/opensearch"
+            - name: SERVER_REWRITEBASEPATH
+              value: "true"
+            {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
