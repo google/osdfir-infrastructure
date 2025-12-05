@@ -24,7 +24,7 @@ spec:
       containers:
         - name: frontend
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
           env:
             - name: OPENRELIK_SERVER_URL
               {{- if .Values.global.ingress.openRelikAPIHost }}
@@ -36,7 +36,7 @@ spec:
               value: v1
             - name: OPENRELIK_AUTH_METHODS
               {{- if .Values.config.oidc.enabled }}
-              value: local,google
+              value: google
               {{- else }}
               value: local
               {{- end }}

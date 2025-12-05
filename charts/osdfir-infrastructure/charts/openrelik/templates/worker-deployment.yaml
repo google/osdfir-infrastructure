@@ -27,7 +27,7 @@ spec:
       containers:
         - name: worker
           image: {{ .image | quote }}
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: {{ $.Values.config.imagePullPolicy }}
           command: ["/bin/sh", "-c"]
           args: ["{{ .command }}"]
           terminationMessagePath: /tmp/termination-log
@@ -46,6 +46,10 @@ spec:
                   key: timesketch-user
           {{- else if .env }}
             {{- toYaml .env | nindent 12 }} 
+          {{- end }}
+          {{- if not .privileged }}
+            - name: UNPRIVILEGED
+              value: "true"
           {{- end }}
             - name: REDIS_URL
               valueFrom:

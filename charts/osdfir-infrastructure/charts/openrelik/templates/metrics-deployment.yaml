@@ -29,7 +29,7 @@ spec:
       containers:
         - name: metrics
           image: "{{ .Values.metrics.image.repository }}:{{ .Values.metrics.image.tag }}"
-          imagePullPolicy: {{ .Values.metrics.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
           command: ["/bin/sh", "-c", "python exporter.py"]
           env:
             - name: REDIS_URL
