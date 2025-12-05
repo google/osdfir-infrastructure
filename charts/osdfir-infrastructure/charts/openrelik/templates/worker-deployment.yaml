@@ -52,6 +52,10 @@ spec:
                 secretKeyRef:
                     name: {{ $.Release.Name }}-openrelik-secret 
                     key: redis-url
+            - name: NODENAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
