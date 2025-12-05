@@ -48,11 +48,11 @@ data:
 
     # UI token expiration in minutes.
     jwt_cookie_refresh_expire_minutes = 1440  # 24 hours
-    jwt_cookie_access_expire_minutes = 720  # 12 hours
+    jwt_cookie_access_expire_minutes = 1200  # 20 hours
 
     # API key token expiration in minutes, if not set by the user upon creation.
     jwt_header_default_refresh_expire_minutes = 10080  # 7 days
-    jwt_header_default_access_expire_minutes = 5  # 5 minutes
+    jwt_header_default_access_expire_minutes = 1440  # 24 hours
 
     [auth.google]
     # Google OAuth authentication. You need to create credentials in a Google Cloud project:
@@ -69,6 +69,9 @@ data:
 
     # Allow only these users (email address) to access the server.
     allowlist = ["<REPLACE_WITH_USERNAME>@gmail.com"]
+
+    # Allow these robot accounts (service accounts) to access the server.
+    allowed_robot_accounts = {{ .Values.config.oidc.allowedRobotAccounts | default list | toJson }}
 
     # Allow anyone (who is authenitcated) to access the server.
     # Note: If a workspace_domain is set then the public_access is limited to that domain.

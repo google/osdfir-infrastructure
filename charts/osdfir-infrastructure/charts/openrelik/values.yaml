@@ -193,7 +193,7 @@ gcp:
 ##
 workers:
 - name: openrelik-worker-analyzer-config
-  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:0.2.0
+  image: ghcr.io/openrelik/openrelik-worker-analyzer-config:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
   privileged: false
   replicas: 1
@@ -201,7 +201,7 @@ workers:
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-analyzer-logs
-  image: ghcr.io/openrelik/openrelik-worker-analyzer-logs:0.1.0
+  image: ghcr.io/openrelik/openrelik-worker-analyzer-logs:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-logs"
   privileged: false
   replicas: 1
@@ -249,7 +249,7 @@ workers:
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-dfindexeddb
-  image: ghcr.io/openrelik/openrelik-worker-dfindexeddb:0.1.0
+  image: ghcr.io/openrelik/openrelik-worker-dfindexeddb:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-dfindexeddb"
   privileged: false
   replicas: 1
@@ -257,7 +257,7 @@ workers:
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-extraction
-  image: ghcr.io/openrelik/openrelik-worker-extraction:0.4.0
+  image: ghcr.io/openrelik/openrelik-worker-extraction:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-extraction"
   privileged: false
   replicas: 1
@@ -273,7 +273,7 @@ workers:
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-grep
-  image: ghcr.io/openrelik/openrelik-worker-grep:0.1.0
+  image: ghcr.io/openrelik/openrelik-worker-grep:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-grep"
   privileged: false
   replicas: 1
@@ -281,7 +281,7 @@ workers:
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-hayabusa
-  image: ghcr.io/openrelik/openrelik-worker-hayabusa:0.3.0
+  image: ghcr.io/openrelik/openrelik-worker-hayabusa:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-hayabusa"
   privileged: false
   replicas: 1
@@ -289,7 +289,7 @@ workers:
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-plaso
-  image: ghcr.io/openrelik/openrelik-worker-plaso:0.4.0
+  image: ghcr.io/openrelik/openrelik-worker-plaso:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
   privileged: false
   replicas: 1
@@ -305,7 +305,7 @@ workers:
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-strings
-  image: ghcr.io/openrelik/openrelik-worker-strings:0.2.1
+  image: ghcr.io/openrelik/openrelik-worker-strings:latest
   command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
   privileged: false
   replicas: 1
@@ -316,7 +316,7 @@ workers:
 ## variables through Helm.
 ##
 - name: openrelik-worker-timesketch
-  image: ghcr.io/openrelik/openrelik-worker-timesketch:0.3.0
+  image: ghcr.io/openrelik/openrelik-worker-timesketch:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
   privileged: false
   replicas: 1
@@ -378,6 +378,13 @@ config:
     ## @param config.oidc.workspaceDomain Restricts logins from a Google Workspace domain.
     ##
     workspaceDomain: ""
+    ## @param config.oidc.allowedRobotAccounts Allow robot accounts (service accounts) to access the server.
+    ## Example
+    ## allowedRobotAccounts:
+    ## - robot1
+    ## - robot2
+    ##
+    allowedRobotAccounts: {}
     ## Allowed emails files for OpenRelik OIDC
     ##
     authenticatedEmailsFile:
