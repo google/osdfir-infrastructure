@@ -176,6 +176,56 @@ entries:
       category: Security
       licenses: Apache-2.0
     apiVersion: v2
+    created: "2025-12-05T16:34:13.159936107Z"
+    dependencies:
+    - condition: global.timesketch.enabled
+      name: timesketch
+      repository: file://charts/timesketch
+      version: 2.3.4
+    - condition: global.yeti.enabled
+      name: yeti
+      repository: file://charts/yeti
+      version: 2.2.2
+    - condition: global.openrelik.enabled
+      name: openrelik
+      repository: file://charts/openrelik
+      version: 2.1.9
+    - condition: global.grr.enabled
+      name: grr
+      repository: file://charts/grr
+      version: 2.3.1
+    - condition: global.hashr.enabled
+      name: hashr
+      repository: file://charts/hashr
+      version: 2.0.1
+    description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
+    digest: efe239e8d79599af8d0eb9ff0dca7fb173a721d501891809b9cee3ef25200e3c
+    home: https://github.com/google/osdfir-infrastructure
+    keywords:
+    - timesketch
+    - yeti
+    - dfir
+    - analysis
+    - processing
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: osdfir-infrastructure
+    sources:
+    - https://github.com/google/grr
+    - https://github.com/google/osdfir-infrastructure
+    - https://github.com/google/timesketch
+    - https://github.com/yeti-platform/yeti
+    - https://openrelik.org/
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-2.5.7/osdfir-infrastructure-2.5.7.tgz
+    version: 2.5.7
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
     created: "2025-11-17T23:47:21.103509735Z"
     dependencies:
     - condition: global.timesketch.enabled
@@ -3444,4 +3494,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2025-11-17T23:47:21.103893644Z"
+generated: "2025-12-05T16:34:13.160491005Z"
