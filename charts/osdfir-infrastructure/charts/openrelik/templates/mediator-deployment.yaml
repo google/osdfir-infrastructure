@@ -26,7 +26,7 @@ spec:
       containers:
         - name: mediator
           image: "{{ .Values.mediator.image.repository }}:{{ .Values.mediator.image.tag }}"
-          imagePullPolicy: {{ .Values.mediator.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
           command: ["/bin/sh", "-c", "python mediator.py"]
           env:
             - name: PYTHONUNBUFFERED
