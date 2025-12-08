@@ -1,7 +1,7 @@
 dependencies:
 - name: timesketch
   repository: file://charts/timesketch
-  version: 2.3.4
+  version: 2.3.5
 - name: yeti
   repository: file://charts/yeti
   version: 2.2.2
@@ -14,5 +14,5 @@ dependencies:
 - name: hashr
   repository: file://charts/hashr
   version: 2.0.1
-digest: sha256:db708e3da3002255f98c973d83593e166143f66d199ff32b0eed73d2f1186a90
-generated: "2025-12-05T14:37:37.149373-08:00"
+digest: sha256:b609c117697fa44a03143fbe3c2f93ba412b8f274e29ef0799be5167d0629c9f
+generated: "2025-12-08T08:55:49.092688-08:00"
