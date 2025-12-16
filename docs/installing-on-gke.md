@@ -226,7 +226,7 @@ To install the chart, specify any release name of your choice.
 For example, using `my-release` as the release name, run:
 
 ```bash
-helm install my-release osdfir-charts/osdfir-infrastructure --version 2.5.8 \
+helm install my-release osdfir-charts/osdfir-infrastructure \
     --set openrelik.gcp.enabled=true \
     --set openrelik.gcp.projectID=$PROJECT_ID \
     --set openrelik.gcp.subscriptionID=$PUBSUB_SUBSCRIPTION \

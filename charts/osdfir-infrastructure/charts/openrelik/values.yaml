@@ -344,7 +344,7 @@ config:
   imagePullPolicy: Always
   ## @param config.gkeAllowList Specify a GKE Autopilot allowlist for OpenRelik privileged workers to use
   ##
-  gkeAllowList: "openrelik-privileged-workers-v1.0.0"
+  gkeAllowList: "openrelik-privileged-workers-v3.0.0"
   ## OpenRelik nbd init container configuration for OpenRelik containers that require the nbd module.
   ## Only enable this container when you need to load the nbd kernel module to the underlying node.
   ##
