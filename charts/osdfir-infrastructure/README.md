@@ -199,7 +199,7 @@ files independently of the Helm chart:
     you can use the [download-timesketch-configs.sh script](./charts/timesketch/tools/download-timesketch-configs.sh).
 
     ```console
-    bash download-timesketch-configs.sh --release 20250408
+    bash download-timesketch-configs.sh --release 20251114
     ```
 
 2. Create a ConfigMap:
