@@ -8,8 +8,8 @@ To learn more about the release, try:
   $ kubectl get pods
 
 To connect to the Timesketch URL:
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-timesketch 5000:5000
-  $ echo "Visit http://127.0.0.1:5000 to access Timesketch through port-forwarding"
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-timesketch-nginx 8080:8080
+  $ echo "Visit http://127.0.0.1:8080 to access Timesketch through port-forwarding"
 
 {{ if .Values.config.createUser -}}
 Login to Timesketch with the User `timesketch`. To get your password run:
