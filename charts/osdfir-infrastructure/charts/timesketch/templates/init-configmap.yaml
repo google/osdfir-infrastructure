@@ -106,3 +106,8 @@ data:
     sed -i -e "s/^# HASHR_QUERY_BATCH_SIZE =.*/HASHR_QUERY_BATCH_SIZE = '50000'/g" timesketch.conf
     sed -i -e "s/^# HASHR_ADD_SOURCE_ATTRIBUTE =.*/HASHR_ADD_SOURCE_ATTRIBUTE = True/g" timesketch.conf
     {{- end }}
+
+    # Enable SecGemini if the secret key is provided
+    {{- if .Values.config.gcp.secGeminiAPIKeySecret }}
+    sed -i "/secgemini_log_analyzer_agent/,/}/ s/'api_key': ''/'api_key': '$SECGEMINI_API_KEY'/" timesketch.conf
+    {{- end }}

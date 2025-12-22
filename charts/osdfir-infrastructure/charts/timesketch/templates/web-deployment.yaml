@@ -47,6 +47,10 @@ spec:
                   name: {{ .Release.Name }}-timesketch-secret
                   key: timesketch-user
             {{- end }}
+            {{- if .Values.config.gcp.vertexServiceAccountSecret }}
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/vertex/vertex-sa.json
+            {{- end }}
           volumeMounts:
             - mountPath: /mnt/timesketchvolume
               name: timesketchvolume
@@ -57,6 +61,12 @@ spec:
             {{- if .Values.opensearch.selfSigned }}
             - mountPath: /etc/opensearch-tls
               name: opensearch-tls
+            {{- end }}
+            {{- if .Values.config.gcp.vertexServiceAccountSecret }}
+            - mountPath: /etc/vertex/vertex-sa.json
+              name: vertex-sa
+              subPath: vertex-sa.json
+              readOnly: true
             {{- end }}
           ports:
             - containerPort: 8080
@@ -98,6 +108,11 @@ spec:
           secret:
             secretName: {{ .Release.Name }}-opensearch-tls
             defaultMode: 0600
+        {{- end }}
+        {{- if .Values.config.gcp.vertexServiceAccountSecret }}
+        - name: vertex-sa
+          secret:
+            secretName: {{ .Values.config.gcp.vertexServiceAccountSecret }}
         {{- end }}
       {{- with .Values.frontend.nodeSelector }}
       nodeSelector:

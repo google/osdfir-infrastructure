@@ -38,7 +38,7 @@ image:
   pullPolicy: IfNotPresent
   ## @param image.tag Overrides the image tag whose default is the chart appVersion
   ##
-  tag: "20251114"
+  tag: "20251219"
 ## @section Timesketch Configuration Parameters
 ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
 ##
@@ -52,6 +52,19 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-timesketch-secret
   ##
   existingSecret: false
+  ## Timesketch GCP optional features to enable
+  ##
+  gcp:
+    ## @param.config.gcp.vertexServiceAccountSecret Name of the
+    ## Please save the Vertex key as a file then create the secret referencing the file prior to deployment
+    ## (e.g. kubectl create secret generic vertex-secret --from-file=vertex-sa.json)
+    ##
+    vertexServiceAccountSecret: ""
+    ## @param.config.gcp.secGeminiAPIKeySecret
+    ## Please ensure that the secret has been created with the key `api-key` prior to deployment
+    ## (e.g. kubectl create secret generic secgemini-secret --from-literal=api-key=$REPLACE_WITH_API_KEY)
+    ##
+    secGeminiAPIKeySecret: ""
   ## Timesketch dependency checker init container.
   ## Waits for required services including Redis, Opensearch, and Postgres to be ready before the main container starts.
   ##
