@@ -60,7 +60,7 @@ config:
     ## (e.g. kubectl create secret generic vertex-secret --from-file=vertex-sa.json)
     ##
     vertexServiceAccountSecret: ""
-    ## @param.config.gcp.secGeminiAPIKeySecret 
+    ## @param.config.gcp.secGeminiAPIKeySecret
     ## Please ensure that the secret has been created with the key `api-key` prior to deployment
     ## (e.g. kubectl create secret generic secgemini-secret --from-literal=api-key=$REPLACE_WITH_API_KEY)
     ##
