@@ -59,12 +59,12 @@ config:
     ## Please save the Vertex key as a file then create the secret referencing the file prior to deployment
     ## (e.g. kubectl create secret generic vertex-secret --from-file=vertex-sa.json)
     ##
-    vertexServiceAccountSecret: "vertex-secret"
+    vertexServiceAccountSecret: ""
     ## @param.config.gcp.secGeminiAPIKeySecret
     ## Please ensure that the secret has been created with the key `api-key` prior to deployment
     ## (e.g. kubectl create secret generic secgemini-secret --from-literal=api-key=$REPLACE_WITH_API_KEY)
     ##
-    secGeminiAPIKeySecret: "secgemini-secret"
+    secGeminiAPIKeySecret: ""
   ## Timesketch dependency checker init container.
   ## Waits for required services including Redis, Opensearch, and Postgres to be ready before the main container starts.
   ##
