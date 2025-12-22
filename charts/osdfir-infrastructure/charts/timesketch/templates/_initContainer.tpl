@@ -55,6 +55,13 @@ Worker pod upon startup.
           key: "client-id-native"
           optional: true
     {{- end }}
+    {{- if .Values.config.gcp.secGeminiAPIKeySecret }}
+    - name: SECGEMINI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.config.gcp.secGeminiAPIKeySecret | quote }}
+          key: "api-key"
+    {{- end }}
   volumeMounts:
     - mountPath: /init
       name: init-timesketch

@@ -6,19 +6,16 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
   labels:
     app.kubernetes.io/component: opensearch-dashboard
-    {{- include "timesketch.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/component: opensearch-dashboard
-      {{- include "timesketch.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
       labels:
         app.kubernetes.io/component: opensearch-dashboard
-        {{- include "timesketch.selectorLabels" . | nindent 8 }}
     spec:
       hostNetwork: false
       hostIPC: false
