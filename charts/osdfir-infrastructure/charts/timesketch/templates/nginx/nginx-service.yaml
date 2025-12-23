@@ -1,4 +1,3 @@
-{{- if (.Values.global.ingress.enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -20,4 +19,3 @@ spec:
   selector:
     app.kubernetes.io/component: nginx
     {{- include "timesketch.selectorLabels" . | nindent 4 }}
-{{- end }}
