@@ -351,7 +351,7 @@ config:
   initWorkerNbd:
     ## @param config.initWorkerNbd.enabled Whether to enable the nbd init container
     ##
-    enabled: true
+    enabled: false
     ## @param config.initWorkerNbd.image Container image with modprobe installed necessary
     ## for loading the nbd module
     ##
