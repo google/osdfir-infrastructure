@@ -184,7 +184,7 @@ persistence:
   existingPVC: ""
   ## @param persistence.size Timesketch persistent volume size
   ##
-  size: 2Gi
+  size: 500Gi
   ## @param persistence.storageClass PVC Storage Class for Timesketch volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
@@ -192,13 +192,13 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
-  storageClass: ""
+  storageClass: "standard-rwx"
   ## @param persistence.accessModes PVC Access Mode for Timesketch volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
 ## Security Context Parameters
 ##
 securityContext:
@@ -334,6 +334,21 @@ redis:
   ## @param redis.nodeSelector Node labels for Timesketch Redis pods assignment
   ##
   nodeSelector: {}
+  ## @section Flower configuration for Celery Task monitoring
+  ##
+  flower:
+    ## @param redis.flower.enabled Whether to enable Flower.
+    ##
+    enabled: false
+    ## @param redis.flower.image Image used by Flower
+    ##
+    image: "mher/flower:latest"
+    ## Flower persistence configuration
+    ##
+    persistence:
+      ## @param redis.flower.persistence.size Flower Persistent Volume size
+      ##
+      size: 2Gi
 ## @section Postgresql Configuration Parameters
 ##
 postgresql:

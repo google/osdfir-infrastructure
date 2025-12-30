@@ -141,13 +141,13 @@ metrics:
 gcp:
   ## @param gcp.enabled Whether to enable the OpenRelik GCP importer.
   ##
-  enabled: false
+  enabled: true
   ## @param gcp.projectID GCP Project ID where your cluster is deployed.
   ##
-  projectID: ""
+  projectID: "glassbro-io-core"
   ## @param gcp.projectID GCP PubSub subscription that is listening to the GCS bucket.
   ##
-  subscriptionID: ""
+  subscriptionID: "openrelik-sub"
   ## OpenRelik GCP importer image configuration
   ##
   image:
@@ -351,7 +351,7 @@ config:
   initWorkerNbd:
     ## @param config.initWorkerNbd.enabled Whether to enable the nbd init container
     ##
-    enabled: false
+    enabled: true
     ## @param config.initWorkerNbd.image Container image with modprobe installed necessary
     ## for loading the nbd module
     ##
@@ -418,13 +418,13 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
-  storageClass: ""
+  storageClass: "standard-rwx"
   ## @param persistence.accessModes PVC Access Mode for OpenRelik volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
 ## @section Redis Configuration Parameters
 ##
 redis:
@@ -460,6 +460,21 @@ redis:
   ## @param redis.nodeSelector Node labels for Redis pods assignment
   ##
   nodeSelector: {}
+  ## @section Flower configuration for Celery Task monitoring
+  ##
+  flower:
+    ## @param redis.flower.enabled Whether to enable Flower.
+    ##
+    enabled: false
+    ## @param redis.flower.image Image used by Flower
+    ##
+    image: "mher/flower:latest"
+    ## Flower persistence configuration
+    ##
+    persistence:
+      ## @param redis.flower.persistence.size Flower Persistent Volume size
+      ##
+      size: 2Gi
 ## @section Postgresql Configuration Parameters
 ##
 postgresql:
