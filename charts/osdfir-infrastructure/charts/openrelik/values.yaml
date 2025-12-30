@@ -141,13 +141,13 @@ metrics:
 gcp:
   ## @param gcp.enabled Whether to enable the OpenRelik GCP importer.
   ##
-  enabled: true
+  enabled: false
   ## @param gcp.projectID GCP Project ID where your cluster is deployed.
   ##
-  projectID: "glassbro-io-core"
+  projectID: ""
   ## @param gcp.projectID GCP PubSub subscription that is listening to the GCS bucket.
   ##
-  subscriptionID: "openrelik-sub"
+  subscriptionID: ""
   ## OpenRelik GCP importer image configuration
   ##
   image:
@@ -418,13 +418,13 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
-  storageClass: "standard-rwx"
+  storageClass: ""
   ## @param persistence.accessModes PVC Access Mode for OpenRelik volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
 ## @section Redis Configuration Parameters
 ##
 redis:
