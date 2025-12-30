@@ -6,7 +6,7 @@ containers. Please update this file when adding a new environment variable.
 - name: YETI_SYSTEM_PLUGINS_PATH
   value: "./plugins"
 - name: YETI_BLOOM_BLOOMCHECK_ENDPOINT
-  value: "{{ .Release.Name }}-yeti-bloomcheck"
+  value: "http://{{ .Release.Name }}-yeti-bloomcheck:8100"
 - name: YETI_BLOOM_FILTERS_DIR
   value: "/opt/yeti/bloomfilters"
 - name: YETI_REDIS_HOST
