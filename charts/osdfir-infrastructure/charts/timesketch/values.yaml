@@ -184,7 +184,7 @@ persistence:
   existingPVC: ""
   ## @param persistence.size Timesketch persistent volume size
   ##
-  size: 500Gi
+  size: 2Gi
   ## @param persistence.storageClass PVC Storage Class for Timesketch volume
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined or set to null, no storageClassName spec is
@@ -192,13 +192,13 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ## ref https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/#using-dynamic-provisioning
   ##
-  storageClass: "standard-rwx"
+  storageClass: ""
   ## @param persistence.accessModes PVC Access Mode for Timesketch volume
   ## Access mode may need to be updated based on the StorageClass
   ## ref https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
   ##
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
 ## Security Context Parameters
 ##
 securityContext:
