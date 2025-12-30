@@ -26,7 +26,7 @@ spec:
       containers:
         - name: beats
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
-          imagePullPolicy: {{ .Values.api.imagePullPolicy }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
           command: ["sh", "-c", "/docker-entrypoint.sh tasks-beat"]
           securityContext:
             allowPrivilegeEscalation: false
