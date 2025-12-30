@@ -32,13 +32,9 @@ frontend:
     ## @param frontend.image.repository Yeti frontend image repository
     ##
     repository: yetiplatform/yeti-frontend
-    ## @param frontend.image.pullPolicy Yeti image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
-    ##
-    pullPolicy: IfNotPresent
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.4.2
+    tag: 2.5.0
   ## Yeti frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -64,13 +60,9 @@ api:
     ## @param api.image.repository Yeti API image repository
     ##
     repository: yetiplatform/yeti
-    ## @param api.image.pullPolicy Yeti image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
-    ##
-    pullPolicy: IfNotPresent
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.4.2
+    tag: 2.5.0
   ## Yeti api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -92,17 +84,6 @@ api:
 ## @section Yeti Tasks configuration
 ##
 tasks:
-  image:
-    ## @param tasks.image.repository Yeti tasks image repository
-    ##
-    repository: yetiplatform/yeti
-    ## @param tasks.image.pullPolicy Yeti image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
-    ##
-    pullPolicy: IfNotPresent
-    ## @param tasks.image.tag Overrides the image tag whose default is the chart appVersion
-    ##
-    tag: 2.4.2
   ## Yeti tasks resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param tasks.resources.limits Resource limits for the tasks container
@@ -170,10 +151,6 @@ bloomcheck:
     ## @param bloomcheck.image.repository Yeti tasks image repository
     ##
     repository: yetiplatform/bloomcheck
-    ## @param tasks.image.pullPolicy Yeti image pull policy
-    ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
-    ##
-    pullPolicy: IfNotPresent
     ## @param bloomcheck.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: dev
@@ -203,6 +180,10 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-yeti-secret
   ##
   existingSecret: false
+  ## @param config.imagePullPolicy Image pull policy for Yeti Pods
+  ## ref https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+  ##
+  imagePullPolicy: IfNotPresent
   ## Yeti dependency checker init container.
   ## Waits for required services including Redis and ArangoDB to be ready before the main container starts.
   ##
@@ -288,6 +269,10 @@ arangodb:
     ## @param arangodb.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: 3.11.8
+  ## @param arangodb.overrideDetectedTotalMemory Override the total memory available to ArangoDB
+  ## When set, the value should be slighly less than the amount of memory requested for the ArangoDB Pod
+  ##
+  overrideDetectedTotalMemory: ""
   ## Persistence Storage Parameters for Yeti ArangoDB storage
   ##
   persistence:

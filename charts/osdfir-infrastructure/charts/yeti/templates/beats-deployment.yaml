@@ -25,8 +25,8 @@ spec:
         {{- include "yeti.initContainer" . | nindent 8 }}
       containers:
         - name: beats
-          image: "{{ .Values.tasks.image.repository }}:{{ .Values.tasks.image.tag }}"
-          imagePullPolicy: {{ .Values.tasks.image.pullPolicy }}
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: {{ .Values.api.imagePullPolicy }}
           command: ["sh", "-c", "/docker-entrypoint.sh tasks-beat"]
           securityContext:
             allowPrivilegeEscalation: false
