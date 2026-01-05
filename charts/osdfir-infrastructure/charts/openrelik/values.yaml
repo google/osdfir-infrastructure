@@ -460,6 +460,21 @@ redis:
   ## @param redis.nodeSelector Node labels for Redis pods assignment
   ##
   nodeSelector: {}
+  ## @section Flower configuration for Celery Task monitoring
+  ##
+  flower:
+    ## @param redis.flower.enabled Whether to enable Flower.
+    ##
+    enabled: false
+    ## @param redis.flower.image Image used by Flower
+    ##
+    image: "mher/flower:latest"
+    ## Flower persistence configuration
+    ##
+    persistence:
+      ## @param redis.flower.persistence.size Flower Persistent Volume size
+      ##
+      size: 2Gi
 ## @section Postgresql Configuration Parameters
 ##
 postgresql:

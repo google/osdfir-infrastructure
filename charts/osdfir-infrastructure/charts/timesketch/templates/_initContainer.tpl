@@ -23,7 +23,7 @@ Worker pod upon startup.
         secretKeyRef:
           name: {{ .Release.Name }}-timesketch-secret
           key: postgres-user
-    {{- if and .Values.global.yeti.enabled .Values.global.yeti.apiKeySecret }}
+    {{- if .Values.global.yeti.apiKeySecret }}
     - name: YETI_API_KEY
       valueFrom:
         secretKeyRef:

@@ -24,7 +24,7 @@ spec:
       containers:
         - name: bloomcheck
           image: "{{ .Values.bloomcheck.image.repository }}:{{ .Values.bloomcheck.image.tag }}"
-          imagePullPolicy: {{ .Values.bloomcheck.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
           command: ["/bin/sh", "-c"]
           args:
             - |

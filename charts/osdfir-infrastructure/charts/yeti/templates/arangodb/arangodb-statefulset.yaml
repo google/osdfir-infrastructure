@@ -23,6 +23,10 @@ spec:
           image: "{{ .Values.arangodb.image.repository }}:{{ .Values.arangodb.image.tag }}"
           imagePullPolicy: {{ .Values.arangodb.image.pullPolicy }}
           env:
+            {{- if .Values.arangodb.overrideDetectedTotalMemory }}
+            - name: ARANGODB_OVERRIDE_DETECTED_TOTAL_MEMORY
+              value: {{ .Values.arangodb.overrideDetectedTotalMemory }}
+            {{- end }}
             - name: ARANGO_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:

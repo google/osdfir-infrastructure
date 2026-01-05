@@ -26,7 +26,7 @@ spec:
       containers:
         - name: api
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
-          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
           command: ["sh", "-c", "/docker-entrypoint.sh webserver"]
           {{- if and (not .Release.IsUpgrade) .Values.config.createUser }}
           lifecycle:
