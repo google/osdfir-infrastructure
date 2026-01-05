@@ -52,9 +52,21 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-timesketch-secret
   ##
   existingSecret: false
+  ## @param.config.logLevel
+  ##
+  logLevel: INFO
   ## @param config.wsgiWorkers Number of Gunicorn workers to start the Timesketch web Pod with
   ##
   wsgiWorkers: 4
+  ## @param config.wsgiLimitRequestLine The maximum size of HTTP request line in bytes.
+  ##
+  wsgiLimitRequestLine: 8190
+  ## @param config.wsgiTimeout Number of seconds before the Gunicorn worker times out
+  ##
+  wsgiTimeout: 600
+  ## @param config.nginxTimeout Number of seconds before Nginx times out on a read operation
+  ##
+  nginxReadTimeout: 600
   ## Timesketch GCP optional features to enable
   ##
   gcp:

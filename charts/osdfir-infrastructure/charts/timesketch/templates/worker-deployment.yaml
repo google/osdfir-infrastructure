@@ -32,7 +32,7 @@ spec:
         - name: worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["sh", "-c", "celery -A timesketch.lib.tasks worker --loglevel=INFO"]
+          command: ["sh", "-c", "celery -A timesketch.lib.tasks worker --loglevel={{ .Values.config.logLevel }}"]
           {{- if .Values.securityContext.enabled }}
           securityContext:
             capabilities:
