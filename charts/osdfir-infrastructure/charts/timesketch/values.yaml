@@ -52,6 +52,9 @@ config:
   ## Secret name must follow the naming convention of {{ .Release.Name }}-timesketch-secret
   ##
   existingSecret: false
+  ## @param config.wsgiWorkers Number of workers to start the Timesketch web
+  ##
+  wsgiWorkers: 4
   ## Timesketch GCP optional features to enable
   ##
   gcp:

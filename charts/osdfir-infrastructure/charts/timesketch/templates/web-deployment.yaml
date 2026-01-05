@@ -32,7 +32,7 @@ spec:
         - name: frontend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/bin/sh", "-c", "gunicorn --bind 0.0.0.0:5000 --capture-output --timeout 600 --workers 4 timesketch.wsgi:application"]
+          command: ["/bin/sh", "-c", "gunicorn --bind 0.0.0.0:5000 --capture-output --timeout 600 --workers {{ .Values.config.wsgiWorkers }} timesketch.wsgi:application"]
           {{- if and (not .Release.IsUpgrade) .Values.config.createUser }}
           lifecycle:
             postStart:
