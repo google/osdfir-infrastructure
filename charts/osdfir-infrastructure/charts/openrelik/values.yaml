@@ -385,6 +385,13 @@ config:
     ## - robot2
     ##
     allowedRobotAccounts: {}
+    ## @param config.oidc.allowedExtraAudiences Allow extra Oauth2 client ids to access the server.
+    ## Example
+    ## allowedExtraAudiences:
+    ## - client_id_1
+    ## - client_id_2
+    ##
+    allowedExtraAudiences: {}
     ## Allowed emails files for OpenRelik OIDC
     ##
     authenticatedEmailsFile:
