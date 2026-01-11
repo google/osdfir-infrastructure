@@ -18,6 +18,10 @@ global:
     ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
     ##
     apiKeySecret: ""
+    ## @param global.yeti.namespace Namespace Yeti is deployed to.
+    ## Please only specify this value when Yeti and Timesketch are in different namespaces and have the same Release name (non-default installation)
+    ##
+    namespace: ""
   hashr:
     ## @param global.hashr.enabled Enables the Hashr deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
