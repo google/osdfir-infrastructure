@@ -93,9 +93,11 @@ data:
     # Yeti integration
     {{- if .Values.global.yeti.apiKeySecret }}
     sed -i 's#^YETI_API_KEY =.*#YETI_API_KEY = "'$YETI_API_KEY'"#' timesketch.conf
-    {{- end }}
-    {{- if .Values.global.yeti.enabled }}
+    {{- if .Values.global.yeti.namespace }}
+    sed -i 's#^YETI_API_ROOT =.*#YETI_API_ROOT =  {{ printf "http://%s-yeti.%s:9000" .Release.Name .Values.global.yeti.namespace | quote }}#' timesketch.conf
+    {{- else }}
     sed -i 's#^YETI_API_ROOT =.*#YETI_API_ROOT =  {{ printf "http://%s-yeti:9000" .Release.Name | quote }}#' timesketch.conf
+    {{- end }}
     {{- end }}
 
     # Enable Hashr integration if the secret key is provided
