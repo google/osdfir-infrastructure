@@ -4,14 +4,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $.Release.Name }}-{{ .name }}
+  labels:
+    app.kubernetes.io/name: openrelik
+    app.kubernetes.io/component: worker
 spec:
   replicas: {{ .replicas }}
   selector:
     matchLabels:
+      app.kubernetes.io/name: openrelik
       app.kubernetes.io/component: worker
   template:
     metadata:
       labels:
+        app.kubernetes.io/name: openrelik
         app.kubernetes.io/component: worker
         {{- if and .privileged $.Values.gcp.enabled $.Values.config.initWorkerNbd.enabled }}
         cloud.google.com/matching-allowlist: {{ $.Values.config.gkeAllowList }}
