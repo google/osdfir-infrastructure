@@ -233,7 +233,7 @@ helm install my-release osdfir-charts/osdfir-infrastructure \
     --set openrelik.persistence.storageClass="standard-rwx" \
     --set openrelik.persistence.accessModes={"ReadWriteMany"} \
     --set openrelik.persistence.size=10Gi \
-    --set openrelik.config.initWorkerNbd=true \
+    --set openrelik.config.initWorkerNbd.enabled=true \
     --set timesketch.persistence.storageClass="standard-rwx" \
     --set timesketch.persistence.accessModes={"ReadWriteMany"} \
     --set timesketch.persistence.size=10Gi
