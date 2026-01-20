@@ -102,9 +102,8 @@ export OPENRELIK_FOLDER_ID=1 # Your OpenRelik Folder ID to store images into (de
 Now, create the GKE cluster with the following command:
 
 ```bash
-gcloud container clusters create-auto $CLUSTER \
+gcloud container --project $PROJECT_ID clusters create-auto $CLUSTER \
   --release-channel=rapid \
-  --cluster-version=1.34.1-gke.1829001 \
   --region $REGION
 ```
 
@@ -122,7 +121,7 @@ plugin for kubectl:
 ```bash
 sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-gcloud container clusters get-credentials $CLUSTER --region $REGION
+gcloud container --project $PROJECT_ID clusters get-credentials $CLUSTER --region $REGION
 ```
 
 Now check that you can connect to the cluster:
@@ -147,7 +146,7 @@ add the `--uniform-bucket-level-access` flag, which is the recommended setting
 for simplifying permissions management on the bucket.
 
 ```bash
-gcloud storage buckets create gs://$GCS_BUCKET --uniform-bucket-level-access
+gcloud storage --project $PROJECT_ID buckets create gs://$GCS_BUCKET --uniform-bucket-level-access
 ```
 
 ### Create the GCS Bucket Notification
@@ -159,7 +158,7 @@ Any time a new object (like a disk image) is added to this bucket, GCS will auto
 OpenRelik gcp importer to pull down the artifact from GCS.
 
 ```bash
-gcloud storage buckets notifications create gs://$GCS_BUCKET --topic=$PUBSUB_TOPIC
+gcloud storage --project $PROJECT_ID buckets notifications create gs://$GCS_BUCKET --topic=$PUBSUB_TOPIC
 ```
 
 ### Create the PubSub Subscription
@@ -173,7 +172,7 @@ to this specific subscription to receive the "new artifact" messages in GCS
 and begin its work to pull down the file into the OpenRelik shared file storage.
 
 ```bash
-gcloud pubsub subscriptions create $PUBSUB_SUBSCRIPTION --topic=projects/$PROJECT_ID/topics/$PUBSUB_TOPIC
+gcloud pubsub --project $PROJECT_ID subscriptions create $PUBSUB_SUBSCRIPTION --topic=projects/$PROJECT_ID/topics/$PUBSUB_TOPIC
 ```
 
 ### Create the GCP Service Account
@@ -215,6 +214,8 @@ created service account.
 
 Now it is time to deploy the OSDFIR Infrastructure Helm chart.
 
+In case you don't have helm installed, refer to [the official documentation](https://helm.sh/docs/intro/install)
+
 The first step is to add the repo and then update to pick up any new changes.
 
 ```console
@@ -233,7 +234,7 @@ helm install my-release osdfir-charts/osdfir-infrastructure \
     --set openrelik.persistence.storageClass="standard-rwx" \
     --set openrelik.persistence.accessModes={"ReadWriteMany"} \
     --set openrelik.persistence.size=10Gi \
-    --set openrelik.config.initWorkerNbd=true \
+    --set openrelik.config.initWorkerNbd.enabled=true \
     --set timesketch.persistence.storageClass="standard-rwx" \
     --set timesketch.persistence.accessModes={"ReadWriteMany"} \
     --set timesketch.persistence.size=10Gi
