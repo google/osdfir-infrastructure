@@ -46,7 +46,7 @@ containers. Please update this file when adding a new environment variable.
     secretKeyRef:
       name: {{ .Release.Name }}-yeti-secret 
       key: yeti-user
-{{- if and .Values.config.oidc.enabled }}
+{{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret }}
 - name: YETI_AUTH_MODULE
   value: "oidc"
 - name: YETI_AUTH_OIDC_DISCOVERY_URL

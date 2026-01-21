@@ -199,7 +199,7 @@ config:
   oidc:
     ## @param config.oidc.enabled Enables Yeti OIDC authentication (currently only supports Google OIDC)
     ##
-    enabled: true
+    enabled: false
     ## @param config.oidc.allowedExtraAudiences Allow extra Oauth2 client ids to access the server.
     ## Example
     ## allowedExtraAudiences: client_id_1,client_id_2
