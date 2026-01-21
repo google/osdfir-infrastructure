@@ -39,7 +39,7 @@ spec:
                   - |
                     # Upgrade sql datastore
                     cd /app/openrelik/datastores/sql && alembic upgrade head
-                    # Create OpenRelik user if it exists.
+                    # Create OpenRelik user if it does not exist.
                     cd /app/openrelik
                     if ! python admin.py user-details openrelik > /dev/null 2>&1; then 
                       python admin.py create-user openrelik --password $OPENRELIK_USER --admin
