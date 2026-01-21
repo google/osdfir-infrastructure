@@ -61,6 +61,8 @@ containers. Please update this file when adding a new environment variable.
     secretKeyRef:
       name: {{ .Values.config.oidc.existingSecret | quote }}
       key: "client-secret"
+- name: YETI_OIDC_EXTRA_CLIENT_AUDIENCES
+  value: {{ .Values.config.oidc.allowedExtraAudiences }}
 {{- if .Values.global.ingress.enabled }}
 - name: YETI_SYSTEM_WEBROOT
   value: {{ printf "https://%s" .Values.global.ingress.yetiHost | quote }}
