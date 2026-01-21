@@ -33,7 +33,17 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "cd /app/openrelik/datastores/sql && alembic upgrade head; cd /app/openrelik && python admin.py create-user openrelik --password $OPENRELIK_USER --admin"]
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - |
+                    # Upgrade sql datastore
+                    cd /app/openrelik/datastores/sql && alembic upgrade head
+                    # Create OpenRelik user if it exists.
+                    cd /app/openrelik
+                    if ! python admin.py user-details openrelik > /dev/null 2>&1; then 
+                      python admin.py create-user openrelik --password $OPENRELIK_USER --admin
+                    fi
           {{- end }}
           env:
             - name: OPENRELIK_USER
