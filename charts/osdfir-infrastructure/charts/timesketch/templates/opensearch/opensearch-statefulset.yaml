@@ -72,6 +72,10 @@ spec:
               value: "master,ingest,data,remote_cluster_client"
             - name: DISABLE_INSTALL_DEMO_CONFIG
               value: "true"
+            {{- if .Values.opensearch.enableSnapshots }}
+            - name: path.repo
+              value: "/mnt/timesketchvolume/opensearch-snapshots"
+            {{- end }}
             {{- if .Values.opensearch.selfSigned }}
             - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
               value: "admin"
@@ -106,6 +110,10 @@ spec:
             - mountPath: /usr/share/opensearch/config/certs
               name: tls
             {{- end }}
+            {{- if .Values.opensearch.enableSnapshots }}
+            - mountPath: /mnt/timesketchvolume/opensearch-snapshots
+              name: timesketchvolume
+            {{- end }}
           ports:
             - containerPort: 9200
               name: http
@@ -132,13 +140,23 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.opensearch.selfSigned }}
       volumes:
+        {{- if .Values.opensearch.selfSigned }}
         - name: tls
           secret:
             secretName: {{ .Release.Name }}-opensearch-tls
             defaultMode: 0600
-      {{- end }}
+        {{- end }}
+        {{- if .Values.opensearch.enableSnapshots }}
+        - name: timesketchvolume
+          persistentVolumeClaim:
+            {{- if .Values.persistence.existingPVC }}
+            claimName: {{ .Values.persistence.existingPVC }}
+            {{- else }}
+            claimName: {{ .Release.Name }}-timesketchvolume-claim
+            {{- end }}
+            readOnly: false
+        {{- end }}
   volumeClaimTemplates:
   - metadata:
       name: data

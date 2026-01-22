@@ -244,10 +244,14 @@ opensearch:
   ## @param opensearch.replicas Number of Opensearch instances to deploy
   ##
   replicas: 1
-   ## @param opensearch.selfSigned Specify whether to create self signed Opensearch certificates
-   ## and enable the Opensearch Security Plugin.
-   ##
+  ## @param opensearch.selfSigned Specify whether to create self signed Opensearch certificates
+  ## and enable the Opensearch Security Plugin.
+  ##
   selfSigned: false
+  ## @param opensearch.enableSnapshots Specify whether to enable Opensearch snapshots.
+  ## Enabling will mount the Timesketch shared storage to the Opensearch nodes so that a snapshot can be created.
+  ##
+  enableSnapshots: false
   ## Sysctl init for updating vm.max_map_count to the required minimum value needed for OpenSearch
   ##
   sysctlInit:
