@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-openrelik-nginx-networkpolicy
+  labels:
+    app.kubernetes.io/component: openrelik-nginx
+    {{- include "openrelik.labels" . | nindent 4 }}
+spec:
+  egress:
+  - {}
+  ingress:
+  - ports:
+    - port: 8710
+      protocol: TCP
+    - port: 8711
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: openrelik-nginx
+  policyTypes:
+  - Ingress
+  - Egress

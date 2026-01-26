@@ -5,11 +5,6 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "openrelik.labels" . | nindent 4 }}
-  {{- if (eq .Values.global.ingress.className "gce") }}
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
-    cloud.google.com/backend-config: '{"ports": {"8710":"{{ .Release.Name }}-openrelik-api-backend-config"}}'
-  {{- end }}
 spec:
   type: ClusterIP
   ports:
