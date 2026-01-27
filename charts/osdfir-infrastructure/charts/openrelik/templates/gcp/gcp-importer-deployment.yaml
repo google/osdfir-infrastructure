@@ -48,6 +48,9 @@ spec:
               value: {{ .Values.gcp.projectID | quote}}
             - name: GOOGLE_CLOUD_SUBSCRIPTION_ID
               value: {{ .Values.gcp.subscriptionID | quote }}
+            {{- if .Values.gcp.env }}
+              {{- toYaml .Values.gcp.env | nindent 12 }} 
+            {{- end }}
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume

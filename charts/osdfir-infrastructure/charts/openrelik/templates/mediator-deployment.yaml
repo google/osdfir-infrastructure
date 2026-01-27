@@ -21,6 +21,9 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      {{- if .Values.config.enableServiceAccount }}
+      serviceAccountName: openrelik
+      {{- end }}
       initContainers:
         {{- include "openrelik.initContainer" . | nindent 8 }}
       containers:
@@ -42,7 +45,10 @@ spec:
                     name: {{ .Release.Name }}-openrelik-secret 
                     key: postgres-url
             - name: OPENRELIK_SERVER_SETTINGS
-              value: /mediator/settings.toml 
+              value: /mediator/settings.toml
+          {{- if .Values.mediator.env }}
+            {{- toYaml .Values.mediator.env | nindent 12 }} 
+          {{- end }}
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
