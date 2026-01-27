@@ -482,6 +482,38 @@ redis:
       ## @param redis.flower.persistence.size Flower Persistent Volume size
       ##
       size: 2Gi
+## @section OpenRelik Nginx Configuration
+##
+nginx:
+  ##  Nginx image configuration
+  ##
+  image:
+    ## @param nginx.image.repository Nginx image repository
+    ##
+    repository: nginx
+    ## @param nginx.image.tag Nginx image tag
+    ##
+    tag: 1.25.5-alpine-slim
+    ## @param nginx.image.pullPolicy Nginx image pull policy
+    ##
+    pullPolicy: IfNotPresent
+  ## OpenRelik Nginx resource requests and limits
+  ## @param nginx.resources.limits The resources limits for the nginx container
+  ## @param nginx.resources.requests.cpu The requested cpu for the nginx container
+  ## @param nginx.resources.requests.memory The requested memory for the nginx container
+  ##
+  resources:
+    ## Example:
+    ## limits:
+    ##    cpu: 500m
+    ##    memory: 1Gi
+    limits: {}
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  ## @param nginx.nodeSelector Node labels for Timesketch nginx pods assignment
+  ##
+  nodeSelector: {}
 ## @section Postgresql Configuration Parameters
 ##
 postgresql:

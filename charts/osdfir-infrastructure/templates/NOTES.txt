@@ -39,8 +39,8 @@ To connect to the OpenRelik URL, run:
   $ echo "Visit https://{{ .Values.global.ingress.openRelikFrontendHost }} to access OpenRelik UI externally"
   $ echo "Visit https://{{ .Values.global.ingress.openRelikAPIHost }} to access OpenRelik API externally"
   {{- end }}
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik 8711:8711
-  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik-api 8710:8710
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik-nginx 8711:8711
+  $ kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ .Release.Name }}-openrelik-nginx 8710:8710
   $ echo "Visit http://127.0.0.1:8711 to access the OpenRelik UI"
 
 Login to OpenRelik with the User `openrelik`. To get your password run:

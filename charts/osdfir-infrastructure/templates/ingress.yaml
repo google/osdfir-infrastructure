@@ -80,7 +80,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-openrelik
+                name: {{ .Release.Name }}-openrelik-nginx
                 port:
                   number: 8711
     {{- end }}
@@ -92,7 +92,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-openrelik-api
+                name: {{ .Release.Name }}-openrelik-nginx
                 port:
                   number: 8710
     {{- end }}
