@@ -29,6 +29,9 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      {{- if $.Values.config.enableServiceAccount }}
+      serviceAccountName: openrelik
+      {{- end }}
       containers:
         - name: worker
           image: {{ .image | quote }}

@@ -34,6 +34,14 @@ frontend:
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: "latest"
+  ## @param frontend.env Additional environment variables to pass to the OpenRelik pod
+  ## To set environment variables, remove {} and replace with provided environment variables
+  ## Example
+  ## env:
+  ##   - name: example-name
+  ##   - value: example-value
+  ##
+  env: {}
   ## OpenRelik frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -62,6 +70,9 @@ api:
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: "latest"
+  ## @param api.env Additional environment variables to pass to the OpenRelik pod
+  ##
+  env: {}
   ## OpenRelik api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -90,6 +101,9 @@ mediator:
     ## @param mediator.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: "latest"
+  ## @param mediator.env Additional environment variables to pass to the OpenRelik pod
+  ##
+  env: {}
   ## OpenRelik mediator resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param mediator.resources.limits Resource limits for the Mediator container
@@ -118,6 +132,9 @@ metrics:
     ## @param metrics.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: "latest"
+  ## @param metrics.env Additional environment variables to pass to the OpenRelik pod
+  ##
+  env: {}
   ## OpenRelik metrics resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param metrics.resources.limits Resource limits for the Metrics container
@@ -157,6 +174,9 @@ gcp:
     ## @param gcp.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: "latest"
+  ## @param gcp.env Additional environment variables to pass to the OpenRelik pod
+  ##
+  env: {}
   ## OpenRelik GCP importer resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param gcp.resources.limits Resource limits for the GCP importer container
@@ -366,6 +386,27 @@ config:
   ## @param config.createUser Create a default `openrelik` user.
   ##
   createUser: true
+  ## @param config.enableServiceAccount Add the K8s service account `openrelik` to all OpenRelik deployment manifests
+  ## This is useful when associationg additional cloud provider permissions with OpenRelik pods (e.g. GCP trace explorer).
+  ##
+  enableServiceAccount: false
+  ## @section OpenRelik optional GCP Vertex AI configuration parameters
+  ##
+  vertex:
+    ## @param config.vertex.serviceAccountSecret Secret name that references the Vertex AI service account key
+    ## Please save the Vertex key as a file then create the secret referencing the file prior to deployment
+    ## (e.g. kubectl create secret generic vertex-secret --from-file=vertex-sa.json)
+    ##
+    serviceAccountSecret: ""
+    ## @param config.vertex.projectID GCP project ID where the Vertex service account was created
+    ##
+    projectID: ""
+    ## @param config.vertex.location Specify the location for a Vertex AI API request (e.g. us-central1 )
+    ##
+    location: ""
+    ## @param config.vertex.model Specify the model you would like Vertex AI to use (e.g. gemini-2.0-flash-001 )
+    ##
+    model: ""
   ## OpenRelik OIDC configuration
   ##
   oidc:

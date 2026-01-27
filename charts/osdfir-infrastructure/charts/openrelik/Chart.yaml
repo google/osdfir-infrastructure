@@ -1,6 +1,6 @@
 apiVersion: v2
 name: openrelik
-version: 2.2.6
+version: 2.2.7
 description: A Helm chart for Openrelik Kubernetes deployments.
 keywords:
 - openrelik

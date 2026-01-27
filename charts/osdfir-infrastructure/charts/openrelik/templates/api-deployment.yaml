@@ -21,6 +21,9 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      {{- if .Values.config.enableServiceAccount }}
+      serviceAccountName: openrelik
+      {{- end }}
       initContainers:
       {{- include "openrelik.initContainerApi" . | nindent 8 }}
       {{- include "openrelik.initContainer" . | nindent 8 }}
@@ -63,12 +66,31 @@ spec:
                     key: postgres-url
             - name: PROMETHEUS_SERVER_URL
               value: http://{{ .Release.Name }}-openrelik-prometheus:9090
+            {{- if .Values.config.vertex.serviceAccountSecret }}
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/vertex/vertex-sa.json
+            - name: VERTEXAI_PROJECT_ID
+              value: {{ .Values.config.vertex.projectID }}
+            - name: VERTEXAI_LOCATION
+              value: {{ .Values.config.vertex.location }}
+            - name: VERTEXAI_DEFAULT_MODEL
+              value: {{ .Values.config.vertex.model }}
+            {{- end }}
+            {{- if .Values.api.env }}
+              {{- toYaml .Values.api.env | nindent 12 }} 
+            {{- end }}
           volumeMounts:
             - mountPath: /mnt/openrelikvolume
               name: openrelikvolume
             - mountPath: /app/settings.toml
               subPath: settings.toml
               name: openrelik-configs-dir
+            {{- if .Values.config.vertex.serviceAccountSecret }}
+            - mountPath: /etc/vertex/vertex-sa.json
+              name: vertex-sa
+              subPath: vertex-sa.json
+              readOnly: true
+            {{- end }}
           ports:
             - containerPort: 8710
           resources:
@@ -98,6 +120,11 @@ spec:
             - key: authenticated-emails-list
               path: authenticated-emails-list
             secretName: {{ include "openrelik.oidc.authenticatedemails" . }}
+        {{- end }}
+        {{- if .Values.config.vertex.serviceAccountSecret }}
+        - name: vertex-sa
+          secret:
+            secretName: {{ .Values.config.vertex.serviceAccountSecret }}
         {{- end }}
       {{- with .Values.api.nodeSelector }}
       nodeSelector:
