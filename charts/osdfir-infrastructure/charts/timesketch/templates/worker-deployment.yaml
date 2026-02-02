@@ -26,13 +26,14 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ .Values.worker.terminationGracePeriodSeconds }}
       initContainers:
       {{- include "timesketch.initContainer" . | nindent 8 }}
       containers:
         - name: worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["sh", "-c", "celery -A timesketch.lib.tasks worker --loglevel={{ .Values.config.logLevel }}"]
+          command: ["sh", "-c", "exec celery -A timesketch.lib.tasks worker --loglevel={{ .Values.config.logLevel }}"]
           {{- if .Values.securityContext.enabled }}
           securityContext:
             capabilities:

@@ -123,6 +123,9 @@ config:
 ## @section Timesketch Frontend Configuration
 ##
 frontend:
+  ## @param frontend.terminationGracePeriodSeconds The number of seconds to wait before K8s forcefully terminates the Pod
+  ##
+  terminationGracePeriodSeconds: 600
   ## Timesketch Frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits The resources limits for the frontend container
@@ -146,6 +149,9 @@ frontend:
 worker:
   ## @param worker.replicas Number of Timesketch worker pods to run
   replicas: 1
+  ## @param worker.terminationGracePeriodSeconds The number of seconds to wait to finish current tasks before K8s forcefully terminates the Pod
+  ##
+  terminationGracePeriodSeconds: 600
   ## Timesketch Worker resource requests and limits
   ## @param worker.resources.limits The resources limits for the worker container
   ## @param worker.resources.requests.cpu The requested cpu for the worker container
