@@ -19,6 +19,7 @@ spec:
         checksum/config: {{  include (print $.Template.BasePath "/init-configmap.yaml") . | sha256sum }}
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
       labels:
         app.kubernetes.io/component: worker
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
