@@ -176,6 +176,56 @@ entries:
       category: Security
       licenses: Apache-2.0
     apiVersion: v2
+    created: "2026-02-06T09:05:39.314209278Z"
+    dependencies:
+    - condition: global.timesketch.enabled
+      name: timesketch
+      repository: file://charts/timesketch
+      version: 2.4.5
+    - condition: global.yeti.enabled
+      name: yeti
+      repository: file://charts/yeti
+      version: 2.2.5
+    - condition: global.openrelik.enabled
+      name: openrelik
+      repository: file://charts/openrelik
+      version: 2.2.7
+    - condition: global.grr.enabled
+      name: grr
+      repository: file://charts/grr
+      version: 2.3.1
+    - condition: global.hashr.enabled
+      name: hashr
+      repository: file://charts/hashr
+      version: 2.0.1
+    description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
+    digest: bb0038060f20ed0120ebf3cf03c80e6de34766d575112039f215fd9d3ef5993c
+    home: https://github.com/google/osdfir-infrastructure
+    keywords:
+    - timesketch
+    - yeti
+    - dfir
+    - analysis
+    - processing
+    - security
+    maintainers:
+    - email: osdfir-maintainers@googlegroups.com
+      name: Open Source DFIR
+      url: https://github.com/google/osdfir-infrastructure
+    name: osdfir-infrastructure
+    sources:
+    - https://github.com/google/grr
+    - https://github.com/google/osdfir-infrastructure
+    - https://github.com/google/timesketch
+    - https://github.com/yeti-platform/yeti
+    - https://openrelik.org/
+    urls:
+    - https://github.com/google/osdfir-infrastructure/releases/download/osdfir-infrastructure-2.7.7/osdfir-infrastructure-2.7.7.tgz
+    version: 2.7.7
+  - annotations:
+      category: Security
+      licenses: Apache-2.0
+    apiVersion: v2
     created: "2026-02-03T10:03:39.7001917Z"
     dependencies:
     - condition: global.timesketch.enabled
@@ -4444,4 +4494,4 @@ entries:
     urls:
     - https://github.com/google/osdfir-infrastructure/releases/download/yeti-0.1.0/yeti-0.1.0.tgz
     version: 0.1.0
-generated: "2026-02-03T10:03:39.700604072Z"
+generated: "2026-02-06T09:05:39.31461741Z"
