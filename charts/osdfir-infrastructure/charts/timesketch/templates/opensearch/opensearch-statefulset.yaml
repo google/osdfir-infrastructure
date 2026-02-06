@@ -9,6 +9,8 @@ metadata:
 spec:
   replicas: {{ .Values.opensearch.replicas }}
   podManagementPolicy: Parallel
+  updateStrategy:
+    type: OnDelete
   selector:
     matchLabels:
       app.kubernetes.io/component: opensearch
@@ -32,6 +34,7 @@ spec:
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
