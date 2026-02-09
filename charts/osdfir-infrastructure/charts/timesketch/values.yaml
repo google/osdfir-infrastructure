@@ -42,7 +42,7 @@ image:
   pullPolicy: IfNotPresent
   ## @param image.tag Overrides the image tag whose default is the chart appVersion
   ##
-  tag: "20251219"
+  tag: "20260209"
 ## @section Timesketch Configuration Parameters
 ## ref: https://github.com/google/timesketch/blob/master/data/timesketch.conf
 ##
