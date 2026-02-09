@@ -24,6 +24,32 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      initContainers:
+        # The init-static container extracts compiled frontend assets from the 
+        # Timesketch image and places them into a shared volume so Nginx can 
+        # serve them directly without proxying to the web container.
+        - name: init-static
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 101
+            runAsNonRoot: true
+            runAsUser: 101
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          # Dynamically find the Timesketch package path and copy the 'dist' 
+          # folder contents to the shared volume.
+          command: ["/bin/sh", "-c", "export TS_PATH=$(python3 -c 'import timesketch; print(timesketch.__path__[0])'); if [ -d \"$TS_PATH/frontend/dist\" ]; then cp -rv $TS_PATH/frontend/dist/* /static/; elif [ -d \"$TS_PATH/frontend-ng/dist\" ]; then cp -rv $TS_PATH/frontend-ng/dist/* /static/; fi"]
+          volumeMounts:
+            - name: static-files
+              mountPath: /static
       containers:
         - name: nginx
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
@@ -46,6 +72,10 @@ spec:
               subPath: default.conf
               name: nginx-config
               readOnly: true
+            # Mount the shared static files from the initContainer
+            - mountPath: /usr/share/nginx/html/static
+              name: static-files
+              readOnly: true
             - mountPath: /var/cache/nginx
               name: tmp
             - mountPath: /var/run/
@@ -60,6 +90,9 @@ spec:
         - name: nginx-config
           configMap:
             name: {{ .Release.Name }}-timesketch-nginx-configmap
+        # Shared volume to transfer static assets from Timesketch image to Nginx
+        - name: static-files
+          emptyDir: {}
       {{- with .Values.nginx.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
