@@ -35,6 +35,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["sh", "-c", "exec celery -A timesketch.lib.tasks worker --loglevel={{ .Values.config.logLevel }}"]
+          env:
+            - name: ENABLE_STRUCTURED_LOGGING
+              value: "true" 
           {{- if .Values.securityContext.enabled }}
           securityContext:
             capabilities:

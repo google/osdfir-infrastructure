@@ -10,6 +10,7 @@ data:
     server {
         listen 9000;
         listen [::]:9000;
+        client_max_body_size 0m;
         root /www;
 
         location /api/v2 {

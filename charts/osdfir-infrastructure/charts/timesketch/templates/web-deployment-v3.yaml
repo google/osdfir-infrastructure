@@ -41,6 +41,8 @@ spec:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /etc/vertex/vertex-sa.json
             {{- end }}
+            - name: ENABLE_STRUCTURED_LOGGING
+              value: "true" 
           volumeMounts:
             - mountPath: /mnt/timesketchvolume
               name: timesketchvolume

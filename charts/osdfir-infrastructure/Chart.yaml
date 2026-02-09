@@ -1,6 +1,6 @@
 apiVersion: v2
 name: osdfir-infrastructure
-version: 2.7.7
+version: 2.7.8
 description: A Helm chart for Open Source Digital Forensics Kubernetes deployments.
 keywords:
 - timesketch
@@ -14,11 +14,11 @@ dependencies:
 - condition: global.timesketch.enabled
   name: timesketch
   repository: file://charts/timesketch
-  version: 2.4.5
+  version: 2.4.6
 - condition: global.yeti.enabled
   name: yeti
   repository: file://charts/yeti
-  version: 2.2.5
+  version: 2.2.6
 - condition: global.openrelik.enabled
   name: openrelik
   repository: file://charts/openrelik
