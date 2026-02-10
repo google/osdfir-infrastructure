@@ -217,6 +217,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-config"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -225,6 +226,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-analyzer-logs"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -233,6 +235,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-bulkextractor"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -241,6 +244,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-capa"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -249,6 +253,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-chromecreds"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -257,6 +262,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-cloud-logs"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -265,6 +271,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-containers"
   privileged: true
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -273,6 +280,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-dfindexeddb"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -281,6 +289,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-extraction"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -289,14 +298,16 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-floss"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
 - name: openrelik-worker-grep
   image: ghcr.io/openrelik/openrelik-worker-grep:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-grep"
-  privileged: false
+  privileged: true
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -305,6 +316,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-hayabusa"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -313,6 +325,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-plaso"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -321,6 +334,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-os-creds"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -329,6 +343,7 @@ workers:
   command: celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-strings
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -340,6 +355,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-timesketch"
   privileged: false
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -348,6 +364,7 @@ workers:
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-yara"
   privileged: true
   replicas: 1
+  terminationGracePeriodSeconds: 600
   env: {}
   resources: {}
   nodeSelector: {}
@@ -364,7 +381,7 @@ config:
   imagePullPolicy: Always
   ## @param config.gkeAllowList Specify a GKE Autopilot allowlist for OpenRelik privileged workers to use
   ##
-  gkeAllowList: "openrelik-privileged-workers-v3.0.0"
+  gkeAllowList: "openrelik-privileged-workers-v4.0.0"
   ## OpenRelik nbd init container configuration for OpenRelik containers that require the nbd module.
   ## Only enable this container when you need to load the nbd kernel module to the underlying node.
   ##
