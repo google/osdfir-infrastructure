@@ -1,7 +1,7 @@
 dependencies:
 - name: timesketch
   repository: file://charts/timesketch
-  version: 2.4.5
+  version: 2.4.6
 - name: yeti
   repository: file://charts/yeti
   version: 2.2.5
