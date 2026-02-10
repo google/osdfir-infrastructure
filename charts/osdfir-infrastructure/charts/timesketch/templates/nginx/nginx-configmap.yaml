@@ -11,10 +11,22 @@ data:
         listen 8080;
         listen [::]:8080;
         client_max_body_size 0m;
+
+        # Serve static frontend assets directly from the filesystem.
+        # This prevents large JS/CSS bundles from being proxied through the
+        # application server, which avoids "upstream response is buffered
+        # to a temporary file" warnings and improves performance.
+        location /dist/ {
+            alias /usr/share/nginx/html/static/;
+            add_header Cache-Control "public, max-age=31536000";
+        }
+
         location / {
+            # Increased buffer sizes to handle larger metadata/responses in memory
+            # and avoid disk I/O for upstream responses.
             proxy_buffer_size 128k;
-            proxy_buffers 4 256k;
-            proxy_busy_buffers_size 256k;
+            proxy_buffers 16 1024k;
+            proxy_busy_buffers_size 2048k;
             proxy_pass http://{{ .Release.Name }}-timesketch:5000/;
             proxy_read_timeout {{ .Values.config.nginxReadTimeout }}s;
             proxy_set_header Host $host;
@@ -34,8 +46,8 @@ data:
         }
         location /v3 {
             proxy_buffer_size 128k;
-            proxy_buffers 4 256k;
-            proxy_busy_buffers_size 256k;
+            proxy_buffers 16 1024k;
+            proxy_busy_buffers_size 2048k;
             proxy_pass http://{{ .Release.Name }}-timesketch-v3:5000/;
             proxy_read_timeout {{ .Values.config.nginxReadTimeout }}s;
             proxy_set_header Host $host;
