@@ -305,7 +305,7 @@ workers:
 - name: openrelik-worker-grep
   image: ghcr.io/openrelik/openrelik-worker-grep:latest
   command: "celery --app=src.app worker --task-events --concurrency=1 --loglevel=INFO -Q openrelik-worker-grep"
-  privileged: true
+  privileged: false
   replicas: 1
   terminationGracePeriodSeconds: 600
   env: {}
