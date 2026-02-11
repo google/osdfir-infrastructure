@@ -57,6 +57,9 @@ spec:
           volumeMounts:
             - mountPath: /mnt/timesketchvolume
               name: timesketchvolume
+            - mountPath: /mnt/timesketchvolume/uploads
+              name: timesketchvolume
+              subPath: uploads
             - mountPath: /etc/timesketch
               name: timesketch-configs
             - mountPath: /tmp

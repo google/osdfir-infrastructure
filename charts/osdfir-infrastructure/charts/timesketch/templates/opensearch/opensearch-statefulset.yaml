@@ -116,6 +116,7 @@ spec:
             {{- if .Values.opensearch.enableSnapshots }}
             - mountPath: /mnt/timesketchvolume/opensearch-snapshots
               name: timesketchvolume
+              subPath: opensearch-snapshots
             {{- end }}
           ports:
             - containerPort: 9200
