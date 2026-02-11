@@ -34,7 +34,7 @@ spec:
       {{- if $.Values.config.enableServiceAccount }}
       serviceAccountName: openrelik
       {{- end }}
-      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ $.Values.config.terminationGracePeriodSeconds }}
       containers:
         - name: worker
           image: {{ .image | quote }}
