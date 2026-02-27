@@ -4,7 +4,7 @@ containers. Please update this file when adding a new environment variable.
 */}}
 {{- define "yeti.envs" -}}
 - name: YETI_K8S_RUNTIME
-  value: true
+  value: "true"
 - name: YETI_SYSTEM_PLUGINS_PATH
   value: "./plugins"
 - name: YETI_BLOOM_BLOOMCHECK_ENDPOINT
