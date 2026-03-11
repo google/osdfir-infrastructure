@@ -9,6 +9,15 @@ global:
     ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
+    ## @param global.timesketch.userSecret Existing secret containing Timesketch OSDFIR service account.
+    ## Please only use this when specifying Timesketch in a different namespace with a user account that is not `timesketch`.
+    ## (e.g. kubectl create secret generic timesketch-automation-user-secret --from-literal=timesketch-user=${TIMESKETCH_USERNAME} --from-literal=timesketch-password=${TIMESKETCH_PASSWORD})
+    ##
+    automationUserSecret: ""
+    ## @param global.timesketch.namespace Namespace Timesketch is deployed to.
+    ## Please only specify this value when Timesketch and Yeti are in different namespaces and have the same Release name (non-default installation)
+    ##
+    namespace: ""
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
@@ -41,7 +50,7 @@ frontend:
   ##   - name: example-name
   ##   - value: example-value
   ##
-  env: {}
+  env: []
   ## OpenRelik frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -72,7 +81,7 @@ api:
     tag: "latest"
   ## @param api.env Additional environment variables to pass to the OpenRelik pod
   ##
-  env: {}
+  env: []
   ## OpenRelik api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -103,7 +112,7 @@ mediator:
     tag: "latest"
   ## @param mediator.env Additional environment variables to pass to the OpenRelik pod
   ##
-  env: {}
+  env: []
   ## OpenRelik mediator resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param mediator.resources.limits Resource limits for the Mediator container
@@ -134,7 +143,7 @@ metrics:
     tag: "latest"
   ## @param metrics.env Additional environment variables to pass to the OpenRelik pod
   ##
-  env: {}
+  env: []
   ## OpenRelik metrics resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param metrics.resources.limits Resource limits for the Metrics container
@@ -176,7 +185,7 @@ gcp:
     tag: "latest"
   ## @param gcp.env Additional environment variables to pass to the OpenRelik pod
   ##
-  env: {}
+  env: []
   ## OpenRelik GCP importer resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param gcp.resources.limits Resource limits for the GCP importer container
@@ -420,14 +429,14 @@ config:
     ## - robot1
     ## - robot2
     ##
-    allowedRobotAccounts: {}
+    allowedRobotAccounts: []
     ## @param config.oidc.allowedExtraAudiences Allow extra Oauth2 client ids to access the server.
     ## Example
     ## allowedExtraAudiences:
     ## - client_id_1
     ## - client_id_2
     ##
-    allowedExtraAudiences: {}
+    allowedExtraAudiences: []
     ## Allowed emails files for OpenRelik OIDC
     ##
     authenticatedEmailsFile:
