@@ -13,18 +13,18 @@ the OpenRelik API, Mediator, and Metrics Pods.
   secretKeyRef:
     name: {{ printf "%s-timesketch-secret" $.Release.Name | quote }}
     key: timesketch-user
-{{- else if and .Values.global.timesketch.automationUserSecret .Values.global.timesketch.namespace -}}
+{{- else if and .Values.global.timesketch.automationUserSecretName .Values.global.timesketch.namespace -}}
 - name: TIMESKETCH_SERVER_URL
   value: {{ printf "http://%s-timesketch.%s:5000" .Release.Name .Values.global.timesketch.namespace | quote }}
 - name: TIMESKETCH_USERNAME
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.global.timesketch.automationUserSecret }}
+      name: {{ .Values.global.timesketch.automationUserSecretName }}
       key: timesketch-user
 - name: TIMESKETCH_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.global.timesketch.automationUserSecret }}
+      name: {{ .Values.global.timesketch.automationUserSecretName }}
       key: timesketch-password
 {{- end }}
 {{- end }}

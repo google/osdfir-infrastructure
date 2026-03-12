@@ -62,11 +62,11 @@ Worker pod upon startup.
           name: {{ .Values.config.gcp.secGeminiAPIKeySecret | quote }}
           key: "api-key"
     {{- end }}
-    {{- if .Values.global.timesketch.automationUserSecret }}
+    {{- if .Values.global.timesketch.automationUserSecretName }}
     - name: TIMESKETCH_AUTOMATION_USER_NAME
       valueFrom:
         secretKeyRef:
-          name: {{ .Values.global.timesketch.automationUserSecret }}
+          name: {{ .Values.global.timesketch.automationUserSecretName }}
           key: "timesketch-user"
     {{- end }}
   volumeMounts:
