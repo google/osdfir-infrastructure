@@ -115,3 +115,9 @@ data:
     {{- if .Values.config.gcp.secGeminiAPIKeySecret }}
     sed -i "/secgemini_log_analyzer_agent/,/}/ s/'api_key': ''/'api_key': '$SECGEMINI_API_KEY'/" timesketch.conf
     {{- end }}
+
+    # Automation user integration
+    {{- if .Values.global.timesketch.automationUserSecretName }}
+    sed -i 's#^LOCAL_AUTH_ALLOWED_USERS =.*#LOCAL_AUTH_ALLOWED_USERS = ["'$TIMESKETCH_AUTOMATION_USER_NAME'"]#' timesketch.conf
+    {{- end }}
+

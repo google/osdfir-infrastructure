@@ -80,5 +80,18 @@ containers. Please update this file when adding a new environment variable.
     secretKeyRef:
       name: {{ printf "%s-timesketch-secret" .Release.Name | quote }}
       key: timesketch-user
+{{- else if and .Values.global.timesketch.automationUserSecretName .Values.global.timesketch.namespace }}
+- name: YETI_TIMESKETCH_ENDPOINT
+  value: {{ printf "http://%s-timesketch.%s:5000" .Release.Name .Values.global.timesketch.namespace | quote }}
+- name: YETI_TIMESKETCH_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.timesketch.automationUserSecretName }}
+      key: timesketch-user
+- name: YETI_TIMESKETCH_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.timesketch.automationUserSecretName }}
+      key: timesketch-password
 {{- end }}
 {{- end }}
