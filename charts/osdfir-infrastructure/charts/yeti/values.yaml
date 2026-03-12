@@ -9,9 +9,9 @@ global:
     ## @param global.timesketch.enabled Enables the Timesketch deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
     enabled: false
-    ## @param global.timesketch.userSecret Existing secret containing Timesketch OSDFIR service account.
+    ## @param global.timesketch.automationUserSecretName Existing secret containing Timesketch OSDFIR service account.
     ## Please only use this when specifying Timesketch in a different namespace with a user account that is not `timesketch`.
-    ## (e.g. kubectl create secret generic timesketch-user-secret --from-literal=timesketch-user=${TIMESKETCH_USERNAME} --from-literal=timesketch-password=${TIMESKETCH_USERNAME})
+    ## (e.g. kubectl create secret generic timesketch-user-secret --from-literal=timesketch-user=${TIMESKETCH_USERNAME} --from-literal=timesketch-password=${TIMESKETCH_PASSWORD})
     ##
     automationUserSecretName: ""
     ## @param global.timesketch.namespace Namespace Timesketch is deployed to.
