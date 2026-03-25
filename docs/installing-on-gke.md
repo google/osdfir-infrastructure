@@ -494,7 +494,7 @@ Yeti Intelligence (IoCs, threat data, etc.) across Timesketch timelines.
 Learn how to use Yeti with Timesketch by following this
 [guide](https://yeti-platform.io/guides/indicators-timesketch/investigation/).
 
-### Enabling GKE Ingress and OIDC Authentication
+#### Enabling GKE Ingress and OIDC Authentication
 
 For Google Kubernetes Engine (GKE) on Google Cloud Platform (GCP), follow these
 steps if you want to expose Timesketch, Yeti, and OpenRelik externally and
