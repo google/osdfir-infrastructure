@@ -102,9 +102,7 @@ export OPENRELIK_FOLDER_ID=1 # Your OpenRelik Folder ID to store images into (de
 Now, create the GKE cluster with the following command:
 
 ```bash
-gcloud container --project $PROJECT_ID clusters create-auto $CLUSTER \
-  --release-channel=rapid \
-  --region $REGION
+gcloud container --project $PROJECT_ID clusters create-auto $CLUSTER --region $REGION
 ```
 
 Important Considerations:
@@ -495,3 +493,79 @@ Yeti Intelligence (IoCs, threat data, etc.) across Timesketch timelines.
 
 Learn how to use Yeti with Timesketch by following this
 [guide](https://yeti-platform.io/guides/indicators-timesketch/investigation/).
+
+### Enabling GKE Ingress and OIDC Authentication
+
+For Google Kubernetes Engine (GKE) on Google Cloud Platform (GCP), follow these
+steps if you want to expose Timesketch, Yeti, and OpenRelik externally and
+enable Google Cloud OpenID Connect (OIDC) authentication to control user access.
+
+1. Reserve a global static IP address:
+
+    ```bash
+    gcloud compute addresses create osdfir-webapps --global
+    ```
+
+2. Register DNS Records
+
+    Register a new domain or use an existing one.  Create DNS "A" records that point
+    your desired subdomains (e.g., timesketch.example.com, yeti.example.com, openrelik.example.com)
+    to the static IP address you reserved in the previous step.
+
+3. Create OAuth web client credentials
+
+    Follow the [Google Support guide](https://support.google.com/cloud/answer/6158849)
+    to create OAuth 2.0 Web Client credentials. You will also need a Desktop/Native OAuth client if you intend to use the client.
+    * Add the following authorized JavaScript origins:
+      * `https://<timesketch.DOMAIN_NAME>.com`
+      * `https://<yeti.DOMAIN_NAME>.com`
+      * `https://<openrelik.DOMAIN_NAME>.com`
+    * Add the following authorized redirect URIs:
+      * `https://<timesketch.DOMAIN_NAME>.com/google_openid_connect/`
+      * `https://<yeti.DOMAIN_NAME>.com/login/google_openid_connect/`
+      * `https://<openrelik.DOMAIN_NAME>.com/auth/google`
+
+4. Store your new OAuth credentials in a K8s secret:
+
+    ```bash
+    kubectl create secret generic oauth-secrets \
+        --from-literal=client-id=<WEB_CLIENT_ID> \
+        --from-literal=client-secret=<WEB_CLIENT_SECRET> \
+        --from-literal=cookie-secret=<COOKIE_SECRET> \
+        --from-literal=client-id-native=<NATIVE_CLIENT_ID>
+    ```
+
+5. Make a list of allowed emails in a text file, one per line:
+
+    ```bash
+    touch authenticated-emails.txt
+    ```
+
+6. Apply the authenticated email list as a K8s secret:
+
+    ```bash
+    kubectl create secret generic authenticated-emails --from-file=authenticated-emails-list=authenticated-emails.txt
+    ```
+
+7. To externally expose Yeti and Timesketch, enable OIDC and provision GCP managed certificates, set the following values during a `helm install` or `helm upgrade`:
+
+    ```bash
+    helm upgrade my-release osdfir-charts/osdfir-infrastructure \
+      --reuse-values \
+      --set global.ingress.enabled=true \
+      --set global.ingress.gcp.staticIPName=<STATIC_IP_NAME> \
+      --set global.ingress.gcp.managedCertificates=true \
+      --set global.ingress.timesketchHost=<timesketch.DOMAIN_NAME.com> \
+      --set global.ingress.yetiHost=<yeti.<DOMAIN_NAME.com> \
+      --set timesketch.config.oidc.enabled=true \
+      --set timesketch.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+      --set timesketch.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+      --set yeti.config.oidc=true \
+      --set yeti.config.oidc.existingSecret=<OAUTH_SECRET_NAME> \
+      --set openrelik.config.oidc=true \
+      --set openrelik.config.oidc.existingSecret=<OAUTH_SECRET_NAME>
+      --set openrelik.config.oidc.authenticatedEmailsFile.existingSecret=<AUTHENTICATED_EMAILS_SECRET_NAME>
+    ```
+
+> **Note**: Yeti user access is managed separately by creating and removing users
+through the `yeticli` command-line tool.
