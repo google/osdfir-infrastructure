@@ -88,7 +88,6 @@ export PROJECT_NUMBER="your-gcp-number"  # Your Google Cloud project number
 export CLUSTER="osdfir-autopilot-cluster"  # The name you choose for your K8s cluster
 export REGION="your-gcp-region" # GCP Region of your K8s cluster
 export ZONE="your-gcp-zone" # GCP Zone of the test disk you will create and process
-export NAMESPACE="default"  # Your K8s namespace (can be left as 'default')
 export GCS_BUCKET="openrelik-my-unique-id-12345" # Your GCS bucket name (must be globally unique)
 export PUBSUB_TOPIC="openrelik-pubsub" # Your Google Cloud PubSub Topic
 export PUBSUB_SUBSCRIPTION="openrelik-sub" # Your Google Cloud PubSub Subscription
@@ -183,21 +182,21 @@ To pull artifacts from Google Cloud Storage with OpenRelik, you need a dedicated
 # Grant the PubSub subscriber role for subscribing to GCS bucket notifications
 gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
     --role=roles/pubsub.subscriber \
-    --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/openrelik
+    --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/default/sa/openrelik
 ```
 
 ```bash
 # Grant the Storage Object User role for reading and downloading artifacts from GCS
 gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
     --role=roles/storage.objectUser \
-    --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/openrelik
+    --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/default/sa/openrelik
 ```
 
 ```bash
 # Grant the Service Account user role to allow the account to act as a service account
 gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
     --role=roles/iam.serviceAccountUser \
-    --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/openrelik
+    --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/default/sa/openrelik
 ```
 
 These commands grant the following roles to the service account:
@@ -251,85 +250,7 @@ kubectl get pods
 You should see pods for Timesketch, OpenRelik, GRR, and Yeti in a Running state.
 It may take a few minutes for all the Pods to show a `Running` state.
 
-## Step 6: Expose Fleetspeak/GRR on L4 LoadBalancer
-
-The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443) on the node IP.
-
-```node``` exposes the Fleetspeak frontend as a ```NodePort``` service.
-
-* Find the IP for one of your cluster nodes and install the chart as following:
-
-> **Note**: Run kubectl get nodes -o wide for a list of IPs to Nodes.
-
-```bash
-helm upgrade my-release osdfir-charts/osdfir-infrastructure \
-  --set grr.fleetspeak.frontend.expose="node" \
-  --set grr.fleetspeak.frontend.address="$NODE_IP" \
-  --reuse-values
-```
-
-* Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
-  binaries on your clients in the same network as the node is running in.
-* This is the simplest mode and only suitable for demo purposes.
-* For a production grade deployment use either an interal or an external L4 LoadBalancer as described below.
-
-### Use an Internal L4 LoadBalancer
-
-```internal``` exposes the Fleetspeak frontend as an [internal Google Cloud L4 LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing)
-
-* This allows you to keep your Fleetspeak/GRR cluster on your private VPC.
-* You will have to reserve a static internal IP address in your Google Cloud Project first.
-
-```bash
-gcloud compute addresses create fleetspeak-frontend-internal \
-  --region=$REGION --subnet=default
-
-# Find the IP address that you have been allocated.
-gcloud compute addresses describe fleetspeak-frontend-internal --region=$REGION
-```
-
-* Choose the values for the ```REGION``` and ```SUBNETWORK```
- so they match the location where you run your GKE cluster.
-
-```bash
-helm upgrade my-release osdfir-charts/osdfir-infrastructure \
-  --set grr.fleetspeak.frontend.expose="internal" \
-  --set grr.fleetspeak.frontend.address="$IP_ADDRESS" \
-  --reuse-values
-```
-
-* Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
- binaries on your clients in the same Google Cloud VPC as the node is running in.
-
-### Use an External L4 LoadBalancer
-
-```external``` exposes the Fleetspeak frontend as an [external Google Cloud L4 LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/how-to/backend-service-based-external-load-balancer)
-
-* This allows you to run your Fleetspeak/GRR cluster so it is available from
- anywhere on the Internet. Use this with caution as it exposes your cluster externally!
-* You will have to reserve a static external IP address in your Google Cloud Project first.
-
-```bash
-gcloud compute addresses create fleetspeak-frontend-external --region=$REGION
-     
-# Find the IP address that you have been allocated.
-gcloud compute addresses describe fleetspeak-frontend-external --region=$REGION
-```
-
-* Choose the value for the ```REGION``` so it matches the location where
- you run your GKE cluster.
-
-```bash
-helm upgrade my-release osdfir-charts/osdfir-infrastructure \
-  --set grr.fleetspeak.frontend.expose="external" \
-  --set grr.fleetspeak.frontend.address="$IP_ADDRESS" \
-  --reuse-values
-```
-
-* Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
- binaries on your clients anywhere where they have access to the Internet.
-
-## Step 7: Process a Google Cloud Disk
+## Step 6: Process a Google Cloud Disk
 
 With OSDFIR Infrastructure deployed, you're ready to process a GCP disk.
 
@@ -423,7 +344,7 @@ the optional workflows for more examples.
 
 ### Additional Workflows
 
-### Setup dfTimewolf and CLI configs
+#### Setup dfTimewolf and CLI configs
 
 OSDFIR Infrastructure utilizes dfTimewolf for orchestrating forensic collection
 and processing. dfTimewolf allows you to define "recipes" that specify how data
@@ -569,3 +490,81 @@ enable Google Cloud OpenID Connect (OIDC) authentication to control user access.
 
 > **Note**: Yeti user access is managed separately by creating and removing users
 through the `yeticli` command-line tool.
+
+#### Exposing Fleetspeak/GRR on L4 LoadBalancer
+
+The default way that the Fleetspeak frontend for GRR is exposed is through a ```NodePort``` (port 30443) on the node IP.
+
+```node``` exposes the Fleetspeak frontend as a ```NodePort``` service.
+
+* Find the IP for one of your cluster nodes and install the chart as following:
+
+> **Note**: Run kubectl get nodes -o wide for a list of IPs to Nodes.
+
+```bash
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
+  --set grr.fleetspeak.frontend.expose="node" \
+  --set grr.fleetspeak.frontend.address="$NODE_IP" \
+  --reuse-values
+```
+
+* Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+  binaries on your clients in the same network as the node is running in.
+* This is the simplest mode and only suitable for demo purposes.
+* For a production grade deployment use either an interal or an external L4 LoadBalancer as described below.
+
+##### Use an Internal L4 LoadBalancer
+
+```internal``` exposes the Fleetspeak frontend as an [internal Google Cloud L4 LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing)
+
+* This allows you to keep your Fleetspeak/GRR cluster on your private VPC.
+* You will have to reserve a static internal IP address in your Google Cloud Project first.
+
+```bash
+gcloud compute addresses create fleetspeak-frontend-internal \
+  --region=$REGION --subnet=default
+
+# Find the IP address that you have been allocated.
+gcloud compute addresses describe fleetspeak-frontend-internal --region=$REGION
+```
+
+* Choose the values for the ```REGION``` and ```SUBNETWORK```
+ so they match the location where you run your GKE cluster.
+
+```bash
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
+  --set grr.fleetspeak.frontend.expose="internal" \
+  --set grr.fleetspeak.frontend.address="$IP_ADDRESS" \
+  --reuse-values
+```
+
+* Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients in the same Google Cloud VPC as the node is running in.
+
+##### Use an External L4 LoadBalancer
+
+```external``` exposes the Fleetspeak frontend as an [external Google Cloud L4 LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/how-to/backend-service-based-external-load-balancer)
+
+* This allows you to run your Fleetspeak/GRR cluster so it is available from
+ anywhere on the Internet. Use this with caution as it exposes your cluster externally!
+* You will have to reserve a static external IP address in your Google Cloud Project first.
+
+```bash
+gcloud compute addresses create fleetspeak-frontend-external --region=$REGION
+     
+# Find the IP address that you have been allocated.
+gcloud compute addresses describe fleetspeak-frontend-external --region=$REGION
+```
+
+* Choose the value for the ```REGION``` so it matches the location where
+ you run your GKE cluster.
+
+```bash
+helm upgrade my-release osdfir-charts/osdfir-infrastructure \
+  --set grr.fleetspeak.frontend.expose="external" \
+  --set grr.fleetspeak.frontend.address="$IP_ADDRESS" \
+  --reuse-values
+```
+
+* Once the Fleetspeak frontend ```pod``` is running you can install the GRR agent
+ binaries on your clients anywhere where they have access to the Internet.
