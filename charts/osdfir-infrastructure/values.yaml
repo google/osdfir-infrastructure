@@ -26,6 +26,9 @@ global:
     ## Please only specify this value when Timesketch and Yeti are in different namespaces and have the same Release name (non-default installation)
     ##
     namespace: ""
+    ## @param global.timesketch.publicURL Optionally specify the Timesketch public url for OpenRelik to use when setting a link to Timesketch.
+    ##
+    publicURL: ""
   yeti:
     ## @param global.yeti.enabled Enables the Yeti deployment (only used in the main OSDFIR Infrastructure Helm chart)
     ##
