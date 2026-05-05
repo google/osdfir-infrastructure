@@ -46,9 +46,9 @@ spec:
             {{- end }}
             - name: ENABLE_STRUCTURED_LOGGING
               value: "true"
-          {{- if .Values.frontend.env }}
-            {{- toYaml .Values.frontend.env | nindent 12 }} 
-          {{- end }}
+            {{- if .Values.frontend.env }}
+              {{- toYaml .Values.frontend.env | nindent 12 }} 
+            {{- end }}
           volumeMounts:
             - mountPath: /mnt/timesketchvolume
               name: timesketchvolume

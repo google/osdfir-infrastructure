@@ -41,9 +41,9 @@ spec:
           env:
             - name: ENABLE_STRUCTURED_LOGGING
               value: "true"
-          {{- if .Values.worker.env }}
-            {{- toYaml .Values.worker.env | nindent 12 }} 
-          {{- end }} 
+            {{- if .Values.worker.env }}
+              {{- toYaml .Values.worker.env | nindent 12 }} 
+            {{- end }} 
           {{- if .Values.securityContext.enabled }}
           securityContext:
             capabilities:
