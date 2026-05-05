@@ -26,6 +26,9 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      {{- if .Values.config.enableServiceAccount }}
+      serviceAccountName: timesketch
+      {{- end }}
       terminationGracePeriodSeconds: {{ .Values.frontend.terminationGracePeriodSeconds }}
       initContainers:
       {{- include "timesketch.initContainer" . | nindent 8 }}
@@ -43,6 +46,9 @@ spec:
             {{- end }}
             - name: ENABLE_STRUCTURED_LOGGING
               value: "true"
+            {{- if .Values.frontend.env }}
+              {{- toYaml .Values.frontend.env | nindent 12 }} 
+            {{- end }}
           volumeMounts:
             - mountPath: /mnt/timesketchvolume
               name: timesketchvolume
