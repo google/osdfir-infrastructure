@@ -27,6 +27,9 @@ spec:
       hostNetwork: false
       hostIPC: false
       automountServiceAccountToken: false
+      {{- if .Values.config.enableServiceAccount }}
+      serviceAccountName: timesketch
+      {{- end }}
       terminationGracePeriodSeconds: {{ .Values.worker.terminationGracePeriodSeconds }}
       initContainers:
       {{- include "timesketch.initContainer" . | nindent 8 }}
@@ -37,7 +40,10 @@ spec:
           command: ["sh", "-c", "exec celery -A timesketch.lib.tasks worker --loglevel={{ .Values.config.logLevel }}"]
           env:
             - name: ENABLE_STRUCTURED_LOGGING
-              value: "true" 
+              value: "true"
+          {{- if .Values.worker.env }}
+            {{- toYaml .Values.worker.env | nindent 12 }} 
+          {{- end }} 
           {{- if .Values.securityContext.enabled }}
           securityContext:
             capabilities:
