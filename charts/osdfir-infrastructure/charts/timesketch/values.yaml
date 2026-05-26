@@ -83,6 +83,10 @@ config:
   ## @param config.nginxTimeout Number of seconds before Nginx times out on a read operation
   ##
   nginxReadTimeout: 600
+  ## @param config.enableServiceAccount Add the K8s service account `timesketch` to all Timesketch deployment manifests
+  ## This is useful when associationg additional cloud provider permissions with Timesketch pods (e.g. GCP trace explorer).
+  ##
+  enableServiceAccount: false
   ## Timesketch GCP optional features to enable
   ##
   gcp:
@@ -135,6 +139,14 @@ config:
 ## @section Timesketch Frontend Configuration
 ##
 frontend:
+  ## @param frontend.env Additional environment variables to pass to the Timesketch pod
+  ## To set environment variables, remove {} and replace with provided environment variables
+  ## Example
+  ## env:
+  ##   - name: example-name
+  ##     value: example-value
+  ##
+  env: []
   ## @param frontend.terminationGracePeriodSeconds The number of seconds to wait before K8s forcefully terminates the Pod
   ##
   terminationGracePeriodSeconds: 600
@@ -164,6 +176,10 @@ worker:
   ## @param worker.terminationGracePeriodSeconds The number of seconds to wait to finish current tasks before K8s forcefully terminates the Pod
   ##
   terminationGracePeriodSeconds: 600
+  ## @param worker.env Additional environment variables to pass to the Timesketch pod
+  ## To set environment variables, remove {} and replace with provided environment variables
+  ##
+  env: []
   ## Timesketch Worker resource requests and limits
   ## @param worker.resources.limits The resources limits for the worker container
   ## @param worker.resources.requests.cpu The requested cpu for the worker container
