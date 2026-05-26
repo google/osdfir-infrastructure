@@ -23,6 +23,7 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         {{- include "yeti.initContainer" . | nindent 8 }}
+        {{- include "yeti.waitForApi" . | nindent 8 }}
       containers:
         - name: beats
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
