@@ -457,6 +457,28 @@ config:
       ## content: |-
       ##   name1@domain
       ##   name2@domain
+  ## OpenRelik Google Cloud IAP (Identity-Aware Proxy) authentication.
+  ## Validates the signed X-Goog-IAP-JWT-Assertion header that IAP adds to
+  ## proxied requests. Requires an OpenRelik server image with the "iap"
+  ## auth method and a GCE Ingress with IAP enabled on the backend.
+  ##
+  iap:
+    ## @param config.iap.enabled Enables OpenRelik IAP authentication
+    ##
+    enabled: false
+    ## @param config.iap.existingSecret Existing secret with the IAP OAuth client_id and client_secret (referenced by the BackendConfig to enable IAP on the load balancer)
+    ## e.g. kubectl create secret generic iap-oauth --from-literal=client_id=... --from-literal=client_secret=...
+    existingSecret: ""
+    ## @param config.iap.audience Expected JWT audience of the IAP assertion, e.g. /projects/PROJECT_NUMBER/global/backendServices/SERVICE_ID
+    ##
+    audience: ""
+    ## @param config.iap.allowlist Allow only these users (email addresses). When set, public access is disabled.
+    ##
+    allowlist: []
+    ## @param config.iap.publicAccess Admit any identity asserted by IAP (access control fully delegated to IAP policy)
+    ##
+    publicAccess: true
+
 ## Persistence Storage Parameters
 ##
 persistence:
