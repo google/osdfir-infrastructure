@@ -80,7 +80,7 @@ spec:
     - host: {{ .Values.global.ingress.openRelikFrontendHost }}
       http:
         paths:
-          {{- range $apiPath := list "/api" "/auth" "/login" "/openapi.json" "/docs" }}
+          {{- range $apiPath := list "/api" "/auth" "/login/" "/openapi.json" "/docs" }}
           - path: {{ $apiPath }}
             pathType: Prefix
             backend:
