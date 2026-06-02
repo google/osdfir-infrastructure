@@ -80,9 +80,12 @@ spec:
     - host: {{ .Values.global.ingress.openRelikFrontendHost }}
       http:
         paths:
-          {{- range $apiPath := list "/api" "/auth" "/login/" "/openapi.json" "/docs" }}
+          {{- /* GCE translates Prefix "/p/" into both "/p" and "/p/*"; use
+                 ImplementationSpecific so bare /login stays a frontend route
+                 while /login/<method> reaches the API. */}}
+          {{- range $apiPath := list "/api/*" "/auth/*" "/login/*" "/openapi.json" "/docs" "/docs/*" }}
           - path: {{ $apiPath }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $.Release.Name }}-openrelik-nginx
