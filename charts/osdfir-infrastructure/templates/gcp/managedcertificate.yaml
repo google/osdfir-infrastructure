@@ -15,7 +15,7 @@ spec:
     {{- if and .Values.global.openrelik.enabled .Values.global.ingress.openRelikFrontendHost }}
     - {{ .Values.global.ingress.openRelikFrontendHost }}
     {{- end }}
-    {{- if and .Values.global.openrelik.enabled .Values.global.ingress.openRelikAPIHost }}
+    {{- if and .Values.global.openrelik.enabled .Values.global.ingress.openRelikAPIHost (ne .Values.global.ingress.openRelikAPIHost .Values.global.ingress.openRelikFrontendHost) }}
     - {{ .Values.global.ingress.openRelikAPIHost }}
     {{- end }}
 {{- end }}

@@ -38,7 +38,9 @@ spec:
             - name: OPENRELIK_API_VERSION
               value: v1
             - name: OPENRELIK_AUTH_METHODS
-              {{- if .Values.config.oidc.enabled }}
+              {{- if .Values.config.iap.enabled }}
+              value: iap
+              {{- else if .Values.config.oidc.enabled }}
               value: google
               {{- else }}
               value: local

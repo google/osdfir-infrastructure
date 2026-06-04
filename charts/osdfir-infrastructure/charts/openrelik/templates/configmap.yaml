@@ -82,6 +82,22 @@ data:
     public_access = false
     {{ end -}}
 
+    {{- if .Values.config.iap.enabled }}
+    [auth.iap]
+    # Google Cloud IAP authentication: validates the signed
+    # X-Goog-IAP-JWT-Assertion header added by the proxy.
+    audience = "{{ .Values.config.iap.audience }}"
+    {{- if .Values.config.iap.allowlist }}
+    allowlist = {{ .Values.config.iap.allowlist | toJson }}
+    public_access = false
+    {{- else }}
+    allowlist = []
+    # Only identities that IAP has authenticated and authorized carry a valid
+    # assertion, so access control can be fully delegated to IAP policy.
+    public_access = {{ .Values.config.iap.publicAccess }}
+    {{- end }}
+    {{- end }}
+
     [ui]
     # data_types that will be rendered using unescaped HTML in a sandboxed iframe in the
     # frontend UI.

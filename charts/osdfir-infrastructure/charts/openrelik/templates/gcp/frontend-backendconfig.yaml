@@ -6,6 +6,12 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
 spec:
   timeoutSec: 300
+  {{- if and .Values.config.iap.enabled .Values.config.iap.existingSecret }}
+  iap:
+    enabled: true
+    oauthclientCredentials:
+      secretName: {{ .Values.config.iap.existingSecret }}
+  {{- end }}
   healthCheck:
     checkIntervalSec: 300
     timeoutSec: 5

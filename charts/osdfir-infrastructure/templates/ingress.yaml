@@ -72,6 +72,34 @@ spec:
                 port:
                   number: 9000
     {{- end }}
+    {{- if and .Values.global.ingress.openRelikFrontendHost (eq .Values.global.ingress.openRelikFrontendHost (.Values.global.ingress.openRelikAPIHost | default "")) }}
+    {{- /* Single-host mode: same origin for UI and API avoids cross-origin
+           cookie and CORS handling (relevant for auth proxies such as IAP,
+           which keep per-host sessions). API routes are matched by prefix;
+           everything else serves the UI. */}}
+    - host: {{ .Values.global.ingress.openRelikFrontendHost }}
+      http:
+        paths:
+          {{- /* GCE translates Prefix "/p/" into both "/p" and "/p/*"; use
+                 ImplementationSpecific so bare /login stays a frontend route
+                 while /login/<method> reaches the API. */}}
+          {{- range $apiPath := list "/api/*" "/auth/*" "/login/*" "/openapi.json" "/docs" "/docs/*" }}
+          - path: {{ $apiPath }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $.Release.Name }}-openrelik-nginx
+                port:
+                  number: 8710
+          {{- end }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-openrelik-nginx
+                port:
+                  number: 8711
+    {{- else }}
     {{- if .Values.global.ingress.openRelikFrontendHost }}
     - host: {{.Values.global.ingress.openRelikFrontendHost }}
       http:
@@ -95,5 +123,6 @@ spec:
                 name: {{ .Release.Name }}-openrelik-nginx
                 port:
                   number: 8710
+    {{- end }}
     {{- end }}
 {{- end }}
