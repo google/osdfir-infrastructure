@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: yeti-arangodb-pdb
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: arangodb
+      app.kubernetes.io/name: yeti

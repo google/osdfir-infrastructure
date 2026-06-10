@@ -14,6 +14,8 @@ spec:
       {{- include "timesketch.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
       labels:
         app.kubernetes.io/component: postgres
         {{- include "timesketch.selectorLabels" . | nindent 8 }}
