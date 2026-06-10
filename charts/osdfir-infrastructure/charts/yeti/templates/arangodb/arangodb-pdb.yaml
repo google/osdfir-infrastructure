@@ -1,7 +1,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: yeti-arangodb-pdb
+  name: {{ .Release.Name }}-yeti-arangodb-pdb
   namespace: {{ .Release.Namespace | quote }}
 spec:
   minAvailable: 1

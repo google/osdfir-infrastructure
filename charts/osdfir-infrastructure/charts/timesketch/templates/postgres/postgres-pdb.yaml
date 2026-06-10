@@ -1,7 +1,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: timesketch-postgres-pdb
+  name: {{ .Release.Name }}-timesketch-postgres-pdb
   namespace: {{ .Release.Namespace | quote }}
 spec:
   minAvailable: 1

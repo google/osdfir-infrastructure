@@ -1,7 +1,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: yeti-redis-pdb
+  name: {{ .Release.Name }}-yeti-redis-pdb
   namespace: {{ .Release.Namespace | quote }}
 spec:
   minAvailable: 1

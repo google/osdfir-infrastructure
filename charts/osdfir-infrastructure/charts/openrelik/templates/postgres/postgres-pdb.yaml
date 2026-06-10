@@ -1,7 +1,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: openrelik-postgres-pdb
+  name: {{ .Release.Name }}-openrelik-postgres-pdb
   namespace: {{ .Release.Namespace | quote }}
 spec:
   minAvailable: 1
