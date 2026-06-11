@@ -36,7 +36,7 @@ spec:
         - name: frontend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/bin/sh", "-c", "exec gunicorn --bind 0.0.0.0:5000 -c /opt/venv/lib/python3.12/site-packages/timesketch/gunicorn.conf.py --capture-output --log-level {{ .Values.config.logLevel }} --timeout {{ .Values.config.wsgiTimeout }} --workers {{ .Values.config.wsgiWorkers }} --limit-request-line {{ .Values.config.wsgiLimitRequestLine }} --max-requests 1000 --max-requests-jitter 100 timesketch.wsgi:application"]
+          command: ["/bin/sh", "-c", "exec gunicorn --bind 0.0.0.0:5000 -c $(python3 -c \"import os, timesketch; print(os.path.join(os.path.dirname(timesketch.__file__), 'gunicorn.conf.py'))\") --capture-output --log-level {{ .Values.config.logLevel }} --timeout {{ .Values.config.wsgiTimeout }} --workers {{ .Values.config.wsgiWorkers }} --limit-request-line {{ .Values.config.wsgiLimitRequestLine }} --max-requests 1000 --max-requests-jitter 100 timesketch.wsgi:application"]
           {{- if and (not .Release.IsUpgrade) .Values.config.createUser }}
           lifecycle:
             postStart:
