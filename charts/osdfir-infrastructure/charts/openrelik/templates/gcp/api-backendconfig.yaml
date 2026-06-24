@@ -16,7 +16,7 @@ spec:
     checkIntervalSec: 60
     timeoutSec: 5
     healthyThreshold: 2
-    unhealthyThreshold: 2
+    unhealthyThreshold: 4
     type: HTTP
     requestPath: /openapi.json
     port: 8710

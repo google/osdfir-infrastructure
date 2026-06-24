@@ -16,7 +16,7 @@ spec:
     checkIntervalSec: 300
     timeoutSec: 5
     healthyThreshold: 2
-    unhealthyThreshold: 2
+    unhealthyThreshold: 4
     type: HTTP
     requestPath: /
     port: 8711
