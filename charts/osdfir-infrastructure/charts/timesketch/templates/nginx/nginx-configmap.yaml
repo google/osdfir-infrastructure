@@ -12,11 +12,17 @@ data:
         listen [::]:8080;
         client_max_body_size 0m;
         location / {
-            proxy_buffer_size 128k;
-            proxy_buffers 4 256k;
-            proxy_busy_buffers_size 256k;
-            proxy_pass http://{{ .Release.Name }}-timesketch:5000/;
+            # --- Robust Memory Buffering Configurations ---
+            proxy_buffering {{ .Values.nginx.proxyBuffering | default "on" }};
+            proxy_buffer_size {{ .Values.nginx.proxyBufferSize | default "128k" }};
+            proxy_buffers {{ .Values.nginx.proxyBuffers | default "4 256k" }};
+            proxy_busy_buffers_size {{ .Values.nginx.proxyBusyBuffersSize | default "256k" }};
+
+            # Safety gate to prevent GKE Ephemeral-Storage pod eviction (DiskPressure)
+            proxy_max_temp_file_size {{ .Values.nginx.proxyMaxTempFileSize | default "512M" }};
+
             proxy_read_timeout {{ .Values.config.nginxReadTimeout }}s;
+            proxy_pass http://{{ .Release.Name }}-timesketch:5000/;
             proxy_set_header Host $host;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
@@ -33,11 +39,17 @@ data:
             return 200;
         }
         location /v3 {
-            proxy_buffer_size 128k;
-            proxy_buffers 4 256k;
-            proxy_busy_buffers_size 256k;
-            proxy_pass http://{{ .Release.Name }}-timesketch-v3:5000/;
+            # --- Robust Memory Buffering Configurations ---
+            proxy_buffering {{ .Values.nginx.proxyBuffering | default "on" }};
+            proxy_buffer_size {{ .Values.nginx.proxyBufferSize | default "128k" }};
+            proxy_buffers {{ .Values.nginx.proxyBuffers | default "4 256k" }};
+            proxy_busy_buffers_size {{ .Values.nginx.proxyBusyBuffersSize | default "256k" }};
+
+            # Safety gate to prevent GKE Ephemeral-Storage pod eviction (DiskPressure)
+            proxy_max_temp_file_size {{ .Values.nginx.proxyMaxTempFileSize | default "512M" }};
+
             proxy_read_timeout {{ .Values.config.nginxReadTimeout }}s;
+            proxy_pass http://{{ .Release.Name }}-timesketch-v3:5000/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

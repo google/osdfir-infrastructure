@@ -79,10 +79,10 @@ config:
   wsgiLimitRequestLine: 8190
   ## @param config.wsgiTimeout Number of seconds before the Gunicorn worker times out
   ##
-  wsgiTimeout: 600
+  wsgiTimeout: 300
   ## @param config.nginxTimeout Number of seconds before Nginx times out on a read operation
   ##
-  nginxReadTimeout: 600
+  nginxReadTimeout: 300
   ## @param config.enableServiceAccount Add the K8s service account `timesketch` to all Timesketch deployment manifests
   ## This is useful when associationg additional cloud provider permissions with Timesketch pods (e.g. GCP trace explorer).
   ##
@@ -229,6 +229,23 @@ nginx:
   ## @param nginx.nodeSelector Node labels for Timesketch nginx pods assignment
   ##
   nodeSelector: {}
+  ## Timesketch Nginx proxy buffering configurations
+  ##
+  ## @param nginx.proxyBuffering Enable proxy buffering for Timesketch paths
+  ##
+  proxyBuffering: "on"
+  ## @param nginx.proxyBufferSize Buffer size for proxying Timesketch responses
+  ##
+  proxyBufferSize: "128k"
+  ## @param nginx.proxyBuffers Number and size of buffers for proxying Timesketch responses
+  ##
+  proxyBuffers: "4 256k"
+  ## @param nginx.proxyBusyBuffersSize Busy buffers size for proxying Timesketch responses
+  ##
+  proxyBusyBuffersSize: "256k"
+  ## @param nginx.proxyMaxTempFileSize Maximum size of temporary files for proxying Timesketch responses
+  ##
+  proxyMaxTempFileSize: "512M"
 ## Persistence Storage Parameters
 ##
 persistence:
