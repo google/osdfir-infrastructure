@@ -229,23 +229,26 @@ nginx:
   ## @param nginx.nodeSelector Node labels for Timesketch nginx pods assignment
   ##
   nodeSelector: {}
-  ## Timesketch Nginx proxy buffering configurations
+  ## Timesketch Nginx config block
   ##
-  ## @param nginx.proxyBuffering Enable proxy buffering for Timesketch paths
-  ##
-  proxyBuffering: "on"
-  ## @param nginx.proxyBufferSize Buffer size for proxying Timesketch responses
-  ##
-  proxyBufferSize: "128k"
-  ## @param nginx.proxyBuffers Number and size of buffers for proxying Timesketch responses
-  ##
-  proxyBuffers: "4 256k"
-  ## @param nginx.proxyBusyBuffersSize Busy buffers size for proxying Timesketch responses
-  ##
-  proxyBusyBuffersSize: "256k"
-  ## @param nginx.proxyMaxTempFileSize Maximum size of temporary files for proxying Timesketch responses
-  ##
-  proxyMaxTempFileSize: "512M"
+  config:
+    ## Timesketch Nginx proxy buffering configurations
+    ##
+    ## @param nginx.config.proxyBuffering Enable proxy buffering for Timesketch paths
+    ##
+    proxyBuffering: "on"
+    ## @param nginx.config.proxyBufferSize Buffer size for proxying Timesketch responses
+    ##
+    proxyBufferSize: "128k"
+    ## @param nginx.config.proxyBuffers Number and size of buffers for proxying Timesketch responses
+    ##
+    proxyBuffers: "4 256k"
+    ## @param nginx.config.proxyBusyBuffersSize Busy buffers size for proxying Timesketch responses
+    ##
+    proxyBusyBuffersSize: "256k"
+    ## @param nginx.config.proxyMaxTempFileSize Maximum size of temporary files for proxying Timesketch responses
+    ##
+    proxyMaxTempFileSize: "512M"
 ## Persistence Storage Parameters
 ##
 persistence:
