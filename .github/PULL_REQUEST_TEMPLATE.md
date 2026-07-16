@@ -23,6 +23,9 @@
 
 <!-- [Place an '[X]' (no spaces) in all applicable fields. Please remove unrelated fields.] -->
 
-- [ ] Chart version bumped in `Chart.yaml` according to [semver](http://semver.org/). This is *not necessary* when the changes only affect README.md files.
+- [ ] Chart version bumped in OSDFIR Infrastructure `Chart.yaml` and the sub chart
+`Chart.yaml` according to [semver](http://semver.org/). This is *not necessary*
+when the changes only affect README.md files.
+- [ ] Run `helm dependency update` to pin updated `Chart.yaml` versions.
 - [ ] Newly added variables are documented in the values.yaml
 - [ ] Title of the pull request is descriptive
