@@ -15,6 +15,22 @@ global:
   ##
   generateExeSignCert: true
 
+## @section Client builder parameters
+##
+clientBuilder:
+  ## @param clientBuilder.address Sets the externally reachable Fleetspeak address embedded in GRR client installers.
+  ## When empty, the address is derived from fleetspeak.frontend.address or the first Kubernetes node internal IP.
+  ##
+  address: ""
+  ## @param clientBuilder.port Sets the externally reachable Fleetspeak port embedded in GRR client installers.
+  ## When empty, fleetspeak.frontend.listenPort is used.
+  ##
+  port: ""
+  ## @param clientBuilder.trustedCert Sets the PEM-encoded certificate trusted by generated Fleetspeak clients.
+  ## When empty, the client builder retrieves the certificate from clientBuilder.address and clientBuilder.port.
+  ##
+  trustedCert: ""
+
 ## @section Fleetspeak parameters
 ##
 fleetspeak:
@@ -55,6 +71,12 @@ fleetspeak:
     ## @param fleetspeak.frontend.address Sets the Fleetspeak frontend listen to use in a load balancer.
     ##
     address: ""
+    ## @param fleetspeak.frontend.cert Sets the PEM-encoded Fleetspeak frontend certificate when fleetspeak.generateCert is false.
+    ##
+    cert: ""
+    ## @param fleetspeak.frontend.key Sets the PEM-encoded Fleetspeak frontend private key when fleetspeak.generateCert is false.
+    ##
+    key: ""
     ## @param fleetspeak.frontend.listenPort Sets the Fleetspeak frontend listen port to use.
     ##
     listenPort: 30443

@@ -1,30 +1,16 @@
-{{- $frontend := "" -}}
-{{- if or (eq .Values.fleetspeak.frontend.expose "internal") (eq .Values.fleetspeak.frontend.expose "external") -}}
-  {{- $frontend = .Values.fleetspeak.frontend.address -}}
-{{- else }}
-  {{- /* Step 1: Perform lookup, store result */}}
-  {{- $lookupResult := lookup "v1" "Node" "" "" | default dict -}}
-  {{- /* Step 2: Get values, store result */}}
-  {{- $nodeList := $lookupResult.items -}}
-  {{- if $nodeList -}}
-    {{- /* Step 3: Get first node data, store result */}}
-    {{- $nodeData := first $nodeList -}}
-    {{- /* Step 4: Get the status */}}
-    {{- $statusValue := $nodeData.status -}}
-    {{- /* Step 5: Get the addresses */}}
-    {{- $addressesList := $statusValue.addresses -}}
-    {{- /* Step 6: Get the InternalIP address */}}
-    {{- range $address := $addressesList -}}
-      {{- if and (not $frontend) (eq $address.type "InternalIP") -}}
-        {{- $frontend = $address.address -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
+{{- $frontend := include "grr.clientBuilderAddress" . -}}
+{{- $frontendPort := include "grr.clientBuilderPort" . -}}
+{{- $builderHash := include "grr.clientBuilderHash" . -}}
+{{- $clientBuilder := .Values.clientBuilder | default dict -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-grr-job-client-builder
+  name: {{ printf "%s-grr-client-builder-%s" (.Release.Name | trunc 35 | trimSuffix "-") (trunc 8 $builderHash) }}
+  labels:
+    app.kubernetes.io/name: grr
+    app.kubernetes.io/component: client-builder
+  annotations:
+    grr.osdfir.dev/client-builder-hash: {{ $builderHash | quote }}
 spec:
   template:
     spec:
@@ -54,6 +40,15 @@ spec:
               echo "Extracting public key from certificate..."
               openssl x509 -in /sign/keys/exe-sign.crt -pubkey -noout > /grr/exe/sign/keys/exe-sign-public-key.pem
             fi
+            {{ if not (get $clientBuilder "trustedCert") }}
+            expected_fingerprint="$(openssl x509 -in /fleetspeak/tls.crt -noout -fingerprint -sha256)"
+            until served_fingerprint="$(openssl s_client -connect "{{ $frontend }}:{{ $frontendPort }}" -servername "{{ $frontend }}" < /dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha256 2>/dev/null)" \
+              && [ "$served_fingerprint" = "$expected_fingerprint" ]
+            do
+              echo "Waiting for the external Fleetspeak endpoint to serve the current certificate"
+              sleep 5
+            done
+            {{ end }}
             cd /kaniko-build; 
             git clone https://github.com/google/osdfir-infrastructure.git
             cd osdfir-infrastructure
@@ -68,6 +63,9 @@ spec:
           - name: grr-server-config
             mountPath: /grr/grr.server.yaml
             subPath: server.local.yaml
+          - name: fleetspeak-frontend-certificate
+            mountPath: /fleetspeak/tls.crt
+            subPath: tls.crt
       containers:
         - name: kaniko
           image: {{ .Values.initContainer.kanikoImage }}
@@ -76,7 +74,8 @@ spec:
             - "--context=dir:///kaniko-build/osdfir-infrastructure"
             - "--context-sub-path=charts/osdfir-infrastructure/charts/grr/containers/grr-client/"
             - "--build-arg=FLEETSPEAK_FRONTEND={{ $frontend }}"
-            - "--build-arg=FLEETSPEAK_FRONTEND_PORT={{ .Values.fleetspeak.frontend.listenPort }}"
+            - "--build-arg=FLEETSPEAK_FRONTEND_PORT={{ $frontendPort }}"
+            - "--build-arg=FLEETSPEAK_TRUSTED_CERT_B64={{ get $clientBuilder "trustedCert" | default "" | b64enc }}"
             {{- if .Values.grr.daemon.image }}
             - "--destination={{ .Values.grr.daemon.image }}"
             {{- else }}
@@ -109,3 +108,9 @@ spec:
             items:
             - key: server.local.yaml
               path: server.local.yaml
+        - name: fleetspeak-frontend-certificate
+          secret:
+            secretName: {{ .Release.Name }}-grr-fleetspeak-frontend-components
+            items:
+            - key: tls.crt
+              path: tls.crt
