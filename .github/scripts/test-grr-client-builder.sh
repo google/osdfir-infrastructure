@@ -29,14 +29,22 @@ grep -Fq "DNS:external.example.test" <<<"$(openssl x509 -noout -text <<<"$certif
 job_name="$(
   awk '/^  name: test-grr-client-builder-/ { print $2; exit }' <<<"$external_render"
 )"
+changed_render="$("$helm" template test "$chart" \
+  --set clientBuilder.address=external.example.test \
+  --set-string clientBuilder.port=8443 \
+  --set-string clientBuilder.trustedCert=test-cert)"
 changed_job_name="$(
-  "$helm" template test "$chart" \
-    --set clientBuilder.address=external.example.test \
-    --set-string clientBuilder.port=8443 \
-    --set-string clientBuilder.trustedCert=test-cert |
-    awk '/^  name: test-grr-client-builder-/ { print $2; exit }'
+  awk '/^  name: test-grr-client-builder-/ { print $2; exit }' <<<"$changed_render"
 )"
-test "$job_name" != "$changed_job_name"
+if [[ "$job_name" == "$changed_job_name" ]]; then
+  echo "Error: Job name did not change when clientBuilder inputs were modified!" >&2
+  exit 1
+fi
+echo "Job name updated successfully on input change."
+
+grep -Fq "ClientBuilder.fleetspeak_client_config: /config/config.windows.textproto" <<<"$external_render"
+grep -Fq 'configuration_key: "HKEY_LOCAL_MACHINE\\SOFTWARE\\FleetspeakClient"' \
+  "$chart/containers/grr-client/config/config.windows.textproto.tmpl"
 
 provided_cert_render="$("$helm" template test "$chart" \
   --set fleetspeak.generateCert=false \

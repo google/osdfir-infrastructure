@@ -33,7 +33,11 @@ RUN if [ -n "$FLEETSPEAK_TRUSTED_CERT_B64" ]; then \
     sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" /config/config.textproto.tmpl > /config/config.textproto && \
     sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" /config/config.textproto && \
     sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" /config/config.textproto && \
-    echo 'client_certificate_header: "client-certificate"' >> /config/config.textproto
+    echo 'client_certificate_header: "client-certificate"' >> /config/config.textproto && \
+    sed "s'FLEETSPEAK_FRONTEND_ADDRESS'$FLEETSPEAK_FRONTEND'g" /config/config.windows.textproto.tmpl > /config/config.windows.textproto && \
+    sed -i "s'FLEETSPEAK_FRONTEND_PORT'$FLEETSPEAK_FRONTEND_PORT'" /config/config.windows.textproto && \
+    sed -i "s'FRONTEND_TRUSTED_CERTIFICATES'\"$FLEETSPEAK_CERT\"'g" /config/config.windows.textproto && \
+    echo 'client_certificate_header: "client-certificate"' >> /config/config.windows.textproto
 
 RUN PRI_KEY=$(cat /grr/exe/sign/keys/exe-sign-private-key.pem | sed ':a;N;$!ba;s/\n/\\\\n/g') && \
     PUB_KEY=$(cat /grr/exe/sign/keys/exe-sign-public-key.pem | sed ':a;N;$!ba;s/\n/\\\\n/g') && \
