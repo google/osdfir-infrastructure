@@ -1,0 +1,19 @@
+{{- if and .Values.chromadb .Values.chromadb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-yeti-chromadb
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/component: chromadb
+    {{- include "yeti.selectorLabels" . | nindent 4 }}
+{{- end }}

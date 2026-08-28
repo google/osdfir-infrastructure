@@ -1,5 +1,5 @@
 {{/*
-Init Container for checking for the Redis and ArangoDB service prior to starting
+Init Container for checking for the Redis, ArangoDB and ChromaDB services prior to starting
 the Yeti Pods.
 */}}
 {{- define "yeti.initContainer" -}}
@@ -9,12 +9,18 @@ the Yeti Pods.
   args: 
     - |
       # Wait for Redis
-      until nslookup {{ .Release.Name }}-yeti-redis; do echo waiting for Redis; sleep 30; done
+      until nslookup {{ .Release.Name }}-yeti-redis; do echo waiting for Redis; sleep 3; done
       echo "Redis service is discoverable."
 
       # Wait for ArangoDB
-      until nslookup {{ .Release.Name }}-yeti-arangodb; do echo waiting for ArangoDB; sleep 30; done
+      until nslookup {{ .Release.Name }}-yeti-arangodb; do echo waiting for ArangoDB; sleep 3; done
       echo "ArangoDB service is discoverable."
+      {{- if and .Values.chromadb .Values.chromadb.enabled }}
+
+      # Wait for ChromaDB
+      until nslookup {{ .Release.Name }}-yeti-chromadb; do echo waiting for ChromaDB; sleep 3; done
+      echo "ChromaDB service is discoverable."
+      {{- end }}
 {{- end }}
 
 {{/*
@@ -30,8 +36,7 @@ This is used by background workers to avoid race conditions during database init
       # Wait for Yeti API to be listening
       until wget -q -O- http://{{ .Release.Name }}-yeti-api:8000/openapi.json > /dev/null 2>&1; do
         echo "Waiting for Yeti API to be healthy and initialized..."
-        sleep 5
+        sleep 3
       done
-      sleep 30
       echo "Yeti API is fully ready."
 {{- end }}
