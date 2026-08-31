@@ -31,11 +31,13 @@ Emits a non-empty string when true, so callers test it with `if`.
 */}}
 {{- define "yeti.agentsEnabled" -}}
 {{- if and .Values.agents .Values.agents.enabled -}}
-{{- if and (not .Values.agents.googleApiKeySecret) (ne .Values.agents.llmProvider "ollama") -}}
+{{- $googleSecret := .Values.agents.googleApiKeySecret -}}
+{{- if and (not $googleSecret) (ne .Values.agents.llmProvider "ollama") -}}
 {{- fail (printf "\n\nagents.enabled is true but agents.googleApiKeySecret is not set.\nThe Yeti Agents service reads GOOGLE_API_KEY at startup and cannot run without it.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-google-api-secret \\\n    --namespace %s --from-literal=google-api-key=$GOOGLE_API_KEY\n  helm upgrade ... --set agents.googleApiKeySecret=yeti-google-api-secret\n\nAlternatively set agents.llmProvider=ollama to use a local model, or\nagents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
 {{- end -}}
-{{- if not .Values.global.yeti.apiKeySecret -}}
-{{- fail (printf "\n\nagents.enabled is true but global.yeti.apiKeySecret is not set.\nThe agents reach Yeti over its API; without these credentials they start but\nevery tool call fails.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-api-secret \\\n    --namespace %s --from-literal=yeti-api=$YETI_API_KEY\n  helm upgrade ... --set global.yeti.apiKeySecret=yeti-api-secret\n\nAlternatively set agents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
+{{- $yetiSecret := .Values.agents.yetiApiKeySecret | default .Values.global.yeti.apiKeySecret -}}
+{{- if not $yetiSecret -}}
+{{- fail (printf "\n\nagents.enabled is true but no Yeti API key secret is configured (agents.yetiApiKeySecret or global.yeti.apiKeySecret).\nThe agents reach Yeti over its API; without these credentials they start but\nevery tool call fails.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-api-secret \\\n    --namespace %s --from-literal=yeti-api=$YETI_API_KEY\n  helm upgrade ... --set agents.yetiApiKeySecret=yeti-api-secret\n\nAlternatively set agents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
 {{- end -}}
 true
 {{- end -}}

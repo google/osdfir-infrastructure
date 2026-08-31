@@ -185,9 +185,9 @@ bloomcheck:
 ##
 agents:
   ## @param agents.enabled Whether to enable Yeti Agents microservice
-  ## Enabling this requires agents.googleApiKeySecret (or llmProvider "ollama")
-  ## and global.yeti.apiKeySecret. The install fails with instructions if either
-  ## is missing, rather than deploying a service that cannot answer.
+  ## Enabling this requires a Google API key for Gemini (agents.googleApiKeySecret)
+  ## and Yeti API credentials (agents.yetiApiKeySecret or global.yeti.apiKeySecret).
+  ## The install fails with instructions if either is missing.
   ##
   enabled: false
   image:
@@ -200,13 +200,14 @@ agents:
     ## @param agents.image.pullPolicy
     ##
     pullPolicy: IfNotPresent
+  ## @param agents.yetiApiKeySecret Existing secret containing the Yeti API key (key: "yeti-api").
+  ## Defaults to global.yeti.apiKeySecret if set.
+  ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
+  ##
+  yetiApiKeySecret: ""
   ## @param agents.googleApiKeySecret Existing secret containing the Google API key for Gemini.
   ## Required when agents.llmProvider is "gemini".
   ## (e.g. kubectl create secret generic yeti-google-api-secret --from-literal=google-api-key=${GOOGLE_API_KEY})
-  ##
-  ## The agents workload is only deployed once it can actually run, which also
-  ## requires global.yeti.apiKeySecret: the agents reach Yeti over its API, and
-  ## without those credentials they start but every tool call fails.
   ##
   googleApiKeySecret: ""
   ## @param agents.llmProvider LLM backend for the agents service ("gemini" or "ollama")
