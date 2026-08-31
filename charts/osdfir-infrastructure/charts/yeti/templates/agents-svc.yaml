@@ -1,4 +1,4 @@
-{{- if .Values.agents.enabled }}
+{{- if and .Values.agents.enabled (or .Values.agents.googleApiKeySecret (eq .Values.agents.llmProvider "ollama")) }}
 apiVersion: v1
 kind: Service
 metadata:
