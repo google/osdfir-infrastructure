@@ -34,7 +34,7 @@ containers. Please update this file when adding a new environment variable.
 - name: YETI_CHROMADB_HTTP_ROOT
   value: "http://{{ .Release.Name }}-yeti-chromadb:8000"
 {{- end }}
-{{- if and .Values.agents .Values.agents.enabled }}
+{{- if and .Values.agents .Values.agents.enabled (or .Values.agents.googleApiKeySecret (eq .Values.agents.llmProvider "ollama")) }}
 - name: YETI_AGENTS_ENDPOINT
   value: "http://{{ .Release.Name }}-yeti-agents:8888"
 {{- end }}

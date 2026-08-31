@@ -186,7 +186,7 @@ bloomcheck:
 agents:
   ## @param agents.enabled Whether to enable Yeti Agents microservice
   ##
-  enabled: false
+  enabled: true
   image:
     ## @param agents.image.repository Yeti agents image repository
     ##
@@ -197,6 +197,26 @@ agents:
     ## @param agents.image.pullPolicy
     ##
     pullPolicy: IfNotPresent
+  ## @param agents.googleApiKeySecret Existing secret containing the Google API key for Gemini.
+  ## Required when agents.llmProvider is "gemini".
+  ## (e.g. kubectl create secret generic yeti-google-api-secret --from-literal=google-api-key=${GOOGLE_API_KEY})
+  ##
+  googleApiKeySecret: ""
+  ## @param agents.llmProvider LLM backend for the agents service ("gemini" or "ollama")
+  ##
+  llmProvider: gemini
+  ## @param agents.geminiModel Gemini model ID used when llmProvider is "gemini"
+  ##
+  geminiModel: gemini-3.7-flash
+  ## Yeti agents persistence configuration
+  ##
+  persistence:
+    ## @param agents.persistence.enabled Whether to enable persistence for Yeti Agents sessions database
+    ##
+    enabled: true
+    ## @param agents.persistence.size Persistent Volume size for sessions database
+    ##
+    size: 2Gi
   ## Yeti agents resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param agents.resources.limits Resource limits for the agents container
