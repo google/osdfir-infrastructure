@@ -163,6 +163,9 @@ bloomcheck:
     ## @param bloomcheck.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: dev
+    ## @param bloomcheck.image.pullPolicy
+    ##
+    pullPolicy: Always
   ## Yeti bloomcheck resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param bloomcheck.resources.limits Resource limits for the bloomcheck container
@@ -199,7 +202,7 @@ agents:
     tag: dev
     ## @param agents.image.pullPolicy
     ##
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   ## @param agents.yetiApiKeySecret Existing secret containing the Yeti API key (key: "yeti-api").
   ## Defaults to global.yeti.apiKeySecret if set.
   ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
