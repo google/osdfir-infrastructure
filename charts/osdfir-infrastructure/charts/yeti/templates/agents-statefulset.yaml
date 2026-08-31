@@ -41,12 +41,17 @@ spec:
           {{- include "yeti.envs" . | nindent 12 }}
             - name: YETI_API_ROOT
               value: "http://{{ .Release.Name }}-yeti-api:8000"
-            {{- $yetiSecret := .Values.agents.yetiApiKeySecret | default .Values.global.yeti.apiKeySecret }}
-            {{- if $yetiSecret }}
+            {{- if .Values.agents.yetiApiKeySecret }}
             - name: YETI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ $yetiSecret | quote }}
+                  name: {{ .Values.agents.yetiApiKeySecret | quote }}
+                  key: "yeti-api"
+            {{- else if .Values.global.yeti.apiKeySecret }}
+            - name: YETI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.yeti.apiKeySecret | quote }}
                   key: "yeti-api"
             {{- end }}
             {{- if .Values.agents.googleApiKeySecret }}
