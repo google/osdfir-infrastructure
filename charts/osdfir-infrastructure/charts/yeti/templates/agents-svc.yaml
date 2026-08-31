@@ -1,0 +1,19 @@
+{{- if .Values.agents.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-yeti-agents
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8888
+      targetPort: 8888
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/component: agents
+    {{- include "yeti.selectorLabels" . | nindent 4 }}
+{{- end }}
