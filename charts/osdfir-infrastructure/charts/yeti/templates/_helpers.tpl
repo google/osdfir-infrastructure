@@ -34,8 +34,8 @@ Emits a non-empty string when true, so callers test it with `if`.
 {{- if and (not .Values.agents.googleApiKeySecret) (ne .Values.agents.llmProvider "ollama") -}}
 {{- fail (printf "\n\nagents.enabled is true but agents.googleApiKeySecret is not set.\nThe Yeti Agents service reads GOOGLE_API_KEY at startup and cannot run without it.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-google-api-secret \\\n    --namespace %s --from-literal=google-api-key=$GOOGLE_API_KEY\n  helm upgrade ... --set agents.googleApiKeySecret=yeti-google-api-secret\n\nAlternatively set agents.llmProvider=ollama to use a local model, or\nagents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
 {{- end -}}
-{{- if and (not .Values.agents.yetiApiKeySecret) (not .Values.global.yeti.apiKeySecret) -}}
-{{- fail (printf "\n\nagents.enabled is true but no Yeti API key secret is configured (agents.yetiApiKeySecret or global.yeti.apiKeySecret).\nThe agents reach Yeti over its API; without these credentials they start but\nevery tool call fails.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-api-secret \\\n    --namespace %s --from-literal=yeti-api=$YETI_API_KEY\n  helm upgrade ... --set agents.yetiApiKeySecret=yeti-api-secret\n\nAlternatively set agents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
+{{- if not .Values.agents.yetiApiKeySecret -}}
+{{- fail (printf "\n\nagents.enabled is true but agents.yetiApiKeySecret is not set.\nThe agents reach Yeti over its API; without these credentials they start but\nevery tool call fails.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-api-secret \\\n    --namespace %s --from-literal=yeti-api=$YETI_API_KEY\n  helm upgrade ... --set agents.yetiApiKeySecret=yeti-api-secret\n\nAlternatively set agents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
 {{- end -}}
 true
 {{- end -}}
