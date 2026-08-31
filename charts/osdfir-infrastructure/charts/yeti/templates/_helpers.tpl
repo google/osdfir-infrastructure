@@ -18,18 +18,25 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{/*
 Whether the Yeti Agents service can actually run.
 
-Agents need a model provider and Yeti API credentials; without either they
-start but cannot answer, so the workload is not rendered rather than deployed
-in a state that can only fail. Defined once here because the same condition
-decides three things -- the StatefulSet, its Service, and whether the Yeti API
-is told the feature exists -- and those must not be able to disagree.
+Agents need a model provider and Yeti API credentials. Asking for them without
+either is a mistake worth stopping the install for: the pod would start and
+then be unable to answer, which is harder to diagnose after the fact than a
+message naming the secret that is missing.
+
+Defined once here because the same answer decides three things -- the
+StatefulSet, its Service, and whether the Yeti API is told the feature exists --
+and those must not be able to disagree.
 
 Emits a non-empty string when true, so callers test it with `if`.
 */}}
 {{- define "yeti.agentsEnabled" -}}
-{{- if and .Values.agents .Values.agents.enabled .Values.global.yeti.apiKeySecret -}}
-{{- if or .Values.agents.googleApiKeySecret (eq .Values.agents.llmProvider "ollama") -}}
-true
+{{- if and .Values.agents .Values.agents.enabled -}}
+{{- if and (not .Values.agents.googleApiKeySecret) (ne .Values.agents.llmProvider "ollama") -}}
+{{- fail (printf "\n\nagents.enabled is true but agents.googleApiKeySecret is not set.\nThe Yeti Agents service reads GOOGLE_API_KEY at startup and cannot run without it.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-google-api-secret \\\n    --namespace %s --from-literal=google-api-key=$GOOGLE_API_KEY\n  helm upgrade ... --set agents.googleApiKeySecret=yeti-google-api-secret\n\nAlternatively set agents.llmProvider=ollama to use a local model, or\nagents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
 {{- end -}}
+{{- if not .Values.global.yeti.apiKeySecret -}}
+{{- fail (printf "\n\nagents.enabled is true but global.yeti.apiKeySecret is not set.\nThe agents reach Yeti over its API; without these credentials they start but\nevery tool call fails.\n\nCreate the secret and pass its name:\n  kubectl create secret generic yeti-api-secret \\\n    --namespace %s --from-literal=yeti-api=$YETI_API_KEY\n  helm upgrade ... --set global.yeti.apiKeySecret=yeti-api-secret\n\nAlternatively set agents.enabled=false to deploy Yeti without the agents service.\n" .Release.Namespace) -}}
+{{- end -}}
+true
 {{- end -}}
 {{- end }}

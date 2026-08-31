@@ -185,8 +185,11 @@ bloomcheck:
 ##
 agents:
   ## @param agents.enabled Whether to enable Yeti Agents microservice
+  ## Enabling this requires agents.googleApiKeySecret (or llmProvider "ollama")
+  ## and global.yeti.apiKeySecret. The install fails with instructions if either
+  ## is missing, rather than deploying a service that cannot answer.
   ##
-  enabled: true
+  enabled: false
   image:
     ## @param agents.image.repository Yeti agents image repository
     ##
@@ -370,7 +373,7 @@ arangodb:
 chromadb:
   ## @param chromadb.enabled Whether to enable ChromaDB microservice
   ##
-  enabled: false
+  enabled: true
   image:
     ## @param chromadb.image.repository ChromaDB image repository
     ##

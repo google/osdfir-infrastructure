@@ -64,6 +64,18 @@ spec:
           ports:
             - containerPort: 8888
               name: http
+          # /health reports whether the service found the configuration it
+          # needs, so an incomplete deployment holds traffic and says why
+          # rather than answering with an agent that has lost its tools.
+          # Readiness only: a configuration problem is not fixed by restarting,
+          # and a liveness probe on the same endpoint would replace a pod that
+          # can still be asked what is wrong with one that keeps dying.
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
           volumeMounts:
             - mountPath: /data
               name: data
