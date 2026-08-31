@@ -201,6 +201,10 @@ agents:
   ## Required when agents.llmProvider is "gemini".
   ## (e.g. kubectl create secret generic yeti-google-api-secret --from-literal=google-api-key=${GOOGLE_API_KEY})
   ##
+  ## The agents workload is only deployed once it can actually run, which also
+  ## requires global.yeti.apiKeySecret: the agents reach Yeti over its API, and
+  ## without those credentials they start but every tool call fails.
+  ##
   googleApiKeySecret: ""
   ## @param agents.llmProvider LLM backend for the agents service ("gemini" or "ollama")
   ##

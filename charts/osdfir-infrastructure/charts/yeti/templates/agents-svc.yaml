@@ -1,4 +1,4 @@
-{{- if and .Values.agents.enabled (or .Values.agents.googleApiKeySecret (eq .Values.agents.llmProvider "ollama")) }}
+{{- if include "yeti.agentsEnabled" . }}
 apiVersion: v1
 kind: Service
 metadata:
