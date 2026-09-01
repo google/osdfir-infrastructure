@@ -57,8 +57,10 @@ spec:
             {{- end }}
             - name: LLM_PROVIDER
               value: {{ .Values.agents.llmProvider | quote }}
-            - name: GEMINI_MODEL
-              value: {{ .Values.agents.geminiModel | quote }}
+            {{- if .Values.agents.geminiModels }}
+            - name: GEMINI_MODELS
+              value: {{ join "," .Values.agents.geminiModels | quote }}
+            {{- end }}
             - name: YETI_AGENTS_DB_PATH
               value: "/data/sessions.db"
           ports:

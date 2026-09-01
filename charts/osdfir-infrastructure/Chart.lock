@@ -4,7 +4,7 @@ dependencies:
   version: 2.5.6
 - name: yeti
   repository: file://charts/yeti
-  version: 2.7.0
+  version: 2.8.0
 - name: openrelik
   repository: file://charts/openrelik
   version: 2.4.2
@@ -14,5 +14,5 @@ dependencies:
 - name: hashr
   repository: file://charts/hashr
   version: 2.0.1
-digest: sha256:d2cef67f8b863c638a70ecca2c2944b2823aefa1dba8d8cb1d47ce4d3e5972b1
-generated: "2026-08-31T20:18:14.07591851Z"
+digest: sha256:33a6bf86bbb9b686e70114bb5f1b6ea0d8a8b6c3419459d031a71a74d44808da
+generated: "2026-09-01T14:29:21.177494634Z"
