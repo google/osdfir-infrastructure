@@ -217,8 +217,23 @@ agents:
   ##
   llmProvider: gemini
   ## @param agents.geminiModel Gemini model ID used when llmProvider is "gemini"
+  ## This is the model a conversation uses unless one is chosen for it.
   ##
   geminiModel: gemini-3.7-flash
+  ## @param agents.geminiModels Gemini model IDs a user may choose between
+  ## Offered in the chat UI, which hides the selector when there is only one.
+  ## The list is what this deployment is willing to spend quota on, so keep it
+  ## deliberate rather than mirroring everything the provider publishes.
+  ## agents.geminiModel is always available whether or not it appears here.
+  ##
+  ## Note that -preview models are retired on Google's schedule, so one listed
+  ## here can stop working without any change on this side.
+  ##
+  geminiModels:
+    - gemini-3.7-flash
+    - gemini-3.5-flash
+    - gemini-3.5-flash-lite
+    - gemini-3.1-pro-preview
   ## Yeti agents persistence configuration
   ##
   persistence:
