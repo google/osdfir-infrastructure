@@ -49,10 +49,8 @@ spec:
               sleep 5
             done
             {{ end }}
-            cd /kaniko-build; 
-            git clone https://github.com/google/osdfir-infrastructure.git
-            cd osdfir-infrastructure
-            cp /grr/grr.server.yaml charts/osdfir-infrastructure/charts/grr/containers/grr-client/config/
+            cp -LR /builder-context/. /kaniko-build/
+            cp /grr/grr.server.yaml /kaniko-build/config/
           volumeMounts:
           - name: grr-exe-sign-keys-volume
             mountPath: /grr/exe/sign/keys
@@ -60,6 +58,8 @@ spec:
             mountPath: /sign/keys
           - name: kaniko-volume
             mountPath: /kaniko-build
+          - name: grr-client-builder-context
+            mountPath: /builder-context
           - name: grr-server-config
             mountPath: /grr/grr.server.yaml
             subPath: server.local.yaml
@@ -71,8 +71,7 @@ spec:
           image: {{ .Values.initContainer.kanikoImage }}
           args:
             - "--dockerfile=Dockerfile.kaniko"
-            - "--context=dir:///kaniko-build/osdfir-infrastructure"
-            - "--context-sub-path=charts/osdfir-infrastructure/charts/grr/containers/grr-client/"
+            - "--context=dir:///kaniko-build"
             - "--build-arg=FLEETSPEAK_FRONTEND={{ $frontend }}"
             - "--build-arg=FLEETSPEAK_FRONTEND_PORT={{ $frontendPort }}"
             - "--build-arg=FLEETSPEAK_TRUSTED_CERT_B64={{ get $clientBuilder "trustedCert" | default "" | b64enc }}"
@@ -96,6 +95,24 @@ spec:
         - name: kaniko-volume
           emptyDir:
             sizeLimit: 25Mi
+        - name: grr-client-builder-context
+          configMap:
+            name: {{ .Release.Name }}-grr-build-context
+            items:
+            - key: Dockerfile.kaniko
+              path: Dockerfile.kaniko
+            - key: grr-client-config.yaml
+              path: grr-client-config.yaml
+            - key: communicator.txt
+              path: config/communicator.txt
+            - key: config.textproto.tmpl
+              path: config/config.textproto.tmpl
+            - key: config.windows.textproto.tmpl
+              path: config/config.windows.textproto.tmpl
+            - key: grr.yaml
+              path: config/grr.yaml
+            - key: grr.service
+              path: config/textservices/grr.service
         - name: grr-exe-sign-keys-volume
           emptyDir:
             sizeLimit: 5Mi

@@ -45,6 +45,13 @@ echo "Job name updated successfully on input change."
 grep -Fq "ClientBuilder.fleetspeak_client_config: /config/config.windows.textproto" <<<"$external_render"
 grep -Fq 'configuration_key: "HKEY_LOCAL_MACHINE\\SOFTWARE\\FleetspeakClient"' \
   "$chart/containers/grr-client/config/config.windows.textproto.tmpl"
+grep -Fq "name: test-grr-build-context" <<<"$external_render"
+grep -Fq "path: config/config.windows.textproto.tmpl" <<<"$external_render"
+grep -Fq "cp -LR /builder-context/. /kaniko-build/" <<<"$external_render"
+grep -Fq '"--context=dir:///kaniko-build"' <<<"$external_render"
+if grep -Fq "git clone https://github.com/google/osdfir-infrastructure.git" <<<"$external_render"; then
+  exit 1
+fi
 
 provided_cert_render="$("$helm" template test "$chart" \
   --set fleetspeak.generateCert=false \
