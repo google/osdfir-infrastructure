@@ -1,0 +1,104 @@
+{{- if include "yeti.agentsEnabled" . }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-yeti-agents
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: agents
+    {{- include "yeti.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ .Release.Name }}-yeti-agents
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: agents
+      {{- include "yeti.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+      labels:
+        app.kubernetes.io/component: agents
+        {{- include "yeti.selectorLabels" . | nindent 8 }}
+    spec:
+      hostNetwork: false
+      hostIPC: false
+      automountServiceAccountToken: false
+      containers:
+        - name: agents
+          image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+          imagePullPolicy: {{ .Values.agents.image.pullPolicy | default .Values.config.imagePullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+          {{- include "yeti.envs" . | nindent 12 }}
+            - name: YETI_API_ROOT
+              value: "http://{{ .Release.Name }}-yeti-api:8000"
+            {{- if .Values.agents.yetiApiKeySecret }}
+            - name: YETI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.agents.yetiApiKeySecret | quote }}
+                  key: "yeti-api"
+            {{- end }}
+            {{- if .Values.agents.googleApiKeySecret }}
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.agents.googleApiKeySecret | quote }}
+                  key: "google-api-key"
+            {{- end }}
+            - name: LLM_PROVIDER
+              value: {{ .Values.agents.llmProvider | quote }}
+            {{- if .Values.agents.geminiModels }}
+            - name: GEMINI_MODELS
+              value: {{ join "," .Values.agents.geminiModels | quote }}
+            {{- end }}
+            - name: YETI_AGENTS_DB_PATH
+              value: "/data/sessions.db"
+          ports:
+            - containerPort: 8888
+              name: http
+          # /health reports whether the service found the configuration it
+          # needs, so an incomplete deployment holds traffic and says why
+          # rather than answering with an agent that has lost its tools.
+          # Readiness only: a configuration problem is not fixed by restarting,
+          # and a liveness probe on the same endpoint would replace a pod that
+          # can still be asked what is wrong with one that keeps dying.
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          volumeMounts:
+            - mountPath: /data
+              name: data
+          resources:
+            {{- toYaml .Values.agents.resources | nindent 12 }}
+      {{- with .Values.agents.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if .Values.agents.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.agents.persistence.size | quote }}
+  {{- else }}
+      volumes:
+        - name: data
+          emptyDir: {}
+  {{- end }}
+{{- end }}

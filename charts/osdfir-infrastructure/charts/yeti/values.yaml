@@ -43,7 +43,7 @@ frontend:
     repository: yetiplatform/yeti-frontend
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.5.0
+    tag: 2.9.0
   ## Yeti frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -71,7 +71,7 @@ api:
     repository: yetiplatform/yeti
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.5.0
+    tag: 2.9.0
   ## Yeti api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -157,16 +157,19 @@ beats:
 ##
 bloomcheck:
   image:
-    ## @param bloomcheck.image.repository Yeti tasks image repository
+    ## @param bloomcheck.image.repository Yeti bloomcheck image repository
     ##
     repository: yetiplatform/bloomcheck
     ## @param bloomcheck.image.tag Overrides the image tag whose default is the chart appVersion
     ##
     tag: dev
+    ## @param bloomcheck.image.pullPolicy
+    ##
+    pullPolicy: Always
   ## Yeti bloomcheck resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param bloomcheck.resources.limits Resource limits for the tasks container
-  ## @param bloomcheck.resources.requests Requested resources for the tasks container
+  ## @param bloomcheck.resources.limits Resource limits for the bloomcheck container
+  ## @param bloomcheck.resources.requests Requested resources for the bloomcheck container
   resources:
     ## Example:
     ## limits:
@@ -178,7 +181,78 @@ bloomcheck:
     ##    cpu: 500m
     ##    memory: 1Gi
     requests: {}
-  ## @param tasks.nodeSelector Node labels for Yeti tasks pods assignment
+  ## @param bloomcheck.nodeSelector Node labels for Yeti bloomcheck pods assignment
+  ##
+  nodeSelector: {}
+## @section Yeti Agents configuration
+##
+agents:
+  ## @param agents.enabled Whether to enable Yeti Agents microservice
+  ## Enabling this requires a Google API key for Gemini (agents.googleApiKeySecret)
+  ## and Yeti API credentials (agents.yetiApiKeySecret or global.yeti.apiKeySecret).
+  ## The install fails with instructions if either is missing.
+  ##
+  enabled: false
+  image:
+    ## @param agents.image.repository Yeti agents image repository
+    ##
+    repository: yetiplatform/yeti-agents
+    ## @param agents.image.tag Overrides the image tag whose default is the chart appVersion
+    ##
+    tag: dev
+    ## @param agents.image.pullPolicy
+    ##
+    pullPolicy: Always
+  ## @param agents.yetiApiKeySecret Existing secret containing the Yeti API key (key: "yeti-api").
+  ## Defaults to global.yeti.apiKeySecret if set.
+  ## (e.g. kubectl create secret generic yeti-api-secret --from-literal=yeti-api=${YETI_API_KEY})
+  ##
+  yetiApiKeySecret: ""
+  ## @param agents.googleApiKeySecret Existing secret containing the Google API key for Gemini.
+  ## Required when agents.llmProvider is "gemini".
+  ## (e.g. kubectl create secret generic yeti-google-api-secret --from-literal=google-api-key=${GOOGLE_API_KEY})
+  ##
+  googleApiKeySecret: ""
+  ## @param agents.llmProvider LLM backend for the agents service ("gemini" or "ollama")
+  ##
+  llmProvider: gemini
+  ## @param agents.geminiModels Gemini model IDs a user may choose between
+  ## Offered in the chat UI, which hides the selector when there is only one.
+  ## The first is what a conversation uses until one is chosen for it, so order
+  ## this by preference.
+  ##
+  ## The list is what this deployment is willing to spend quota on, so keep it
+  ## deliberate rather than mirroring everything the provider publishes.
+  ##
+  ## Note that -preview models are retired on Google's schedule, so one listed
+  ## here can stop working without any change on this side.
+  ##
+  geminiModels:
+    - gemini-3.7-flash
+    - gemini-3.5-flash
+    - gemini-3.5-flash-lite
+    - gemini-3.1-pro-preview
+  ## Yeti agents persistence configuration
+  ##
+  persistence:
+    ## @param agents.persistence.enabled Whether to enable persistence for Yeti Agents sessions database
+    ##
+    enabled: true
+    ## @param agents.persistence.size Persistent Volume size for sessions database
+    ##
+    size: 2Gi
+  ## Yeti agents resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param agents.resources.limits Resource limits for the agents container
+  ## @param agents.resources.requests Requested resources for the agents container
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  ## @param agents.nodeSelector Node labels for Yeti agents pods assignment
   ##
   nodeSelector: {}
 ## @section Yeti Configuration Parameters
@@ -309,5 +383,43 @@ arangodb:
     ##    memory: 1Gi
     requests: {}
   ## @param arangodb.nodeSelector Node labels for Yeti arangodb pods assignment
+  ##
+  nodeSelector: {}
+## @section ChromaDB configuration
+##
+chromadb:
+  ## @param chromadb.enabled Whether to enable ChromaDB microservice
+  ##
+  enabled: true
+  image:
+    ## @param chromadb.image.repository ChromaDB image repository
+    ##
+    repository: chromadb/chroma
+    ## @param chromadb.image.pullPolicy ChromaDB image pull policy
+    ##
+    pullPolicy: IfNotPresent
+    ## @param chromadb.image.tag ChromaDB image tag
+    ##
+    tag: "1.5.7"
+  ## ChromaDB persistence configuration
+  ##
+  persistence:
+    ## @param chromadb.persistence.enabled Whether to enable persistence for ChromaDB
+    ##
+    enabled: true
+    ## @param chromadb.persistence.size ChromaDB Persistent Volume size
+    ##
+    size: 10Gi
+  ## ChromaDB resource requests and limits
+  ## @param chromadb.resources.limits The resources limits for the ChromaDB container
+  ## @param chromadb.resources.requests The requested resources for the ChromaDB container
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  ## @param chromadb.nodeSelector Node labels for ChromaDB pods assignment
   ##
   nodeSelector: {}
