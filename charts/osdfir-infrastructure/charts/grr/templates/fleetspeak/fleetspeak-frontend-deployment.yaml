@@ -14,6 +14,8 @@ spec:
       app.kubernetes.io/name: fleetspeak-frontend
   template:
     metadata:
+      annotations:
+        grr.osdfir.dev/certificate-hash: {{ include "grr.fleetspeakCertificateHash" . | quote }}
       labels:
         app.kubernetes.io/name: fleetspeak-frontend
         prometheus: fleetspeak-frontend

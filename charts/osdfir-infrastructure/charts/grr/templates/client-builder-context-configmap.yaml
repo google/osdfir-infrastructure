@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-grr-build-context
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+data:
+  Dockerfile.kaniko: |-
+{{ .Files.Get "containers/grr-client/Dockerfile.kaniko" | indent 4 }}
+  grr-client-config.yaml: |-
+{{ .Files.Get "containers/grr-client/grr-client-config.yaml" | indent 4 }}
+  communicator.txt: |-
+{{ .Files.Get "containers/grr-client/config/communicator.txt" | indent 4 }}
+  config.textproto.tmpl: |-
+{{ .Files.Get "containers/grr-client/config/config.textproto.tmpl" | indent 4 }}
+  config.windows.textproto.tmpl: |-
+{{ .Files.Get "containers/grr-client/config/config.windows.textproto.tmpl" | indent 4 }}
+  grr.yaml: |-
+{{ .Files.Get "containers/grr-client/config/grr.yaml" | indent 4 }}
+  grr.service: |-
+{{ .Files.Get "containers/grr-client/config/textservices/grr.service" | indent 4 }}

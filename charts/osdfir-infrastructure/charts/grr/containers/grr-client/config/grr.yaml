@@ -8,6 +8,6 @@ ClientBuilder.executables_dir: /client_installers
 Target:Linux:
   ClientBuilder.fleetspeak_client_config: /config/config.textproto
 Target:Windows:
-  ClientBuilder.fleetspeak_client_config: /config/config.textproto
+  ClientBuilder.fleetspeak_client_config: /config/config.windows.textproto
 Target:Darwin:
   ClientBuilder.fleetspeak_client_config: /config/config.textproto
