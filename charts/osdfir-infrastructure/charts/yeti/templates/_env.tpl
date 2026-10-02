@@ -80,6 +80,10 @@ containers. Please update this file when adding a new environment variable.
       key: "client-secret"
 - name: YETI_AUTH_OIDC_EXTRA_CLIENT_AUDIENCES
   value: {{ .Values.config.oidc.allowedExtraAudiences }}
+{{- if include "yeti.googleAccessTokenExchangeEnabled" . }}
+- name: YETI_AUTH_GOOGLE_ACCESS_TOKEN_CLIENT_IDS
+  value: {{ .Values.config.oidc.googleAccessTokenClientIds | quote }}
+{{- end }}
 {{- if .Values.global.ingress.enabled }}
 - name: YETI_SYSTEM_WEBROOT
   value: {{ printf "https://%s" .Values.global.ingress.yetiHost | quote }}

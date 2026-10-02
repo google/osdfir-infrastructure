@@ -40,3 +40,19 @@ Emits a non-empty string when true, so callers test it with `if`.
 true
 {{- end -}}
 {{- end }}
+
+{{/*
+Whether Yeti serves /api/v2/auth/google-access-token.
+
+Yeti registers the route only when it uses OIDC authentication and
+auth.google_access_token_client_ids is set. Defined once here because the same
+answer decides whether Yeti is given that setting and whether Nginx rate-limits
+the route, and those must not be able to disagree.
+
+Emits a non-empty string when true, so callers test it with `if`.
+*/}}
+{{- define "yeti.googleAccessTokenExchangeEnabled" -}}
+{{- if and .Values.config.oidc.enabled .Values.config.oidc.existingSecret .Values.config.oidc.googleAccessTokenClientIds -}}
+true
+{{- end -}}
+{{- end }}
