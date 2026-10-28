@@ -12,7 +12,72 @@ cd osdfir-infrastructure
 export REPO=$(pwd)
 ```
 
-## Build clients for an external Fleetspeak address
+## 1. Quick Start
+
+A convenient way to get started is to run GRR on a `minikube` cluster.
+
+The GRR chart repacks the client templates for Darwin, Linux and Windows when it is installed.
+
+The resulting `.pkg`, `.deb`, `.rpm`, and `.msi` installers are uploaded to GRR and are available in
+the Admin UI under **Binaries → executables → installers**.
+
+After the installation finishes you can download and run the respective installer for your client OS.
+
+Make sure that your client machine has network connectivity to the `minikube ip` (see below) so it can reach the GRR server.
+
+```console
+minikube start
+export REPO=$(pwd)
+export NODE_IP=$(minikube ip)
+
+# Install the GRR chart
+helm install grr \
+  "$REPO/charts/osdfir-infrastructure/charts/grr" \
+  --set clientBuilder.address="$NODE_IP"
+  --set-string clientBuilder.port=30443 \
+  --set grr.fleetspeak.frontend.expose="node" \
+  --set grr.fleetspeak.frontend.address="$NODE_IP"
+
+# Wait for all pods to be in the 'running' state then port forward the GRR Admin UI.
+kubectl port-forward service/grr-grr-admin 8000:8000
+```
+
+You can now point your browser to [http://localhost:8000](http://localhost:8000) to access the GRR Admin UI.
+
+
+Alternatively, instead of having to run an external GRR client you can run a GRR client as a Kubernetes Daemonset in the GRR cluster.
+
+Note that while this is convenient for demos it is not otherwise recommended.
+
+```console
+minikube start --insecure-registry="192.168.49.0/24" --addons=registry
+export REPO=$(pwd)
+export NODE_IP=$(minikube ip)
+export CLIENT_IMAGE=grr-client:v0.1
+
+# Install the GRR chart
+helm install grr \
+  "$REPO/charts/osdfir-infrastructure/charts/grr" \
+  --set clientBuilder.address="$NODE_IP" \
+  --set-string clientBuilder.port=30443 \
+  --set grr.fleetspeak.frontend.expose="node"
+  --set grr.fleetspeak.frontend.address="$NODE_IP"  \
+  --set grr.daemon.image="localhost:5000/$CLIENT_IMAGE" \
+  --set grr.clientBuilder.kanikoInsecure=true \
+  --set clientBuilder.imageOnRegistry="$NODE_IP:5000/$CLIENT_IMAGE"
+
+# Wait for all pods to be in the 'running' state
+# Label the minikube node with 'grrclient=installed' to get the GRR client installed in a daemonset. 
+kubectl get nodes
+kubectl label nodes --overwrite minikube  grrclient=installed
+
+# Port forward the GRR Admin UI
+kubectl port-forward service/grr-grr-admin 8000:8000
+```
+
+You can now point your browser to [http://localhost:8000](http://localhost:8000) to access the GRR Admin UI and run some test Flows.
+
+## 2. Build clients for an external Fleetspeak address
 
 The chart repacks the GRR client templates when it is installed. The resulting
 `.deb`, `.rpm`, and `.msi` installers are uploaded to GRR and are available in
@@ -68,7 +133,7 @@ helm upgrade --install grr \
   --set-file clientBuilder.trustedCert=./fleetspeak-frontend.crt
 ```
 
-### Validate with KIND
+### 2.1. Validate with KIND
 
 Expose the default Fleetspeak NodePort when creating a disposable KIND cluster:
 
@@ -132,3 +197,56 @@ kubectl port-forward service/grr-grr-admin 8000:8000
 After installing it on a test machine, confirm the new client appears in GRR
 and that its Fleetspeak connection targets the configured external address and
 port.
+
+## 3. Run GRR with Fleetspeak-on-Spanner
+
+[GRR](https://github.com/google/grr) and [Fleetspeak](https://github.com/google/fleetspeak) are both backed by a datastore for their operational data.
+
+The default datastore implementation for both GRR and Fleetspeak is MySQL.
+
+MySQL is a reasonable choice for GRR installations with less than 10,000 clients.
+
+If your fleet is surpassing 10,000 GRR clients we recommend exploring the option of running Fleetspeak on [Google Cloud Spanner](https://cloud.google.com/spanner).
+
+You can find more background information about the configuration in this [blog post](https://osdfir.blogspot.com/2025/06/unlocking-fleetspeak-large-scale-and.html).
+
+If you would like to test the Fleetspeak-on-Spanner setup before adopting the approach you can do so with `minikube` and the [Spanner emulator](https://docs.cloud.google.com/spanner/docs/emulator).
+
+Follow the instructions below to set up GRR with Fleetspeak-on-Spanner on `minikube`.
+
+```console
+minikube start --insecure-registry="192.168.49.0/24" --addons=registry
+export REPO=$(pwd)
+export NODE_IP=$(minikube ip)
+export CLIENT_IMAGE=grr-client:v0.1
+
+helm install grr \
+  "$REPO/charts/osdfir-infrastructure/charts/grr" \
+  --set clientBuilder.address="$NODE_IP" \
+  --set-string clientBuilder.port=30443 \
+  --set grr.fleetspeak.frontend.expose="node" \
+  --set grr.fleetspeak.frontend.address="$NODE_IP"  \
+  --set grr.daemon.image="localhost:5000/$CLIENT_IMAGE" \
+  --set grr.clientBuilder.kanikoInsecure=true \
+  --set clientBuilder.imageOnRegistry="$NODE_IP:5000/$CLIENT_IMAGE" \
+  --set fleetspeak.spanner.emulateSpanner=true  \
+  --set fleetspeak.spanner.useSpanner=true
+
+# Wait for all pods to be in the 'running' state and the client builder job to complete
+kubectl get job
+# The output should look similar to the below:
+# NAME                     STATUS     COMPLETIONS   DURATION   AGE
+# grr-grr-client-builder   Complete   1/1           9m55s      11m
+kubectl wait --for=condition=complete job --all --timeout=900s
+# The output should look similar to the below:
+# job.batch/grr-grr-client-builder condition met
+
+# Label the minikube node with 'grrclient=installed' to get the GRR client installed in a daemonset. 
+kubectl get nodes
+kubectl label nodes --overwrite minikube  grrclient=installed
+
+# Port forward the GRR Admin UI
+kubectl port-forward service/grr-grr-admin 8000:8000
+```
+
+You can now point your browser to [http://localhost:8000](http://localhost:8000) to access the GRR Admin UI and run some test Flows.
