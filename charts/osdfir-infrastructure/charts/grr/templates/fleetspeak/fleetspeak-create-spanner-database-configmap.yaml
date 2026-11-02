@@ -1,0 +1,25 @@
+{{- if .Values.fleetspeak.spanner.emulateSpanner }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-grr-fleetspeak-create-spanner-database
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+data:
+  createSpannerDatabase.sh: |
+    # 1) Fetch the setup files
+    curl -O https://raw.githubusercontent.com/google/fleetspeak/refs/tags/v0.1.19/spanner-setup/fleetspeak.pb
+    curl -O https://raw.githubusercontent.com/google/fleetspeak/refs/tags/v0.1.19/spanner-setup/setup.sh
+    # 2) Setup the Spanner Database and its Tables
+    bash setup.sh
+    # 3) Set the environment variables
+    export PUBSUB_PROJECT_ID=spanner-emulator-project
+    export PUBSUB_EMULATOR_HOST=pubsub.default.svc.cluster.local:8085
+    # 4) Create the PubSub Topic
+    curl -X PUT "http://${PUBSUB_EMULATOR_HOST}/v1/projects/${PUBSUB_PROJECT_ID}/topics/fleetspeak-top"
+    # 5) Create the PubSub Subscription
+    curl -X PUT "http://${PUBSUB_EMULATOR_HOST}/v1/projects/${PUBSUB_PROJECT_ID}/subscriptions/fleetspeak-sub" \
+      -H "Content-Type: application/json" \
+      -d "{\"topic\": \"projects/${PUBSUB_PROJECT_ID}/topics/fleetspeak-top\"}"
+{{- end }}

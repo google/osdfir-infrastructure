@@ -22,6 +22,14 @@ clientBuilder:
   ## When empty, the address is derived from fleetspeak.frontend.address or the first Kubernetes node internal IP.
   ##
   address: ""
+  ## @param clientBuilder.imageOnRegistry Sets the externally reachable Fleetspeak address embedded in GRR client installers.
+  ## When empty, clientBuilder.imageOnRegistry defaults to daemon.image.
+  ## This is mainly helpful when working with minikube's registry addon.
+  ##
+  imageOnRegistry: ""
+  ## @param clientBuilder.kanikoInsecure Sets the kaniko --insecure flag.
+  ##
+  kanikoInsecure: false
   ## @param clientBuilder.port Sets the externally reachable Fleetspeak port embedded in GRR client installers.
   ## When empty, fleetspeak.frontend.listenPort is used.
   ##
@@ -53,7 +61,7 @@ fleetspeak:
     healthCheckPort: 8080
     ## @param fleetspeak.admin.image Sets the Fleetspeak admin container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:v0.1.17"
+    image: "ghcr.io/google/fleetspeak:v0.1.19"
     ## @param fleetspeak.admin.listenPort Sets the Fleetspeak admin listen port to use.
     ##
     listenPort: 4444
@@ -67,7 +75,7 @@ fleetspeak:
     healthCheckPort: 8080
     ## @param fleetspeak.frontend.image Sets the Fleetspeak fronend container image to use.
     ##
-    image: "ghcr.io/google/fleetspeak:v0.1.17"
+    image: "ghcr.io/google/fleetspeak:v0.1.19"
     ## @param fleetspeak.frontend.address Sets the Fleetspeak frontend listen to use in a load balancer.
     ##
     address: ""
@@ -110,6 +118,29 @@ fleetspeak:
     ## @param fleetspeak.mysqlDb.userPassword Sets the Fleetspeak DB password to use.
     ##
     userPassword: "fleetspeak-password"
+
+  spanner:
+    ## @param fleetspeak.spanner.database Sets the Spanner database name for Fleetspeak on Spanner.
+    ##
+    database: "fleetspeak"
+    ## @param fleetspeak.spanner.emulateSpanner Emulates the use of Spanner with eumulator containers deployed into the cluster.
+    ##
+    emulateSpanner: false
+    ## @param fleetspeak.spanner.instance Sets the Spanner instance name for Fleetspeak on Spanner.
+    ##
+    instance: "fleetspeak-instance"
+    ## @param fleetspeak.spanner.project Sets the Project ID for the Fleetspeak Spanner instance to use.
+    ##
+    project: "spanner-emulator-project"
+    ## @param fleetspeak.spanner.subscription Sets PubSub Subscription for Fleetspeak on Spanner.
+    ##
+    subscription: "fleetspeak-sub"
+    ## @param fleetspeak.spanner.topic Sets the PubSub Topic for Fleetspeak on Spanner.
+    ##
+    topic: "fleetspeak-top"
+    ## @param fleetspeak.spanner.useSpanner Enables the use of Spanner.
+    ##
+    useSpanner: false
 
 ## @section GRR parameters
 ##
@@ -178,10 +209,12 @@ prometheus:
 ## @section initContainer parameters
 ##
 initContainer:
-  ## @param initContainer.image Init container image necessary for creating certificates, ensuring services
-  ## are online prior to the main Pod.
+  ## @param initContainer.image Init container image necessary for nsuring services are online prior to the main Pod.
   ##
-  image: "bitnamilegacy/git:latest"
+  image: "google/cloud-sdk:587.0.0-alpine"
   ## @param initContainer.kanikoImage Init container image necessary for the GRR client kaniko build job.
   ##
   kanikoImage: "gcr.io/kaniko-project/executor:latest"
+  ## @param initContainer.ssl OpenSSL container image necessary for creating certificates.
+  ##
+  ssl: "alpine/openssl:3.5.9"

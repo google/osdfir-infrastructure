@@ -29,7 +29,7 @@ spec:
             done
             echo "Fleetspeak Frontend health check is ready"
         - name: init-kaniko-env
-          image: {{ .Values.initContainer.image }}
+          image: {{ .Values.initContainer.ssl }}
           command: ["/bin/sh", "-c"]
           args:
           - |
@@ -75,8 +75,11 @@ spec:
             - "--build-arg=FLEETSPEAK_FRONTEND={{ $frontend }}"
             - "--build-arg=FLEETSPEAK_FRONTEND_PORT={{ $frontendPort }}"
             - "--build-arg=FLEETSPEAK_TRUSTED_CERT_B64={{ get $clientBuilder "trustedCert" | default "" | b64enc }}"
+            {{- if .Values.clientBuilder.kanikoInsecure }}
+            - "--insecure"
+            {{- end }}
             {{- if .Values.grr.daemon.image }}
-            - "--destination={{ .Values.grr.daemon.image }}"
+            - "--destination={{ default .Values.grr.daemon.image .Values.clientBuilder.imageOnRegistry }}"
             {{- else }}
             - "--no-push"
             - "--no-push-cache"

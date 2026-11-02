@@ -43,7 +43,7 @@ spec:
           done
           echo "Fleetspeak Admin health check is ready"
       - name: init-exe-sign
-        image: {{ .Values.initContainer.image }}
+        image: {{ .Values.initContainer.ssl }}
         command: ["/bin/sh", "-c"]
         args:
         - |

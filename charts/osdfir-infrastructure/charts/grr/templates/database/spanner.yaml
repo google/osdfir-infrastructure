@@ -1,0 +1,93 @@
+{{- if .Values.fleetspeak.spanner.emulateSpanner }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spanner-emulator
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+  labels:
+    app: spanner-emulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spanner-emulator
+  template:
+    metadata:
+      labels:
+        app: spanner-emulator
+    spec:
+      containers:
+      - name: spanner-emulator
+        image: gcr.io/cloud-spanner-emulator/emulator:1.5.59
+        ports:
+        - name: grpc
+          containerPort: 9010
+        - name: rest
+          containerPort: 9020
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spanner
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+spec:
+  selector:
+    app: spanner-emulator
+  ports:
+    - name: grpc
+      port: 9010
+      targetPort: 9010
+      protocol: TCP
+    - name: rest
+      port: 9020
+      targetPort: 9020
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pubsub-emulator
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+  labels:
+    app: pubsub-emulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pubsub-emulator
+  template:
+    metadata:
+      labels:
+        app: pubsub-emulator
+    spec:
+      containers:
+      - name: pubsub-emulator
+        image: google/cloud-sdk:591.0.0-emulators
+        command: ["gcloud", "beta", "emulators", "pubsub", "start"]
+        args: ["--project=spanner-emulator-project", "--host-port=0.0.0.0:8085"]
+        ports:
+        - name: pubsub 
+          containerPort: 8085
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pubsub
+  {{- if .Values.grr.namespace }}
+  namespace: {{ .Values.grr.namespace }}
+  {{- end }}
+spec:
+  selector:
+    app: pubsub-emulator
+  ports:
+    - name: pubsub
+      port: 8085
+      targetPort: 8085
+      protocol: TCP
+{{- end }}

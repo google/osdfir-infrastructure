@@ -39,16 +39,78 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         image: {{ .Values.initContainer.image }}
-        command: ['sh', '-c', "cp /stage/fleetspeak-server/server.*.config /etc/fleetspeak-server/; sed -i \"s/FLEETSPEAK_FRONTEND_IP/$POD_IP/g\" /etc/fleetspeak-server/server.components.config"]
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          set -e
+          cp /stage/fleetspeak-server/server.*.config /etc/fleetspeak-server/
+          sed -i s/FLEETSPEAK_FRONTEND_IP/$POD_IP/g /etc/fleetspeak-server/server.components.config
+          cat /stage/fleetspeak-database.config >> /etc/fleetspeak-server/server.components.config
         volumeMounts:
         - name: fleetspeak-config-volume
           mountPath: /etc/fleetspeak-server
         - name: fleetspeak-frontend-components
           mountPath: /stage/fleetspeak-server/server.components.config
           subPath: server.components.config
+        - name: fleetspeak-database-components
+          mountPath: /stage/fleetspeak-database.config
+          subPath: database.components.config
         - name: fleetspeak-services
           mountPath: /stage/fleetspeak-server/server.services.config
           subPath: server.services.config
+      {{- if .Values.fleetspeak.spanner.emulateSpanner }}
+      - name: init-spanner-setup
+        image: google/cloud-sdk:591.0.0-emulators
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          set -e
+          until curl -sf "http://spanner:9020/v1/projects/{{ .Values.fleetspeak.spanner.project }}/instances" > /dev/null;
+          do
+            echo "Waiting for spanner emulator...";
+            sleep 5;
+          done
+          echo "Spanner emulator is ready"
+          db_status=$(curl -s -o /dev/null -w "%{http_code}" "http://spanner:9020/v1/projects/{{ .Values.fleetspeak.spanner.project }}/instances/{{ .Values.fleetspeak.spanner.instance }}/databases/{{ .Values.fleetspeak.spanner.database }}")
+          if [ "$db_status" -eq 200 ]; then
+            echo "Spanner database exists"
+          else
+            # Set up the config
+            gcloud config configurations create emulator
+            gcloud config set auth/disable_credentials true
+            gcloud config set project {{ .Values.fleetspeak.spanner.project }} --quiet
+            gcloud config set api_endpoint_overrides/spanner \
+              http://spanner.default.svc.cluster.local:9020/ --quiet
+            inst_status=$(curl -s -o /dev/null -w "%{http_code}" "http://spanner:9020/v1/projects/{{ .Values.fleetspeak.spanner.project }}/instances/{{ .Values.fleetspeak.spanner.instance }}")
+            if [ "$inst_status" -eq 200 ]; then
+              echo "Spanner instance exists"
+            else
+              # Create Spanner instance
+              echo "Creating Spanner instance"
+              gcloud spanner instances create {{ .Values.fleetspeak.spanner.instance }} --nodes=1 \
+                --config=emulator --description="Fleetspeak Instance"
+            fi
+            # Create Spanner database
+            bash /stage/createSpannerDatabase.sh
+          fi
+        volumeMounts:
+        - name: fleetspeak-create-spanner-database
+          mountPath: /stage/createSpannerDatabase.sh
+          subPath: createSpannerDatabase.sh
+      {{- end }}
+      {{- if not .Values.fleetspeak.spanner.useSpanner }}
+      - name: init-mysql-server
+        image: {{ .Values.initContainer.image }}
+        command: ['/bin/sh', '-c']
+        args:
+        - |
+          until nc -z {{ .Values.fleetspeak.mysqlDb.address }} {{ .Values.fleetspeak.mysqlDb.port }};
+          do
+            echo "Waiting for MySQL server...";
+            sleep 5;
+          done
+          echo "MySQL server is ready";
+      {{- end }}
       containers:
       - name: fleetspeak-frontend
         image: {{ .Values.fleetspeak.frontend.image }}
@@ -57,6 +119,13 @@ spec:
           requests:
             memory: "2Gi"
             cpu: "1000m"
+        {{- end }}
+        {{- if .Values.fleetspeak.spanner.emulateSpanner }}
+        env:
+        - name: SPANNER_EMULATOR_HOST
+          value: "spanner.default.svc.cluster.local:9010"
+        - name: PUBSUB_EMULATOR_HOST
+          value: "pubsub.default.svc.cluster.local:8085"
         {{- end }}
         ports:
         - containerPort: {{ .Values.fleetspeak.frontend.listenPort }}
@@ -88,9 +157,27 @@ spec:
           items:
           - key: frontend.components.textproto
             path: server.components.config
+      - name: fleetspeak-database-components
+        secret:
+          {{- if .Values.fleetspeak.spanner.useSpanner }}
+          secretName: {{ .Release.Name }}-grr-fleetspeak-spanner-components
+          {{- else }}
+          secretName: {{ .Release.Name }}-grr-fleetspeak-mysql-components
+          {{- end }}
+          items:
+          - key: database.components.textproto
+            path: database.components.config
       - name: fleetspeak-services
         configMap:
           name: {{ .Release.Name }}-grr-fleetspeak-services
           items:
           - key: services.textproto
             path: server.services.config
+      {{- if .Values.fleetspeak.spanner.emulateSpanner }}
+      - name: fleetspeak-create-spanner-database
+        configMap:
+          name: {{ .Release.Name }}-grr-fleetspeak-create-spanner-database
+          items:
+          - key: createSpannerDatabase.sh
+            path: createSpannerDatabase.sh
+      {{- end }}

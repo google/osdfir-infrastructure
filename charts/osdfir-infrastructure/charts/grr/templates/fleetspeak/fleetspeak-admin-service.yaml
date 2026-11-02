@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Values.grr.namespace }}
   {{- end }}
 spec:
+  clusterIP: None
   selector:
     app.kubernetes.io/name: fleetspeak-admin
   ports:
