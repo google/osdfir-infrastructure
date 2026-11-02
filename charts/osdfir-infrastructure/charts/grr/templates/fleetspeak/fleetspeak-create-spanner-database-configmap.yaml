@@ -9,8 +9,8 @@ metadata:
 data:
   createSpannerDatabase.sh: |
     # 1) Fetch the setup files
-    curl -O https://raw.githubusercontent.com/google/fleetspeak/refs/heads/master/spanner-setup/fleetspeak.pb
-    curl -O https://raw.githubusercontent.com/google/fleetspeak/refs/heads/master/spanner-setup/setup.sh
+    curl -O https://raw.githubusercontent.com/google/fleetspeak/refs/tags/v0.1.19/spanner-setup/fleetspeak.pb
+    curl -O https://raw.githubusercontent.com/google/fleetspeak/refs/tags/v0.1.19/spanner-setup/setup.sh
     # 2) Setup the Spanner Database and its Tables
     bash setup.sh
     # 3) Set the environment variables
