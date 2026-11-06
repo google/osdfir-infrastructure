@@ -177,6 +177,10 @@ gcp:
   ## @param gcp.projectID GCP PubSub subscription that is listening to the GCS bucket.
   ##
   subscriptionID: ""
+  ## @param gcp.artifactsBucket GCS bucket (name only, without gs://) whose notifications feed the PubSub subscription.
+  ## Advertised to clients via the OpenRelik server /configs/system/ API endpoint so they know where to upload artifacts.
+  ##
+  artifactsBucket: ""
   ## OpenRelik GCP importer image configuration
   ##
   image:

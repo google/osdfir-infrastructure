@@ -104,3 +104,10 @@ data:
     allowed_data_types_preview = [
         "openrelik:hayabusa:html_report"
     ]
+    {{- if and .Values.gcp.enabled .Values.gcp.artifactsBucket }}
+
+    [gcp]
+    # GCS bucket that clients upload artifacts to for ingestion by the GCP importer.
+    # Advertised to clients via the /configs/system/ API endpoint.
+    artifacts_bucket = {{ .Values.gcp.artifactsBucket | quote }}
+    {{- end }}
