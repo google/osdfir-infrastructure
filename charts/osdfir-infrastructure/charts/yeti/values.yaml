@@ -43,7 +43,7 @@ frontend:
     repository: yetiplatform/yeti-frontend
     ## @param frontend.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.9.0
+    tag: 2.12.0
   ## Yeti frontend resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param frontend.resources.limits Resource limits for the frontend container
@@ -71,7 +71,7 @@ api:
     repository: yetiplatform/yeti
     ## @param api.image.tag Overrides the image tag whose default is the chart appVersion
     ##
-    tag: 2.9.0
+    tag: 2.12.0
   ## Yeti api resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param api.resources.limits Resource limits for the API container
@@ -291,6 +291,23 @@ config:
     ## @param config.oidc.existingSecret Existing secret with the client ID, secret and cookie secret
     ##
     existingSecret: ""
+    ## @param config.oidc.googleAccessTokenClientIds OAuth client IDs whose Google access tokens can be exchanged for Yeti API tokens
+    ## Comma-separated. Enables POST /api/v2/auth/google-access-token (Yeti 2.12.0 or later), for API
+    ## clients that can mint Google access tokens without a browser but can't get ID tokens. Only tokens
+    ## issued to a listed client, with identity scopes only, for the verified email address of an
+    ## existing Yeti user are accepted.
+    ##
+    ## Only list OAuth clients you control. Access tokens aren't bound to Yeti: anyone holding an
+    ## identity-scoped token from a listed client, for a Yeti user's email address, can log in as that
+    ## user until the token expires. Never list a public client whose secret ships with an application.
+    ## See https://github.com/yeti-platform/yeti/blob/main/yeti.conf.sample
+    ##
+    ## Setting this also rate-limits the endpoint in the frontend Nginx, which calls Google for every
+    ## request.
+    ## Example
+    ## googleAccessTokenClientIds: client_id_1,client_id_2
+    ##
+    googleAccessTokenClientIds: ""
 ## @section Third Party Configuration
 ## This section contains all the main configuration for third party dependencies Yeti needs to run
 ##

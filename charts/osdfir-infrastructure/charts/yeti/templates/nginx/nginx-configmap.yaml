@@ -7,6 +7,13 @@ metadata:
     {{- include "yeti.labels" . | nindent 4 }}
 data:
   default.conf: |
+    {{- if include "yeti.googleAccessTokenExchangeEnabled" . }}
+    # Yeti calls Google for every token exchange request, before it knows who is
+    # asking. One zone shared by all clients caps the total: behind a load
+    # balancer or proxy, every request arrives from the proxy's address. The key
+    # is a constant because requests with an empty key aren't limited.
+    limit_req_zone "google-access-token" zone=google_access_token:1m rate=5r/s;
+    {{- end }}
     server {
         listen 9000;
         listen [::]:9000;
@@ -16,6 +23,17 @@ data:
         location /api/v2 {
             proxy_pass http://{{ .Release.Name }}-yeti-api:8000;
         }
+        {{- if include "yeti.googleAccessTokenExchangeEnabled" . }}
+
+        # Clients exchange a token once per session, so the burst absorbs many
+        # clients starting together. Rejected requests get 429 so that clients
+        # can tell rate limiting from Google being unavailable (503).
+        location = /api/v2/auth/google-access-token {
+            limit_req zone=google_access_token burst=20 nodelay;
+            limit_req_status 429;
+            proxy_pass http://{{ .Release.Name }}-yeti-api:8000;
+        }
+        {{- end }}
         
         location ~(^/docs|^/openapi.json) {
             proxy_pass http://{{ .Release.Name }}-yeti-api:8000;
