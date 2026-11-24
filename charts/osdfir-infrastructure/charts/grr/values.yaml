@@ -118,6 +118,10 @@ grr:
   ##
   version: "3.4.9.1"
   admin:
+    ## @param grr.admin.apiDefaultRouter Sets the GRR "no authorization" router for testing purposes.
+    ## Use with caution and only if you know what you are doing.
+    ##
+    ## apiDefaultRouter: "ApiCallRouterWithoutChecks"
     ## @param grr.admin.image Sets the GRR admin container image to use.
     ##
     image: "ghcr.io/google/grr:v3.4.9.1-release"
