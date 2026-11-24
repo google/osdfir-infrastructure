@@ -10,9 +10,9 @@ dependencies:
   version: 2.4.2
 - name: grr
   repository: file://charts/grr
-  version: 2.4.0
+  version: 2.4.1
 - name: hashr
   repository: file://charts/hashr
   version: 2.0.1
-digest: sha256:717cfabd6a9d883eb299d47d5b02d10af46bd51c13ad56b1c107c997ff40cedd
-generated: "2026-10-02T18:36:47.134609000Z"
+digest: sha256:fba1f94fc1bbb3f668c81d981b8ba05bfd7b76413a1f3750d41d812f7009b5dc
+generated: "2026-11-24T13:09:21.668610233Z"
