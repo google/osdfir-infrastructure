@@ -33,7 +33,7 @@ export NODE_IP=$(minikube ip)
 # Install the GRR chart
 helm install grr \
   "$REPO/charts/osdfir-infrastructure/charts/grr" \
-  --set clientBuilder.address="$NODE_IP"
+  --set clientBuilder.address="$NODE_IP" \
   --set-string clientBuilder.port=30443 \
   --set grr.fleetspeak.frontend.expose="node" \
   --set grr.fleetspeak.frontend.address="$NODE_IP"
